@@ -1,0 +1,426 @@
+\doxysection{b3\+Overlapping\+Pair\+Cache.\+h}
+\hypertarget{b3_overlapping_pair_cache_8h_source}{}\label{b3_overlapping_pair_cache_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/BroadPhaseCollision/b3OverlappingPairCache.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/BroadPhaseCollision/b3OverlappingPairCache.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ B3\_OVERLAPPING\_PAIR\_CACHE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ B3\_OVERLAPPING\_PAIR\_CACHE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Int2.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3AlignedObjectArray.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }b3Dispatcher;}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}b3OverlappingPair.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3BroadphasePair>}}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_overlap_callback}{b3OverlapCallback}}}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structb3_overlap_callback}{\string~b3OverlapCallback}}()}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//return\ true\ for\ deletion\ of\ the\ pair}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ processOverlap(b3BroadphasePair\&\ pair)\ =\ 0;}
+\DoxyCodeLine{00034\ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structb3_overlap_filter_callback}{\string~b3OverlapFilterCallback}}()}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{//\ return\ true\ when\ pairs\ need\ collision}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ needBroadphaseCollision(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ b3g\_removePairs;}
+\DoxyCodeLine{00046\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ b3g\_addedPairs;}
+\DoxyCodeLine{00047\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ b3g\_findPairs;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ B3\_NULL\_PAIR\ =\ 0xffffffff;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}}
+\DoxyCodeLine{00054\ \{}
+\DoxyCodeLine{00055\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_overlapping_pair_cache}{\string~b3OverlappingPairCache}}()\ \{\}\ \ \textcolor{comment}{//\ this\ is\ needed\ so\ we\ can\ get\ to\ the\ derived\ class\ destructor}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ getOverlappingPairArrayPtr()\ =\ 0;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ b3BroadphasePair*\ getOverlappingPairArrayPtr()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\&\ getOverlappingPairArray()\ =\ 0;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ cleanOverlappingPair(b3BroadphasePair\&\ pair,\ b3Dispatcher*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumOverlappingPairs()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ cleanProxyFromPairs(\textcolor{keywordtype}{int}\ proxy,\ b3Dispatcher*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setOverlapFilterCallback(\mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ callback)\ =\ 0;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processAllOverlappingPairs(\mbox{\hyperlink{structb3_overlap_callback}{b3OverlapCallback}}*,\ b3Dispatcher*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ findPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1)\ =\ 0;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ hasDeferredRemoval()\ =\ 0;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//virtual\ \ \ void\ \ \ \ setInternalGhostPairCallback(b3OverlappingPairCallback*\ ghostPairCallback)=0;}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ addOverlappingPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1)\ =\ 0;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}*\ removeOverlappingPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1,\ b3Dispatcher*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeOverlappingPairsContainingProxy(\textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy0*/},\ b3Dispatcher*\ \textcolor{comment}{/*dispatcher*/})\ =\ 0;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ sortOverlappingPairs(b3Dispatcher*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00085\ \};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_hashed_overlapping_pair_cache}{b3HashedOverlappingPairCache}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}}
+\DoxyCodeLine{00089\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00091\ \ \ \ \ \mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ m\_overlapFilterCallback;}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ \ bool\ \ \ \ \ \ \ \ m\_blockedForChanges;}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{classb3_hashed_overlapping_pair_cache}{b3HashedOverlappingPairCache}}();}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_hashed_overlapping_pair_cache}{\string~b3HashedOverlappingPairCache}}();}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeOverlappingPairsContainingProxy(\textcolor{keywordtype}{int}\ proxy,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}*\ removeOverlappingPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ needsBroadphaseCollision(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00103\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_overlapFilterCallback)}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlapFilterCallback-\/>needBroadphaseCollision(proxy0,\ proxy1);}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ collides\ =\ \textcolor{keyword}{true};\ \ \textcolor{comment}{//(proxy0-\/>m\_collisionFilterGroup\ \&\ proxy1-\/>m\_collisionFilterMask)\ !=\ 0;}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{comment}{//collides\ =\ collides\ \&\&\ (proxy1-\/>m\_collisionFilterGroup\ \&\ proxy0-\/>m\_collisionFilterMask);}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ collides;}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{//\ Add\ a\ pair\ and\ return\ the\ new\ pair.\ If\ the\ pair\ already\ exists,}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{//\ no\ new\ pair\ is\ created\ and\ the\ old\ one\ is\ returned.}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ addOverlappingPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1)}
+\DoxyCodeLine{00116\ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ b3g\_addedPairs++;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!needsBroadphaseCollision(proxy0,\ proxy1))}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ internalAddPair(proxy0,\ proxy1);}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{void}\ cleanProxyFromPairs(\textcolor{keywordtype}{int}\ proxy,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processAllOverlappingPairs(\mbox{\hyperlink{structb3_overlap_callback}{b3OverlapCallback}}*,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ getOverlappingPairArrayPtr()}
+\DoxyCodeLine{00130\ \ \ \ \ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_overlappingPairArray[0];}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{const}\ b3BroadphasePair*\ getOverlappingPairArrayPtr()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00135\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_overlappingPairArray[0];}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\&\ getOverlappingPairArray()}
+\DoxyCodeLine{00140\ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00142\ \ \ \ \ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\&\ getOverlappingPairArray()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00145\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00147\ \ \ \ \ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{void}\ cleanOverlappingPair(b3BroadphasePair\&\ pair,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ b3BroadphasePair*\ findPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{int}\ GetCount()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_overlappingPairArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();\ \}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{comment}{//\ \ b3BroadphasePair*\ GetPairs()\ \{\ return\ m\_pairs;\ \}}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ getOverlapFilterCallback()}
+\DoxyCodeLine{00157\ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlapFilterCallback;}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{void}\ setOverlapFilterCallback(\mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ callback)}
+\DoxyCodeLine{00162\ \ \ \ \ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ m\_overlapFilterCallback\ =\ callback;}
+\DoxyCodeLine{00164\ \ \ \ \ \}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumOverlappingPairs()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00167\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingPairArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00169\ \ \ \ \ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00172\ \ \ \ \ b3BroadphasePair*\ internalAddPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1);}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{void}\ growTables();}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ equalsPair(\textcolor{keyword}{const}\ b3BroadphasePair\&\ pair,\ \textcolor{keywordtype}{int}\ proxyId1,\ \textcolor{keywordtype}{int}\ proxyId2)}
+\DoxyCodeLine{00177\ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ pair.x\ ==\ proxyId1\ \&\&\ pair.y\ ==\ proxyId2;}
+\DoxyCodeLine{00179\ \ \ \ \ \}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ \ \ \ //\ Thomas\ Wang's\ hash,\ see:\ http://www.concentric.net/\string~Ttwang/tech/inthash.htm}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ \ \ \ //\ This\ assumes\ proxyId1\ and\ proxyId2\ are\ 16-\/bit.}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ \ B3\_FORCE\_INLINE\ int\ getHash(int\ proxyId1,\ int\ proxyId2)}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ \ \ \ \ \ \ \ int\ key\ =\ (proxyId2\ <<\ 16)\ |\ proxyId1;}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ \ \ \ \ \ \ \ key\ =\ \string~key\ +\ (key\ <<\ 15);}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ \ \ \ \ \ key\ =\ key\ \string^\ (key\ >>\ 12);}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ \ \ \ \ \ \ \ key\ =\ key\ +\ (key\ <<\ 2);}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ \ \ \ \ \ \ \ key\ =\ key\ \string^\ (key\ >>\ 4);}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ \ \ \ \ \ \ \ key\ =\ key\ *\ 2057;}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ \ \ \ \ \ \ \ key\ =\ key\ \string^\ (key\ >>\ 16);}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ \ \ \ \ \ \ \ return\ key;}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ \ \ \ \}}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ \ \ \ */}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ getHash(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ proxyId1,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ proxyId2)}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ key\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(((\textcolor{keywordtype}{unsigned}\ int)proxyId1)\ |\ (((\textcolor{keywordtype}{unsigned}\ int)proxyId2)\ <<\ 16));}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thomas\ Wang's\ hash}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 15);}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 10);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ key\ +=\ (key\ <<\ 3);}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 6);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 11);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 16);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\textcolor{keyword}{>}(key);}
+\DoxyCodeLine{00209\ \ \ \ \ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ B3\_FORCE\_INLINE\ b3BroadphasePair*\ internalFindPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1,\ \textcolor{keywordtype}{int}\ hash)}
+\DoxyCodeLine{00212\ \ \ \ \ \{}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ proxyId1\ =\ proxy0;}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ proxyId2\ =\ proxy1;}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#if\ 0\ \ }\textcolor{comment}{//\ wrong,\ 'equalsPair'\ use\ unsorted\ uids,\ copy-\/past\ devil\ striked\ again.\ Nat.}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (proxyId1\ >\ proxyId2)\ }
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ b3Swap(proxyId1,\ proxyId2);}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ m\_hashTable[hash];}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (index\ !=\ B3\_NULL\_PAIR\ \&\&\ equalsPair(m\_overlappingPairArray[index],\ proxyId1,\ proxyId2)\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ index\ =\ m\_next[index];}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ ==\ B3\_NULL\_PAIR)}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ b3Assert(index\ <\ m\_overlappingPairArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}());}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_overlappingPairArray[index];}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ hasDeferredRemoval()}
+\DoxyCodeLine{00238\ \ \ \ \ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00240\ \ \ \ \ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{comment}{/*\ \ virtual\ void\ \ \ \ setInternalGhostPairCallback(b3OverlappingPairCallback*\ ghostPairCallback)}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \ \ \ \ m\_ghostPairCallback\ =\ ghostPairCallback;}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ \ \ \ \}}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ \ \ \ */}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ sortOverlappingPairs(b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00251\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_hashTable;}
+\DoxyCodeLine{00252\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_next;}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{comment}{//\ \ b3OverlappingPairCallback*\ \ m\_ghostPairCallback;}}
+\DoxyCodeLine{00254\ \};}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00258\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_sorted_overlapping_pair_cache}{b3SortedOverlappingPairCache}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}}
+\DoxyCodeLine{00259\ \{}
+\DoxyCodeLine{00260\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{comment}{//avoid\ brute-\/force\ finding\ all\ the\ time}}
+\DoxyCodeLine{00262\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{comment}{//during\ the\ dispatch,\ check\ that\ user\ doesn't\ destroy/create\ proxy}}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_blockedForChanges;}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb3_sorted_overlapping_pair_cache_aebe6abcf2a675cda50246430a4e5cea4}{m\_hasDeferredRemoval}};}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{comment}{//if\ set,\ use\ the\ callback\ instead\ of\ the\ built\ in\ filter\ in\ needBroadphaseCollision}}
+\DoxyCodeLine{00271\ \ \ \ \ \mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ m\_overlapFilterCallback;}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ b3OverlappingPairCallback*\ \ m\_ghostPairCallback;}}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00276\ \ \ \ \ \mbox{\hyperlink{classb3_sorted_overlapping_pair_cache}{b3SortedOverlappingPairCache}}();}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_sorted_overlapping_pair_cache}{\string~b3SortedOverlappingPairCache}}();}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processAllOverlappingPairs(\mbox{\hyperlink{structb3_overlap_callback}{b3OverlapCallback}}*,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordtype}{void}*\ removeOverlappingPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keywordtype}{void}\ cleanOverlappingPair(b3BroadphasePair\&\ pair,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \ \ \ \ b3BroadphasePair*\ addOverlappingPair(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1);}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \ \ b3BroadphasePair*\ \mbox{\hyperlink{classb3_sorted_overlapping_pair_cache_ad24f6d5bfc4b9e378ace06bcb10519ea}{findPair}}(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1);}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keywordtype}{void}\ cleanProxyFromPairs(\textcolor{keywordtype}{int}\ proxy,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeOverlappingPairsContainingProxy(\textcolor{keywordtype}{int}\ proxy,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ needsBroadphaseCollision(\textcolor{keywordtype}{int}\ proxy0,\ \textcolor{keywordtype}{int}\ proxy1)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00294\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_overlapFilterCallback)}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlapFilterCallback-\/>needBroadphaseCollision(proxy0,\ proxy1);}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ collides\ =\ \textcolor{keyword}{true};\ \ \textcolor{comment}{//(proxy0-\/>m\_collisionFilterGroup\ \&\ proxy1-\/>m\_collisionFilterMask)\ !=\ 0;}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{comment}{//collides\ =\ collides\ \&\&\ (proxy1-\/>m\_collisionFilterGroup\ \&\ proxy0-\/>m\_collisionFilterMask);}}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ collides;}
+\DoxyCodeLine{00302\ \ \ \ \ \}}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\&\ getOverlappingPairArray()}
+\DoxyCodeLine{00305\ \ \ \ \ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00307\ \ \ \ \ \}}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\&\ getOverlappingPairArray()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00310\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00312\ \ \ \ \ \}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ b3BroadphasePair*\ getOverlappingPairArrayPtr()}
+\DoxyCodeLine{00315\ \ \ \ \ \{}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_overlappingPairArray[0];}
+\DoxyCodeLine{00317\ \ \ \ \ \}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keyword}{const}\ b3BroadphasePair*\ getOverlappingPairArrayPtr()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00320\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_overlappingPairArray[0];}
+\DoxyCodeLine{00322\ \ \ \ \ \}}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumOverlappingPairs()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00325\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingPairArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00327\ \ \ \ \ \}}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ getOverlapFilterCallback()}
+\DoxyCodeLine{00330\ \ \ \ \ \{}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlapFilterCallback;}
+\DoxyCodeLine{00332\ \ \ \ \ \}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keywordtype}{void}\ setOverlapFilterCallback(\mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ callback)}
+\DoxyCodeLine{00335\ \ \ \ \ \{}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ m\_overlapFilterCallback\ =\ callback;}
+\DoxyCodeLine{00337\ \ \ \ \ \}}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ hasDeferredRemoval()}
+\DoxyCodeLine{00340\ \ \ \ \ \{}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classb3_sorted_overlapping_pair_cache_aebe6abcf2a675cda50246430a4e5cea4}{m\_hasDeferredRemoval}};}
+\DoxyCodeLine{00342\ \ \ \ \ \}}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ virtual\ void\ \ \ \ setInternalGhostPairCallback(b3OverlappingPairCallback*\ ghostPairCallback)}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ m\_ghostPairCallback\ =\ ghostPairCallback;}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ sortOverlappingPairs(b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00350\ \};}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00353\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_null_pair_cache}{b3NullPairCache}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}}
+\DoxyCodeLine{00354\ \{}
+\DoxyCodeLine{00355\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ getOverlappingPairArrayPtr()}
+\DoxyCodeLine{00359\ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_overlappingPairArray[0];}
+\DoxyCodeLine{00361\ \ \ \ \ \}}
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{keyword}{const}\ b3BroadphasePair*\ getOverlappingPairArrayPtr()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00363\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_overlappingPairArray[0];}
+\DoxyCodeLine{00365\ \ \ \ \ \}}
+\DoxyCodeLine{00366\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3BroadphasePairArray}}\&\ getOverlappingPairArray()}
+\DoxyCodeLine{00367\ \ \ \ \ \{}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingPairArray;}
+\DoxyCodeLine{00369\ \ \ \ \ \}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ cleanOverlappingPair(b3BroadphasePair\&\ \textcolor{comment}{/*pair*/},\ b3Dispatcher*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00372\ \ \ \ \ \{}
+\DoxyCodeLine{00373\ \ \ \ \ \}}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumOverlappingPairs()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00376\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00378\ \ \ \ \ \}}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ cleanProxyFromPairs(\textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy*/},\ b3Dispatcher*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00381\ \ \ \ \ \{}
+\DoxyCodeLine{00382\ \ \ \ \ \}}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00384\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setOverlapFilterCallback(\mbox{\hyperlink{structb3_overlap_filter_callback}{b3OverlapFilterCallback}}*\ \textcolor{comment}{/*callback*/})}
+\DoxyCodeLine{00385\ \ \ \ \ \{}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processAllOverlappingPairs(\mbox{\hyperlink{structb3_overlap_callback}{b3OverlapCallback}}*,\ b3Dispatcher*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00389\ \ \ \ \ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \}}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ findPair(\textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy0*/},\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy1*/})}
+\DoxyCodeLine{00393\ \ \ \ \ \{}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00395\ \ \ \ \ \}}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ hasDeferredRemoval()}
+\DoxyCodeLine{00398\ \ \ \ \ \{}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00400\ \ \ \ \ \}}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{comment}{//\ \ virtual\ void\ \ \ \ setInternalGhostPairCallback(b3OverlappingPairCallback*\ /*\ ghostPairCallback\ */)}}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{comment}{//\ \ \{}}
+\DoxyCodeLine{00404\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{comment}{//\ \ \}}}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \ \ \textcolor{keyword}{virtual}\ b3BroadphasePair*\ addOverlappingPair(\textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy0*/},\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy1*/})}
+\DoxyCodeLine{00408\ \ \ \ \ \{}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00410\ \ \ \ \ \}}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}*\ removeOverlappingPair(\textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy0*/},\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy1*/},\ b3Dispatcher*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00413\ \ \ \ \ \{}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00415\ \ \ \ \ \}}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeOverlappingPairsContainingProxy(\textcolor{keywordtype}{int}\ \textcolor{comment}{/*proxy0*/},\ b3Dispatcher*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00418\ \ \ \ \ \{}
+\DoxyCodeLine{00419\ \ \ \ \ \}}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00421\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ sortOverlappingPairs(b3Dispatcher*\ dispatcher)}
+\DoxyCodeLine{00422\ \ \ \ \ \{}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ (void)dispatcher;}
+\DoxyCodeLine{00424\ \ \ \ \ \}}
+\DoxyCodeLine{00425\ \};}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_OVERLAPPING\_PAIR\_CACHE\_H}}
+
+\end{DoxyCode}

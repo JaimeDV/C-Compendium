@@ -1,0 +1,130 @@
+\doxysection{bt\+Deformable\+Corotated\+Force.\+h}
+\hypertarget{bt_deformable_corotated_force_8h_source}{}\label{bt_deformable_corotated_force_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableCorotatedForce.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableCorotatedForce.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_COROTATED\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_COROTATED\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btDeformableLagrangianForce.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btPolarDecomposition.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ PolarDecomposition(\textcolor{keyword}{const}\ btMatrix3x3\&\ m,\ btMatrix3x3\&\ q,\ btMatrix3x3\&\ s)}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_polar_decomposition}{btPolarDecomposition}}\ \mbox{\hyperlink{group__gtx__polar__coordinates_gaba267270e686615d598de0ffda7bd484}{polar}};}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__gtx__polar__coordinates_gaba267270e686615d598de0ffda7bd484}{polar}}.decompose(m,\ q,\ s);}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_corotated_force}{btDeformableCorotatedForce}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_lagrangian_force}{btDeformableLagrangianForce}}}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00032\ \ \ \ \ btScalar\ m\_mu,\ m\_lambda;}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_corotated_force}{btDeformableCorotatedForce}}()\ :\ m\_mu(1),\ m\_lambda(1)}
+\DoxyCodeLine{00034\ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_corotated_force}{btDeformableCorotatedForce}}(btScalar\ mu,\ btScalar\ lambda)\ :\ m\_mu(mu),\ m\_lambda(lambda)}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledForces(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ addScaledElasticForce(scale,\ force);}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledExplicitForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ addScaledElasticForce(scale,\ force);}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledDampingForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00052\ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledElasticForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numNodes\ =\ getNumNodes();}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ btAssert(numNodes\ <=\ force.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ btVector3\ grad\_N\_hat\_1st\_col\ =\ btVector3(-\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_tetras.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_tetra}{btSoftBody::Tetra}}\&\ tetra\ =\ psb-\/>m\_tetras[j];}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ P;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ firstPiola(tetra.m\_F,\ P);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ force\_on\_node0\ =\ P\ *\ (tetra.m\_Dm\_inverse.transpose()\ *\ grad\_N\_hat\_1st\_col);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ force\_on\_node123\ =\ P\ *\ tetra.m\_Dm\_inverse.transpose();}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node0\ =\ tetra.m\_n[0];}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node1\ =\ tetra.m\_n[1];}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node2\ =\ tetra.m\_n[2];}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node3\ =\ tetra.m\_n[3];}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id0\ =\ node0-\/>index;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id1\ =\ node1-\/>index;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id2\ =\ node2-\/>index;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id3\ =\ node3-\/>index;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ elastic\ force}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ explicit\ elastic\ force}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ scale1\ =\ scale\ *\ tetra.m\_element\_measure;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id0]\ -\/=\ scale1\ *\ force\_on\_node0;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id1]\ -\/=\ scale1\ *\ force\_on\_node123.getColumn(0);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id2]\ -\/=\ scale1\ *\ force\_on\_node123.getColumn(1);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id3]\ -\/=\ scale1\ *\ force\_on\_node123.getColumn(2);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ firstPiola(\textcolor{keyword}{const}\ btMatrix3x3\&\ F,\ btMatrix3x3\&\ P)}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ btMatrix3x3\ JFinvT\ =\ F.adjoint();}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ btScalar\ J\ =\ F.determinant();}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ P\ =\ F.adjoint().transpose()\ *\ (m\_lambda\ *\ (J\ -\/\ 1));}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_mu\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ R,\ S;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (J\ <\ 1024\ *\ SIMD\_EPSILON)}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ R.setIdentity();}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PolarDecomposition(F,\ R,\ S);\ \ \textcolor{comment}{//\ this\ QR\ is\ not\ robust,\ consider\ using\ implicit\ shift\ svd}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*https://fuchuyuan.github.io/research/svd/paper.pdf*/}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ P\ +=\ (F\ -\/\ R)\ *\ 2\ *\ m\_mu;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledElasticForceDifferential(btScalar\ scale,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dx,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ df)}
+\DoxyCodeLine{00109\ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledDampingForceDifferential(btScalar\ scale,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dv,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ df)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ buildDampingForceDifferentialDiagonal(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ diagA)\ \{\}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{virtual}\ btDeformableLagrangianForceType\ getForceType()}
+\DoxyCodeLine{00119\ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_COROTATED\_FORCE;}
+\DoxyCodeLine{00121\ \ \ \ \ \}}
+\DoxyCodeLine{00122\ \};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btCorotated\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

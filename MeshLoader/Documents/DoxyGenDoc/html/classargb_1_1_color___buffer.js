@@ -1,0 +1,25 @@
+var classargb_1_1_color___buffer =
+[
+    [ "Color", "classargb_1_1_color___buffer.html#af6f74daf697a0b18f773e83aa7d0cb97", null ],
+    [ "Color_Format", "classargb_1_1_color___buffer.html#a5227eea6f7692f7e0191cab049f5ff28", null ],
+    [ "Iterator", "classargb_1_1_color___buffer.html#af0de815d1d0155ecdcbc48b3505717e9", null ],
+    [ "Color_Buffer", "classargb_1_1_color___buffer.html#a69c7ce607171c0aa56ead7bcadf6b55a", null ],
+    [ "begin", "classargb_1_1_color___buffer.html#a349450fc9607041d063d6545765c53a2", null ],
+    [ "begin", "classargb_1_1_color___buffer.html#a60bcbfa0a083d78b1ba7770f8b0ecdda", null ],
+    [ "blit_to_window", "classargb_1_1_color___buffer.html#a2c39031109ae21a754fd907f17e7c69d", null ],
+    [ "blit_to_window", "classargb_1_1_color___buffer.html#a8387eaad32516695b38d9d0c4e4d157b", null ],
+    [ "blit_to_window", "classargb_1_1_color___buffer.html#abdc80bd3e72004eedd1167281bc10bc3", null ],
+    [ "blit_to_window", "classargb_1_1_color___buffer.html#a33bfa79c76dade74475e023a3d9a6c44", null ],
+    [ "clear", "classargb_1_1_color___buffer.html#a0c1a265b1fd2f6c872e8030c77e72ae3", null ],
+    [ "end", "classargb_1_1_color___buffer.html#a9b13d2efd124e85f78cb6419c6a6b10a", null ],
+    [ "end", "classargb_1_1_color___buffer.html#af806a20cfd4e8beb37f22965a842801e", null ],
+    [ "get_height", "classargb_1_1_color___buffer.html#a5e38ba9a280ce89fd13ed51b32961a0a", null ],
+    [ "get_size", "classargb_1_1_color___buffer.html#a88f0eb4f4798ba6ec3261882454f6644", null ],
+    [ "get_width", "classargb_1_1_color___buffer.html#afba4d5de6a5ef61ad197c9c558ad8ebb", null ],
+    [ "operator Color_Format *", "classargb_1_1_color___buffer.html#a00f4f8ae5abf591869533067652c300b", null ],
+    [ "operator const Color_Format *", "classargb_1_1_color___buffer.html#a85465d924125bc9bfe3c0df5faa15943", null ],
+    [ "pixels", "classargb_1_1_color___buffer.html#af0abd7a14872ca5942553f2809e441b9", null ],
+    [ "pixels", "classargb_1_1_color___buffer.html#a10e538e417502a448ea03c201e0e87f8", null ],
+    [ "set_pixel", "classargb_1_1_color___buffer.html#ace85e4c1374f5404e294156a19feaf6d", null ],
+    [ "set_pixel", "classargb_1_1_color___buffer.html#a05c9e04b5e6951de879150bfed58014b", null ]
+];

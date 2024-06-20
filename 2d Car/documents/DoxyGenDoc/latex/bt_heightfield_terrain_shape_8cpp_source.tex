@@ -1,0 +1,930 @@
+\doxysection{bt\+Heightfield\+Terrain\+Shape.\+cpp}
+\hypertarget{bt_heightfield_terrain_shape_8cpp_source}{}\label{bt_heightfield_terrain_shape_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btHeightfieldTerrainShape.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransformUtil.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ btHeightfieldTerrainShape::btHeightfieldTerrainShape(}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ heightfieldData,\ btScalar\ minHeight,\ btScalar\ maxHeight,}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges)}
+\DoxyCodeLine{00024\ \ \ \ \ :\ m\_userValue3(0),\ m\_triangleInfoMap(0)}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ initialize(heightStickWidth,\ heightStickLength,\ heightfieldData,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*heightScale=*/}1,\ minHeight,\ maxHeight,\ upAxis,\ PHY\_FLOAT,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipQuadEdges);}
+\DoxyCodeLine{00029\ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ btHeightfieldTerrainShape::btHeightfieldTerrainShape(}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}*\ heightfieldData,}
+\DoxyCodeLine{00033\ \ \ \ \ btScalar\ minHeight,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges)}
+\DoxyCodeLine{00034\ \ \ \ \ :\ m\_userValue3(0),\ m\_triangleInfoMap(0)}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ initialize(heightStickWidth,\ heightStickLength,\ heightfieldData,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*heightScale=*/}1,\ minHeight,\ maxHeight,\ upAxis,\ PHY\_DOUBLE,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipQuadEdges);}
+\DoxyCodeLine{00039\ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ btHeightfieldTerrainShape::btHeightfieldTerrainShape(}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{short}*\ heightfieldData,\ btScalar\ heightScale,}
+\DoxyCodeLine{00043\ \ \ \ \ btScalar\ minHeight,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges)}
+\DoxyCodeLine{00044\ \ \ \ \ :\ m\_userValue3(0),\ m\_triangleInfoMap(0)}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ initialize(heightStickWidth,\ heightStickLength,\ heightfieldData,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ heightScale,\ minHeight,\ maxHeight,\ upAxis,\ PHY\_SHORT,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipQuadEdges);}
+\DoxyCodeLine{00049\ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ btHeightfieldTerrainShape::btHeightfieldTerrainShape(}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ heightfieldData,\ btScalar\ heightScale,}
+\DoxyCodeLine{00053\ \ \ \ \ btScalar\ minHeight,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges)}
+\DoxyCodeLine{00054\ \ \ \ \ :\ m\_userValue3(0),\ m\_triangleInfoMap(0)}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ initialize(heightStickWidth,\ heightStickLength,\ heightfieldData,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ heightScale,\ minHeight,\ maxHeight,\ upAxis,\ PHY\_UCHAR,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipQuadEdges);}
+\DoxyCodeLine{00059\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ btHeightfieldTerrainShape::btHeightfieldTerrainShape(}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ heightfieldData,}
+\DoxyCodeLine{00063\ \ \ \ \ btScalar\ heightScale,\ btScalar\ minHeight,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,}
+\DoxyCodeLine{00064\ \ \ \ \ PHY\_ScalarType\ hdt,\ \textcolor{keywordtype}{bool}\ flipQuadEdges)}
+\DoxyCodeLine{00065\ \ \ \ \ :m\_userValue3(0),}
+\DoxyCodeLine{00066\ \ \ \ \ m\_triangleInfoMap(0)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ legacy\ constructor:\ Assumes\ PHY\_FLOAT\ means\ btScalar.}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordflow}{if}\ (hdt\ ==\ PHY\_FLOAT)\ hdt\ =\ PHY\_DOUBLE;}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00072\ \ \ \ \ initialize(heightStickWidth,\ heightStickLength,\ heightfieldData,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ heightScale,\ minHeight,\ maxHeight,\ upAxis,\ hdt,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipQuadEdges);}
+\DoxyCodeLine{00075\ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ btHeightfieldTerrainShape::btHeightfieldTerrainShape(\textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ heightfieldData,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ useFloatData,\ \textcolor{keywordtype}{bool}\ flipQuadEdges)}
+\DoxyCodeLine{00078\ \ \ \ \ :\ \ \ m\_userValue3(0),}
+\DoxyCodeLine{00079\ \ \ \ \ m\_triangleInfoMap(0)}
+\DoxyCodeLine{00080\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ legacy\ constructor:\ support\ only\ btScalar\ or\ unsigned\ char\ data,}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ and\ min\ height\ is\ zero.}}
+\DoxyCodeLine{00083\ \ \ \ \ PHY\_ScalarType\ hdt\ =\ (useFloatData)\ ?\ PHY\_FLOAT\ :\ PHY\_UCHAR;}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{if}\ (hdt\ ==\ PHY\_FLOAT)\ hdt\ =\ PHY\_DOUBLE;}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00087\ \ \ \ \ btScalar\ minHeight\ =\ 0.0f;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{comment}{//\ previously,\ height\ =\ uchar\ *\ maxHeight\ /\ 65535.}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ So\ to\ preserve\ legacy\ behavior,\ heightScale\ =\ maxHeight\ /\ 65535}}
+\DoxyCodeLine{00091\ \ \ \ \ btScalar\ heightScale\ =\ maxHeight\ /\ 65535;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ initialize(heightStickWidth,\ heightStickLength,\ heightfieldData,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ heightScale,\ minHeight,\ maxHeight,\ upAxis,\ hdt,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipQuadEdges);}
+\DoxyCodeLine{00096\ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::initialize(}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ heightfieldData,}
+\DoxyCodeLine{00100\ \ \ \ \ btScalar\ heightScale,\ btScalar\ minHeight,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,}
+\DoxyCodeLine{00101\ \ \ \ \ PHY\_ScalarType\ hdt,\ \textcolor{keywordtype}{bool}\ flipQuadEdges)}
+\DoxyCodeLine{00102\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//\ validation}}
+\DoxyCodeLine{00104\ \ \ \ \ btAssert(heightStickWidth\ >\ 1);\ \ \ \textcolor{comment}{//\ \&\&\ "{}bad\ width"{});}}
+\DoxyCodeLine{00105\ \ \ \ \ btAssert(heightStickLength\ >\ 1);\ \ \textcolor{comment}{//\ \&\&\ "{}bad\ length"{});}}
+\DoxyCodeLine{00106\ \ \ \ \ btAssert(heightfieldData);\ \ \ \ \ \ \ \ \textcolor{comment}{//\ \&\&\ "{}null\ heightfield\ data"{});}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{//\ btAssert(heightScale)\ -\/-\/\ do\ we\ care?\ \ Trust\ caller\ here}}
+\DoxyCodeLine{00108\ \ \ \ \ btAssert(minHeight\ <=\ maxHeight);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \&\&\ "{}bad\ min/max\ height"{});}}
+\DoxyCodeLine{00109\ \ \ \ \ btAssert(upAxis\ >=\ 0\ \&\&\ upAxis\ <\ 3);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \&\&\ "{}bad\ upAxis-\/-\/should\ be\ in\ range\ [0,2]"{});}}
+\DoxyCodeLine{00110\ \ \ \ \ btAssert(hdt\ !=\ PHY\_UCHAR\ ||\ hdt\ !=\ PHY\_FLOAT\ ||\ hdt\ !=\ PHY\_DOUBLE\ ||\ hdt\ !=\ PHY\_SHORT);\ \ \textcolor{comment}{//\ \&\&\ "{}Bad\ height\ data\ type\ enum"{});}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{comment}{//\ initialize\ member\ variables}}
+\DoxyCodeLine{00113\ \ \ \ \ m\_shapeType\ =\ TERRAIN\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00114\ \ \ \ \ m\_heightStickWidth\ =\ heightStickWidth;}
+\DoxyCodeLine{00115\ \ \ \ \ m\_heightStickLength\ =\ heightStickLength;}
+\DoxyCodeLine{00116\ \ \ \ \ m\_minHeight\ =\ minHeight;}
+\DoxyCodeLine{00117\ \ \ \ \ m\_maxHeight\ =\ maxHeight;}
+\DoxyCodeLine{00118\ \ \ \ \ m\_width\ =\ (btScalar)(heightStickWidth\ -\/\ 1);}
+\DoxyCodeLine{00119\ \ \ \ \ m\_length\ =\ (btScalar)(heightStickLength\ -\/\ 1);}
+\DoxyCodeLine{00120\ \ \ \ \ m\_heightScale\ =\ heightScale;}
+\DoxyCodeLine{00121\ \ \ \ \ m\_heightfieldDataUnknown\ =\ heightfieldData;}
+\DoxyCodeLine{00122\ \ \ \ \ m\_heightDataType\ =\ hdt;}
+\DoxyCodeLine{00123\ \ \ \ \ m\_flipQuadEdges\ =\ flipQuadEdges;}
+\DoxyCodeLine{00124\ \ \ \ \ m\_useDiamondSubdivision\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00125\ \ \ \ \ m\_useZigzagSubdivision\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00126\ \ \ \ \ m\_flipTriangleWinding\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00127\ \ \ \ \ m\_upAxis\ =\ upAxis;}
+\DoxyCodeLine{00128\ \ \ \ \ m\_localScaling.setValue(btScalar(1.),\ btScalar(1.),\ btScalar(1.));}
+\DoxyCodeLine{00129\ \ \ \ \ }
+\DoxyCodeLine{00130\ \ \ \ \ m\_vboundsChunkSize\ =\ 0;}
+\DoxyCodeLine{00131\ \ \ \ \ m\_vboundsGridWidth\ =\ 0;}
+\DoxyCodeLine{00132\ \ \ \ \ m\_vboundsGridLength\ =\ 0;}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{//\ determine\ min/max\ axis-\/aligned\ bounding\ box\ (aabb)\ values}}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_upAxis)}
+\DoxyCodeLine{00136\ \ \ \ \ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMin.setValue(m\_minHeight,\ 0,\ 0);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMax.setValue(m\_maxHeight,\ m\_width,\ m\_length);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMin.setValue(0,\ m\_minHeight,\ 0);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMax.setValue(m\_width,\ m\_maxHeight,\ m\_length);}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMin.setValue(0,\ 0,\ m\_minHeight);}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMax.setValue(m\_width,\ m\_length,\ m\_maxHeight);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//need\ to\ get\ valid\ m\_upAxis}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(0);\ \ \textcolor{comment}{//\ \&\&\ "{}Bad\ m\_upAxis"{});}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{//\ remember\ origin\ (defined\ as\ exact\ middle\ of\ aabb)}}
+\DoxyCodeLine{00163\ \ \ \ \ m\_localOrigin\ =\ btScalar(0.5)\ *\ (m\_localAabbMin\ +\ m\_localAabbMax);}
+\DoxyCodeLine{00164\ \}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ btHeightfieldTerrainShape::\string~btHeightfieldTerrainShape()}
+\DoxyCodeLine{00167\ \{}
+\DoxyCodeLine{00168\ \ \ \ \ clearAccelerator();}
+\DoxyCodeLine{00169\ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::getAabb(\textcolor{keyword}{const}\ btTransform\&\ t,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00172\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00173\ \ \ \ \ btVector3\ halfExtents\ =\ (m\_localAabbMax\ -\/\ m\_localAabbMin)\ *\ m\_localScaling\ *\ btScalar(0.5);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ btVector3\ localOrigin(0,\ 0,\ 0);}
+\DoxyCodeLine{00176\ \ \ \ \ localOrigin[m\_upAxis]\ =\ (m\_minHeight\ +\ m\_maxHeight)\ *\ btScalar(0.5);}
+\DoxyCodeLine{00177\ \ \ \ \ localOrigin\ *=\ m\_localScaling;}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ btMatrix3x3\ abs\_b\ =\ t.getBasis().absolute();}
+\DoxyCodeLine{00180\ \ \ \ \ btVector3\ center\ =\ t.getOrigin();}
+\DoxyCodeLine{00181\ \ \ \ \ btVector3\ extent\ =\ halfExtents.dot3(abs\_b[0],\ abs\_b[1],\ abs\_b[2]);}
+\DoxyCodeLine{00182\ \ \ \ \ extent\ +=\ btVector3(getMargin(),\ getMargin(),\ getMargin());}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ aabbMin\ =\ center\ -\/\ extent;}
+\DoxyCodeLine{00185\ \ \ \ \ aabbMax\ =\ center\ +\ extent;}
+\DoxyCodeLine{00186\ \}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00191\ btScalar}
+\DoxyCodeLine{00192\ btHeightfieldTerrainShape::getRawHeightFieldValue(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ y)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00193\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00194\ \ \ \ \ btScalar\ val\ =\ 0.f;}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_heightDataType)}
+\DoxyCodeLine{00196\ \ \ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_FLOAT:}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ val\ =\ m\_heightfieldDataFloat[(y\ *\ m\_heightStickWidth)\ +\ x];}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_DOUBLE:}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ val\ =\ m\_heightfieldDataDouble[(y\ *\ m\_heightStickWidth)\ +\ x];}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_UCHAR:}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ heightFieldValue\ =\ m\_heightfieldDataUnsignedChar[(y\ *\ m\_heightStickWidth)\ +\ x];}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ val\ =\ heightFieldValue\ *\ m\_heightScale;}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_SHORT:}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{short}\ hfValue\ =\ m\_heightfieldDataShort[(y\ *\ m\_heightStickWidth)\ +\ x];}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ val\ =\ hfValue\ *\ m\_heightScale;}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(!\textcolor{stringliteral}{"{}Bad\ m\_heightDataType"{}});}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ \}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordflow}{return}\ val;}
+\DoxyCodeLine{00230\ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00233\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::getVertex(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ y,\ btVector3\&\ vertex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00234\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00235\ \ \ \ \ btAssert(x\ >=\ 0);}
+\DoxyCodeLine{00236\ \ \ \ \ btAssert(y\ >=\ 0);}
+\DoxyCodeLine{00237\ \ \ \ \ btAssert(x\ <\ m\_heightStickWidth);}
+\DoxyCodeLine{00238\ \ \ \ \ btAssert(y\ <\ m\_heightStickLength);}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ btScalar\ height\ =\ getRawHeightFieldValue(x,\ y);}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_upAxis)}
+\DoxyCodeLine{00243\ \ \ \ \ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ vertex.setValue(}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ height\ -\/\ m\_localOrigin.getX(),}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (-\/m\_width\ /\ btScalar(2.0))\ +\ x,}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (-\/m\_length\ /\ btScalar(2.0))\ +\ y);}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ vertex.setValue(}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (-\/m\_width\ /\ btScalar(2.0))\ +\ x,}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ height\ -\/\ m\_localOrigin.getY(),}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (-\/m\_length\ /\ btScalar(2.0))\ +\ y);}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ vertex.setValue(}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (-\/m\_width\ /\ btScalar(2.0))\ +\ x,}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (-\/m\_length\ /\ btScalar(2.0))\ +\ y,}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ height\ -\/\ m\_localOrigin.getZ());}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//need\ to\ get\ valid\ m\_upAxis}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00273\ \ \ \ \ \}}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ vertex\ *=\ m\_localScaling;}
+\DoxyCodeLine{00276\ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00279\ getQuantized(}
+\DoxyCodeLine{00280\ \ \ \ \ btScalar\ x)}
+\DoxyCodeLine{00281\ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ <\ 0.0)}
+\DoxyCodeLine{00283\ \ \ \ \ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})(x\ -\/\ 0.5);}
+\DoxyCodeLine{00285\ \ \ \ \ \}}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})(x\ +\ 0.5);}
+\DoxyCodeLine{00287\ \}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \textcolor{comment}{//\ Equivalent\ to\ std::minmax(\{a,\ b,\ c\}).}}
+\DoxyCodeLine{00290\ \textcolor{comment}{//\ Performs\ at\ most\ 3\ comparisons.}}
+\DoxyCodeLine{00291\ \textcolor{keyword}{static}\ btHeightfieldTerrainShape::Range\ minmaxRange(btScalar\ a,\ btScalar\ b,\ btScalar\ c)}
+\DoxyCodeLine{00292\ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordflow}{if}\ (a\ >\ b)}
+\DoxyCodeLine{00294\ \ \ \ \ \{}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (b\ >\ c)}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btHeightfieldTerrainShape::Range(c,\ a);}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (a\ >\ c)}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btHeightfieldTerrainShape::Range(b,\ a);}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btHeightfieldTerrainShape::Range(b,\ c);}
+\DoxyCodeLine{00301\ \ \ \ \ \}}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00303\ \ \ \ \ \{}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (a\ >\ c)}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btHeightfieldTerrainShape::Range(c,\ b);}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (b\ >\ c)}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btHeightfieldTerrainShape::Range(a,\ b);}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btHeightfieldTerrainShape::Range(a,\ c);}
+\DoxyCodeLine{00310\ \ \ \ \ \}}
+\DoxyCodeLine{00311\ \}}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00322\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::quantizeWithClamp(\textcolor{keywordtype}{int}*\ out,\ \textcolor{keyword}{const}\ btVector3\&\ point,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*isMax*/})\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00323\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00324\ \ \ \ \ btVector3\ clampedPoint(point);}
+\DoxyCodeLine{00325\ \ \ \ \ clampedPoint.setMax(m\_localAabbMin);}
+\DoxyCodeLine{00326\ \ \ \ \ clampedPoint.setMin(m\_localAabbMax);}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ out[0]\ =\ getQuantized(clampedPoint.getX());}
+\DoxyCodeLine{00329\ \ \ \ \ out[1]\ =\ getQuantized(clampedPoint.getY());}
+\DoxyCodeLine{00330\ \ \ \ \ out[2]\ =\ getQuantized(clampedPoint.getZ());}
+\DoxyCodeLine{00331\ \}}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00340\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::processAllTriangles(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00341\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00342\ \ \ \ \ \textcolor{comment}{//\ scale\ down\ the\ input\ aabb's\ so\ they\ are\ in\ local\ (non-\/scaled)\ coordinates}}
+\DoxyCodeLine{00343\ \ \ \ \ btVector3\ localAabbMin\ =\ aabbMin\ *\ btVector3(1.f\ /\ m\_localScaling[0],\ 1.f\ /\ m\_localScaling[1],\ 1.f\ /\ m\_localScaling[2]);}
+\DoxyCodeLine{00344\ \ \ \ \ btVector3\ localAabbMax\ =\ aabbMax\ *\ btVector3(1.f\ /\ m\_localScaling[0],\ 1.f\ /\ m\_localScaling[1],\ 1.f\ /\ m\_localScaling[2]);}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{comment}{//\ account\ for\ local\ origin}}
+\DoxyCodeLine{00347\ \ \ \ \ localAabbMin\ +=\ m\_localOrigin;}
+\DoxyCodeLine{00348\ \ \ \ \ localAabbMax\ +=\ m\_localOrigin;}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ \textcolor{comment}{//quantize\ the\ aabbMin\ and\ aabbMax,\ and\ adjust\ the\ start/end\ ranges}}
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{int}\ quantizedAabbMin[3];}
+\DoxyCodeLine{00352\ \ \ \ \ \textcolor{keywordtype}{int}\ quantizedAabbMax[3];}
+\DoxyCodeLine{00353\ \ \ \ \ quantizeWithClamp(quantizedAabbMin,\ localAabbMin,\ 0);}
+\DoxyCodeLine{00354\ \ \ \ \ quantizeWithClamp(quantizedAabbMax,\ localAabbMax,\ 1);}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{comment}{//\ expand\ the\ min/max\ quantized\ values}}
+\DoxyCodeLine{00357\ \ \ \ \ \textcolor{comment}{//\ this\ is\ to\ catch\ the\ case\ where\ the\ input\ aabb\ falls\ between\ grid\ points!}}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00359\ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ quantizedAabbMin[i]-\/-\/;}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ quantizedAabbMax[i]++;}
+\DoxyCodeLine{00362\ \ \ \ \ \}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{keywordtype}{int}\ startX\ =\ 0;}
+\DoxyCodeLine{00365\ \ \ \ \ \textcolor{keywordtype}{int}\ endX\ =\ m\_heightStickWidth\ -\/\ 1;}
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keywordtype}{int}\ startJ\ =\ 0;}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordtype}{int}\ endJ\ =\ m\_heightStickLength\ -\/\ 1;}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_upAxis)}
+\DoxyCodeLine{00370\ \ \ \ \ \{}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMin[1]\ >\ startX)}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startX\ =\ quantizedAabbMin[1];}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMax[1]\ <\ endX)}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endX\ =\ quantizedAabbMax[1];}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMin[2]\ >\ startJ)}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startJ\ =\ quantizedAabbMin[2];}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMax[2]\ <\ endJ)}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endJ\ =\ quantizedAabbMax[2];}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMin[0]\ >\ startX)}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startX\ =\ quantizedAabbMin[0];}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMax[0]\ <\ endX)}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endX\ =\ quantizedAabbMax[0];}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMin[2]\ >\ startJ)}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startJ\ =\ quantizedAabbMin[2];}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMax[2]\ <\ endJ)}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endJ\ =\ quantizedAabbMax[2];}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMin[0]\ >\ startX)}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startX\ =\ quantizedAabbMin[0];}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMax[0]\ <\ endX)}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endX\ =\ quantizedAabbMax[0];}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMin[1]\ >\ startJ)}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startJ\ =\ quantizedAabbMin[1];}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantizedAabbMax[1]\ <\ endJ)}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endJ\ =\ quantizedAabbMax[1];}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//need\ to\ get\ valid\ m\_upAxis}}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00412\ \ \ \ \ \}}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{comment}{//\ TODO\ If\ m\_vboundsGrid\ is\ available,\ use\ it\ to\ determine\ if\ we\ really\ need\ to\ process\ this\ area}}
+\DoxyCodeLine{00415\ \ \ \ \ }
+\DoxyCodeLine{00416\ \ \ \ \ \textcolor{keyword}{const}\ Range\ aabbUpRange(aabbMin[m\_upAxis],\ aabbMax[m\_upAxis]);}
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ startJ;\ j\ <\ endJ;\ j++)}
+\DoxyCodeLine{00418\ \ \ \ \ \{}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ startX;\ x\ <\ endX;\ x++)}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ vertices[3];}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ indices[3]\ =\ \{\ 0,\ 1,\ 2\ \};}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flipTriangleWinding)}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indices[0]\ =\ 2;}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indices[2]\ =\ 0;}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flipQuadEdges\ ||\ (m\_useDiamondSubdivision\ \&\&\ !((j\ +\ x)\ \&\ 1))\ ||\ (m\_useZigzagSubdivision\ \&\&\ !(j\ \&\ 1)))}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x,\ j,\ vertices[indices[0]]);}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x,\ j\ +\ 1,\ vertices[indices[1]]);}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x\ +\ 1,\ j\ +\ 1,\ vertices[indices[2]]);}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Skip\ triangle\ processing\ if\ the\ triangle\ is\ out-\/of-\/AABB.}}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Range\ upRange\ =\ minmaxRange(vertices[0][m\_upAxis],\ vertices[1][m\_upAxis],\ vertices[2][m\_upAxis]);}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (upRange.overlaps(aabbUpRange))}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ 2\ *\ x,\ j);}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ already\ set:\ getVertex(x,\ j,\ vertices[indices[0]])}}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ equivalent\ to:\ getVertex(x\ +\ 1,\ j\ +\ 1,\ vertices[indices[1]]);}}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vertices[indices[1]]\ =\ vertices[indices[2]];}
+\DoxyCodeLine{00445\ }
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x\ +\ 1,\ j,\ vertices[indices[2]]);}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ upRange.min\ =\ btMin(upRange.min,\ vertices[indices[2]][m\_upAxis]);}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ upRange.max\ =\ btMax(upRange.max,\ vertices[indices[2]][m\_upAxis]);}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (upRange.overlaps(aabbUpRange))}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ 2\ *\ x\ +\ 1,\ j);}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x,\ j,\ vertices[indices[0]]);}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x,\ j\ +\ 1,\ vertices[indices[1]]);}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x\ +\ 1,\ j,\ vertices[indices[2]]);}
+\DoxyCodeLine{00458\ }
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Skip\ triangle\ processing\ if\ the\ triangle\ is\ out-\/of-\/AABB.}}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Range\ upRange\ =\ minmaxRange(vertices[0][m\_upAxis],\ vertices[1][m\_upAxis],\ vertices[2][m\_upAxis]);}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (upRange.overlaps(aabbUpRange))}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ 2\ *\ x,\ j);}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ already\ set:\ getVertex(x,\ j\ +\ 1,\ vertices[indices[1]]);}}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ equivalent\ to:\ getVertex(x\ +\ 1,\ j,\ vertices[indices[0]]);}}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vertices[indices[0]]\ =\ vertices[indices[2]];}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getVertex(x\ +\ 1,\ j\ +\ 1,\ vertices[indices[2]]);}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ upRange.min\ =\ btMin(upRange.min,\ vertices[indices[2]][m\_upAxis]);}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ upRange.max\ =\ btMax(upRange.max,\ vertices[indices[2]][m\_upAxis]);}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (upRange.overlaps(aabbUpRange))}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ 2\ *\ x\ +\ 1,\ j);}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00478\ \ \ \ \ \}}
+\DoxyCodeLine{00479\ \}}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::calculateLocalInertia(btScalar,\ btVector3\&\ inertia)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00482\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00483\ \ \ \ \ \textcolor{comment}{//moving\ concave\ objects\ not\ supported}}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \ \ \ \ inertia.setValue(btScalar(0.),\ btScalar(0.),\ btScalar(0.));}
+\DoxyCodeLine{00486\ \}}
+\DoxyCodeLine{00487\ }
+\DoxyCodeLine{00488\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::setLocalScaling(\textcolor{keyword}{const}\ btVector3\&\ scaling)}
+\DoxyCodeLine{00489\ \{}
+\DoxyCodeLine{00490\ \ \ \ \ m\_localScaling\ =\ scaling;}
+\DoxyCodeLine{00491\ \}}
+\DoxyCodeLine{00492\ \textcolor{keyword}{const}\ btVector3\&\ btHeightfieldTerrainShape::getLocalScaling()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00493\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00494\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_localScaling;}
+\DoxyCodeLine{00495\ \}}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \textcolor{keyword}{namespace}}
+\DoxyCodeLine{00498\ \{}
+\DoxyCodeLine{00499\ \ \ \ \ \textcolor{keyword}{struct\ }GridRaycastState}
+\DoxyCodeLine{00500\ \ \ \ \ \{}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ x;\ \ \textcolor{comment}{//\ Next\ quad\ coords}}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ z;}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prev\_x;\ \ \textcolor{comment}{//\ Previous\ quad\ coords}}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prev\_z;}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ btScalar\ param;\ \ \ \ \ \ \textcolor{comment}{//\ Exit\ param\ for\ previous\ quad}}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ btScalar\ prevParam;\ \ \textcolor{comment}{//\ Enter\ param\ for\ previous\ quad}}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ btScalar\ maxDistanceFlat;}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ btScalar\ maxDistance3d;}
+\DoxyCodeLine{00509\ \ \ \ \ \};}
+\DoxyCodeLine{00510\ \}}
+\DoxyCodeLine{00511\ }
+\DoxyCodeLine{00512\ \textcolor{comment}{//\ TODO\ Does\ it\ really\ need\ to\ take\ 3D\ vectors?}}
+\DoxyCodeLine{00516\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ Action\_T>}
+\DoxyCodeLine{00517\ \textcolor{keywordtype}{void}\ gridRaycast(Action\_T\&\ quadAction,\ \textcolor{keyword}{const}\ btVector3\&\ beginPos,\ \textcolor{keyword}{const}\ btVector3\&\ endPos,\ \textcolor{keywordtype}{int}\ indices[3])}
+\DoxyCodeLine{00518\ \{}
+\DoxyCodeLine{00519\ \ \ \ \ GridRaycastState\ rs;}
+\DoxyCodeLine{00520\ \ \ \ \ rs.maxDistance3d\ =\ beginPos.distance(endPos);}
+\DoxyCodeLine{00521\ \ \ \ \ \textcolor{keywordflow}{if}\ (rs.maxDistance3d\ <\ 0.0001)}
+\DoxyCodeLine{00522\ \ \ \ \ \{}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Consider\ the\ ray\ is\ too\ small\ to\ hit\ anything}}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00525\ \ \ \ \ \}}
+\DoxyCodeLine{00526\ \ \ \ \ }
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00528\ \ \ \ \ btScalar\ rayDirectionFlatX\ =\ endPos[indices[0]]\ -\/\ beginPos[indices[0]];}
+\DoxyCodeLine{00529\ \ \ \ \ btScalar\ rayDirectionFlatZ\ =\ endPos[indices[2]]\ -\/\ beginPos[indices[2]];}
+\DoxyCodeLine{00530\ \ \ \ \ rs.maxDistanceFlat\ =\ btSqrt(rayDirectionFlatX\ *\ rayDirectionFlatX\ +\ rayDirectionFlatZ\ *\ rayDirectionFlatZ);}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \ \ \ \ \textcolor{keywordflow}{if}\ (rs.maxDistanceFlat\ <\ 0.0001)}
+\DoxyCodeLine{00533\ \ \ \ \ \{}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Consider\ the\ ray\ vertical}}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ rayDirectionFlatX\ =\ 0;}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ rayDirectionFlatZ\ =\ 0;}
+\DoxyCodeLine{00537\ \ \ \ \ \}}
+\DoxyCodeLine{00538\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00539\ \ \ \ \ \{}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ rayDirectionFlatX\ /=\ rs.maxDistanceFlat;}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ rayDirectionFlatZ\ /=\ rs.maxDistanceFlat;}
+\DoxyCodeLine{00542\ \ \ \ \ \}}
+\DoxyCodeLine{00543\ }
+\DoxyCodeLine{00544\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ xiStep\ =\ rayDirectionFlatX\ >\ 0\ ?\ 1\ :\ rayDirectionFlatX\ <\ 0\ ?\ -\/1\ :\ 0;}
+\DoxyCodeLine{00545\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ziStep\ =\ rayDirectionFlatZ\ >\ 0\ ?\ 1\ :\ rayDirectionFlatZ\ <\ 0\ ?\ -\/1\ :\ 0;}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ infinite\ =\ 9999999;}
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ paramDeltaX\ =\ xiStep\ !=\ 0\ ?\ 1.f\ /\ btFabs(rayDirectionFlatX)\ :\ infinite;}
+\DoxyCodeLine{00549\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ paramDeltaZ\ =\ ziStep\ !=\ 0\ ?\ 1.f\ /\ btFabs(rayDirectionFlatZ)\ :\ infinite;}
+\DoxyCodeLine{00550\ }
+\DoxyCodeLine{00551\ \ \ \ \ \textcolor{comment}{//\ pos\ =\ param\ *\ dir}}
+\DoxyCodeLine{00552\ \ \ \ \ btScalar\ paramCrossX;\ \ \textcolor{comment}{//\ At\ which\ value\ of\ \`{}param`\ we\ will\ cross\ a\ x-\/axis\ lane?}}
+\DoxyCodeLine{00553\ \ \ \ \ btScalar\ paramCrossZ;\ \ \textcolor{comment}{//\ At\ which\ value\ of\ \`{}param`\ we\ will\ cross\ a\ z-\/axis\ lane?}}
+\DoxyCodeLine{00554\ }
+\DoxyCodeLine{00555\ \ \ \ \ \textcolor{comment}{//\ paramCrossX\ and\ paramCrossZ\ are\ initialized\ as\ being\ the\ first\ cross}}
+\DoxyCodeLine{00556\ \ \ \ \ \textcolor{comment}{//\ X\ initialization}}
+\DoxyCodeLine{00557\ \ \ \ \ \textcolor{keywordflow}{if}\ (xiStep\ !=\ 0)}
+\DoxyCodeLine{00558\ \ \ \ \ \{}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xiStep\ ==\ 1)}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ paramCrossX\ =\ (\mbox{\hyperlink{group__core__func__common_ga7a508730e49e5cec65af435d92ee4baf}{ceil}}(beginPos[indices[0]])\ -\/\ beginPos[indices[0]])\ *\ paramDeltaX;}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ paramCrossX\ =\ (beginPos[indices[0]]\ -\/\ \mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(beginPos[indices[0]]))\ *\ paramDeltaX;}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00567\ \ \ \ \ \}}
+\DoxyCodeLine{00568\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00569\ \ \ \ \ \{}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ paramCrossX\ =\ infinite;\ \ \textcolor{comment}{//\ Will\ never\ cross\ on\ X}}
+\DoxyCodeLine{00571\ \ \ \ \ \}}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \ \ \ \ \textcolor{comment}{//\ Z\ initialization}}
+\DoxyCodeLine{00574\ \ \ \ \ \textcolor{keywordflow}{if}\ (ziStep\ !=\ 0)}
+\DoxyCodeLine{00575\ \ \ \ \ \{}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ziStep\ ==\ 1)}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ paramCrossZ\ =\ (\mbox{\hyperlink{group__core__func__common_ga7a508730e49e5cec65af435d92ee4baf}{ceil}}(beginPos[indices[2]])\ -\/\ beginPos[indices[2]])\ *\ paramDeltaZ;}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ paramCrossZ\ =\ (beginPos[indices[2]]\ -\/\ \mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(beginPos[indices[2]]))\ *\ paramDeltaZ;}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00584\ \ \ \ \ \}}
+\DoxyCodeLine{00585\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00586\ \ \ \ \ \{}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ paramCrossZ\ =\ infinite;\ \ \textcolor{comment}{//\ Will\ never\ cross\ on\ Z}}
+\DoxyCodeLine{00588\ \ \ \ \ \}}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \ \ \ \ rs.x\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(beginPos[indices[0]]));}
+\DoxyCodeLine{00591\ \ \ \ \ rs.z\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(beginPos[indices[2]]));}
+\DoxyCodeLine{00592\ }
+\DoxyCodeLine{00593\ \ \ \ \ \textcolor{comment}{//\ Workaround\ cases\ where\ the\ ray\ starts\ at\ an\ integer\ position}}
+\DoxyCodeLine{00594\ \ \ \ \ \textcolor{keywordflow}{if}\ (paramCrossX\ ==\ 0.0)}
+\DoxyCodeLine{00595\ \ \ \ \ \{}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ paramCrossX\ +=\ paramDeltaX;}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ going\ backwards,\ we\ should\ ignore\ the\ position\ we\ would\ get\ by\ the\ above\ flooring,}}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ because\ the\ ray\ is\ not\ heading\ in\ that\ direction}}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xiStep\ ==\ -\/1)}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ rs.x\ -\/=\ 1;}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00603\ \ \ \ \ \}}
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ \ \ \ \ \textcolor{keywordflow}{if}\ (paramCrossZ\ ==\ 0.0)}
+\DoxyCodeLine{00606\ \ \ \ \ \{}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ paramCrossZ\ +=\ paramDeltaZ;}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ziStep\ ==\ -\/1)}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ rs.z\ -\/=\ 1;}
+\DoxyCodeLine{00610\ \ \ \ \ \}}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \ \ \ \ rs.prev\_x\ =\ rs.x;}
+\DoxyCodeLine{00613\ \ \ \ \ rs.prev\_z\ =\ rs.z;}
+\DoxyCodeLine{00614\ \ \ \ \ rs.param\ =\ 0;}
+\DoxyCodeLine{00615\ }
+\DoxyCodeLine{00616\ \ \ \ \ \textcolor{keywordflow}{while}\ (\textcolor{keyword}{true})}
+\DoxyCodeLine{00617\ \ \ \ \ \{}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ rs.prev\_x\ =\ rs.x;}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ rs.prev\_z\ =\ rs.z;}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ rs.prevParam\ =\ rs.param;}
+\DoxyCodeLine{00621\ }
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (paramCrossX\ <\ paramCrossZ)}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ X\ lane}}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ rs.x\ +=\ xiStep;}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assign\ before\ advancing\ the\ param,}}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ be\ in\ sync\ with\ the\ initialization\ step}}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ rs.param\ =\ paramCrossX;}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \ \ \ \ paramCrossX\ +=\ paramDeltaX;}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Z\ lane}}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ \ \ rs.z\ +=\ ziStep;}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \ \ \ \ rs.param\ =\ paramCrossZ;}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \ \ paramCrossZ\ +=\ paramDeltaZ;}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00638\ }
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rs.param\ >\ rs.maxDistanceFlat)}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \ \ \ \ rs.param\ =\ rs.maxDistanceFlat;}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \ \ \ \ quadAction(rs);}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \ \ \ \ quadAction(rs);}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00649\ \ \ \ \ \}}
+\DoxyCodeLine{00650\ \}}
+\DoxyCodeLine{00651\ }
+\DoxyCodeLine{00652\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_process_triangles_action}{ProcessTrianglesAction}}}
+\DoxyCodeLine{00653\ \{}
+\DoxyCodeLine{00654\ \ \ \ \ \textcolor{keyword}{const}\ btHeightfieldTerrainShape*\ shape;}
+\DoxyCodeLine{00655\ \ \ \ \ \textcolor{keywordtype}{bool}\ flipQuadEdges;}
+\DoxyCodeLine{00656\ \ \ \ \ \textcolor{keywordtype}{bool}\ useDiamondSubdivision;}
+\DoxyCodeLine{00657\ \ \ \ \ \textcolor{keywordtype}{int}\ width;}
+\DoxyCodeLine{00658\ \ \ \ \ \textcolor{keywordtype}{int}\ length;}
+\DoxyCodeLine{00659\ \ \ \ \ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback;}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00661\ \ \ \ \ \textcolor{keywordtype}{void}\ exec(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ z)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00662\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ <\ 0\ ||\ z\ <\ 0\ ||\ x\ >=\ width\ ||\ z\ >=\ length)}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00667\ }
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ btVector3\ vertices[3];}
+\DoxyCodeLine{00669\ }
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO\ Since\ this\ is\ for\ raycasts,\ we\ could\ greatly\ benefit\ from\ an\ early\ exit\ on\ the\ first\ hit}}
+\DoxyCodeLine{00671\ }
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ quad}}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (flipQuadEdges\ ||\ (useDiamondSubdivision\ \&\&\ (((z\ +\ x)\ \&\ 1)\ >\ 0)))}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ First\ triangle}}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x,\ z,\ vertices[0]);}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x\ +\ 1,\ z,\ vertices[1]);}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x\ +\ 1,\ z\ +\ 1,\ vertices[2]);}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ x,\ z);}
+\DoxyCodeLine{00680\ }
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Second\ triangle}}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x,\ z,\ vertices[0]);}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x\ +\ 1,\ z\ +\ 1,\ vertices[1]);}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x,\ z\ +\ 1,\ vertices[2]);}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ x,\ z);}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ First\ triangle}}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x,\ z,\ vertices[0]);}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x,\ z\ +\ 1,\ vertices[1]);}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x\ +\ 1,\ z,\ vertices[2]);}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ x,\ z);}
+\DoxyCodeLine{00694\ }
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Second\ triangle}}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x\ +\ 1,\ z,\ vertices[0]);}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x,\ z\ +\ 1,\ vertices[1]);}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>getVertex(x\ +\ 1,\ z\ +\ 1,\ vertices[2]);}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ callback-\/>processTriangle(vertices,\ x,\ z);}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00701\ \ \ \ \ \}}
+\DoxyCodeLine{00702\ }
+\DoxyCodeLine{00703\ \ \ \ \ \textcolor{keywordtype}{void}\ operator()(\textcolor{keyword}{const}\ GridRaycastState\&\ bs)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00704\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ exec(bs.prev\_x,\ bs.prev\_z);}
+\DoxyCodeLine{00706\ \ \ \ \ \}}
+\DoxyCodeLine{00707\ \};}
+\DoxyCodeLine{00708\ }
+\DoxyCodeLine{00709\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_process_v_bounds_action}{ProcessVBoundsAction}}}
+\DoxyCodeLine{00710\ \{}
+\DoxyCodeLine{00711\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btHeightfieldTerrainShape::Range>}}\&\ vbounds;}
+\DoxyCodeLine{00712\ \ \ \ \ \textcolor{keywordtype}{int}\ width;}
+\DoxyCodeLine{00713\ \ \ \ \ \textcolor{keywordtype}{int}\ length;}
+\DoxyCodeLine{00714\ \ \ \ \ \textcolor{keywordtype}{int}\ chunkSize;}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00716\ \ \ \ \ btVector3\ rayBegin;}
+\DoxyCodeLine{00717\ \ \ \ \ btVector3\ rayEnd;}
+\DoxyCodeLine{00718\ \ \ \ \ btVector3\ rayDir;}
+\DoxyCodeLine{00719\ }
+\DoxyCodeLine{00720\ \ \ \ \ \textcolor{keywordtype}{int}*\ m\_indices;}
+\DoxyCodeLine{00721\ \ \ \ \ \mbox{\hyperlink{struct_process_triangles_action}{ProcessTrianglesAction}}\ processTriangles;}
+\DoxyCodeLine{00722\ }
+\DoxyCodeLine{00723\ \ \ \ \ \mbox{\hyperlink{struct_process_v_bounds_action}{ProcessVBoundsAction}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btHeightfieldTerrainShape::Range>}}\&\ bnd,\ \textcolor{keywordtype}{int}*\ indices)}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ :\ vbounds(bnd),}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ m\_indices(indices)}
+\DoxyCodeLine{00726\ \ \ \ \ \{}
+\DoxyCodeLine{00727\ \ \ \ \ \}}
+\DoxyCodeLine{00728\ \ \ \ \ \textcolor{keywordtype}{void}\ operator()(\textcolor{keyword}{const}\ GridRaycastState\&\ rs)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00729\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ x\ =\ rs.prev\_x;}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ z\ =\ rs.prev\_z;}
+\DoxyCodeLine{00732\ }
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ <\ 0\ ||\ z\ <\ 0\ ||\ x\ >=\ width\ ||\ z\ >=\ length)}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00737\ }
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btHeightfieldTerrainShape::Range\ chunk\ =\ vbounds[x\ +\ z\ *\ width];}
+\DoxyCodeLine{00739\ }
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ btVector3\ enterPos;}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ btVector3\ exitPos;}
+\DoxyCodeLine{00742\ }
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rs.maxDistanceFlat\ >\ 0.0001)}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ flatTo3d\ =\ chunkSize\ *\ rs.maxDistance3d\ /\ rs.maxDistanceFlat;}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ enterParam3d\ =\ rs.prevParam\ *\ flatTo3d;}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ exitParam3d\ =\ rs.param\ *\ flatTo3d;}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \ \ \ \ enterPos\ =\ rayBegin\ +\ rayDir\ *\ enterParam3d;}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ exitPos\ =\ rayBegin\ +\ rayDir\ *\ exitParam3d;}
+\DoxyCodeLine{00750\ }
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ We\ did\ enter\ the\ flat\ projection\ of\ the\ AABB,}}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ but\ we\ have\ to\ check\ if\ we\ intersect\ it\ on\ the\ vertical\ axis}}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (enterPos[1]\ >\ chunk.max\ \&\&\ exitPos[m\_indices[1]]\ >\ chunk.max)}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (enterPos[1]\ <\ chunk.min\ \&\&\ exitPos[m\_indices[1]]\ <\ chunk.min)}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Consider\ the\ ray\ vertical}}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (though\ we\ shouldn't\ reach\ this\ often\ because\ there\ is\ an\ early\ check\ up-\/front)}}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ enterPos\ =\ rayBegin;}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ exitPos\ =\ rayEnd;}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00769\ }
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ gridRaycast(processTriangles,\ enterPos,\ exitPos,\ m\_indices);}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Note:\ it\ could\ be\ possible\ to\ have\ more\ than\ one\ grid\ at\ different\ levels,}}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ do\ this\ there\ would\ be\ a\ branch\ using\ a\ pointer\ to\ another\ ProcessVBoundsAction}}
+\DoxyCodeLine{00773\ \ \ \ \ \}}
+\DoxyCodeLine{00774\ \};}
+\DoxyCodeLine{00775\ }
+\DoxyCodeLine{00776\ \textcolor{comment}{//\ TODO\ How\ do\ I\ interrupt\ the\ ray\ when\ there\ is\ a\ hit?\ \`{}callback`\ does\ not\ return\ any\ result}}
+\DoxyCodeLine{00779\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::performRaycast(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00780\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00781\ \ \ \ \ \textcolor{comment}{//\ Transform\ to\ cell-\/local}}
+\DoxyCodeLine{00782\ \ \ \ \ btVector3\ beginPos\ =\ raySource\ /\ m\_localScaling;}
+\DoxyCodeLine{00783\ \ \ \ \ btVector3\ endPos\ =\ rayTarget\ /\ m\_localScaling;}
+\DoxyCodeLine{00784\ \ \ \ \ beginPos\ +=\ m\_localOrigin;}
+\DoxyCodeLine{00785\ \ \ \ \ endPos\ +=\ m\_localOrigin;}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \ \ \ \ \mbox{\hyperlink{struct_process_triangles_action}{ProcessTrianglesAction}}\ processTriangles;}
+\DoxyCodeLine{00788\ \ \ \ \ processTriangles.shape\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00789\ \ \ \ \ processTriangles.flipQuadEdges\ =\ m\_flipQuadEdges;}
+\DoxyCodeLine{00790\ \ \ \ \ processTriangles.useDiamondSubdivision\ =\ m\_useDiamondSubdivision;}
+\DoxyCodeLine{00791\ \ \ \ \ processTriangles.callback\ =\ callback;}
+\DoxyCodeLine{00792\ \ \ \ \ processTriangles.width\ =\ m\_heightStickWidth\ -\/\ 1;}
+\DoxyCodeLine{00793\ \ \ \ \ processTriangles.length\ =\ m\_heightStickLength\ -\/\ 1;}
+\DoxyCodeLine{00794\ }
+\DoxyCodeLine{00795\ \ \ \ \ \textcolor{comment}{//\ TODO\ Transform\ vectors\ to\ account\ for\ m\_upAxis}}
+\DoxyCodeLine{00796\ \ \ \ \ \textcolor{keywordtype}{int}\ indices[3]\ =\ \{\ 0,\ 1,\ 2\ \};}
+\DoxyCodeLine{00797\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_upAxis\ ==\ 2)}
+\DoxyCodeLine{00798\ \ \ \ \ \{}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ indices[1]\ =\ 2;}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ indices[2]\ =\ 1;}
+\DoxyCodeLine{00801\ \ \ \ \ \}}
+\DoxyCodeLine{00802\ \ \ \ \ \textcolor{keywordtype}{int}\ iBeginX\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(beginPos[indices[0]]));}
+\DoxyCodeLine{00803\ \ \ \ \ \textcolor{keywordtype}{int}\ iBeginZ\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(beginPos[indices[2]]));}
+\DoxyCodeLine{00804\ \ \ \ \ \textcolor{keywordtype}{int}\ iEndX\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(endPos[indices[0]]));}
+\DoxyCodeLine{00805\ \ \ \ \ \textcolor{keywordtype}{int}\ iEndZ\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{group__core__func__common_gac433646923ab80af6d9964f1570855d5}{floor}}(endPos[indices[2]]));}
+\DoxyCodeLine{00806\ }
+\DoxyCodeLine{00807\ \ \ \ \ \textcolor{keywordflow}{if}\ (iBeginX\ ==\ iEndX\ \&\&\ iBeginZ\ ==\ iEndZ)}
+\DoxyCodeLine{00808\ \ \ \ \ \{}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ ray\ will\ never\ cross\ quads\ within\ the\ plane,}}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ so\ directly\ process\ triangles\ within\ one\ quad}}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (typically,\ vertical\ rays\ should\ end\ up\ here)}}
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ processTriangles.exec(iBeginX,\ iEndZ);}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00814\ \ \ \ \ \}}
+\DoxyCodeLine{00815\ }
+\DoxyCodeLine{00816\ \ \ \ \ }
+\DoxyCodeLine{00817\ }
+\DoxyCodeLine{00818\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_vboundsGrid.size()==0)}
+\DoxyCodeLine{00819\ \ \ \ \ \{}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Process\ all\ quads\ intersecting\ the\ flat\ projection\ of\ the\ ray}}
+\DoxyCodeLine{00821\ \ \ \ \ \ \ \ \ gridRaycast(processTriangles,\ beginPos,\ endPos,\ \&indices[0]);}
+\DoxyCodeLine{00822\ \ \ \ \ \}}
+\DoxyCodeLine{00823\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00824\ \ \ \ \ \{}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ btVector3\ rayDiff\ =\ endPos\ -\/\ beginPos;}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ btScalar\ flatDistance2\ =\ rayDiff[indices[0]]\ *\ rayDiff[indices[0]]\ +\ rayDiff[indices[2]]\ *\ rayDiff[indices[2]];}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (flatDistance2\ <\ m\_vboundsChunkSize\ *\ m\_vboundsChunkSize)}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Don't\ use\ chunks,\ the\ ray\ is\ too\ short\ in\ the\ plane}}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \ \ \ \ gridRaycast(processTriangles,\ beginPos,\ endPos,\ \&indices[0]);}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00832\ }
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_process_v_bounds_action}{ProcessVBoundsAction}}\ processVBounds(m\_vboundsGrid,\ \&indices[0]);}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ processVBounds.width\ =\ m\_vboundsGridWidth;}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ processVBounds.length\ =\ m\_vboundsGridLength;}
+\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ processVBounds.rayBegin\ =\ beginPos;}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ processVBounds.rayEnd\ =\ endPos;}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ processVBounds.rayDir\ =\ rayDiff.normalized();}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ processVBounds.processTriangles\ =\ processTriangles;}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ processVBounds.chunkSize\ =\ m\_vboundsChunkSize;}
+\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ ray\ is\ long,\ run\ raycast\ on\ a\ higher-\/level\ grid}}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ gridRaycast(processVBounds,\ beginPos\ /\ m\_vboundsChunkSize,\ endPos\ /\ m\_vboundsChunkSize,\ indices);}
+\DoxyCodeLine{00843\ \ \ \ \ \}}
+\DoxyCodeLine{00844\ \}}
+\DoxyCodeLine{00845\ }
+\DoxyCodeLine{00849\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::buildAccelerator(\textcolor{keywordtype}{int}\ chunkSize)}
+\DoxyCodeLine{00850\ \{}
+\DoxyCodeLine{00851\ \ \ \ \ \textcolor{keywordflow}{if}\ (chunkSize\ <=\ 0)}
+\DoxyCodeLine{00852\ \ \ \ \ \{}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ clearAccelerator();}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00855\ \ \ \ \ \}}
+\DoxyCodeLine{00856\ }
+\DoxyCodeLine{00857\ \ \ \ \ m\_vboundsChunkSize\ =\ chunkSize;}
+\DoxyCodeLine{00858\ \ \ \ \ \textcolor{keywordtype}{int}\ nChunksX\ =\ m\_heightStickWidth\ /\ chunkSize;}
+\DoxyCodeLine{00859\ \ \ \ \ \textcolor{keywordtype}{int}\ nChunksZ\ =\ m\_heightStickLength\ /\ chunkSize;}
+\DoxyCodeLine{00860\ }
+\DoxyCodeLine{00861\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_heightStickWidth\ \%\ chunkSize\ >\ 0)}
+\DoxyCodeLine{00862\ \ \ \ \ \{}
+\DoxyCodeLine{00863\ \ \ \ \ \ \ \ \ ++nChunksX;\ \ \textcolor{comment}{//\ In\ case\ terrain\ size\ isn't\ dividable\ by\ chunk\ size}}
+\DoxyCodeLine{00864\ \ \ \ \ \}}
+\DoxyCodeLine{00865\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_heightStickLength\ \%\ chunkSize\ >\ 0)}
+\DoxyCodeLine{00866\ \ \ \ \ \{}
+\DoxyCodeLine{00867\ \ \ \ \ \ \ \ \ ++nChunksZ;}
+\DoxyCodeLine{00868\ \ \ \ \ \}}
+\DoxyCodeLine{00869\ }
+\DoxyCodeLine{00870\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_vboundsGridWidth\ !=\ nChunksX\ ||\ m\_vboundsGridLength\ !=\ nChunksZ)}
+\DoxyCodeLine{00871\ \ \ \ \ \{}
+\DoxyCodeLine{00872\ \ \ \ \ \ \ \ \ clearAccelerator();}
+\DoxyCodeLine{00873\ \ \ \ \ \ \ \ \ m\_vboundsGridWidth\ =\ nChunksX;}
+\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ m\_vboundsGridLength\ =\ nChunksZ;}
+\DoxyCodeLine{00875\ \ \ \ \ \}}
+\DoxyCodeLine{00876\ }
+\DoxyCodeLine{00877\ \ \ \ \ \textcolor{keywordflow}{if}\ (nChunksX\ ==\ 0\ ||\ nChunksZ\ ==\ 0)}
+\DoxyCodeLine{00878\ \ \ \ \ \{}
+\DoxyCodeLine{00879\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00880\ \ \ \ \ \}}
+\DoxyCodeLine{00881\ }
+\DoxyCodeLine{00882\ \ \ \ \ \textcolor{comment}{//\ This\ data\ structure\ is\ only\ reallocated\ if\ the\ required\ size\ changed}}
+\DoxyCodeLine{00883\ \ \ \ \ m\_vboundsGrid.resize(nChunksX\ *\ nChunksZ);}
+\DoxyCodeLine{00884\ \ \ \ \ }
+\DoxyCodeLine{00885\ \ \ \ \ \textcolor{comment}{//\ Compute\ min\ and\ max\ height\ for\ all\ chunks}}
+\DoxyCodeLine{00886\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ cz\ =\ 0;\ cz\ <\ nChunksZ;\ ++cz)}
+\DoxyCodeLine{00887\ \ \ \ \ \{}
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ z0\ =\ cz\ *\ chunkSize;}
+\DoxyCodeLine{00889\ }
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ cx\ =\ 0;\ cx\ <\ nChunksX;\ ++cx)}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ x0\ =\ cx\ *\ chunkSize;}
+\DoxyCodeLine{00893\ }
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \ \ \ \ Range\ r;}
+\DoxyCodeLine{00895\ }
+\DoxyCodeLine{00896\ \ \ \ \ \ \ \ \ \ \ \ \ r.min\ =\ getRawHeightFieldValue(x0,\ z0);}
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ \ \ \ \ r.max\ =\ r.min;}
+\DoxyCodeLine{00898\ }
+\DoxyCodeLine{00899\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Compute\ min\ and\ max\ height\ for\ this\ chunk.}}
+\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ We\ have\ to\ include\ one\ extra\ cell\ to\ account\ for\ neighbors.}}
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Here\ is\ why:}}
+\DoxyCodeLine{00902\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Say\ we\ have\ a\ flat\ terrain,\ and\ a\ plateau\ that\ fits\ a\ chunk\ perfectly.}}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ Left\ \ \ \ \ \ \ \ Right}}
+\DoxyCodeLine{00905\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0-\/-\/-\/0-\/-\/-\/0-\/-\/-\/1-\/-\/-\/1-\/-\/-\/1}}
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ |\ \ \ |\ \ \ |\ \ \ |\ \ \ |\ \ \ |}}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0-\/-\/-\/0-\/-\/-\/0-\/-\/-\/1-\/-\/-\/1-\/-\/-\/1}}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ |\ \ \ |\ \ \ |\ \ \ |\ \ \ |\ \ \ |}}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0-\/-\/-\/0-\/-\/-\/0-\/-\/-\/1-\/-\/-\/1-\/-\/-\/1}}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ x}}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ the\ AABB\ for\ the\ Left\ chunk\ did\ not\ share\ vertices\ with\ the\ Right,}}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ then\ we\ would\ fail\ collision\ tests\ at\ x\ due\ to\ a\ gap.}}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ z0;\ z\ <\ z0\ +\ chunkSize\ +\ 1;\ ++z)}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00917\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (z\ >=\ m\_heightStickLength)}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00921\ }
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ x0;\ x\ <\ x0\ +\ chunkSize\ +\ 1;\ ++x)}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00924\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ >=\ m\_heightStickWidth)}
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00926\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00927\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00928\ }
+\DoxyCodeLine{00929\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ height\ =\ getRawHeightFieldValue(x,\ z);}
+\DoxyCodeLine{00930\ }
+\DoxyCodeLine{00931\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (height\ <\ r.min)}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00933\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r.min\ =\ height;}
+\DoxyCodeLine{00934\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00935\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (height\ >\ r.max)}
+\DoxyCodeLine{00936\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00937\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r.max\ =\ height;}
+\DoxyCodeLine{00938\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00939\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00940\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00941\ }
+\DoxyCodeLine{00942\ \ \ \ \ \ \ \ \ \ \ \ \ m\_vboundsGrid[cx\ +\ cz\ *\ nChunksX]\ =\ r;}
+\DoxyCodeLine{00943\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00944\ \ \ \ \ \}}
+\DoxyCodeLine{00945\ \}}
+\DoxyCodeLine{00946\ }
+\DoxyCodeLine{00947\ \textcolor{keywordtype}{void}\ btHeightfieldTerrainShape::clearAccelerator()}
+\DoxyCodeLine{00948\ \{}
+\DoxyCodeLine{00949\ \ \ \ \ m\_vboundsGrid.clear();}
+\DoxyCodeLine{00950\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,181 @@
+\doxysection{b3\+New\+Contact\+Reduction.\+h}
+\hypertarget{b3_new_contact_reduction_8h_source}{}\label{b3_new_contact_reduction_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3NewContactReduction.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3NewContactReduction.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_NEW\_CONTACT\_REDUCTION\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_NEW\_CONTACT\_REDUCTION\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Float4.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3Contact4Data.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ GET\_NPOINTS(x)\ (x).m\_worldNormalOnB.w}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keywordtype}{int}\ b3ExtractManifoldSequentialGlobal(\_\_global\ \textcolor{keyword}{const}\ b3Float4*\ p,\ \textcolor{keywordtype}{int}\ nPoints,\ b3Float4ConstArg\ nearNormal,\ b3Int4*\ contactIdx)}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordflow}{if}\ (nPoints\ ==\ 0)}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordflow}{if}\ (nPoints\ <=\ 4)}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ nPoints;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordflow}{if}\ (nPoints\ >\ 64)}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ nPoints\ =\ 64;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ b3Float4\ center\ =\ b3MakeFloat4(0,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ nPoints;\ i++)}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ center\ +=\ p[i];}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ center\ /=\ (float)nPoints;}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ \ sample\ 4\ directions}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ b3Float4\ aVector\ =\ p[0]\ -\/\ center;}
+\DoxyCodeLine{00032\ \ \ \ \ b3Float4\ u\ =\ b3Cross(nearNormal,\ aVector);}
+\DoxyCodeLine{00033\ \ \ \ \ b3Float4\ v\ =\ b3Cross(nearNormal,\ u);}
+\DoxyCodeLine{00034\ \ \ \ \ u\ =\ b3Normalized(u);}
+\DoxyCodeLine{00035\ \ \ \ \ v\ =\ b3Normalized(v);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//keep\ point\ with\ deepest\ penetration}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{float}\ minW\ =\ FLT\_MAX;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{int}\ minIndex\ =\ -\/1;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ b3Float4\ maxDots;}
+\DoxyCodeLine{00043\ \ \ \ \ maxDots.x\ =\ FLT\_MIN;}
+\DoxyCodeLine{00044\ \ \ \ \ maxDots.y\ =\ FLT\_MIN;}
+\DoxyCodeLine{00045\ \ \ \ \ maxDots.z\ =\ FLT\_MIN;}
+\DoxyCodeLine{00046\ \ \ \ \ maxDots.w\ =\ FLT\_MIN;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{//\ \ idx,\ distance}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ie\ =\ 0;\ ie\ <\ nPoints;\ ie++)}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p[ie].w\ <\ minW)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ minW\ =\ p[ie].w;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ minIndex\ =\ ie;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ f;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ b3Float4\ r\ =\ p[ie]\ -\/\ center;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ f\ =\ b3Dot(u,\ r);}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f\ <\ maxDots.x)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ maxDots.x\ =\ f;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ contactIdx[0].x\ =\ ie;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ f\ =\ b3Dot(-\/u,\ r);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f\ <\ maxDots.y)}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ maxDots.y\ =\ f;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ contactIdx[0].y\ =\ ie;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ f\ =\ b3Dot(v,\ r);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f\ <\ maxDots.z)}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ maxDots.z\ =\ f;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ contactIdx[0].z\ =\ ie;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ f\ =\ b3Dot(-\/v,\ r);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f\ <\ maxDots.w)}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ maxDots.w\ =\ f;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ contactIdx[0].w\ =\ ie;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{if}\ (contactIdx[0].x\ !=\ minIndex\ \&\&\ contactIdx[0].y\ !=\ minIndex\ \&\&\ contactIdx[0].z\ !=\ minIndex\ \&\&\ contactIdx[0].w\ !=\ minIndex)}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{comment}{//replace\ the\ first\ contact\ with\ minimum\ (todo:\ replace\ contact\ with\ least\ penetration)}}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ contactIdx[0].x\ =\ minIndex;}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{return}\ 4;}
+\DoxyCodeLine{00094\ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \_\_kernel\ \textcolor{keywordtype}{void}\ b3NewContactReductionKernel(\_\_global\ b3Int4*\ pairs,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData\_t}}*\ rigidBodies,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ b3Float4*\ separatingNormals,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*\ hasSeparatingAxis,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_contact4_data}{b3Contact4Data}}*\ globalContactsOut,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ b3Int4*\ clippingFaces,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ b3Float4*\ worldVertsB2,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{volatile}\ \_\_global\ \textcolor{keywordtype}{int}*\ nGlobalContactsOut,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ vertexFaceCapacity,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ contactCapacity,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numPairs,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pairIndex)}
+\DoxyCodeLine{00108\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{//\ \ \ \ int\ i\ =\ get\_global\_id(0);}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//int\ pairIndex\ =\ i;}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ pairIndex;}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ b3Int4\ contactIdx;}
+\DoxyCodeLine{00114\ \ \ \ \ contactIdx\ =\ b3MakeInt4(0,\ 1,\ 2,\ 3);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ numPairs)}
+\DoxyCodeLine{00117\ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hasSeparatingAxis[i])}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nPoints\ =\ clippingFaces[pairIndex].w;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (nPoints\ >\ 0)}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ b3Float4*\ pointsIn\ =\ \&worldVertsB2[pairIndex\ *\ vertexFaceCapacity];}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Float4\ normal\ =\ -\/separatingNormals[i];}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nReducedContacts\ =\ b3ExtractManifoldSequentialGlobal(pointsIn,\ nPoints,\ normal,\ \&contactIdx);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dstIdx;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dstIdx\ =\ b3AtomicInc(nGlobalContactsOut);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\#if\ 0}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(dstIdx\ <\ contactCapacity);}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dstIdx\ <\ contactCapacity)}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_contact4_data}{b3Contact4Data}}*\ c\ =\ \&globalContactsOut[dstIdx];}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldNormalOnB\ =\ -\/normal;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_restituitionCoeffCmp\ =\ (0.f\ *\ 0xffff);}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_frictionCoeffCmp\ =\ (0.7f\ *\ 0xffff);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_batchIdx\ =\ pairIndex;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bodyA\ =\ pairs[pairIndex].x;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bodyB\ =\ pairs[pairIndex].y;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pairs[pairIndex].w\ =\ dstIdx;}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_bodyAPtrAndSignBit\ =\ rigidBodies[bodyA].m\_invMass\ ==\ 0\ ?\ -\/bodyA\ :\ bodyA;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_bodyBPtrAndSignBit\ =\ rigidBodies[bodyB].m\_invMass\ ==\ 0\ ?\ -\/bodyB\ :\ bodyB;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_childIndexA\ =\ -\/1;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_childIndexB\ =\ -\/1;}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (nReducedContacts)}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 4:}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldPosB[3]\ =\ pointsIn[contactIdx.w];}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 3:}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldPosB[2]\ =\ pointsIn[contactIdx.z];}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldPosB[1]\ =\ pointsIn[contactIdx.y];}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldPosB[0]\ =\ pointsIn[contactIdx.x];}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GET\_NPOINTS(*c)\ =\ nReducedContacts;}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\#endif}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ \ \ \ \ \ \ if\ (numContactsOut>0)}}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ if\ (hasSeparatingAxis[i])}}
+\DoxyCodeLine{00173\ \ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ if\ (i<numPairs)}}
+\DoxyCodeLine{00174\ \}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

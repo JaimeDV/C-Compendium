@@ -1,0 +1,156 @@
+\doxysection{Task.\+hpp}
+\hypertarget{_task_8hpp_source}{}\label{_task_8hpp_source}\index{code/headers/Task.hpp@{code/headers/Task.hpp}}
+\mbox{\hyperlink{_task_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <string>}\ \textcolor{comment}{//pa\ mensaje}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <variant>}\ \textcolor{comment}{//pa\ mesaje}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <list>}\ \textcolor{comment}{//pa\ mesaje}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <map>}\ \textcolor{comment}{//pa\ mesaje}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }InputManager;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{class\ }AudioManager;}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{class\ }Sample\_Renderer;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{class\ }Window;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{class\ }Scene;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }Message\_Dispacher;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_task}{Task}}}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ priority;\ \textcolor{comment}{//between\ 1-\/10\ les\ value\ equals\ more\ priority}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ consumible;\ \textcolor{comment}{//if\ true\ when\ done\ the\ kernel\ removes\ it\ after}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ owner;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{classmisi_1_1_task_aabd008bb2ed43e61c284122f872cf7cd}{task\_name}};}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_task_a505aaeaf70dac322754281749f7a2d48}{Task}}()}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ owner\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ priority\ =\ 0;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ consumible\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_task_a8d97588376c538d91faaf9db4a6f0044}{Task}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner):\ owner(given\_owner)}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ priority\ =\ 0;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ consumible\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_task_aad7c56e8b8dd04d93df82296519641d1}{Task}}(\textcolor{keywordtype}{int}\ given\_priority,\ \mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner)\ :priority(given\_priority),owner(given\_owner)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ consumible\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_task_a46a14d83d42dd858f03b709078348791}{Task}}(\textcolor{keywordtype}{int}\ given\_priority,\ \textcolor{keywordtype}{bool}\ given\_consumible,\ \mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner)\ :priority(given\_priority),\ consumible(given\_consumible),\ owner(given\_owner)\ \{\}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_task_a5a0c51d2b81a11539004ada0c7121295}{execute}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\ =\ 0;\ \textcolor{comment}{//t\ is\ time}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{comment}{//virtual\ void\ initialize()\ \{\};//optional\ /Unimplemeted,\ could\ not\ find\ a\ good\ use\ at\ the\ moment}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{//virtual\ void\ finalize()\ \{\};//optional}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_task_a80dd664fdee98e53435c058dbe1f97a9}{get\_consumable}}()}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ consumible;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_task_a5e3897c6896d76cf059bd0de8375d8b5}{set\_consumable}}(\textcolor{keywordtype}{bool}\ given\_Consumible)}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ consumible=\ given\_Consumible;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_task_a898b4e6aa06b3ecb38adeb53945756ad}{set\_owner}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ owner\ =\ given\_owner;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_task_a25b467affd3b8567c4f17c98700416f8}{operator\ <\ }}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classmisi_1_1_task}{Task}}\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>priority\ <\ other.priority;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00065\ \ \ \ \ \};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_input___task}{Input\_Task}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_task}{Task}}\ \{\textcolor{comment}{//1}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_input_manager}{InputManager}}*\ inputManager;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ message\_dispacher;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_input___task_a8f1bd99e74a41e489d992d79c1c46873}{Input\_Task}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner);}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_input___task_a684d4c1e48a2df7c6398b9cfe841bebd}{execute}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_input_manager}{InputManager}}*\ \mbox{\hyperlink{classmisi_1_1_input___task_a04a0fec3f50d1f0c456a43dff15bbd95}{get\_input}}()}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ inputManager;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ \mbox{\hyperlink{classmisi_1_1_input___task_a828d56a95736479ed5fa5808a71400de}{get\_message\_dispacher}}()}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ message\_dispacher;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_input___task_aa63c7666cd77afc2ffa0dc515ae234a5}{set\_message\_dispacher}}(\mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ given\_dispacher)}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ message\_dispacher\ =\ given\_dispacher;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_input___task_a3425d3384636201db6d22dde8f314de9}{\string~Input\_Task}}();}
+\DoxyCodeLine{00086\ \ \ \ \ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_update___task}{Update\_Task}}\ :\textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_task}{Task}}\ \{\textcolor{comment}{//5}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_window}{Window}}\ *\ window;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ message\_dispacher;}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_update___task_a54d71caaf16e9892ae303b84b0a2eb67}{Update\_Task}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner,\ \ std::string\ title,\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}},\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}},\ \textcolor{keywordtype}{bool}\ full\_screen\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_update___task_a54d71caaf16e9892ae303b84b0a2eb67}{Update\_Task}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner,\ \ std::string\ title,\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}},\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{glad_8h_a1675d9d7bb68e1657ff028643b4037e3}{y}},\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}},\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}});}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_update___task_a1768d6bfa2bb15574866b4b2a97bb984}{execute}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_window}{Window}}*\ \mbox{\hyperlink{classmisi_1_1_update___task_a471b37e852bd460f0a92e08cce019f03}{get\_window}}()}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ window;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ \mbox{\hyperlink{classmisi_1_1_update___task_af92006d8447377b0ecbe5a719eaae52e}{get\_message\_dispacher}}()}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ message\_dispacher;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_update___task_ab1e2de88c00bd54ee6fa618f7fe47130}{set\_message\_dispacher}}(\mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ given\_dispacher)}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ message\_dispacher\ =\ given\_dispacher;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_update___task_a703f14b2b39443533608f50e05c4b709}{\string~Update\_Task}}();}
+\DoxyCodeLine{00109\ \ \ \ \ \};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_render___task}{Render\_Task}}\ :\textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_task}{Task}}\ \{\textcolor{comment}{//9}}
+\DoxyCodeLine{00113\ \ \ \ \ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_sample___renderer}{Sample\_Renderer}}\ *\ renderer;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ message\_dispacher;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_render___task_a512d5693c59b7e0dbe3be8a642a9dfb8}{Render\_Task}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner,\ \mbox{\hyperlink{classmisi_1_1_update___task}{Update\_Task}}*\ updateTask);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_render___task_a6c61cc4659b84d9feb9fa5420429dcaa}{execute}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_sample___renderer}{Sample\_Renderer}}*\ \mbox{\hyperlink{classmisi_1_1_render___task_ab3b0732cc24371990962d9fcd3a1d061}{get\_renderer}}()}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ renderer;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ \mbox{\hyperlink{classmisi_1_1_render___task_a4baa440280174eefc852e2e8aa30aab5}{get\_message\_dispacher}}()}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ message\_dispacher;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_render___task_a0e902f3149f54be65c02a0599a2354af}{set\_message\_dispacher}}(\mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ given\_dispacher)}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ message\_dispacher\ =\ given\_dispacher;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_render___task_a27e58f01f83748f64b2f914fc83d8f30}{\string~Render\_Task}}();}
+\DoxyCodeLine{00132\ \ \ \ \ \};}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_sync__task}{Sync\_task}}\ :\textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_task}{Task}}\ \{\textcolor{comment}{//10}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_sync__task_a8322475c248a91d2cf86ffae4b2266de}{Sync\_task}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_sync__task_a5c4224a3a38f7c93728f60d52df0a1c5}{execute}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_sync__task_a4b0914c7a1f1f0ff018b6d30e322bced}{\string~Sync\_task}}();}
+\DoxyCodeLine{00140\ \ \ \ \ \};}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_audio___task}{Audio\_Task}}\ :\textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_task}{Task}}\ \{\textcolor{comment}{//10}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_audio_manager}{AudioManager}}\ *\ audiomanager;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_audio___task_aa8c95ebe475df659ff0f7ed324acbd0a}{Audio\_Task}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner);}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_audio___task_a38c9eb27b86df454d2472298db84bb72}{execute}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_audio_manager}{AudioManager}}*\ \mbox{\hyperlink{classmisi_1_1_audio___task_a67ef26482e843434342fdf40f8b8f2e7}{get\_audio}}()}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ audiomanager;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_audio___task_ad05f084fb55b36f9fb942c322f3ef2ec}{\string~Audio\_Task}}();}
+\DoxyCodeLine{00153\ \ \ \ \ \};}
+\DoxyCodeLine{00154\ \}}
+
+\end{DoxyCode}

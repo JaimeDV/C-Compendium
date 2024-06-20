@@ -1,0 +1,1211 @@
+\doxysection{b3\+Vector3.\+h}
+\hypertarget{b3_vector3_8h_source}{}\label{b3_vector3_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3Vector3.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3Vector3.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2013\ Gino\ van\ den\ Bergen\ /\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00007\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00009\ \textcolor{comment}{}}
+\DoxyCodeLine{00010\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifndef\ B3\_VECTOR3\_H}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ B3\_VECTOR3\_H}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{//\#include\ <stdint.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}b3Scalar.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}b3MinMax.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}b3AlignedAllocator.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ b3Vector3Data\ b3Vector3DoubleData}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ b3Vector3DataName\ "{}b3Vector3DoubleData"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ b3Vector3Data\ b3Vector3FloatData}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ b3Vector3DataName\ "{}b3Vector3FloatData"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#if\ defined\ B3\_USE\_SSE}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//typedef\ \ uint32\_t\ \_\_m128i\ \_\_attribute\_\_\ ((vector\_size(16)));}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#ifdef\ \_MSC\_VER}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#pragma\ warning(disable\ :\ 4556)\ \ }\textcolor{comment}{//\ value\ of\ intrinsic\ immediate\ argument\ '4294967239'\ is\ out\ of\ range\ '0\ -\/\ 255'}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ B3\_SHUFFLE(x,\ y,\ z,\ w)\ (((w)\ <<\ 6\ |\ (z)\ <<\ 4\ |\ (y)\ <<\ 2\ |\ (x))\ \&\ 0xff)}}
+\DoxyCodeLine{00040\ \textcolor{comment}{//\#define\ b3\_pshufd\_ps(\ \_a,\ \_mask\ )\ (\_\_m128)\ \_mm\_shuffle\_epi32((\_\_m128i)(\_a),\ (\_mask)\ )}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ b3\_pshufd\_ps(\_a,\ \_mask)\ \_mm\_shuffle\_ps((\_a),\ (\_a),\ (\_mask))}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#define\ b3\_splat3\_ps(\_a,\ \_i)\ b3\_pshufd\_ps((\_a),\ B3\_SHUFFLE(\_i,\ \_i,\ \_i,\ 3))}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ b3\_splat\_ps(\_a,\ \_i)\ b3\_pshufd\_ps((\_a),\ B3\_SHUFFLE(\_i,\ \_i,\ \_i,\ \_i))}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ b3v3AbsiMask\ (\_mm\_set\_epi32(0x00000000,\ 0x7FFFFFFF,\ 0x7FFFFFFF,\ 0x7FFFFFFF))}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ b3vAbsMask\ (\_mm\_set\_epi32(0x7FFFFFFF,\ 0x7FFFFFFF,\ 0x7FFFFFFF,\ 0x7FFFFFFF))}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ b3vFFF0Mask\ (\_mm\_set\_epi32(0x00000000,\ 0xFFFFFFFF,\ 0xFFFFFFFF,\ 0xFFFFFFFF))}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ b3v3AbsfMask\ b3CastiTo128f(b3v3AbsiMask)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ b3vFFF0fMask\ b3CastiTo128f(b3vFFF0Mask)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ b3vxyzMaskf\ b3vFFF0fMask}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ b3vAbsfMask\ b3CastiTo128f(b3vAbsMask)}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{const}\ \_\_m128\ B3\_ATTRIBUTE\_ALIGNED16(b3vMzeroMask)\ =\ \{-\/0.0f,\ -\/0.0f,\ -\/0.0f,\ -\/0.0f\};}
+\DoxyCodeLine{00054\ \textcolor{keyword}{const}\ \_\_m128\ B3\_ATTRIBUTE\_ALIGNED16(b3v1110)\ =\ \{1.0f,\ 1.0f,\ 1.0f,\ 0.0f\};}
+\DoxyCodeLine{00055\ \textcolor{keyword}{const}\ \_\_m128\ B3\_ATTRIBUTE\_ALIGNED16(b3vHalf)\ =\ \{0.5f,\ 0.5f,\ 0.5f,\ 0.5f\};}
+\DoxyCodeLine{00056\ \textcolor{keyword}{const}\ \_\_m128\ B3\_ATTRIBUTE\_ALIGNED16(b3v1\_5)\ =\ \{1.5f,\ 1.5f,\ 1.5f,\ 1.5f\};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_NEON}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{const}\ float32x4\_t\ B3\_ATTRIBUTE\_ALIGNED16(b3vMzeroMask)\ =\ (float32x4\_t)\{-\/0.0f,\ -\/0.0f,\ -\/0.0f,\ -\/0.0f\};}
+\DoxyCodeLine{00063\ \textcolor{keyword}{const}\ int32x4\_t\ B3\_ATTRIBUTE\_ALIGNED16(b3vFFF0Mask)\ =\ (int32x4\_t)\{0xFFFFFFFF,\ 0xFFFFFFFF,\ 0xFFFFFFFF,\ 0x0\};}
+\DoxyCodeLine{00064\ \textcolor{keyword}{const}\ int32x4\_t\ B3\_ATTRIBUTE\_ALIGNED16(b3vAbsMask)\ =\ (int32x4\_t)\{0x7FFFFFFF,\ 0x7FFFFFFF,\ 0x7FFFFFFF,\ 0x7FFFFFFF\};}
+\DoxyCodeLine{00065\ \textcolor{keyword}{const}\ int32x4\_t\ B3\_ATTRIBUTE\_ALIGNED16(b3v3AbsMask)\ =\ (int32x4\_t)\{0x7FFFFFFF,\ 0x7FFFFFFF,\ 0x7FFFFFFF,\ 0x0\};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{class\ }b3Vector3;}
+\DoxyCodeLine{00070\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_vector4}{b3Vector4}};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00073\ \textcolor{comment}{//\#if\ defined\ (B3\_USE\_SSE)\ ||\ defined\ (B3\_USE\_NEON)}}
+\DoxyCodeLine{00074\ \textcolor{keyword}{inline}\ b3Vector3\ b3MakeVector3(b3SimdFloat4\ v);}
+\DoxyCodeLine{00075\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ b3MakeVector4(b3SimdFloat4\ vec);}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{inline}\ b3Vector3\ b3MakeVector3(b3Scalar\ x,\ b3Scalar\ y,\ b3Scalar\ z);}
+\DoxyCodeLine{00079\ \textcolor{keyword}{inline}\ b3Vector3\ b3MakeVector3(b3Scalar\ x,\ b3Scalar\ y,\ b3Scalar\ z,\ b3Scalar\ w);}
+\DoxyCodeLine{00080\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ b3MakeVector4(b3Scalar\ x,\ b3Scalar\ y,\ b3Scalar\ z,\ b3Scalar\ w);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00086\ B3\_ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00087\ b3Vector3}
+\DoxyCodeLine{00088\ \{}
+\DoxyCodeLine{00089\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE)\ ||\ defined(B3\_USE\_NEON)\ \ }\textcolor{comment}{//\ \_WIN32\ ||\ ARM}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ b3SimdFloat4\ mVec128;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_floats[4];}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ x,\ y,\ z,\ w;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00098\ \ \ \ \ \};}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_floats[4];}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ x,\ y,\ z,\ w;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00106\ \ \ \ \ \};}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00110\ \ \ \ \ B3\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE)\ ||\ defined(B3\_USE\_NEON)\ \ }\textcolor{comment}{//\ \_WIN32\ ||\ ARM}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{/*B3\_FORCE\_INLINE\ \ \ \ \ \ \ b3Vector3()}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \}}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ \ \ \ */}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ B3\_FORCE\_INLINE\ b3SimdFloat4\ get128()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00120\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mVec128;}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ set128(b3SimdFloat4\ v128)}
+\DoxyCodeLine{00124\ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ mVec128\ =\ v128;}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00132\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\&\ operator+=(\textcolor{keyword}{const}\ b3Vector3\&\ v)}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_add\_ps(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ mVec128\ =\ vaddq\_f32(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ m\_floats[0]\ +=\ v.m\_floats[0];}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ m\_floats[1]\ +=\ v.m\_floats[1];}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ m\_floats[2]\ +=\ v.m\_floats[2];}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00144\ \ \ \ \ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00148\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\&\ operator-\/=(\textcolor{keyword}{const}\ b3Vector3\&\ v)}
+\DoxyCodeLine{00149\ \ \ \ \ \{}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_sub\_ps(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ mVec128\ =\ vsubq\_f32(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ m\_floats[0]\ -\/=\ v.m\_floats[0];}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ m\_floats[1]\ -\/=\ v.m\_floats[1];}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ m\_floats[2]\ -\/=\ v.m\_floats[2];}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00164\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\&\ operator*=(\textcolor{keyword}{const}\ b3Scalar\&\ s)}
+\DoxyCodeLine{00165\ \ \ \ \ \{}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \_\_m128\ vs\ =\ \_mm\_load\_ss(\&s);\ \ \textcolor{comment}{//\ \ \ \ (S\ 0\ 0\ 0)}}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ vs\ =\ b3\_pshufd\_ps(vs,\ 0x80);\ \ \textcolor{comment}{//\ \ \ \ (S\ S\ S\ 0.0)}}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_mul\_ps(mVec128,\ vs);}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ mVec128\ =\ vmulq\_n\_f32(mVec128,\ s);}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ m\_floats[0]\ *=\ s;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ m\_floats[1]\ *=\ s;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ m\_floats[2]\ *=\ s;}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00178\ \ \ \ \ \}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00182\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\&\ operator/=(\textcolor{keyword}{const}\ b3Scalar\&\ s)}
+\DoxyCodeLine{00183\ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ b3FullAssert(s\ !=\ b3Scalar(0.0));}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#if\ 0\ \ }\textcolor{comment}{//defined(B3\_USE\_SSE\_IN\_API)}}
+\DoxyCodeLine{00187\ \textcolor{comment}{//\ this\ code\ is\ not\ faster\ !}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \_\_m128\ vs\ =\ \_mm\_load\_ss(\&s);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ vs\ =\ \_mm\_div\_ss(b3v1110,\ vs);}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ vs\ =\ b3\_pshufd\_ps(vs,\ 0x00);\ \ \ \ \textcolor{comment}{//\ \ (S\ S\ S\ S)}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_mul\_ps(mVec128,\ vs);}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this}\ *=\ b3Scalar(1.0)\ /\ s;}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00198\ \ \ \ \ \}}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00202\ \ \ \ \ B3\_FORCE\_INLINE\ b3Scalar\ dot(\textcolor{keyword}{const}\ b3Vector3\&\ v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00203\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \_\_m128\ vd\ =\ \_mm\_mul\_ps(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \_\_m128\ z\ =\ \_mm\_movehl\_ps(vd,\ vd);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \_\_m128\ y\ =\ \_mm\_shuffle\_ps(vd,\ vd,\ 0x55);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_add\_ss(vd,\ y);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_add\_ss(vd,\ z);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_mm\_cvtss\_f32(vd);}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ float32x4\_t\ vd\ =\ vmulq\_f32(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ float32x2\_t\ x\ =\ vpadd\_f32(vget\_low\_f32(vd),\ vget\_low\_f32(vd));}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ x\ =\ vadd\_f32(x,\ vget\_high\_f32(vd));}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vget\_lane\_f32(x,\ 0);}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_floats[0]\ *\ v.m\_floats[0]\ +}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[1]\ *\ v.m\_floats[1]\ +}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[2]\ *\ v.m\_floats[2];}
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00221\ \ \ \ \ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00224\ \ \ \ \ B3\_FORCE\_INLINE\ b3Scalar\ length2()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00225\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ dot(*\textcolor{keyword}{this});}
+\DoxyCodeLine{00227\ \ \ \ \ \}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00230\ \ \ \ \ B3\_FORCE\_INLINE\ b3Scalar\ length()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00231\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3Sqrt(length2());}
+\DoxyCodeLine{00233\ \ \ \ \ \}}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00237\ \ \ \ \ B3\_FORCE\_INLINE\ b3Scalar\ distance2(\textcolor{keyword}{const}\ b3Vector3\&\ v)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00241\ \ \ \ \ B3\_FORCE\_INLINE\ b3Scalar\ distance(\textcolor{keyword}{const}\ b3Vector3\&\ v)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\&\ safeNormalize()}
+\DoxyCodeLine{00244\ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ b3Scalar\ l2\ =\ length2();}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{comment}{//triNormal.normalize();}}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l2\ >=\ B3\_EPSILON\ *\ B3\_EPSILON)}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ (*this)\ /=\ b3Sqrt(l2);}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ setValue(1,\ 0,\ 0);}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00256\ \ \ \ \ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00260\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\&\ normalize()}
+\DoxyCodeLine{00261\ \ \ \ \ \{}
+\DoxyCodeLine{00262\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dot\ product\ first}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \_\_m128\ vd\ =\ \_mm\_mul\_ps(mVec128,\ mVec128);}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \_\_m128\ z\ =\ \_mm\_movehl\_ps(vd,\ vd);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \_\_m128\ y\ =\ \_mm\_shuffle\_ps(vd,\ vd,\ 0x55);}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_add\_ss(vd,\ y);}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_add\_ss(vd,\ z);}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_sqrt\_ss(vd);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_div\_ss(b3v1110,\ vd);}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ vd\ =\ b3\_splat\_ps(vd,\ 0x80);}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_mul\_ps(mVec128,\ vd);}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NR\ step\ 1/sqrt(x)\ -\/\ vd\ is\ x,\ y\ is\ output}}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ y\ =\ \_mm\_rsqrt\_ss(vd);\ \ \textcolor{comment}{//\ estimate}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ one\ step\ NR}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ z\ =\ b3v1\_5;}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_mul\_ss(vd,\ b3vHalf);\ \ \textcolor{comment}{//\ vd\ *\ 0.5}}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{comment}{//x2\ =\ vd;}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_mul\_ss(vd,\ y);\ \ \textcolor{comment}{//\ vd\ *\ 0.5\ *\ y0}}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ vd\ =\ \_mm\_mul\_ss(vd,\ y);\ \ \textcolor{comment}{//\ vd\ *\ 0.5\ *\ y0\ *\ y0}}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ z\ =\ \_mm\_sub\_ss(z,\ vd);\ \ \ \textcolor{comment}{//\ 1.5\ -\/\ vd\ *\ 0.5\ *\ y0\ *\ y0}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ y\ =\ \_mm\_mul\_ss(y,\ z);\ \ \textcolor{comment}{//\ y0\ *\ (1.5\ -\/\ vd\ *\ 0.5\ *\ y0\ *\ y0)}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ y\ =\ b3\_splat\_ps(y,\ 0x80);}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_mul\_ps(mVec128,\ y);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00296\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this}\ /=\ length();}
+\DoxyCodeLine{00298\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00299\ \ \ \ \ \}}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00302\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\ normalized()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00307\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\ rotate(\textcolor{keyword}{const}\ b3Vector3\&\ wAxis,\ \textcolor{keyword}{const}\ b3Scalar\ angle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00311\ \ \ \ \ B3\_FORCE\_INLINE\ b3Scalar\ angle(\textcolor{keyword}{const}\ b3Vector3\&\ v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00312\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ b3Scalar\ s\ =\ b3Sqrt(length2()\ *\ v.length2());}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ b3FullAssert(s\ !=\ b3Scalar(0.0));}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3Acos(dot(v)\ /\ s);}
+\DoxyCodeLine{00316\ \ \ \ \ \}}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00319\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\ absolute()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00320\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(\_mm\_and\_ps(mVec128,\ b3v3AbsfMask));}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3Vector3(vabsq\_f32(mVec128));}
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ b3Fabs(m\_floats[0]),}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ b3Fabs(m\_floats[1]),}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ b3Fabs(m\_floats[2]));}
+\DoxyCodeLine{00330\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00331\ \ \ \ \ \}}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00335\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\ cross(\textcolor{keyword}{const}\ b3Vector3\&\ v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00336\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00337\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \_\_m128\ T,\ V;}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ T\ =\ b3\_pshufd\_ps(mVec128,\ B3\_SHUFFLE(1,\ 2,\ 0,\ 3));\ \ \ \ \textcolor{comment}{//\ \ \ \ (Y\ Z\ X\ 0)}}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ V\ =\ b3\_pshufd\_ps(v.mVec128,\ B3\_SHUFFLE(1,\ 2,\ 0,\ 3));\ \ \textcolor{comment}{//\ \ \ \ (Y\ Z\ X\ 0)}}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_mul\_ps(V,\ mVec128);}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ T\ =\ \_mm\_mul\_ps(T,\ v.mVec128);}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_sub\_ps(V,\ T);}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ V\ =\ b3\_pshufd\_ps(V,\ B3\_SHUFFLE(1,\ 2,\ 0,\ 3));}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(V);}
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ float32x4\_t\ T,\ V;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ form\ (Y,\ Z,\ X,\ \_)\ of\ mVec128\ and\ v.mVec128}}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ float32x2\_t\ Tlow\ =\ vget\_low\_f32(mVec128);}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ float32x2\_t\ Vlow\ =\ vget\_low\_f32(v.mVec128);}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ T\ =\ vcombine\_f32(vext\_f32(Tlow,\ vget\_high\_f32(mVec128),\ 1),\ Tlow);}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ V\ =\ vcombine\_f32(vext\_f32(Vlow,\ vget\_high\_f32(v.mVec128),\ 1),\ Vlow);}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ V\ =\ vmulq\_f32(V,\ mVec128);}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ T\ =\ vmulq\_f32(T,\ v.mVec128);}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ V\ =\ vsubq\_f32(V,\ T);}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ Vlow\ =\ vget\_low\_f32(V);}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ form\ (Y,\ Z,\ X,\ \_);}}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ V\ =\ vcombine\_f32(vext\_f32(Vlow,\ vget\_high\_f32(V),\ 1),\ Vlow);}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ V\ =\ (float32x4\_t)vandq\_s32((int32x4\_t)V,\ b3vFFF0Mask);}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3Vector3(V);}
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[1]\ *\ v.m\_floats[2]\ -\/\ m\_floats[2]\ *\ v.m\_floats[1],}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[2]\ *\ v.m\_floats[0]\ -\/\ m\_floats[0]\ *\ v.m\_floats[2],}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[0]\ *\ v.m\_floats[1]\ -\/\ m\_floats[1]\ *\ v.m\_floats[0]);}
+\DoxyCodeLine{00371\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00372\ \ \ \ \ \}}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \ \ \ \ B3\_FORCE\_INLINE\ b3Scalar\ triple(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00375\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00376\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ cross:}}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \_\_m128\ T\ =\ \_mm\_shuffle\_ps(v1.mVec128,\ v1.mVec128,\ B3\_SHUFFLE(1,\ 2,\ 0,\ 3));\ \ \textcolor{comment}{//\ \ (Y\ Z\ X\ 0)}}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \_\_m128\ V\ =\ \_mm\_shuffle\_ps(v2.mVec128,\ v2.mVec128,\ B3\_SHUFFLE(1,\ 2,\ 0,\ 3));\ \ \textcolor{comment}{//\ \ (Y\ Z\ X\ 0)}}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_mul\_ps(V,\ v1.mVec128);}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ T\ =\ \_mm\_mul\_ps(T,\ v2.mVec128);}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_sub\_ps(V,\ T);}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_shuffle\_ps(V,\ V,\ B3\_SHUFFLE(1,\ 2,\ 0,\ 3));}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dot:}}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_mul\_ps(V,\ mVec128);}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \_\_m128\ z\ =\ \_mm\_movehl\_ps(V,\ V);}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \_\_m128\ y\ =\ \_mm\_shuffle\_ps(V,\ V,\ 0x55);}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_add\_ss(V,\ y);}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ V\ =\ \_mm\_add\_ss(V,\ z);}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_mm\_cvtss\_f32(V);}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ cross:}}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ float32x4\_t\ T,\ V;}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ form\ (Y,\ Z,\ X,\ \_)\ of\ mVec128\ and\ v.mVec128}}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ float32x2\_t\ Tlow\ =\ vget\_low\_f32(v1.mVec128);}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ float32x2\_t\ Vlow\ =\ vget\_low\_f32(v2.mVec128);}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ T\ =\ vcombine\_f32(vext\_f32(Tlow,\ vget\_high\_f32(v1.mVec128),\ 1),\ Tlow);}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ V\ =\ vcombine\_f32(vext\_f32(Vlow,\ vget\_high\_f32(v2.mVec128),\ 1),\ Vlow);}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ V\ =\ vmulq\_f32(V,\ v1.mVec128);}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ T\ =\ vmulq\_f32(T,\ v2.mVec128);}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ V\ =\ vsubq\_f32(V,\ T);}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ Vlow\ =\ vget\_low\_f32(V);}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ form\ (Y,\ Z,\ X,\ \_);}}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ V\ =\ vcombine\_f32(vext\_f32(Vlow,\ vget\_high\_f32(V),\ 1),\ Vlow);}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dot:}}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ V\ =\ vmulq\_f32(mVec128,\ V);}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ float32x2\_t\ x\ =\ vpadd\_f32(vget\_low\_f32(V),\ vget\_low\_f32(V));}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ x\ =\ vadd\_f32(x,\ vget\_high\_f32(V));}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vget\_lane\_f32(x,\ 0);}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_floats[0]\ *\ (v1.m\_floats[1]\ *\ v2.m\_floats[2]\ -\/\ v1.m\_floats[2]\ *\ v2.m\_floats[1])\ +}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[1]\ *\ (v1.m\_floats[2]\ *\ v2.m\_floats[0]\ -\/\ v1.m\_floats[0]\ *\ v2.m\_floats[2])\ +}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[2]\ *\ (v1.m\_floats[0]\ *\ v2.m\_floats[1]\ -\/\ v1.m\_floats[1]\ *\ v2.m\_floats[0]);}
+\DoxyCodeLine{00420\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00421\ \ \ \ \ \}}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00425\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ minAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00426\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_floats[0]\ <\ m\_floats[1]\ ?\ (m\_floats[0]\ <\ m\_floats[2]\ ?\ 0\ :\ 2)\ :\ (m\_floats[1]\ <\ m\_floats[2]\ ?\ 1\ :\ 2);}
+\DoxyCodeLine{00428\ \ \ \ \ \}}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00432\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ maxAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00433\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_floats[0]\ <\ m\_floats[1]\ ?\ (m\_floats[1]\ <\ m\_floats[2]\ ?\ 2\ :\ 1)\ :\ (m\_floats[0]\ <\ m\_floats[2]\ ?\ 2\ :\ 0);}
+\DoxyCodeLine{00435\ \ \ \ \ \}}
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00437\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ furthestAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00438\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ absolute().minAxis();}
+\DoxyCodeLine{00440\ \ \ \ \ \}}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ closestAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00443\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ absolute().maxAxis();}
+\DoxyCodeLine{00445\ \ \ \ \ \}}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setInterpolate3(\textcolor{keyword}{const}\ b3Vector3\&\ v0,\ \textcolor{keyword}{const}\ b3Vector3\&\ v1,\ b3Scalar\ rt)}
+\DoxyCodeLine{00448\ \ \ \ \ \{}
+\DoxyCodeLine{00449\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \_\_m128\ vrt\ =\ \_mm\_load\_ss(\&rt);\ \ \textcolor{comment}{//\ \ (rt\ 0\ 0\ 0)}}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ b3Scalar\ s\ =\ b3Scalar(1.0)\ -\/\ rt;}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \_\_m128\ vs\ =\ \_mm\_load\_ss(\&s);\ \ \textcolor{comment}{//\ \ \ \ (S\ 0\ 0\ 0)}}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ vs\ =\ b3\_pshufd\_ps(vs,\ 0x80);\ \ \textcolor{comment}{//\ \ \ \ (S\ S\ S\ 0.0)}}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \_\_m128\ r0\ =\ \_mm\_mul\_ps(v0.mVec128,\ vs);}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ vrt\ =\ b3\_pshufd\_ps(vrt,\ 0x80);\ \ \textcolor{comment}{//\ \ (rt\ rt\ rt\ 0.0)}}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \_\_m128\ r1\ =\ \_mm\_mul\_ps(v1.mVec128,\ vrt);}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \_\_m128\ tmp3\ =\ \_mm\_add\_ps(r0,\ r1);}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ mVec128\ =\ tmp3;}
+\DoxyCodeLine{00459\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ float32x4\_t\ vl\ =\ vsubq\_f32(v1.mVec128,\ v0.mVec128);}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ vl\ =\ vmulq\_n\_f32(vl,\ rt);}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ mVec128\ =\ vaddq\_f32(vl,\ v0.mVec128);}
+\DoxyCodeLine{00463\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ b3Scalar\ s\ =\ b3Scalar(1.0)\ -\/\ rt;}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ m\_floats[0]\ =\ s\ *\ v0.m\_floats[0]\ +\ rt\ *\ v1.m\_floats[0];}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ m\_floats[1]\ =\ s\ *\ v0.m\_floats[1]\ +\ rt\ *\ v1.m\_floats[1];}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ m\_floats[2]\ =\ s\ *\ v0.m\_floats[2]\ +\ rt\ *\ v1.m\_floats[2];}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \textcolor{comment}{//don't\ do\ the\ unused\ w\ component}}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ m\_co[3]\ =\ s\ *\ v0[3]\ +\ rt\ *\ v1[3];}}
+\DoxyCodeLine{00470\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00471\ \ \ \ \ \}}
+\DoxyCodeLine{00472\ }
+\DoxyCodeLine{00476\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\ lerp(\textcolor{keyword}{const}\ b3Vector3\&\ v,\ \textcolor{keyword}{const}\ b3Scalar\&\ t)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00477\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00478\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \_\_m128\ vt\ =\ \_mm\_load\_ss(\&t);\ \ \textcolor{comment}{//\ \ \ \ (t\ 0\ 0\ 0)}}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ vt\ =\ b3\_pshufd\_ps(vt,\ 0x80);\ \ \textcolor{comment}{//\ \ \ \ (rt\ rt\ rt\ 0.0)}}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \_\_m128\ vl\ =\ \_mm\_sub\_ps(v.mVec128,\ mVec128);}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ vl\ =\ \_mm\_mul\_ps(vl,\ vt);}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ vl\ =\ \_mm\_add\_ps(vl,\ mVec128);}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(vl);}
+\DoxyCodeLine{00486\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ float32x4\_t\ vl\ =\ vsubq\_f32(v.mVec128,\ mVec128);}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ vl\ =\ vmulq\_n\_f32(vl,\ t);}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ vl\ =\ vaddq\_f32(vl,\ mVec128);}
+\DoxyCodeLine{00490\ }
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3Vector3(vl);}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(m\_floats[0]\ +\ (v.m\_floats[0]\ -\/\ m\_floats[0])\ *\ t,}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[1]\ +\ (v.m\_floats[1]\ -\/\ m\_floats[1])\ *\ t,}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_floats[2]\ +\ (v.m\_floats[2]\ -\/\ m\_floats[2])\ *\ t);}
+\DoxyCodeLine{00496\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00497\ \ \ \ \ \}}
+\DoxyCodeLine{00498\ }
+\DoxyCodeLine{00501\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\&\ operator*=(\textcolor{keyword}{const}\ b3Vector3\&\ v)}
+\DoxyCodeLine{00502\ \ \ \ \ \{}
+\DoxyCodeLine{00503\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_mul\_ps(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00505\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ mVec128\ =\ vmulq\_f32(mVec128,\ v.mVec128);}
+\DoxyCodeLine{00507\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ m\_floats[0]\ *=\ v.m\_floats[0];}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ m\_floats[1]\ *=\ v.m\_floats[1];}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ m\_floats[2]\ *=\ v.m\_floats[2];}
+\DoxyCodeLine{00511\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00513\ \ \ \ \ \}}
+\DoxyCodeLine{00514\ }
+\DoxyCodeLine{00516\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{const}\ b3Scalar\&\ getX()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[0];\ \}}
+\DoxyCodeLine{00518\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{const}\ b3Scalar\&\ getY()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[1];\ \}}
+\DoxyCodeLine{00520\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{const}\ b3Scalar\&\ getZ()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[2];\ \}}
+\DoxyCodeLine{00522\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{const}\ b3Scalar\&\ getW()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[3];\ \}}
+\DoxyCodeLine{00523\ }
+\DoxyCodeLine{00525\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setX(b3Scalar\ \_x)\ \{\ m\_floats[0]\ =\ \_x;\ \};}
+\DoxyCodeLine{00527\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setY(b3Scalar\ \_y)\ \{\ m\_floats[1]\ =\ \_y;\ \};}
+\DoxyCodeLine{00529\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setZ(b3Scalar\ \_z)\ \{\ m\_floats[2]\ =\ \_z;\ \};}
+\DoxyCodeLine{00531\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setW(b3Scalar\ \_w)\ \{\ m\_floats[3]\ =\ \_w;\ \};}
+\DoxyCodeLine{00532\ }
+\DoxyCodeLine{00533\ \ \ \ \ \textcolor{comment}{//B3\_FORCE\_INLINE\ b3Scalar\&\ \ \ \ \ \ \ operator[](int\ i)\ \ \ \ \ \ \ \{\ return\ (\&m\_floats[0])[i];\ \ \ \}}}
+\DoxyCodeLine{00534\ \ \ \ \ \textcolor{comment}{//B3\_FORCE\_INLINE\ const\ b3Scalar\&\ operator[](int\ i)\ const\ \{\ return\ (\&m\_floats[0])[i];\ \}}}
+\DoxyCodeLine{00536\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{operator}\ b3Scalar*()\ \{\ \textcolor{keywordflow}{return}\ \&m\_floats[0];\ \}}
+\DoxyCodeLine{00537\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{operator}\ \textcolor{keyword}{const}\ b3Scalar*()\ \textcolor{keyword}{const}\ \{\ \textcolor{keywordflow}{return}\ \&m\_floats[0];\ \}}
+\DoxyCodeLine{00538\ }
+\DoxyCodeLine{00539\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ b3Vector3\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00540\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00541\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (0xf\ ==\ \_mm\_movemask\_ps((\_\_m128)\_mm\_cmpeq\_ps(mVec128,\ other.mVec128)));}
+\DoxyCodeLine{00543\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((m\_floats[3]\ ==\ other.m\_floats[3])\ \&\&}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_floats[2]\ ==\ other.m\_floats[2])\ \&\&}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_floats[1]\ ==\ other.m\_floats[1])\ \&\&}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_floats[0]\ ==\ other.m\_floats[0]));}
+\DoxyCodeLine{00548\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00549\ \ \ \ \ \}}
+\DoxyCodeLine{00550\ }
+\DoxyCodeLine{00551\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ operator!=(\textcolor{keyword}{const}\ b3Vector3\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00552\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ !(*\textcolor{keyword}{this}\ ==\ other);}
+\DoxyCodeLine{00554\ \ \ \ \ \}}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00559\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setMax(\textcolor{keyword}{const}\ b3Vector3\&\ other)}
+\DoxyCodeLine{00560\ \ \ \ \ \{}
+\DoxyCodeLine{00561\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_max\_ps(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00563\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ mVec128\ =\ vmaxq\_f32(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00565\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ b3SetMax(m\_floats[0],\ other.m\_floats[0]);}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ b3SetMax(m\_floats[1],\ other.m\_floats[1]);}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ b3SetMax(m\_floats[2],\ other.m\_floats[2]);}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ b3SetMax(m\_floats[3],\ other.m\_floats[3]);}
+\DoxyCodeLine{00570\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00571\ \ \ \ \ \}}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00576\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setMin(\textcolor{keyword}{const}\ b3Vector3\&\ other)}
+\DoxyCodeLine{00577\ \ \ \ \ \{}
+\DoxyCodeLine{00578\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_min\_ps(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00580\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ mVec128\ =\ vminq\_f32(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00582\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ b3SetMin(m\_floats[0],\ other.m\_floats[0]);}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ b3SetMin(m\_floats[1],\ other.m\_floats[1]);}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ b3SetMin(m\_floats[2],\ other.m\_floats[2]);}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ b3SetMin(m\_floats[3],\ other.m\_floats[3]);}
+\DoxyCodeLine{00587\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00588\ \ \ \ \ \}}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setValue(\textcolor{keyword}{const}\ b3Scalar\&\ \_x,\ \textcolor{keyword}{const}\ b3Scalar\&\ \_y,\ \textcolor{keyword}{const}\ b3Scalar\&\ \_z)}
+\DoxyCodeLine{00591\ \ \ \ \ \{}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ m\_floats[0]\ =\ \_x;}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ m\_floats[1]\ =\ \_y;}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ m\_floats[2]\ =\ \_z;}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ m\_floats[3]\ =\ b3Scalar(0.f);}
+\DoxyCodeLine{00596\ \ \ \ \ \}}
+\DoxyCodeLine{00597\ }
+\DoxyCodeLine{00598\ \ \ \ \ \textcolor{keywordtype}{void}\ getSkewSymmetricMatrix(b3Vector3\ *\ v0,\ b3Vector3\ *\ v1,\ b3Vector3\ *\ v2)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00599\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00600\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \_\_m128\ V\ =\ \_mm\_and\_ps(mVec128,\ b3vFFF0fMask);}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \_\_m128\ V0\ =\ \_mm\_xor\_ps(b3vMzeroMask,\ V);}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \_\_m128\ V2\ =\ \_mm\_movelh\_ps(V0,\ V);}
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \_\_m128\ V1\ =\ \_mm\_shuffle\_ps(V,\ V0,\ 0xCE);}
+\DoxyCodeLine{00607\ }
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ V0\ =\ \_mm\_shuffle\_ps(V0,\ V,\ 0xDB);}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ V2\ =\ \_mm\_shuffle\_ps(V2,\ V,\ 0xF9);}
+\DoxyCodeLine{00610\ }
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ v0-\/>mVec128\ =\ V0;}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ v1-\/>mVec128\ =\ V1;}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ v2-\/>mVec128\ =\ V2;}
+\DoxyCodeLine{00614\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ v0-\/>setValue(0.,\ -\/getZ(),\ getY());}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ v1-\/>setValue(getZ(),\ 0.,\ -\/getX());}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ v2-\/>setValue(-\/getY(),\ getX(),\ 0.);}
+\DoxyCodeLine{00618\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00619\ \ \ \ \ \}}
+\DoxyCodeLine{00620\ }
+\DoxyCodeLine{00621\ \ \ \ \ \textcolor{keywordtype}{void}\ setZero()}
+\DoxyCodeLine{00622\ \ \ \ \ \{}
+\DoxyCodeLine{00623\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ mVec128\ =\ (\_\_m128)\_mm\_xor\_ps(mVec128,\ mVec128);}
+\DoxyCodeLine{00625\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ int32x4\_t\ vi\ =\ vdupq\_n\_s32(0);}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ mVec128\ =\ vreinterpretq\_f32\_s32(vi);}
+\DoxyCodeLine{00628\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ setValue(b3Scalar(0.),\ b3Scalar(0.),\ b3Scalar(0.));}
+\DoxyCodeLine{00630\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00631\ \ \ \ \ \}}
+\DoxyCodeLine{00632\ }
+\DoxyCodeLine{00633\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ isZero()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00634\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_floats[0]\ ==\ b3Scalar(0)\ \&\&\ m\_floats[1]\ ==\ b3Scalar(0)\ \&\&\ m\_floats[2]\ ==\ b3Scalar(0);}
+\DoxyCodeLine{00636\ \ \ \ \ \}}
+\DoxyCodeLine{00637\ }
+\DoxyCodeLine{00638\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ fuzzyZero()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00639\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ length2()\ <\ B3\_EPSILON;}
+\DoxyCodeLine{00641\ \ \ \ \ \}}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ serialize(\textcolor{keyword}{struct}\ b3Vector3Data\ \&\ dataOut)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00644\ }
+\DoxyCodeLine{00645\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ deSerialize(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ b3Vector3Data\&\ dataIn);}
+\DoxyCodeLine{00646\ }
+\DoxyCodeLine{00647\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ serializeFloat(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}\ \&\ dataOut)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00648\ }
+\DoxyCodeLine{00649\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ deSerializeFloat(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}\&\ dataIn);}
+\DoxyCodeLine{00650\ }
+\DoxyCodeLine{00651\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ serializeDouble(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}\ \&\ dataOut)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00653\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ deSerializeDouble(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}\&\ dataIn);}
+\DoxyCodeLine{00654\ }
+\DoxyCodeLine{00659\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{long}\ maxDot(\textcolor{keyword}{const}\ b3Vector3*\ array,\ \textcolor{keywordtype}{long}\ array\_count,\ b3Scalar\&\ dotOut)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00665\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{long}\ minDot(\textcolor{keyword}{const}\ b3Vector3*\ array,\ \textcolor{keywordtype}{long}\ array\_count,\ b3Scalar\&\ dotOut)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00666\ }
+\DoxyCodeLine{00667\ \ \ \ \ \textcolor{comment}{/*\ create\ a\ vector\ as\ \ b3Vector3(\ this-\/>dot(\ b3Vector3\ v0\ ),\ this-\/>dot(\ b3Vector3\ v1),\ this-\/>dot(\ b3Vector3\ v2\ ))\ \ */}}
+\DoxyCodeLine{00668\ \ \ \ \ B3\_FORCE\_INLINE\ b3Vector3\ dot3(\textcolor{keyword}{const}\ b3Vector3\&\ v0,\ \textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00669\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00670\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00671\ }
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \_\_m128\ a0\ =\ \_mm\_mul\_ps(v0.mVec128,\ this-\/>mVec128);}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \_\_m128\ a1\ =\ \_mm\_mul\_ps(v1.mVec128,\ this-\/>mVec128);}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \_\_m128\ a2\ =\ \_mm\_mul\_ps(v2.mVec128,\ this-\/>mVec128);}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \_\_m128\ b0\ =\ \_mm\_unpacklo\_ps(a0,\ a1);}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \_\_m128\ b1\ =\ \_mm\_unpackhi\_ps(a0,\ a1);}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \_\_m128\ b2\ =\ \_mm\_unpacklo\_ps(a2,\ \_mm\_setzero\_ps());}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \_\_m128\ r\ =\ \_mm\_movelh\_ps(b0,\ b2);}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ r\ =\ \_mm\_add\_ps(r,\ \_mm\_movehl\_ps(b2,\ b0));}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ a2\ =\ \_mm\_and\_ps(a2,\ b3vxyzMaskf);}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ r\ =\ \_mm\_add\_ps(r,\ b3CastdTo128f(\_mm\_move\_sd(b3CastfTo128d(a2),\ b3CastfTo128d(b1))));}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(r);}
+\DoxyCodeLine{00683\ }
+\DoxyCodeLine{00684\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ uint32x4\_t\ xyzMask\ =\ (\textcolor{keyword}{const}\ uint32x4\_t)\{-\/1,\ -\/1,\ -\/1,\ 0\};}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ float32x4\_t\ a0\ =\ vmulq\_f32(v0.mVec128,\ this-\/>mVec128);}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ float32x4\_t\ a1\ =\ vmulq\_f32(v1.mVec128,\ this-\/>mVec128);}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ float32x4\_t\ a2\ =\ vmulq\_f32(v2.mVec128,\ this-\/>mVec128);}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ float32x2x2\_t\ zLo\ =\ vtrn\_f32(vget\_high\_f32(a0),\ vget\_high\_f32(a1));}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ a2\ =\ (float32x4\_t)vandq\_u32((uint32x4\_t)a2,\ xyzMask);}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ float32x2\_t\ b0\ =\ vadd\_f32(vpadd\_f32(vget\_low\_f32(a0),\ vget\_low\_f32(a1)),\ zLo.val[0]);}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ float32x2\_t\ b1\ =\ vpadd\_f32(vpadd\_f32(vget\_low\_f32(a2),\ vget\_high\_f32(a2)),\ vdup\_n\_f32(0.0f));}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3Vector3(vcombine\_f32(b0,\ b1));}
+\DoxyCodeLine{00694\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(dot(v0),\ dot(v1),\ dot(v2));}
+\DoxyCodeLine{00696\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00697\ \ \ \ \ \}}
+\DoxyCodeLine{00698\ \};}
+\DoxyCodeLine{00699\ }
+\DoxyCodeLine{00701\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00702\ operator+(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00703\ \{}
+\DoxyCodeLine{00704\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00705\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(\_mm\_add\_ps(v1.mVec128,\ v2.mVec128));}
+\DoxyCodeLine{00706\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00707\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(vaddq\_f32(v1.mVec128,\ v2.mVec128));}
+\DoxyCodeLine{00708\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00709\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ v1.m\_floats[0]\ +\ v2.m\_floats[0],}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ v1.m\_floats[1]\ +\ v2.m\_floats[1],}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ v1.m\_floats[2]\ +\ v2.m\_floats[2]);}
+\DoxyCodeLine{00713\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00714\ \}}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00717\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00718\ operator*(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00719\ \{}
+\DoxyCodeLine{00720\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00721\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(\_mm\_mul\_ps(v1.mVec128,\ v2.mVec128));}
+\DoxyCodeLine{00722\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00723\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(vmulq\_f32(v1.mVec128,\ v2.mVec128));}
+\DoxyCodeLine{00724\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00725\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ v1.m\_floats[0]\ *\ v2.m\_floats[0],}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ v1.m\_floats[1]\ *\ v2.m\_floats[1],}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ v1.m\_floats[2]\ *\ v2.m\_floats[2]);}
+\DoxyCodeLine{00729\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00730\ \}}
+\DoxyCodeLine{00731\ }
+\DoxyCodeLine{00733\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00734\ operator-\/(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00735\ \{}
+\DoxyCodeLine{00736\ \textcolor{preprocessor}{\#if\ (defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE))}}
+\DoxyCodeLine{00737\ }
+\DoxyCodeLine{00738\ \ \ \ \ \textcolor{comment}{//\ \ without\ \_mm\_and\_ps\ this\ code\ causes\ slowdown\ in\ Concave\ moving}}
+\DoxyCodeLine{00739\ \ \ \ \ \_\_m128\ r\ =\ \_mm\_sub\_ps(v1.mVec128,\ v2.mVec128);}
+\DoxyCodeLine{00740\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(\_mm\_and\_ps(r,\ b3vFFF0fMask));}
+\DoxyCodeLine{00741\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00742\ \ \ \ \ float32x4\_t\ r\ =\ vsubq\_f32(v1.mVec128,\ v2.mVec128);}
+\DoxyCodeLine{00743\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3((float32x4\_t)vandq\_s32((int32x4\_t)r,\ b3vFFF0Mask));}
+\DoxyCodeLine{00744\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00745\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ v1.m\_floats[0]\ -\/\ v2.m\_floats[0],}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ v1.m\_floats[1]\ -\/\ v2.m\_floats[1],}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ v1.m\_floats[2]\ -\/\ v2.m\_floats[2]);}
+\DoxyCodeLine{00749\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00750\ \}}
+\DoxyCodeLine{00751\ }
+\DoxyCodeLine{00753\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00754\ operator-\/(\textcolor{keyword}{const}\ b3Vector3\&\ v)}
+\DoxyCodeLine{00755\ \{}
+\DoxyCodeLine{00756\ \textcolor{preprocessor}{\#if\ (defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE))}}
+\DoxyCodeLine{00757\ \ \ \ \ \_\_m128\ r\ =\ \_mm\_xor\_ps(v.mVec128,\ b3vMzeroMask);}
+\DoxyCodeLine{00758\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(\_mm\_and\_ps(r,\ b3vFFF0fMask));}
+\DoxyCodeLine{00759\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00760\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3((b3SimdFloat4)veorq\_s32((int32x4\_t)v.mVec128,\ (int32x4\_t)b3vMzeroMask));}
+\DoxyCodeLine{00761\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00762\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(-\/v.m\_floats[0],\ -\/v.m\_floats[1],\ -\/v.m\_floats[2]);}
+\DoxyCodeLine{00763\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00764\ \}}
+\DoxyCodeLine{00765\ }
+\DoxyCodeLine{00767\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00768\ operator*(\textcolor{keyword}{const}\ b3Vector3\&\ v,\ \textcolor{keyword}{const}\ b3Scalar\&\ s)}
+\DoxyCodeLine{00769\ \{}
+\DoxyCodeLine{00770\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00771\ \ \ \ \ \_\_m128\ vs\ =\ \_mm\_load\_ss(\&s);\ \ \textcolor{comment}{//\ \ \ \ (S\ 0\ 0\ 0)}}
+\DoxyCodeLine{00772\ \ \ \ \ vs\ =\ b3\_pshufd\_ps(vs,\ 0x80);\ \ \textcolor{comment}{//\ \ \ \ (S\ S\ S\ 0.0)}}
+\DoxyCodeLine{00773\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(\_mm\_mul\_ps(v.mVec128,\ vs));}
+\DoxyCodeLine{00774\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00775\ \ \ \ \ float32x4\_t\ r\ =\ vmulq\_n\_f32(v.mVec128,\ s);}
+\DoxyCodeLine{00776\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3((float32x4\_t)vandq\_s32((int32x4\_t)r,\ b3vFFF0Mask));}
+\DoxyCodeLine{00777\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00778\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(v.m\_floats[0]\ *\ s,\ v.m\_floats[1]\ *\ s,\ v.m\_floats[2]\ *\ s);}
+\DoxyCodeLine{00779\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00780\ \}}
+\DoxyCodeLine{00781\ }
+\DoxyCodeLine{00783\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00784\ operator*(\textcolor{keyword}{const}\ b3Scalar\&\ s,\ \textcolor{keyword}{const}\ b3Vector3\&\ v)}
+\DoxyCodeLine{00785\ \{}
+\DoxyCodeLine{00786\ \ \ \ \ \textcolor{keywordflow}{return}\ v\ *\ s;}
+\DoxyCodeLine{00787\ \}}
+\DoxyCodeLine{00788\ }
+\DoxyCodeLine{00790\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00791\ operator/(\textcolor{keyword}{const}\ b3Vector3\&\ v,\ \textcolor{keyword}{const}\ b3Scalar\&\ s)}
+\DoxyCodeLine{00792\ \{}
+\DoxyCodeLine{00793\ \ \ \ \ b3FullAssert(s\ !=\ b3Scalar(0.0));}
+\DoxyCodeLine{00794\ \textcolor{preprocessor}{\#if\ 0\ \ }\textcolor{comment}{//defined(B3\_USE\_SSE\_IN\_API)}}
+\DoxyCodeLine{00795\ \textcolor{comment}{//\ this\ code\ is\ not\ faster\ !}}
+\DoxyCodeLine{00796\ \ \ \ \ \_\_m128\ vs\ =\ \_mm\_load\_ss(\&s);}
+\DoxyCodeLine{00797\ \ \ \ \ vs\ =\ \_mm\_div\_ss(b3v1110,\ vs);}
+\DoxyCodeLine{00798\ \ \ \ \ vs\ =\ b3\_pshufd\_ps(vs,\ 0x00);\ \ \ \ \textcolor{comment}{//\ \ (S\ S\ S\ S)}}
+\DoxyCodeLine{00799\ }
+\DoxyCodeLine{00800\ \ \ \ \ \textcolor{keywordflow}{return}\ b3Vector3(\_mm\_mul\_ps(v.mVec128,\ vs));}
+\DoxyCodeLine{00801\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00802\ \ \ \ \ \textcolor{keywordflow}{return}\ v\ *\ (b3Scalar(1.0)\ /\ s);}
+\DoxyCodeLine{00803\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00804\ \}}
+\DoxyCodeLine{00805\ }
+\DoxyCodeLine{00807\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00808\ operator/(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00809\ \{}
+\DoxyCodeLine{00810\ \textcolor{preprocessor}{\#if\ (defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE))}}
+\DoxyCodeLine{00811\ \ \ \ \ \_\_m128\ vec\ =\ \_mm\_div\_ps(v1.mVec128,\ v2.mVec128);}
+\DoxyCodeLine{00812\ \ \ \ \ vec\ =\ \_mm\_and\_ps(vec,\ b3vFFF0fMask);}
+\DoxyCodeLine{00813\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(vec);}
+\DoxyCodeLine{00814\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00815\ \ \ \ \ float32x4\_t\ x,\ y,\ v,\ m;}
+\DoxyCodeLine{00816\ }
+\DoxyCodeLine{00817\ \ \ \ \ x\ =\ v1.mVec128;}
+\DoxyCodeLine{00818\ \ \ \ \ y\ =\ v2.mVec128;}
+\DoxyCodeLine{00819\ }
+\DoxyCodeLine{00820\ \ \ \ \ v\ =\ vrecpeq\_f32(y);\ \ \ \ \ \textcolor{comment}{//\ v\ \string~\ 1/y}}
+\DoxyCodeLine{00821\ \ \ \ \ m\ =\ vrecpsq\_f32(y,\ v);\ \ \textcolor{comment}{//\ m\ =\ (2-\/v*y)}}
+\DoxyCodeLine{00822\ \ \ \ \ v\ =\ vmulq\_f32(v,\ m);\ \ \ \ \textcolor{comment}{//\ vv\ =\ v*m\ \string~\string~\ 1/y}}
+\DoxyCodeLine{00823\ \ \ \ \ m\ =\ vrecpsq\_f32(y,\ v);\ \ \textcolor{comment}{//\ mm\ =\ (2-\/vv*y)}}
+\DoxyCodeLine{00824\ \ \ \ \ v\ =\ vmulq\_f32(v,\ x);\ \ \ \ \textcolor{comment}{//\ x*vv}}
+\DoxyCodeLine{00825\ \ \ \ \ v\ =\ vmulq\_f32(v,\ m);\ \ \ \ \textcolor{comment}{//\ (x*vv)*(2-\/vv*y)\ =\ x*(vv(2-\/vv*y))\ \string~\string~\string~\ x/y}}
+\DoxyCodeLine{00826\ }
+\DoxyCodeLine{00827\ \ \ \ \ \textcolor{keywordflow}{return}\ b3Vector3(v);}
+\DoxyCodeLine{00828\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00829\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ v1.m\_floats[0]\ /\ v2.m\_floats[0],}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ v1.m\_floats[1]\ /\ v2.m\_floats[1],}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ v1.m\_floats[2]\ /\ v2.m\_floats[2]);}
+\DoxyCodeLine{00833\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00834\ \}}
+\DoxyCodeLine{00835\ }
+\DoxyCodeLine{00837\ B3\_FORCE\_INLINE\ b3Scalar}
+\DoxyCodeLine{00838\ b3Dot(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00839\ \{}
+\DoxyCodeLine{00840\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.dot(v2);}
+\DoxyCodeLine{00841\ \}}
+\DoxyCodeLine{00842\ }
+\DoxyCodeLine{00844\ B3\_FORCE\_INLINE\ b3Scalar}
+\DoxyCodeLine{00845\ b3Distance2(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00846\ \{}
+\DoxyCodeLine{00847\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.distance2(v2);}
+\DoxyCodeLine{00848\ \}}
+\DoxyCodeLine{00849\ }
+\DoxyCodeLine{00851\ B3\_FORCE\_INLINE\ b3Scalar}
+\DoxyCodeLine{00852\ b3Distance(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00853\ \{}
+\DoxyCodeLine{00854\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.distance(v2);}
+\DoxyCodeLine{00855\ \}}
+\DoxyCodeLine{00856\ }
+\DoxyCodeLine{00858\ B3\_FORCE\_INLINE\ b3Scalar}
+\DoxyCodeLine{00859\ b3Angle(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00860\ \{}
+\DoxyCodeLine{00861\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.angle(v2);}
+\DoxyCodeLine{00862\ \}}
+\DoxyCodeLine{00863\ }
+\DoxyCodeLine{00865\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00866\ b3Cross(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2)}
+\DoxyCodeLine{00867\ \{}
+\DoxyCodeLine{00868\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.cross(v2);}
+\DoxyCodeLine{00869\ \}}
+\DoxyCodeLine{00870\ }
+\DoxyCodeLine{00871\ B3\_FORCE\_INLINE\ b3Scalar}
+\DoxyCodeLine{00872\ b3Triple(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2,\ \textcolor{keyword}{const}\ b3Vector3\&\ v3)}
+\DoxyCodeLine{00873\ \{}
+\DoxyCodeLine{00874\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.triple(v2,\ v3);}
+\DoxyCodeLine{00875\ \}}
+\DoxyCodeLine{00876\ }
+\DoxyCodeLine{00881\ B3\_FORCE\_INLINE\ b3Vector3}
+\DoxyCodeLine{00882\ b3Lerp(\textcolor{keyword}{const}\ b3Vector3\&\ v1,\ \textcolor{keyword}{const}\ b3Vector3\&\ v2,\ \textcolor{keyword}{const}\ b3Scalar\&\ t)}
+\DoxyCodeLine{00883\ \{}
+\DoxyCodeLine{00884\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.lerp(v2,\ t);}
+\DoxyCodeLine{00885\ \}}
+\DoxyCodeLine{00886\ }
+\DoxyCodeLine{00887\ B3\_FORCE\_INLINE\ b3Scalar\ b3Vector3::distance2(\textcolor{keyword}{const}\ b3Vector3\&\ v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00888\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00889\ \ \ \ \ \textcolor{keywordflow}{return}\ (v\ -\/\ *\textcolor{keyword}{this}).length2();}
+\DoxyCodeLine{00890\ \}}
+\DoxyCodeLine{00891\ }
+\DoxyCodeLine{00892\ B3\_FORCE\_INLINE\ b3Scalar\ b3Vector3::distance(\textcolor{keyword}{const}\ b3Vector3\&\ v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00893\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00894\ \ \ \ \ \textcolor{keywordflow}{return}\ (v\ -\/\ *\textcolor{keyword}{this}).length();}
+\DoxyCodeLine{00895\ \}}
+\DoxyCodeLine{00896\ }
+\DoxyCodeLine{00897\ B3\_FORCE\_INLINE\ b3Vector3\ b3Vector3::normalized()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00898\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00899\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00900\ \ \ \ \ b3Vector3\ norm\ =\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00901\ }
+\DoxyCodeLine{00902\ \ \ \ \ \textcolor{keywordflow}{return}\ norm.normalize();}
+\DoxyCodeLine{00903\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00904\ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this}\ /\ length();}
+\DoxyCodeLine{00905\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00906\ \}}
+\DoxyCodeLine{00907\ }
+\DoxyCodeLine{00908\ B3\_FORCE\_INLINE\ b3Vector3\ b3Vector3::rotate(\textcolor{keyword}{const}\ b3Vector3\&\ wAxis,\ \textcolor{keyword}{const}\ b3Scalar\ \_angle)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00909\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00910\ \ \ \ \ \textcolor{comment}{//\ wAxis\ must\ be\ a\ unit\ lenght\ vector}}
+\DoxyCodeLine{00911\ }
+\DoxyCodeLine{00912\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00913\ }
+\DoxyCodeLine{00914\ \ \ \ \ \_\_m128\ O\ =\ \_mm\_mul\_ps(wAxis.mVec128,\ mVec128);}
+\DoxyCodeLine{00915\ \ \ \ \ b3Scalar\ ssin\ =\ b3Sin(\_angle);}
+\DoxyCodeLine{00916\ \ \ \ \ \_\_m128\ C\ =\ wAxis.cross(b3MakeVector3(mVec128)).mVec128;}
+\DoxyCodeLine{00917\ \ \ \ \ O\ =\ \_mm\_and\_ps(O,\ b3vFFF0fMask);}
+\DoxyCodeLine{00918\ \ \ \ \ b3Scalar\ scos\ =\ b3Cos(\_angle);}
+\DoxyCodeLine{00919\ }
+\DoxyCodeLine{00920\ \ \ \ \ \_\_m128\ vsin\ =\ \_mm\_load\_ss(\&ssin);\ \ \textcolor{comment}{//\ \ \ (S\ 0\ 0\ 0)}}
+\DoxyCodeLine{00921\ \ \ \ \ \_\_m128\ vcos\ =\ \_mm\_load\_ss(\&scos);\ \ \textcolor{comment}{//\ \ \ (S\ 0\ 0\ 0)}}
+\DoxyCodeLine{00922\ }
+\DoxyCodeLine{00923\ \ \ \ \ \_\_m128\ Y\ =\ b3\_pshufd\_ps(O,\ 0xC9);\ \ \textcolor{comment}{//\ \ \ (Y\ Z\ X\ 0)}}
+\DoxyCodeLine{00924\ \ \ \ \ \_\_m128\ Z\ =\ b3\_pshufd\_ps(O,\ 0xD2);\ \ \textcolor{comment}{//\ \ \ (Z\ X\ Y\ 0)}}
+\DoxyCodeLine{00925\ \ \ \ \ O\ =\ \_mm\_add\_ps(O,\ Y);}
+\DoxyCodeLine{00926\ \ \ \ \ vsin\ =\ b3\_pshufd\_ps(vsin,\ 0x80);\ \ \textcolor{comment}{//\ \ \ \ (S\ S\ S\ 0)}}
+\DoxyCodeLine{00927\ \ \ \ \ O\ =\ \_mm\_add\_ps(O,\ Z);}
+\DoxyCodeLine{00928\ \ \ \ \ vcos\ =\ b3\_pshufd\_ps(vcos,\ 0x80);\ \ \textcolor{comment}{//\ \ \ \ (S\ S\ S\ 0)}}
+\DoxyCodeLine{00929\ }
+\DoxyCodeLine{00930\ \ \ \ \ vsin\ =\ vsin\ *\ C;}
+\DoxyCodeLine{00931\ \ \ \ \ O\ =\ O\ *\ wAxis.mVec128;}
+\DoxyCodeLine{00932\ \ \ \ \ \_\_m128\ X\ =\ mVec128\ -\/\ O;}
+\DoxyCodeLine{00933\ }
+\DoxyCodeLine{00934\ \ \ \ \ O\ =\ O\ +\ vsin;}
+\DoxyCodeLine{00935\ \ \ \ \ vcos\ =\ vcos\ *\ X;}
+\DoxyCodeLine{00936\ \ \ \ \ O\ =\ O\ +\ vcos;}
+\DoxyCodeLine{00937\ }
+\DoxyCodeLine{00938\ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector3(O);}
+\DoxyCodeLine{00939\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00940\ \ \ \ \ b3Vector3\ o\ =\ wAxis\ *\ wAxis.dot(*\textcolor{keyword}{this});}
+\DoxyCodeLine{00941\ \ \ \ \ b3Vector3\ \_x\ =\ *\textcolor{keyword}{this}\ -\/\ o;}
+\DoxyCodeLine{00942\ \ \ \ \ b3Vector3\ \_y;}
+\DoxyCodeLine{00943\ }
+\DoxyCodeLine{00944\ \ \ \ \ \_y\ =\ wAxis.cross(*\textcolor{keyword}{this});}
+\DoxyCodeLine{00945\ }
+\DoxyCodeLine{00946\ \ \ \ \ \textcolor{keywordflow}{return}\ (o\ +\ \_x\ *\ b3Cos(\_angle)\ +\ \_y\ *\ b3Sin(\_angle));}
+\DoxyCodeLine{00947\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00948\ \}}
+\DoxyCodeLine{00949\ }
+\DoxyCodeLine{00950\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{long}\ b3Vector3::maxDot(\textcolor{keyword}{const}\ b3Vector3*\ array,\ \textcolor{keywordtype}{long}\ array\_count,\ b3Scalar\&\ dotOut)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00951\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00952\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE)\ ||\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00953\ \textcolor{preprocessor}{\#if\ defined\ \_WIN32\ ||\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{00954\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{long}\ scalar\_cutoff\ =\ 10;}
+\DoxyCodeLine{00955\ \ \ \ \ \textcolor{keywordtype}{long}\ b3\_maxdot\_large(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ array,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ vec,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ array\_count,\ \textcolor{keywordtype}{float}*\ dotOut);}
+\DoxyCodeLine{00956\ \textcolor{preprocessor}{\#elif\ defined\ B3\_USE\_NEON}}
+\DoxyCodeLine{00957\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{long}\ scalar\_cutoff\ =\ 4;}
+\DoxyCodeLine{00958\ \ \ \ \ \textcolor{keyword}{extern}\ long\ (*\_maxdot\_large)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ array,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ vec,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ array\_count,\ \textcolor{keywordtype}{float}*\ dotOut);}
+\DoxyCodeLine{00959\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00960\ \ \ \ \ \textcolor{keywordflow}{if}\ (array\_count\ <\ scalar\_cutoff)}
+\DoxyCodeLine{00961\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00962\ }
+\DoxyCodeLine{00963\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_SSE\ ||\ B3\_USE\_NEON}}
+\DoxyCodeLine{00964\ \ \ \ \ \{}
+\DoxyCodeLine{00965\ \ \ \ \ \ \ \ \ b3Scalar\ maxDot\ =\ -\/B3\_INFINITY;}
+\DoxyCodeLine{00966\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ 0;}
+\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ptIndex\ =\ -\/1;}
+\DoxyCodeLine{00968\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ array\_count;\ i++)}
+\DoxyCodeLine{00969\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00970\ \ \ \ \ \ \ \ \ \ \ \ \ b3Scalar\ dot\ =\ array[i].dot(*\textcolor{keyword}{this});}
+\DoxyCodeLine{00971\ }
+\DoxyCodeLine{00972\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ >\ maxDot)}
+\DoxyCodeLine{00973\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00974\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxDot\ =\ dot;}
+\DoxyCodeLine{00975\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ptIndex\ =\ i;}
+\DoxyCodeLine{00976\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00977\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00978\ }
+\DoxyCodeLine{00979\ \ \ \ \ \ \ \ \ b3Assert(ptIndex\ >=\ 0);}
+\DoxyCodeLine{00980\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptIndex\ <\ 0)}
+\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ \ \ \ \ ptIndex\ =\ 0;}
+\DoxyCodeLine{00983\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ dotOut\ =\ maxDot;}
+\DoxyCodeLine{00985\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptIndex;}
+\DoxyCodeLine{00986\ \ \ \ \ \}}
+\DoxyCodeLine{00987\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE)\ ||\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00988\ \ \ \ \ \textcolor{keywordflow}{return}\ b3\_maxdot\_large((\textcolor{keywordtype}{float}*)array,\ (\textcolor{keywordtype}{float}*)\&m\_floats[0],\ array\_count,\ \&dotOut);}
+\DoxyCodeLine{00989\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00990\ \}}
+\DoxyCodeLine{00991\ }
+\DoxyCodeLine{00992\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{long}\ b3Vector3::minDot(\textcolor{keyword}{const}\ b3Vector3*\ array,\ \textcolor{keywordtype}{long}\ array\_count,\ b3Scalar\&\ dotOut)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00993\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00994\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE)\ ||\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{00995\ \textcolor{preprocessor}{\#if\ defined\ B3\_USE\_SSE}}
+\DoxyCodeLine{00996\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{long}\ scalar\_cutoff\ =\ 10;}
+\DoxyCodeLine{00997\ \ \ \ \ \textcolor{keywordtype}{long}\ b3\_mindot\_large(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ array,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ vec,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ array\_count,\ \textcolor{keywordtype}{float}*\ dotOut);}
+\DoxyCodeLine{00998\ \textcolor{preprocessor}{\#elif\ defined\ B3\_USE\_NEON}}
+\DoxyCodeLine{00999\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{long}\ scalar\_cutoff\ =\ 4;}
+\DoxyCodeLine{01000\ \ \ \ \ \textcolor{keyword}{extern}\ long\ (*b3\_mindot\_large)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ array,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ vec,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ array\_count,\ \textcolor{keywordtype}{float}*\ dotOut);}
+\DoxyCodeLine{01001\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01002\ \textcolor{preprocessor}{\#error\ unhandled\ arch!}}
+\DoxyCodeLine{01003\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01004\ }
+\DoxyCodeLine{01005\ \ \ \ \ \textcolor{keywordflow}{if}\ (array\_count\ <\ scalar\_cutoff)}
+\DoxyCodeLine{01006\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_SSE\ ||\ B3\_USE\_NEON}}
+\DoxyCodeLine{01007\ \ \ \ \ \{}
+\DoxyCodeLine{01008\ \ \ \ \ \ \ \ \ b3Scalar\ minDot\ =\ B3\_INFINITY;}
+\DoxyCodeLine{01009\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ 0;}
+\DoxyCodeLine{01010\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ptIndex\ =\ -\/1;}
+\DoxyCodeLine{01011\ }
+\DoxyCodeLine{01012\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ array\_count;\ i++)}
+\DoxyCodeLine{01013\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01014\ \ \ \ \ \ \ \ \ \ \ \ \ b3Scalar\ dot\ =\ array[i].dot(*\textcolor{keyword}{this});}
+\DoxyCodeLine{01015\ }
+\DoxyCodeLine{01016\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ <\ minDot)}
+\DoxyCodeLine{01017\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minDot\ =\ dot;}
+\DoxyCodeLine{01019\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ptIndex\ =\ i;}
+\DoxyCodeLine{01020\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01021\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01022\ }
+\DoxyCodeLine{01023\ \ \ \ \ \ \ \ \ dotOut\ =\ minDot;}
+\DoxyCodeLine{01024\ }
+\DoxyCodeLine{01025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptIndex;}
+\DoxyCodeLine{01026\ \ \ \ \ \}}
+\DoxyCodeLine{01027\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE)\ ||\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{01028\ \ \ \ \ \textcolor{keywordflow}{return}\ b3\_mindot\_large((\textcolor{keywordtype}{float}*)array,\ (\textcolor{keywordtype}{float}*)\&m\_floats[0],\ array\_count,\ \&dotOut);}
+\DoxyCodeLine{01029\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01030\ \}}
+\DoxyCodeLine{01031\ }
+\DoxyCodeLine{01032\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ :\ \textcolor{keyword}{public}\ b3Vector3}
+\DoxyCodeLine{01033\ \{}
+\DoxyCodeLine{01034\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{01035\ \ \ \ \ B3\_FORCE\_INLINE\ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ absolute4()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01036\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{01037\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{01038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector4(\_mm\_and\_ps(mVec128,\ b3vAbsfMask));}
+\DoxyCodeLine{01039\ \textcolor{preprocessor}{\#elif\ defined(B3\_USE\_NEON)}}
+\DoxyCodeLine{01040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}(vabsq\_f32(mVec128));}
+\DoxyCodeLine{01041\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3MakeVector4(}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \ \ \ \ b3Fabs(m\_floats[0]),}
+\DoxyCodeLine{01044\ \ \ \ \ \ \ \ \ \ \ \ \ b3Fabs(m\_floats[1]),}
+\DoxyCodeLine{01045\ \ \ \ \ \ \ \ \ \ \ \ \ b3Fabs(m\_floats[2]),}
+\DoxyCodeLine{01046\ \ \ \ \ \ \ \ \ \ \ \ \ b3Fabs(m\_floats[3]));}
+\DoxyCodeLine{01047\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01048\ \ \ \ \ \}}
+\DoxyCodeLine{01049\ }
+\DoxyCodeLine{01050\ \ \ \ \ b3Scalar\ getW()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[3];\ \}}
+\DoxyCodeLine{01051\ }
+\DoxyCodeLine{01052\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ maxAxis4()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01053\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{01054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ maxIndex\ =\ -\/1;}
+\DoxyCodeLine{01055\ \ \ \ \ \ \ \ \ b3Scalar\ maxVal\ =\ b3Scalar(-\/B3\_LARGE\_FLOAT);}
+\DoxyCodeLine{01056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[0]\ >\ maxVal)}
+\DoxyCodeLine{01057\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01058\ \ \ \ \ \ \ \ \ \ \ \ \ maxIndex\ =\ 0;}
+\DoxyCodeLine{01059\ \ \ \ \ \ \ \ \ \ \ \ \ maxVal\ =\ m\_floats[0];}
+\DoxyCodeLine{01060\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[1]\ >\ maxVal)}
+\DoxyCodeLine{01062\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01063\ \ \ \ \ \ \ \ \ \ \ \ \ maxIndex\ =\ 1;}
+\DoxyCodeLine{01064\ \ \ \ \ \ \ \ \ \ \ \ \ maxVal\ =\ m\_floats[1];}
+\DoxyCodeLine{01065\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[2]\ >\ maxVal)}
+\DoxyCodeLine{01067\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01068\ \ \ \ \ \ \ \ \ \ \ \ \ maxIndex\ =\ 2;}
+\DoxyCodeLine{01069\ \ \ \ \ \ \ \ \ \ \ \ \ maxVal\ =\ m\_floats[2];}
+\DoxyCodeLine{01070\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[3]\ >\ maxVal)}
+\DoxyCodeLine{01072\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01073\ \ \ \ \ \ \ \ \ \ \ \ \ maxIndex\ =\ 3;}
+\DoxyCodeLine{01074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01075\ }
+\DoxyCodeLine{01076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ maxIndex;}
+\DoxyCodeLine{01077\ \ \ \ \ \}}
+\DoxyCodeLine{01078\ }
+\DoxyCodeLine{01079\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ minAxis4()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01080\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{01081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ minIndex\ =\ -\/1;}
+\DoxyCodeLine{01082\ \ \ \ \ \ \ \ \ b3Scalar\ minVal\ =\ b3Scalar(B3\_LARGE\_FLOAT);}
+\DoxyCodeLine{01083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[0]\ <\ minVal)}
+\DoxyCodeLine{01084\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01085\ \ \ \ \ \ \ \ \ \ \ \ \ minIndex\ =\ 0;}
+\DoxyCodeLine{01086\ \ \ \ \ \ \ \ \ \ \ \ \ minVal\ =\ m\_floats[0];}
+\DoxyCodeLine{01087\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[1]\ <\ minVal)}
+\DoxyCodeLine{01089\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01090\ \ \ \ \ \ \ \ \ \ \ \ \ minIndex\ =\ 1;}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ \ \ \ \ minVal\ =\ m\_floats[1];}
+\DoxyCodeLine{01092\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[2]\ <\ minVal)}
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ \ \ \ \ minIndex\ =\ 2;}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ \ \ \ \ minVal\ =\ m\_floats[2];}
+\DoxyCodeLine{01097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_floats[3]\ <\ minVal)}
+\DoxyCodeLine{01099\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01100\ \ \ \ \ \ \ \ \ \ \ \ \ minIndex\ =\ 3;}
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \ \ \ \ minVal\ =\ m\_floats[3];}
+\DoxyCodeLine{01102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01103\ }
+\DoxyCodeLine{01104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ minIndex;}
+\DoxyCodeLine{01105\ \ \ \ \ \}}
+\DoxyCodeLine{01106\ }
+\DoxyCodeLine{01107\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ closestAxis4()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01108\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{01109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ absolute4().maxAxis4();}
+\DoxyCodeLine{01110\ \ \ \ \ \}}
+\DoxyCodeLine{01111\ }
+\DoxyCodeLine{01118\ \ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ void\ getValue(b3Scalar\ *m)\ const}}
+\DoxyCodeLine{01119\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{01120\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ m[0]\ =\ m\_floats[0];}}
+\DoxyCodeLine{01121\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ m[1]\ =\ m\_floats[1];}}
+\DoxyCodeLine{01122\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ m[2]\ =m\_floats[2];}}
+\DoxyCodeLine{01123\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{01124\ \textcolor{comment}{*/}}
+\DoxyCodeLine{01131\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_vector4_a84a6ca4ce77953fb5bc61670f3c91cac}{setValue}}(\textcolor{keyword}{const}\ b3Scalar\&\ \_x,\ \textcolor{keyword}{const}\ b3Scalar\&\ \_y,\ \textcolor{keyword}{const}\ b3Scalar\&\ \_z,\ \textcolor{keyword}{const}\ b3Scalar\&\ \_w)}
+\DoxyCodeLine{01132\ \ \ \ \ \{}
+\DoxyCodeLine{01133\ \ \ \ \ \ \ \ \ m\_floats[0]\ =\ \_x;}
+\DoxyCodeLine{01134\ \ \ \ \ \ \ \ \ m\_floats[1]\ =\ \_y;}
+\DoxyCodeLine{01135\ \ \ \ \ \ \ \ \ m\_floats[2]\ =\ \_z;}
+\DoxyCodeLine{01136\ \ \ \ \ \ \ \ \ m\_floats[3]\ =\ \_w;}
+\DoxyCodeLine{01137\ \ \ \ \ \}}
+\DoxyCodeLine{01138\ \};}
+\DoxyCodeLine{01139\ }
+\DoxyCodeLine{01141\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3SwapScalarEndian(\textcolor{keyword}{const}\ b3Scalar\&\ sourceVal,\ b3Scalar\&\ destVal)}
+\DoxyCodeLine{01142\ \{}
+\DoxyCodeLine{01143\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{01144\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ dest\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)\&destVal;}
+\DoxyCodeLine{01145\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ src\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)\&sourceVal;}
+\DoxyCodeLine{01146\ \ \ \ \ dest[0]\ =\ src[7];}
+\DoxyCodeLine{01147\ \ \ \ \ dest[1]\ =\ src[6];}
+\DoxyCodeLine{01148\ \ \ \ \ dest[2]\ =\ src[5];}
+\DoxyCodeLine{01149\ \ \ \ \ dest[3]\ =\ src[4];}
+\DoxyCodeLine{01150\ \ \ \ \ dest[4]\ =\ src[3];}
+\DoxyCodeLine{01151\ \ \ \ \ dest[5]\ =\ src[2];}
+\DoxyCodeLine{01152\ \ \ \ \ dest[6]\ =\ src[1];}
+\DoxyCodeLine{01153\ \ \ \ \ dest[7]\ =\ src[0];}
+\DoxyCodeLine{01154\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01155\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ dest\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)\&destVal;}
+\DoxyCodeLine{01156\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ src\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)\&sourceVal;}
+\DoxyCodeLine{01157\ \ \ \ \ dest[0]\ =\ src[3];}
+\DoxyCodeLine{01158\ \ \ \ \ dest[1]\ =\ src[2];}
+\DoxyCodeLine{01159\ \ \ \ \ dest[2]\ =\ src[1];}
+\DoxyCodeLine{01160\ \ \ \ \ dest[3]\ =\ src[0];}
+\DoxyCodeLine{01161\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{01162\ \}}
+\DoxyCodeLine{01164\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3SwapVector3Endian(\textcolor{keyword}{const}\ b3Vector3\&\ sourceVec,\ b3Vector3\&\ destVec)}
+\DoxyCodeLine{01165\ \{}
+\DoxyCodeLine{01166\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01167\ \ \ \ \ \{}
+\DoxyCodeLine{01168\ \ \ \ \ \ \ \ \ b3SwapScalarEndian(sourceVec[i],\ destVec[i]);}
+\DoxyCodeLine{01169\ \ \ \ \ \}}
+\DoxyCodeLine{01170\ \}}
+\DoxyCodeLine{01171\ }
+\DoxyCodeLine{01173\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3UnSwapVector3Endian(b3Vector3\&\ vector)}
+\DoxyCodeLine{01174\ \{}
+\DoxyCodeLine{01175\ \ \ \ \ b3Vector3\ swappedVec;}
+\DoxyCodeLine{01176\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01177\ \ \ \ \ \{}
+\DoxyCodeLine{01178\ \ \ \ \ \ \ \ \ b3SwapScalarEndian(vector[i],\ swappedVec[i]);}
+\DoxyCodeLine{01179\ \ \ \ \ \}}
+\DoxyCodeLine{01180\ \ \ \ \ vector\ =\ swappedVec;}
+\DoxyCodeLine{01181\ \}}
+\DoxyCodeLine{01182\ }
+\DoxyCodeLine{01183\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{01184\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3PlaneSpace1(\textcolor{keyword}{const}\ T\&\ n,\ T\&\ p,\ T\&\ q)}
+\DoxyCodeLine{01185\ \{}
+\DoxyCodeLine{01186\ \ \ \ \ \textcolor{keywordflow}{if}\ (b3Fabs(n[2])\ >\ B3\_SQRT12)}
+\DoxyCodeLine{01187\ \ \ \ \ \{}
+\DoxyCodeLine{01188\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ choose\ p\ in\ y-\/z\ plane}}
+\DoxyCodeLine{01189\ \ \ \ \ \ \ \ \ b3Scalar\ a\ =\ n[1]\ *\ n[1]\ +\ n[2]\ *\ n[2];}
+\DoxyCodeLine{01190\ \ \ \ \ \ \ \ \ b3Scalar\ k\ =\ b3RecipSqrt(a);}
+\DoxyCodeLine{01191\ \ \ \ \ \ \ \ \ p[0]\ =\ 0;}
+\DoxyCodeLine{01192\ \ \ \ \ \ \ \ \ p[1]\ =\ -\/n[2]\ *\ k;}
+\DoxyCodeLine{01193\ \ \ \ \ \ \ \ \ p[2]\ =\ n[1]\ *\ k;}
+\DoxyCodeLine{01194\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\ q\ =\ n\ x\ p}}
+\DoxyCodeLine{01195\ \ \ \ \ \ \ \ \ q[0]\ =\ a\ *\ k;}
+\DoxyCodeLine{01196\ \ \ \ \ \ \ \ \ q[1]\ =\ -\/n[0]\ *\ p[2];}
+\DoxyCodeLine{01197\ \ \ \ \ \ \ \ \ q[2]\ =\ n[0]\ *\ p[1];}
+\DoxyCodeLine{01198\ \ \ \ \ \}}
+\DoxyCodeLine{01199\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01200\ \ \ \ \ \{}
+\DoxyCodeLine{01201\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ choose\ p\ in\ x-\/y\ plane}}
+\DoxyCodeLine{01202\ \ \ \ \ \ \ \ \ b3Scalar\ a\ =\ n[0]\ *\ n[0]\ +\ n[1]\ *\ n[1];}
+\DoxyCodeLine{01203\ \ \ \ \ \ \ \ \ b3Scalar\ k\ =\ b3RecipSqrt(a);}
+\DoxyCodeLine{01204\ \ \ \ \ \ \ \ \ p[0]\ =\ -\/n[1]\ *\ k;}
+\DoxyCodeLine{01205\ \ \ \ \ \ \ \ \ p[1]\ =\ n[0]\ *\ k;}
+\DoxyCodeLine{01206\ \ \ \ \ \ \ \ \ p[2]\ =\ 0;}
+\DoxyCodeLine{01207\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\ q\ =\ n\ x\ p}}
+\DoxyCodeLine{01208\ \ \ \ \ \ \ \ \ q[0]\ =\ -\/n[2]\ *\ p[1];}
+\DoxyCodeLine{01209\ \ \ \ \ \ \ \ \ q[1]\ =\ n[2]\ *\ p[0];}
+\DoxyCodeLine{01210\ \ \ \ \ \ \ \ \ q[2]\ =\ a\ *\ k;}
+\DoxyCodeLine{01211\ \ \ \ \ \}}
+\DoxyCodeLine{01212\ \}}
+\DoxyCodeLine{01213\ }
+\DoxyCodeLine{01214\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}}
+\DoxyCodeLine{01215\ \{}
+\DoxyCodeLine{01216\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_floats[4];}
+\DoxyCodeLine{01217\ \};}
+\DoxyCodeLine{01218\ }
+\DoxyCodeLine{01219\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}}
+\DoxyCodeLine{01220\ \{}
+\DoxyCodeLine{01221\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_floats[4];}
+\DoxyCodeLine{01222\ \};}
+\DoxyCodeLine{01223\ }
+\DoxyCodeLine{01224\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3Vector3::serializeFloat(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}\&\ dataOut)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01225\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01227\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01228\ \ \ \ \ \ \ \ \ dataOut.m\_floats[i]\ =\ \textcolor{keywordtype}{float}(m\_floats[i]);}
+\DoxyCodeLine{01229\ \}}
+\DoxyCodeLine{01230\ }
+\DoxyCodeLine{01231\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3Vector3::deSerializeFloat(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}\&\ dataIn)}
+\DoxyCodeLine{01232\ \{}
+\DoxyCodeLine{01233\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01234\ \ \ \ \ \ \ \ \ m\_floats[i]\ =\ b3Scalar(dataIn.m\_floats[i]);}
+\DoxyCodeLine{01235\ \}}
+\DoxyCodeLine{01236\ }
+\DoxyCodeLine{01237\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3Vector3::serializeDouble(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}\&\ dataOut)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01238\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01240\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01241\ \ \ \ \ \ \ \ \ dataOut.m\_floats[i]\ =\ \textcolor{keywordtype}{double}(m\_floats[i]);}
+\DoxyCodeLine{01242\ \}}
+\DoxyCodeLine{01243\ }
+\DoxyCodeLine{01244\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3Vector3::deSerializeDouble(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}\&\ dataIn)}
+\DoxyCodeLine{01245\ \{}
+\DoxyCodeLine{01246\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01247\ \ \ \ \ \ \ \ \ m\_floats[i]\ =\ b3Scalar(dataIn.m\_floats[i]);}
+\DoxyCodeLine{01248\ \}}
+\DoxyCodeLine{01249\ }
+\DoxyCodeLine{01250\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3Vector3::serialize(\textcolor{keyword}{struct}\ b3Vector3Data\&\ dataOut)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01251\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01253\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01254\ \ \ \ \ \ \ \ \ dataOut.m\_floats[i]\ =\ m\_floats[i];}
+\DoxyCodeLine{01255\ \}}
+\DoxyCodeLine{01256\ }
+\DoxyCodeLine{01257\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ b3Vector3::deSerialize(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ b3Vector3Data\&\ dataIn)}
+\DoxyCodeLine{01258\ \{}
+\DoxyCodeLine{01259\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{01260\ \ \ \ \ \ \ \ \ m\_floats[i]\ =\ dataIn.m\_floats[i];}
+\DoxyCodeLine{01261\ \}}
+\DoxyCodeLine{01262\ }
+\DoxyCodeLine{01263\ \textcolor{keyword}{inline}\ b3Vector3\ b3MakeVector3(b3Scalar\ x,\ b3Scalar\ y,\ b3Scalar\ z)}
+\DoxyCodeLine{01264\ \{}
+\DoxyCodeLine{01265\ \ \ \ \ b3Vector3\ tmp;}
+\DoxyCodeLine{01266\ \ \ \ \ tmp.setValue(x,\ y,\ z);}
+\DoxyCodeLine{01267\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{01268\ \}}
+\DoxyCodeLine{01269\ }
+\DoxyCodeLine{01270\ \textcolor{keyword}{inline}\ b3Vector3\ b3MakeVector3(b3Scalar\ x,\ b3Scalar\ y,\ b3Scalar\ z,\ b3Scalar\ w)}
+\DoxyCodeLine{01271\ \{}
+\DoxyCodeLine{01272\ \ \ \ \ b3Vector3\ tmp;}
+\DoxyCodeLine{01273\ \ \ \ \ tmp.setValue(x,\ y,\ z);}
+\DoxyCodeLine{01274\ \ \ \ \ tmp.w\ =\ w;}
+\DoxyCodeLine{01275\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{01276\ \}}
+\DoxyCodeLine{01277\ }
+\DoxyCodeLine{01278\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ b3MakeVector4(b3Scalar\ x,\ b3Scalar\ y,\ b3Scalar\ z,\ b3Scalar\ w)}
+\DoxyCodeLine{01279\ \{}
+\DoxyCodeLine{01280\ \ \ \ \ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ tmp;}
+\DoxyCodeLine{01281\ \ \ \ \ tmp.\mbox{\hyperlink{classb3_vector4_a84a6ca4ce77953fb5bc61670f3c91cac}{setValue}}(x,\ y,\ z,\ w);}
+\DoxyCodeLine{01282\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{01283\ \}}
+\DoxyCodeLine{01284\ }
+\DoxyCodeLine{01285\ \textcolor{preprocessor}{\#if\ defined(B3\_USE\_SSE\_IN\_API)\ \&\&\ defined(B3\_USE\_SSE)}}
+\DoxyCodeLine{01286\ }
+\DoxyCodeLine{01287\ \textcolor{keyword}{inline}\ b3Vector3\ b3MakeVector3(b3SimdFloat4\ v)}
+\DoxyCodeLine{01288\ \{}
+\DoxyCodeLine{01289\ \ \ \ \ b3Vector3\ tmp;}
+\DoxyCodeLine{01290\ \ \ \ \ tmp.set128(v);}
+\DoxyCodeLine{01291\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{01292\ \}}
+\DoxyCodeLine{01293\ }
+\DoxyCodeLine{01294\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ b3MakeVector4(b3SimdFloat4\ vec)}
+\DoxyCodeLine{01295\ \{}
+\DoxyCodeLine{01296\ \ \ \ \ \mbox{\hyperlink{classb3_vector4}{b3Vector4}}\ tmp;}
+\DoxyCodeLine{01297\ \ \ \ \ tmp.set128(vec);}
+\DoxyCodeLine{01298\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{01299\ \}}
+\DoxyCodeLine{01300\ }
+\DoxyCodeLine{01301\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01302\ }
+\DoxyCodeLine{01303\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_VECTOR3\_H}}
+
+\end{DoxyCode}

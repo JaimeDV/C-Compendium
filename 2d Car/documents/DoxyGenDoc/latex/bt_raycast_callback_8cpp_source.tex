@@ -1,0 +1,181 @@
+\doxysection{bt\+Raycast\+Callback.\+cpp}
+\hypertarget{bt_raycast_callback_8cpp_source}{}\label{bt_raycast_callback_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\#include\ <stdio.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexShape.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btTriangleShape.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkConvexCast.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btContinuousConvexCollision.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkEpaPenetrationDepthSolver.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}btRaycastCallback.h"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ btTriangleRaycastCallback::btTriangleRaycastCallback(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags)}
+\DoxyCodeLine{00027\ \ \ \ \ :\ m\_from(from),}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ m\_to(to),}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \textcolor{comment}{//@BP\ Mod}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ m\_flags(flags),}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ m\_hitFraction(btScalar(1.))}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ btTriangleRaycastCallback::processTriangle(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vert0\ =\ triangle[0];}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vert1\ =\ triangle[1];}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vert2\ =\ triangle[2];}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ btVector3\ v10;}
+\DoxyCodeLine{00042\ \ \ \ \ v10\ =\ vert1\ -\/\ vert0;}
+\DoxyCodeLine{00043\ \ \ \ \ btVector3\ v20;}
+\DoxyCodeLine{00044\ \ \ \ \ v20\ =\ vert2\ -\/\ vert0;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__gtx__normal_ga81559dbb043923772a63a87b711188ae}{triangleNormal}};}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{group__gtx__normal_ga81559dbb043923772a63a87b711188ae}{triangleNormal}}\ =\ v10.cross(v20);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ dist\ =\ vert0.dot(triangleNormal);}
+\DoxyCodeLine{00050\ \ \ \ \ btScalar\ dist\_a\ =\ \mbox{\hyperlink{group__gtx__normal_ga81559dbb043923772a63a87b711188ae}{triangleNormal}}.dot(m\_from);}
+\DoxyCodeLine{00051\ \ \ \ \ dist\_a\ -\/=\ dist;}
+\DoxyCodeLine{00052\ \ \ \ \ btScalar\ dist\_b\ =\ \mbox{\hyperlink{group__gtx__normal_ga81559dbb043923772a63a87b711188ae}{triangleNormal}}.dot(m\_to);}
+\DoxyCodeLine{00053\ \ \ \ \ dist\_b\ -\/=\ dist;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\_a\ *\ dist\_b\ >=\ btScalar(0.0))}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};\ \ \textcolor{comment}{//\ same\ sign}}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{if}\ (((m\_flags\ \&\ kF\_FilterBackfaces)\ !=\ 0)\ \&\&\ (dist\_a\ <=\ btScalar(0.0)))}
+\DoxyCodeLine{00061\ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Backface,\ skip\ check}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ proj\_length\ =\ dist\_a\ -\/\ dist\_b;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ distance\ =\ (dist\_a)\ /\ (proj\_length);}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ Now\ we\ have\ the\ intersection\ point\ on\ the\ plane,\ we'll\ see\ if\ it's\ inside\ the\ triangle}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ Add\ an\ epsilon\ as\ a\ tolerance\ for\ the\ raycast,}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ in\ case\ the\ ray\ hits\ exacly\ on\ the\ edge\ of\ the\ triangle.}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{//\ It\ must\ be\ scaled\ for\ the\ triangle\ size.}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordflow}{if}\ (distance\ <\ m\_hitFraction)}
+\DoxyCodeLine{00074\ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ btScalar\ edge\_tolerance\ =\ \mbox{\hyperlink{group__gtx__normal_ga81559dbb043923772a63a87b711188ae}{triangleNormal}}.length2();}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ edge\_tolerance\ *=\ btScalar(-\/0.0001);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ btVector3\ point;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ point.setInterpolate3(m\_from,\ m\_to,\ distance);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ v0p;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ v0p\ =\ vert0\ -\/\ point;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ v1p;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ v1p\ =\ vert1\ -\/\ point;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ cp0;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ cp0\ =\ v0p.cross(v1p);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((btScalar)(cp0.dot(triangleNormal))\ >=\ edge\_tolerance)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ v2p;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v2p\ =\ vert2\ -\/\ point;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ cp1;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp1\ =\ v1p.cross(v2p);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((btScalar)(cp1.dot(triangleNormal))\ >=\ edge\_tolerance)}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ cp2;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp2\ =\ v2p.cross(v0p);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((btScalar)(cp2.dot(triangleNormal))\ >=\ edge\_tolerance)}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//@BP\ Mod}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Triangle\ normal\ isn't\ normalized}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtx__normal_ga81559dbb043923772a63a87b711188ae}{triangleNormal}}.normalize();}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//@BP\ Mod\ -\/\ Allow\ for\ unflipped\ normal\ when\ raycasting\ against\ backfaces}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((m\_flags\ \&\ kF\_KeepUnflippedNormal)\ ==\ 0)\ \&\&\ (dist\_a\ <=\ btScalar(0.0)))}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_hitFraction\ =\ reportHit(-\/triangleNormal,\ distance,\ partId,\ triangleIndex);}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_hitFraction\ =\ reportHit(triangleNormal,\ distance,\ partId,\ triangleIndex);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+\DoxyCodeLine{00118\ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ btTriangleConvexcastCallback::btTriangleConvexcastCallback(\textcolor{keyword}{const}\ btConvexShape*\ convexShape,\ \textcolor{keyword}{const}\ btTransform\&\ convexShapeFrom,\ \textcolor{keyword}{const}\ btTransform\&\ convexShapeTo,\ \textcolor{keyword}{const}\ btTransform\&\ triangleToWorld,\ \textcolor{keyword}{const}\ btScalar\ triangleCollisionMargin)}
+\DoxyCodeLine{00121\ \{}
+\DoxyCodeLine{00122\ \ \ \ \ m\_convexShape\ =\ convexShape;}
+\DoxyCodeLine{00123\ \ \ \ \ m\_convexShapeFrom\ =\ convexShapeFrom;}
+\DoxyCodeLine{00124\ \ \ \ \ m\_convexShapeTo\ =\ convexShapeTo;}
+\DoxyCodeLine{00125\ \ \ \ \ m\_triangleToWorld\ =\ triangleToWorld;}
+\DoxyCodeLine{00126\ \ \ \ \ m\_hitFraction\ =\ 1.0f;}
+\DoxyCodeLine{00127\ \ \ \ \ m\_triangleCollisionMargin\ =\ triangleCollisionMargin;}
+\DoxyCodeLine{00128\ \ \ \ \ m\_allowedPenetration\ =\ 0.f;}
+\DoxyCodeLine{00129\ \}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ btTriangleConvexcastCallback::processTriangle(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00132\ \{}
+\DoxyCodeLine{00133\ \ \ \ \ btTriangleShape\ triangleShape(triangle[0],\ triangle[1],\ triangle[2]);}
+\DoxyCodeLine{00134\ \ \ \ \ triangleShape.setMargin(m\_triangleCollisionMargin);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ btVoronoiSimplexSolver\ simplexSolver;}
+\DoxyCodeLine{00137\ \ \ \ \ \mbox{\hyperlink{classbt_gjk_epa_penetration_depth_solver}{btGjkEpaPenetrationDepthSolver}}\ gjkEpaPenetrationSolver;}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{comment}{//\#define\ \ USE\_SUBSIMPLEX\_CONVEX\_CAST\ 1}}
+\DoxyCodeLine{00140\ \textcolor{comment}{//if\ you\ reenable\ USE\_SUBSIMPLEX\_CONVEX\_CAST\ see\ commented\ out\ code\ below}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#ifdef\ USE\_SUBSIMPLEX\_CONVEX\_CAST}}
+\DoxyCodeLine{00142\ \ \ \ \ \mbox{\hyperlink{classbt_subsimplex_convex_cast}{btSubsimplexConvexCast}}\ convexCaster(m\_convexShape,\ \&triangleShape,\ \&simplexSolver);}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{//btGjkConvexCast\ \ \ convexCaster(m\_convexShape,\&triangleShape,\&simplexSolver);}}
+\DoxyCodeLine{00145\ \ \ \ \ \mbox{\hyperlink{classbt_continuous_convex_collision}{btContinuousConvexCollision}}\ convexCaster(m\_convexShape,\ \&triangleShape,\ \&simplexSolver,\ \&gjkEpaPenetrationSolver);}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\#USE\_SUBSIMPLEX\_CONVEX\_CAST}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{btConvexCast::CastResult}}\ castResult;}
+\DoxyCodeLine{00149\ \ \ \ \ castResult.m\_fraction\ =\ btScalar(1.);}
+\DoxyCodeLine{00150\ \ \ \ \ castResult.m\_allowedPenetration\ =\ m\_allowedPenetration;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordflow}{if}\ (convexCaster.calcTimeOfImpact(m\_convexShapeFrom,\ m\_convexShapeTo,\ m\_triangleToWorld,\ m\_triangleToWorld,\ castResult))}
+\DoxyCodeLine{00152\ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ hit}}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_normal.length2()\ >\ btScalar(0.0001))}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_fraction\ <\ m\_hitFraction)}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ btContinuousConvexCast's\ normal\ is\ already\ in\ world\ space\ */}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\#ifdef\ USE\_SUBSIMPLEX\_CONVEX\_CAST}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //rotate\ normal\ into\ worldspace}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal\ =\ m\_convexShapeFrom.getBasis()\ *\ castResult.m\_normal;}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\#endif\ //USE\_SUBSIMPLEX\_CONVEX\_CAST}}
+\DoxyCodeLine{00164\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal.normalize();}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reportHit(castResult.m\_normal,}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_hitPoint,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_fraction,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ partId,}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangleIndex);}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00174\ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \}}
+
+\end{DoxyCode}

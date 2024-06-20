@@ -1,0 +1,513 @@
+\doxysection{b3\+Aligned\+Object\+Array.\+h}
+\hypertarget{b3_aligned_object_array_8h_source}{}\label{b3_aligned_object_array_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3AlignedObjectArray.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3AlignedObjectArray.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ B3\_OBJECT\_ARRAY\_\_}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ B3\_OBJECT\_ARRAY\_\_}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}b3Scalar.h"{}}\ \ \textcolor{comment}{//\ has\ definitions\ like\ B3\_FORCE\_INLINE}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}b3AlignedAllocator.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ B3\_USE\_PLACEMENT\_NEW\ 1}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\#define\ B3\_USE\_MEMCPY\ 1\ //disable,\ because\ it\ is\ cumbersome\ to\ find\ out\ for\ each\ platform\ where\ memcpy\ is\ defined.\ It\ can\ be\ in\ <memory.h>\ or\ <string.h>\ or\ otherwise...}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ B3\_ALLOW\_ARRAY\_COPY\_OPERATOR\ \ }\textcolor{comment}{//\ enabling\ this\ can\ accidently\ perform\ deep\ copies\ of\ data\ if\ you\ are\ not\ careful}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_MEMCPY}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <memory.h>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_MEMCPY}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <new>}\ \ \textcolor{comment}{//for\ placement\ new}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00044\ \textcolor{comment}{//template\ <class\ T>}}
+\DoxyCodeLine{00045\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray}}}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_allocator}{b3AlignedAllocator<T,\ 16>}}\ m\_allocator;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_size;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_capacity;}
+\DoxyCodeLine{00051\ \ \ \ \ T*\ m\_data;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//PCK:\ added\ this\ line}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ownsMemory;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#ifdef\ B3\_ALLOW\_ARRAY\_COPY\_OPERATOR}}
+\DoxyCodeLine{00056\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00057\ \ \ \ \ B3\_FORCE\_INLINE\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<T>}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<T>}}\&\ other)}
+\DoxyCodeLine{00058\ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ copyFromArray(other);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#else\ \ \ }\textcolor{comment}{//B3\_ALLOW\_ARRAY\_COPY\_OPERATOR}}
+\DoxyCodeLine{00063\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00064\ \ \ \ \ B3\_FORCE\_INLINE\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<T>}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<T>}}\&\ other);}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_ALLOW\_ARRAY\_COPY\_OPERATOR}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00068\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ allocSize(\textcolor{keywordtype}{int}\ size)}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (size\ ?\ size\ *\ 2\ :\ 1);}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ copy(\textcolor{keywordtype}{int}\ start,\ \textcolor{keywordtype}{int}\ end,\ T*\ dest)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00073\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ start;\ i\ <\ end;\ ++i)}
+\DoxyCodeLine{00076\ \#ifdef\ B3\_USE\_PLACEMENT\_NEW}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\&dest[i])\ T(m\_data[i]);}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ dest[i]\ =\ m\_data[i];}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ init()}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{comment}{//PCK:\ added\ this\ line}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ m\_ownsMemory\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ m\_data\ =\ 0;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ m\_size\ =\ 0;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ m\_capacity\ =\ 0;}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ destroy(\textcolor{keywordtype}{int}\ first,\ \textcolor{keywordtype}{int}\ last)}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ first;\ i\ <\ last;\ i++)}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ m\_data[i].\string~T();}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}*\ allocate(\textcolor{keywordtype}{int}\ size)}
+\DoxyCodeLine{00101\ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (size)}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_allocator.allocate(size);}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ deallocate()}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_data)}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//PCK:\ enclosed\ the\ deallocation\ in\ this\ block}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_ownsMemory)}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allocator.deallocate(m\_data);}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ m\_data\ =\ 0;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00121\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray}}()}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ init();}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{\string~b3AlignedObjectArray}}()}
+\DoxyCodeLine{00127\ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array_acdc54ab1ea43d23576dfcd62ca643995}{clear}}();}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00132\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array_ae62126efa9fbd38a59fac11b03639086}{b3AlignedObjectArray}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray}}\&\ otherArray)}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ init();}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ otherSize\ =\ otherArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ resize(otherSize);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ otherArray.copy(0,\ otherSize,\ m\_data);}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00142\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00143\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_size;}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{const}\ T\&\ at(\textcolor{keywordtype}{int}\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00148\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ b3Assert(n\ >=\ 0);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ b3Assert(n\ <\ size());}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[n];}
+\DoxyCodeLine{00152\ \ \ \ \ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ B3\_FORCE\_INLINE\ T\&\ at(\textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ b3Assert(n\ >=\ 0);}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ b3Assert(n\ <\ size());}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[n];}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keyword}{const}\ T\&\ operator[](\textcolor{keywordtype}{int}\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00162\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ b3Assert(n\ >=\ 0);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ b3Assert(n\ <\ size());}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[n];}
+\DoxyCodeLine{00166\ \ \ \ \ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ B3\_FORCE\_INLINE\ T\&\ operator[](\textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00169\ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ b3Assert(n\ >=\ 0);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ b3Assert(n\ <\ size());}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[n];}
+\DoxyCodeLine{00173\ \ \ \ \ \}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00176\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_aligned_object_array_acdc54ab1ea43d23576dfcd62ca643995}{clear}}()}
+\DoxyCodeLine{00177\ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ destroy(0,\ size());}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ deallocate();}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ init();}
+\DoxyCodeLine{00183\ \ \ \ \ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ pop\_back()}
+\DoxyCodeLine{00186\ \ \ \ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ b3Assert(m\_size\ >\ 0);}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ m\_size-\/-\/;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ m\_data[m\_size].\string~T();}
+\DoxyCodeLine{00190\ \ \ \ \ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00194\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_aligned_object_array_a5f21071bc7b73c1a0b4fcfde123e5182}{resizeNoInitialize}}(\textcolor{keywordtype}{int}\ newsize)}
+\DoxyCodeLine{00195\ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ curSize\ =\ size();}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newsize\ <\ curSize)}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newsize\ >\ size())}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reserve(newsize);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//leave\ this\ uninitialized}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ m\_size\ =\ newsize;}
+\DoxyCodeLine{00210\ \ \ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ resize(\textcolor{keywordtype}{int}\ newsize,\ \textcolor{keyword}{const}\ T\&\ fillData\ =\ T())}
+\DoxyCodeLine{00213\ \ \ \ \ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ curSize\ =\ size();}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newsize\ <\ curSize)}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ newsize;\ i\ <\ curSize;\ i++)}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_data[i].\string~T();}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newsize\ >\ size())}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reserve(newsize);}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ curSize;\ i\ <\ newsize;\ i++)}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\&m\_data[i])\ T(fillData);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ m\_size\ =\ newsize;}
+\DoxyCodeLine{00238\ \ \ \ \ \}}
+\DoxyCodeLine{00239\ \ \ \ \ B3\_FORCE\_INLINE\ T\&\ expandNonInitializing()}
+\DoxyCodeLine{00240\ \ \ \ \ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ size();}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sz\ ==\ \mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}())}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ reserve(allocSize(size()));}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ m\_size++;}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[sz];}
+\DoxyCodeLine{00249\ \ \ \ \ \}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ B3\_FORCE\_INLINE\ T\&\ expand(\textcolor{keyword}{const}\ T\&\ fillValue\ =\ T())}
+\DoxyCodeLine{00252\ \ \ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ size();}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sz\ ==\ \mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}())}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ reserve(allocSize(size()));}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ m\_size++;}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\&m\_data[sz])\ T(fillValue);\ \ \textcolor{comment}{//use\ the\ in-\/place\ new\ (not\ really\ allocating\ heap\ memory)}}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[sz];}
+\DoxyCodeLine{00264\ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ push\_back(\textcolor{keyword}{const}\ T\&\ \_Val)}
+\DoxyCodeLine{00267\ \ \ \ \ \{}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ size();}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sz\ ==\ \mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}())}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ reserve(allocSize(size()));}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\&m\_data[m\_size])\ T(\_Val);}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ m\_data[size()]\ =\ \_Val;}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ m\_size++;}
+\DoxyCodeLine{00281\ \ \ \ \ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00284\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00285\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_capacity;}
+\DoxyCodeLine{00287\ \ \ \ \ \}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ reserve(\textcolor{keywordtype}{int}\ \_Count)}
+\DoxyCodeLine{00290\ \ \ \ \ \{\ \ \textcolor{comment}{//\ determine\ new\ minimum\ length\ of\ allocated\ storage}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\ <\ \_Count)}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \{\ \ \textcolor{comment}{//\ not\ enough\ room,\ reallocate}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ T*\ s\ =\ (T*)allocate(\_Count);}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(s);}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (s\ ==\ 0)}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Error(\textcolor{stringliteral}{"{}b3AlignedObjectArray\ reserve\ out-\/of-\/memory\(\backslash\)n"{}});}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Count\ =\ 0;}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_size\ =\ 0;}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ copy(0,\ size(),\ s);}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ destroy(0,\ size());}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ deallocate();}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//PCK:\ added\ this\ line}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ m\_ownsMemory\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ m\_data\ =\ s;}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ m\_capacity\ =\ \_Count;}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00314\ \ \ \ \ \}}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_aligned_object_array_1_1less}{less}}}
+\DoxyCodeLine{00317\ \ \ \ \ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ operator()(\textcolor{keyword}{const}\ T\&\ a,\ \textcolor{keyword}{const}\ T\&\ b)}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ <\ b);}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00323\ \ \ \ \ \};}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ L>}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordtype}{void}\ quickSortInternal(\textcolor{keyword}{const}\ L\&\ CompareFunc,\ \textcolor{keywordtype}{int}\ lo,\ \textcolor{keywordtype}{int}\ hi)}
+\DoxyCodeLine{00327\ \ \ \ \ \{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ lo\ is\ the\ lower\ index,\ hi\ is\ the\ upper\ index}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ of\ the\ region\ of\ array\ a\ that\ is\ to\ be\ sorted}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ lo,\ j\ =\ hi;}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ T\ x\ =\ m\_data[(lo\ +\ hi)\ /\ 2];}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ partition}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (CompareFunc(m\_data[i],\ x))}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i++;}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (CompareFunc(x,\ m\_data[j]))}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ j-\/-\/;}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <=\ j)}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ swap(i,\ j);}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i++;}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ j-\/-\/;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (i\ <=\ j);}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ recursion}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lo\ <\ j)}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ quickSortInternal(CompareFunc,\ lo,\ j);}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ hi)}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ quickSortInternal(CompareFunc,\ i,\ hi);}
+\DoxyCodeLine{00353\ \ \ \ \ \}}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ L>}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keywordtype}{void}\ quickSort(\textcolor{keyword}{const}\ L\&\ CompareFunc)}
+\DoxyCodeLine{00357\ \ \ \ \ \{}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \textcolor{comment}{//don't\ sort\ 0\ or\ 1\ elements}}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (size()\ >\ 1)}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ quickSortInternal(CompareFunc,\ 0,\ size()\ -\/\ 1);}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00363\ \ \ \ \ \}}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ L>}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_aligned_object_array_a91e85a8c4395476b954c04c250625440}{downHeap}}(T*\ pArr,\ \textcolor{keywordtype}{int}\ k,\ \textcolor{keywordtype}{int}\ n,\ \textcolor{keyword}{const}\ L\&\ CompareFunc)}
+\DoxyCodeLine{00368\ \ \ \ \ \{}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ \ PRE:\ a[k+1..N]\ is\ a\ heap\ */}}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ POST:\ \ a[k..N]\ \ is\ a\ heap\ */}}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ T\ temp\ =\ pArr[k\ -\/\ 1];}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ k\ has\ child(s)\ */}}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (k\ <=\ n\ /\ 2)}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ child\ =\ 2\ *\ k;}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((child\ <\ n)\ \&\&\ CompareFunc(pArr[child\ -\/\ 1],\ pArr[child]))}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ child++;}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pick\ larger\ child\ */}}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (CompareFunc(temp,\ pArr[child\ -\/\ 1]))}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ move\ child\ up\ */}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pArr[k\ -\/\ 1]\ =\ pArr[child\ -\/\ 1];}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ k\ =\ child;}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ pArr[k\ -\/\ 1]\ =\ temp;}
+\DoxyCodeLine{00395\ \ \ \ \ \}\ \textcolor{comment}{/*downHeap*/}}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keywordtype}{void}\ swap(\textcolor{keywordtype}{int}\ index0,\ \textcolor{keywordtype}{int}\ index1)}
+\DoxyCodeLine{00398\ \ \ \ \ \{}
+\DoxyCodeLine{00399\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_MEMCPY}}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ temp[\textcolor{keyword}{sizeof}(T)];}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ memcpy(temp,\ \&m\_data[index0],\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ memcpy(\&m\_data[index0],\ \&m\_data[index1],\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ memcpy(\&m\_data[index1],\ temp,\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00404\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ T\ temp\ =\ m\_data[index0];}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ m\_data[index0]\ =\ m\_data[index1];}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ m\_data[index1]\ =\ temp;}
+\DoxyCodeLine{00408\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_PLACEMENT\_NEW}}
+\DoxyCodeLine{00409\ \ \ \ \ \}}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00411\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ L>}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordtype}{void}\ heapSort(\textcolor{keyword}{const}\ L\&\ CompareFunc)}
+\DoxyCodeLine{00413\ \ \ \ \ \{}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ sort\ a[0..N-\/1],\ \ N.B.\ 0\ to\ N-\/1\ */}}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ k;}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ m\_size;}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (k\ =\ n\ /\ 2;\ k\ >\ 0;\ k-\/-\/)}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array_a91e85a8c4395476b954c04c250625440}{downHeap}}(m\_data,\ k,\ n,\ CompareFunc);}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00421\ }
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ a[1..N]\ is\ now\ a\ heap\ */}}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (n\ >=\ 1)}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ swap(0,\ n\ -\/\ 1);\ \textcolor{comment}{/*\ largest\ of\ a[0..n-\/1]\ */}}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ n\ =\ n\ -\/\ 1;}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ restore\ a[1..i-\/1]\ heap\ */}}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array_a91e85a8c4395476b954c04c250625440}{downHeap}}(m\_data,\ 1,\ n,\ CompareFunc);}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00431\ \ \ \ \ \}}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00434\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classb3_aligned_object_array_aaf10600f6e97eb192e6e1bc96a40d1fc}{findBinarySearch}}(\textcolor{keyword}{const}\ T\&\ key)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00435\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ first\ =\ 0;}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ last\ =\ size()\ -\/\ 1;}
+\DoxyCodeLine{00438\ }
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \textcolor{comment}{//assume\ sorted\ array}}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (first\ <=\ last)}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mid\ =\ (first\ +\ last)\ /\ 2;\ \ \textcolor{comment}{//\ compute\ mid\ point.}}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (key\ >\ m\_data[mid])}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ first\ =\ mid\ +\ 1;\ \ \textcolor{comment}{//\ repeat\ search\ in\ top\ half.}}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (key\ <\ m\_data[mid])}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ last\ =\ mid\ -\/\ 1;\ \ \textcolor{comment}{//\ repeat\ search\ in\ bottom\ half.}}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mid;\ \ \textcolor{comment}{//\ found\ it.\ return\ position\ /////}}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ size();\ \ \textcolor{comment}{//\ failed\ to\ find\ key}}
+\DoxyCodeLine{00451\ \ \ \ \ \}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ \textcolor{keywordtype}{int}\ findLinearSearch(\textcolor{keyword}{const}\ T\&\ key)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00454\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ size();}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ size();\ i++)}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_data[i]\ ==\ key)}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ index\ =\ i;}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ index;}
+\DoxyCodeLine{00467\ \ \ \ \ \}}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \ \ \ \ \textcolor{keywordtype}{int}\ findLinearSearch2(\textcolor{keyword}{const}\ T\&\ key)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00470\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ -\/1;}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ size();\ i++)}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_data[i]\ ==\ key)}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ index\ =\ i;}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ index;}
+\DoxyCodeLine{00483\ \ \ \ \ \}}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \ \ \ \ \textcolor{keywordtype}{void}\ remove(\textcolor{keyword}{const}\ T\&\ key)}
+\DoxyCodeLine{00486\ \ \ \ \ \{}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ findIndex\ =\ findLinearSearch(key);}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (findIndex\ <\ size())}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ swap(findIndex,\ size()\ -\/\ 1);}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ pop\_back();}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00493\ \ \ \ \ \}}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ \ \ \ \ \textcolor{comment}{//PCK:\ whole\ function}}
+\DoxyCodeLine{00496\ \ \ \ \ \textcolor{keywordtype}{void}\ initializeFromBuffer(\textcolor{keywordtype}{void}*\ buffer,\ \textcolor{keywordtype}{int}\ size,\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}})}
+\DoxyCodeLine{00497\ \ \ \ \ \{}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array_acdc54ab1ea43d23576dfcd62ca643995}{clear}}();}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ m\_ownsMemory\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ m\_data\ =\ (T*)buffer;}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ m\_size\ =\ size;}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ m\_capacity\ =\ \mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}};}
+\DoxyCodeLine{00503\ \ \ \ \ \}}
+\DoxyCodeLine{00504\ }
+\DoxyCodeLine{00505\ \ \ \ \ \textcolor{keywordtype}{void}\ copyFromArray(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray}}\&\ otherArray)}
+\DoxyCodeLine{00506\ \ \ \ \ \{}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ otherSize\ =\ otherArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ resize(otherSize);}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ otherArray.copy(0,\ otherSize,\ m\_data);}
+\DoxyCodeLine{00510\ \ \ \ \ \}}
+\DoxyCodeLine{00511\ }
+\DoxyCodeLine{00512\ \ \ \ \ \textcolor{keywordtype}{void}\ removeAtIndex(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00513\ \ \ \ \ \{}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ <\ size())}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ swap(index,\ size()\ -\/\ 1);}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ pop\_back();}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00519\ \ \ \ \ \}}
+\DoxyCodeLine{00520\ \};}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_OBJECT\_ARRAY\_\_}}
+
+\end{DoxyCode}

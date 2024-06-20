@@ -1,0 +1,151 @@
+\doxysection{bt\+Soft\+Body\+Concave\+Collision\+Algorithm.\+h}
+\hypertarget{bt_soft_body_concave_collision_algorithm_8h_source}{}\label{bt_soft_body_concave_collision_algorithm_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSoftBodyConcaveCollisionAlgorithm.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSoftBodyConcaveCollisionAlgorithm.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_SOFT\_BODY\_CONCAVE\_COLLISION\_ALGORITHM\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_SOFT\_BODY\_CONCAVE\_COLLISION\_ALGORITHM\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btDispatcher.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btTriangleCallback.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}};}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionCreateFunc.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_soft_body}{btSoftBody}};}
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }btCollisionShape;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btHashMap.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btQuantizedBvh.h"{}}\ \ \textcolor{comment}{//for\ definition\ of\ MAX\_NUM\_PARTS\_IN\_BITS}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_tri_index}{btTriIndex}}}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_PartIdTriangleIndex;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{class\ }btCollisionShape*\ m\_childShape;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{structbt_tri_index}{btTriIndex}}(\textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex,\ btCollisionShape*\ shape)}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ m\_PartIdTriangleIndex\ =\ (partId\ <<\ (31\ -\/\ MAX\_NUM\_PARTS\_IN\_BITS))\ |\ triangleIndex;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ m\_childShape\ =\ shape;}
+\DoxyCodeLine{00043\ \ \ \ \ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ getTriangleIndex()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00046\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ only\ the\ lower\ bits\ where\ the\ triangle\ index\ is\ stored}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ x\ =\ 0;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ y\ =\ (\string~(x\ \&\ 0))\ <<\ (31\ -\/\ MAX\_NUM\_PARTS\_IN\_BITS);}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_PartIdTriangleIndex\ \&\ \string~(y));}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ getPartId()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ only\ the\ highest\ bits\ where\ the\ part\ index\ is\ stored}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_PartIdTriangleIndex\ >>\ (31\ -\/\ MAX\_NUM\_PARTS\_IN\_BITS));}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{int}\ getUid()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00058\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_PartIdTriangleIndex;}
+\DoxyCodeLine{00060\ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_soft_body_triangle_callback}{btSoftBodyTriangleCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}}
+\DoxyCodeLine{00065\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ m\_softBody;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ m\_triBody;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ btVector3\ m\_aabbMin;}
+\DoxyCodeLine{00070\ \ \ \ \ btVector3\ m\_aabbMax;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ m\_resultOut;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ m\_dispatcher;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}*\ m\_dispatchInfoPtr;}
+\DoxyCodeLine{00076\ \ \ \ \ btScalar\ m\_collisionMarginTriangle;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashKey<btTriIndex>}},\ \mbox{\hyperlink{structbt_tri_index}{btTriIndex}}>\ m\_shapeCache;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_triangleCount;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ \ btPersistentManifold*\ \ \ m\_manifoldPtr;}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{classbt_soft_body_triangle_callback}{btSoftBodyTriangleCallback}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ \textcolor{keywordtype}{bool}\ isSwapped);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{void}\ setTimeStepAndCounters(btScalar\ collisionMarginTriangle,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ triObjWrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_soft_body_triangle_callback}{\string~btSoftBodyTriangleCallback}}();}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_soft_body_triangle_callback_a0f8b46eba213eb55a451e182d2f6a9be}{processTriangle}}(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{void}\ clearCache();}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btVector3\&\ getAabbMin()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_aabbMin;}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btVector3\&\ getAabbMax()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_aabbMax;}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00106\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_soft_body_concave_collision_algorithm}{btSoftBodyConcaveCollisionAlgorithm}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}}
+\DoxyCodeLine{00107\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_isSwapped;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \mbox{\hyperlink{classbt_soft_body_triangle_callback}{btSoftBodyTriangleCallback}}\ m\_btSoftBodyTriangleCallback;}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{classbt_soft_body_concave_collision_algorithm}{btSoftBodyConcaveCollisionAlgorithm}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_algorithm_construction_info}{btCollisionAlgorithmConstructionInfo}}\&\ ci,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ \textcolor{keywordtype}{bool}\ isSwapped);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_soft_body_concave_collision_algorithm}{\string~btSoftBodyConcaveCollisionAlgorithm}}();}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processCollision(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ btScalar\ calculateTimeOfImpact(btCollisionObject*\ body0,\ btCollisionObject*\ body1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getAllContactManifolds(\mbox{\hyperlink{classbt_aligned_object_array}{btManifoldArray}}\&\ manifoldArray)}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{comment}{//we\ don't\ add\ any\ manifolds}}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{void}\ clearCache();}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_body_concave_collision_algorithm_1_1_create_func}{CreateFunc}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}}
+\DoxyCodeLine{00129\ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}*\ CreateCollisionAlgorithm(\mbox{\hyperlink{structbt_collision_algorithm_construction_info}{btCollisionAlgorithmConstructionInfo}}\&\ ci,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap)}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ ci.m\_dispatcher1-\/>allocateCollisionAlgorithm(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classbt_soft_body_concave_collision_algorithm}{btSoftBodyConcaveCollisionAlgorithm}}));}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ (mem)\ \mbox{\hyperlink{classbt_soft_body_concave_collision_algorithm}{btSoftBodyConcaveCollisionAlgorithm}}(ci,\ body0Wrap,\ body1Wrap,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \ \ \};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_body_concave_collision_algorithm_1_1_swapped_create_func}{SwappedCreateFunc}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}}
+\DoxyCodeLine{00138\ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}*\ CreateCollisionAlgorithm(\mbox{\hyperlink{structbt_collision_algorithm_construction_info}{btCollisionAlgorithmConstructionInfo}}\&\ ci,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ ci.m\_dispatcher1-\/>allocateCollisionAlgorithm(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classbt_soft_body_concave_collision_algorithm}{btSoftBodyConcaveCollisionAlgorithm}}));}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ (mem)\ \mbox{\hyperlink{classbt_soft_body_concave_collision_algorithm}{btSoftBodyConcaveCollisionAlgorithm}}(ci,\ body0Wrap,\ body1Wrap,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00144\ \ \ \ \ \};}
+\DoxyCodeLine{00145\ \};}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SOFT\_BODY\_CONCAVE\_COLLISION\_ALGORITHM\_H}}
+
+\end{DoxyCode}

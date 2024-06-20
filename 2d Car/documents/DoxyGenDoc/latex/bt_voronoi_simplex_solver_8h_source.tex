@@ -1,0 +1,176 @@
+\doxysection{bt\+Voronoi\+Simplex\+Solver.\+h}
+\hypertarget{bt_voronoi_simplex_solver_8h_source}{}\label{bt_voronoi_simplex_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_VORONOI\_SIMPLEX\_SOLVER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_VORONOI\_SIMPLEX\_SOLVER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btSimplexSolverInterface.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ VORONOI\_SIMPLEX\_MAX\_VERTS\ 5}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ BT\_USE\_EQUAL\_VERTEX\_THRESHOLD}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ VORONOI\_DEFAULT\_EQUAL\_VERTEX\_THRESHOLD\ 1e-\/12f}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ VORONOI\_DEFAULT\_EQUAL\_VERTEX\_THRESHOLD\ 0.0001f}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_usage_bitfield}{btUsageBitfield}}}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structbt_usage_bitfield}{btUsageBitfield}}()}
+\DoxyCodeLine{00035\ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ reset();}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ reset()}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ usedVertexA\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ usedVertexB\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ usedVertexC\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ usedVertexD\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00045\ \ \ \ \ \}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ usedVertexA\ :\ 1;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ usedVertexB\ :\ 1;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ usedVertexC\ :\ 1;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ usedVertexD\ :\ 1;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ unused1\ :\ 1;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ unused2\ :\ 1;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ unused3\ :\ 1;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ unused4\ :\ 1;}
+\DoxyCodeLine{00054\ \};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_sub_simplex_closest_result}{btSubSimplexClosestResult}}}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ btVector3\ m\_closestPointOnSimplex;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{//MASK\ for\ m\_usedVertices}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//stores\ the\ simplex\ vertex-\/usage,\ using\ the\ MASK,}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ if\ m\_usedVertices\ \&\ MASK\ then\ the\ related\ vertex\ is\ used}}
+\DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{structbt_usage_bitfield}{btUsageBitfield}}\ m\_usedVertices;}
+\DoxyCodeLine{00063\ \ \ \ \ btScalar\ m\_barycentricCoords[4];}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_degenerate;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ reset()}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ m\_degenerate\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ setBarycentricCoordinates();}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ m\_usedVertices.reset();}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{bool}\ isValid()}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ valid\ =\ (m\_barycentricCoords[0]\ >=\ btScalar(0.))\ \&\&}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_barycentricCoords[1]\ >=\ btScalar(0.))\ \&\&}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_barycentricCoords[2]\ >=\ btScalar(0.))\ \&\&}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_barycentricCoords[3]\ >=\ btScalar(0.));}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ valid;}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ setBarycentricCoordinates(btScalar\ a\ =\ btScalar(0.),\ btScalar\ b\ =\ btScalar(0.),\ btScalar\ c\ =\ btScalar(0.),\ btScalar\ d\ =\ btScalar(0.))}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ m\_barycentricCoords[0]\ =\ a;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ m\_barycentricCoords[1]\ =\ b;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ m\_barycentricCoords[2]\ =\ c;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ m\_barycentricCoords[3]\ =\ d;}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#ifdef\ NO\_VIRTUAL\_INTERFACE}}
+\DoxyCodeLine{00093\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00094\ btVoronoiSimplexSolver}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00096\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00097\ btVoronoiSimplexSolver\ :\ public\ btSimplexSolverInterface}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00099\ \{}
+\DoxyCodeLine{00100\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00101\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numVertices;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ btVector3\ m\_simplexVectorW[VORONOI\_SIMPLEX\_MAX\_VERTS];}
+\DoxyCodeLine{00106\ \ \ \ \ btVector3\ m\_simplexPointsP[VORONOI\_SIMPLEX\_MAX\_VERTS];}
+\DoxyCodeLine{00107\ \ \ \ \ btVector3\ m\_simplexPointsQ[VORONOI\_SIMPLEX\_MAX\_VERTS];}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ btVector3\ m\_cachedP1;}
+\DoxyCodeLine{00110\ \ \ \ \ btVector3\ m\_cachedP2;}
+\DoxyCodeLine{00111\ \ \ \ \ btVector3\ m\_cachedV;}
+\DoxyCodeLine{00112\ \ \ \ \ btVector3\ m\_lastW;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ btScalar\ m\_equalVertexThreshold;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_cachedValidClosest;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \mbox{\hyperlink{structbt_sub_simplex_closest_result}{btSubSimplexClosestResult}}\ m\_cachedBC;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_needsUpdate;}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{void}\ removeVertex(\textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{void}\ reduceVertices(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_usage_bitfield}{btUsageBitfield}}\&\ usedVerts);}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{bool}\ updateClosestVectorAndPoints();}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{bool}\ closestPtPointTetrahedron(\textcolor{keyword}{const}\ btVector3\&\ p,\ \textcolor{keyword}{const}\ btVector3\&\ a,\ \textcolor{keyword}{const}\ btVector3\&\ b,\ \textcolor{keyword}{const}\ btVector3\&\ c,\ \textcolor{keyword}{const}\ btVector3\&\ d,\ \mbox{\hyperlink{structbt_sub_simplex_closest_result}{btSubSimplexClosestResult}}\&\ finalResult);}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{int}\ pointOutsideOfPlane(\textcolor{keyword}{const}\ btVector3\&\ p,\ \textcolor{keyword}{const}\ btVector3\&\ a,\ \textcolor{keyword}{const}\ btVector3\&\ b,\ \textcolor{keyword}{const}\ btVector3\&\ c,\ \textcolor{keyword}{const}\ btVector3\&\ d);}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{bool}\ closestPtPointTriangle(\textcolor{keyword}{const}\ btVector3\&\ p,\ \textcolor{keyword}{const}\ btVector3\&\ a,\ \textcolor{keyword}{const}\ btVector3\&\ b,\ \textcolor{keyword}{const}\ btVector3\&\ c,\ \mbox{\hyperlink{structbt_sub_simplex_closest_result}{btSubSimplexClosestResult}}\&\ result);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00130\ \ \ \ \ btVoronoiSimplexSolver()}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ :\ m\_equalVertexThreshold(VORONOI\_DEFAULT\_EQUAL\_VERTEX\_THRESHOLD)}
+\DoxyCodeLine{00132\ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ addVertex(\textcolor{keyword}{const}\ btVector3\&\ w,\ \textcolor{keyword}{const}\ btVector3\&\ p,\ \textcolor{keyword}{const}\ btVector3\&\ q);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{void}\ setEqualVertexThreshold(btScalar\ threshold)}
+\DoxyCodeLine{00139\ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ m\_equalVertexThreshold\ =\ threshold;}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ btScalar\ getEqualVertexThreshold()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00144\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_equalVertexThreshold;}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{bool}\ closest(btVector3\ \&\ v);}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ btScalar\ maxVertex();}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{bool}\ fullSimplex()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00153\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_numVertices\ ==\ 4);}
+\DoxyCodeLine{00155\ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{int}\ getSimplex(btVector3\ *\ pBuf,\ btVector3\ *\ qBuf,\ btVector3\ *\ yBuf)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{bool}\ inSimplex(\textcolor{keyword}{const}\ btVector3\&\ w);}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{void}\ backup\_closest(btVector3\ \&\ v);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{bool}\ emptySimplex()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordtype}{void}\ compute\_points(btVector3\ \&\ p1,\ btVector3\ \&\ p2);}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordtype}{int}\ numVertices()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00168\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_numVertices;}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \};}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_VORONOI\_SIMPLEX\_SOLVER\_H}}
+
+\end{DoxyCode}

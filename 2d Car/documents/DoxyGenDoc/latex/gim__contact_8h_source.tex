@@ -1,0 +1,162 @@
+\doxysection{gim\+\_\+contact.\+h}
+\hypertarget{gim__contact_8h_source}{}\label{gim__contact_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_contact.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_contact.h}}
+\mbox{\hyperlink{gim__contact_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ GIM\_CONTACT\_H\_INCLUDED}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ GIM\_CONTACT\_H\_INCLUDED}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00008\ \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00009\ \textcolor{comment}{This\ source\ file\ is\ part\ of\ GIMPACT\ Library.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{For\ the\ latest\ info,\ see\ http://gimpact.sourceforge.net/}}
+\DoxyCodeLine{00012\ \textcolor{comment}{}}
+\DoxyCodeLine{00013\ \textcolor{comment}{Copyright\ (c)\ 2006\ Francisco\ Leon\ Najera.\ C.C.\ 80087371.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{email:\ projectileman@yahoo.com}}
+\DoxyCodeLine{00015\ \textcolor{comment}{}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ modify\ it\ under\ the\ terms\ of\ EITHER:}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ (1)\ The\ GNU\ Lesser\ General\ Public\ License\ as\ published\ by\ the\ Free}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ \ \ \ Software\ Foundation;\ either\ version\ 2.1\ of\ the\ License,\ or\ (at}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ \ \ your\ option)\ any\ later\ version.\ The\ text\ of\ the\ GNU\ Lesser}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ \ \ \ \ General\ Public\ License\ is\ included\ with\ this\ library\ in\ the}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ \ \ file\ GIMPACT-\/LICENSE-\/LGPL.TXT.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ (2)\ The\ BSD-\/style\ license\ that\ is\ included\ with\ this\ library\ in}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ \ \ the\ file\ GIMPACT-\/LICENSE-\/BSD.TXT.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ (3)\ The\ zlib/libpng\ license\ that\ is\ included\ with\ this\ library\ in}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ \ \ \ the\ file\ GIMPACT-\/LICENSE-\/ZLIB.TXT.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ See\ the\ files}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ GIMPACT-\/LICENSE-\/LGPL.TXT,\ GIMPACT-\/LICENSE-\/ZLIB.TXT\ and\ GIMPACT-\/LICENSE-\/BSD.TXT\ for\ more\ details.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{}}
+\DoxyCodeLine{00033\ \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00034\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__geometry_8h}{gim\_geometry.h}}"{}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__radixsort_8h}{gim\_radixsort.h}}"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__array_8h}{gim\_array.h}}"{}}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#ifndef\ NORMAL\_CONTACT\_AVERAGE}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ NORMAL\_CONTACT\_AVERAGE\ 1}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#ifndef\ CONTACT\_DIFF\_EPSILON}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ CONTACT\_DIFF\_EPSILON\ 0.00001f}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#ifndef\ BT\_CONTACT\_H\_STRUCTS\_INCLUDED}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t}{GIM\_CONTACT}}}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00060\ \ \ \ \ btVector3\ m\_point;}
+\DoxyCodeLine{00061\ \ \ \ \ btVector3\ m\_normal;}
+\DoxyCodeLine{00062\ \ \ \ \ GREAL\ m\_depth;\ \ \ \ \ \textcolor{comment}{//Positive\ value\ indicates\ interpenetration}}
+\DoxyCodeLine{00063\ \ \ \ \ GREAL\ m\_distance;\ \ \textcolor{comment}{//Padding\ not\ for\ use}}
+\DoxyCodeLine{00064\ \ \ \ \ GUINT\ m\_feature1;\ \ \textcolor{comment}{//Face\ number}}
+\DoxyCodeLine{00065\ \ \ \ \ GUINT\ m\_feature2;\ \ \textcolor{comment}{//Face\ number}}
+\DoxyCodeLine{00066\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t}{GIM\_CONTACT}}()}
+\DoxyCodeLine{00068\ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t}{GIM\_CONTACT}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t}{GIM\_CONTACT}}\ \&contact)\ :\ m\_point(contact.m\_point),}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_normal(contact.m\_normal),}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_depth(contact.m\_depth),}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_feature1(contact.m\_feature1),}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_feature2(contact.m\_feature2)}
+\DoxyCodeLine{00076\ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ m\_point\ =\ contact.m\_point;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ m\_normal\ =\ contact.m\_normal;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ m\_depth\ =\ contact.m\_depth;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ m\_feature1\ =\ contact.m\_feature1;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ m\_feature2\ =\ contact.m\_feature2;}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t}{GIM\_CONTACT}}(\textcolor{keyword}{const}\ btVector3\ \&point,\ \textcolor{keyword}{const}\ btVector3\ \&normal,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GREAL\ depth,\ GUINT\ feature1,\ GUINT\ feature2)\ :\ m\_point(point),}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_normal(normal),}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_depth(depth),}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_feature1(feature1),}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_feature2(feature2)}
+\DoxyCodeLine{00090\ \ \ \ \ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00094\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ \mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t_a81c1c924eef0edf8842762068d8dafc6}{calc\_key\_contact}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00095\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ GINT\ \_coords[]\ =\ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ (GINT)(m\_point[0]\ *\ 1000.0f\ +\ 1.0f),}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ (GINT)(m\_point[1]\ *\ 1333.0f),}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ (GINT)(m\_point[2]\ *\ 2133.0f\ +\ 3.0f)\};}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ GUINT\ \_hash\ =\ 0;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ GUINT\ *\_uitmp\ =\ (GUINT\ *)(\&\_coords[0]);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \_hash\ =\ *\_uitmp;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \_uitmp++;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \_hash\ +=\ (*\_uitmp)\ <<\ 4;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \_uitmp++;}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \_hash\ +=\ (*\_uitmp)\ <<\ 8;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_hash;}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ interpolate\_normals(btVector3\ *normals,\ GUINT\ normal\_count)}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ btVector3\ vec\_sum(m\_normal);}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (GUINT\ i\ =\ 0;\ i\ <\ normal\_count;\ i++)}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ vec\_sum\ +=\ normals[i];}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ GREAL\ vec\_sum\_len\ =\ vec\_sum.length2();}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (vec\_sum\_len\ <\ CONTACT\_DIFF\_EPSILON)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ GIM\_INV\_SQRT(vec\_sum\_len,\ vec\_sum\_len);\ \ \textcolor{comment}{//\ 1/sqrt(vec\_sum\_len)}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ m\_normal\ =\ vec\_sum\ *\ vec\_sum\_len;}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ \};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classgim__contact__array}{gim\_contact\_array}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classgim__array}{gim\_array}}<GIM\_CONTACT>}
+\DoxyCodeLine{00130\ \{}
+\DoxyCodeLine{00131\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00132\ \ \ \ \ \mbox{\hyperlink{classgim__contact__array}{gim\_contact\_array}}()\ :\ \mbox{\hyperlink{classgim__array}{gim\_array<GIM\_CONTACT>}}(64)}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ push\_contact(\textcolor{keyword}{const}\ btVector3\ \&point,\ \textcolor{keyword}{const}\ btVector3\ \&normal,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GREAL\ depth,\ GUINT\ feature1,\ GUINT\ feature2)}
+\DoxyCodeLine{00138\ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classgim__array_acbd3ad9a6756d0b91e42549a0e7107f0}{push\_back\_mem}}();}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t}{GIM\_CONTACT}}\ \&newele\ =\ back();}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ newele.m\_point\ =\ point;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ newele.m\_normal\ =\ normal;}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ newele.m\_depth\ =\ depth;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ newele.m\_feature1\ =\ feature1;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ newele.m\_feature2\ =\ feature2;}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ push\_triangle\_contacts(}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}\ \&tricontact,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ GUINT\ feature1,\ GUINT\ feature2)}
+\DoxyCodeLine{00151\ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (GUINT\ i\ =\ 0;\ i\ <\ tricontact.m\_point\_count;\ i++)}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classgim__array_acbd3ad9a6756d0b91e42549a0e7107f0}{push\_back\_mem}}();}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___c_o_n_t_a_c_t}{GIM\_CONTACT}}\ \&newele\ =\ back();}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ newele.m\_point\ =\ tricontact.m\_points[i];}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ newele.m\_normal\ =\ tricontact.m\_separating\_normal;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ newele.m\_depth\ =\ tricontact.m\_penetration\_depth;}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ newele.m\_feature1\ =\ feature1;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ newele.m\_feature2\ =\ feature2;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{void}\ merge\_contacts(\textcolor{keyword}{const}\ \mbox{\hyperlink{classgim__contact__array}{gim\_contact\_array}}\ \&contacts,\ \textcolor{keywordtype}{bool}\ normal\_contact\_average\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordtype}{void}\ merge\_contacts\_unique(\textcolor{keyword}{const}\ \mbox{\hyperlink{classgim__contact__array}{gim\_contact\_array}}\ \&contacts);}
+\DoxyCodeLine{00166\ \};}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GIM\_CONTACT\_H\_INCLUDED}}
+
+\end{DoxyCode}

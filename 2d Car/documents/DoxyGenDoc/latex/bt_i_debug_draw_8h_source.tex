@@ -1,0 +1,474 @@
+\doxysection{bt\+IDebug\+Draw.\+h}
+\hypertarget{bt_i_debug_draw_8h_source}{}\label{bt_i_debug_draw_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btIDebugDraw.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btIDebugDraw.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_IDEBUG\_DRAW\_\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_IDEBUG\_DRAW\_\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btVector3.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btTransform.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00028\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ \ \ \ \ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00030\ \ \ \ \ DefaultColors}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ btVector3\ m\_activeObject;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ btVector3\ m\_deactivatedObject;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ btVector3\ m\_wantsDeactivationObject;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ btVector3\ m\_disabledDeactivationObject;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ btVector3\ m\_disabledSimulationObject;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ btVector3\ m\_aabb;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ btVector3\ m\_contactPoint;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ DefaultColors()}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_activeObject(1,\ 1,\ 1),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_deactivatedObject(0,\ 1,\ 0),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_wantsDeactivationObject(0,\ 1,\ 1),}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_disabledDeactivationObject(1,\ 0,\ 0),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_disabledSimulationObject(1,\ 1,\ 0),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_aabb(1,\ 0,\ 0),}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_contactPoint(1,\ 1,\ 0)}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{enum}\ DebugDrawModes}
+\DoxyCodeLine{00053\ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ DBG\_NoDebug\ =\ 0,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ DBG\_DrawWireframe\ =\ 1,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ DBG\_DrawAabb\ =\ 2,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ DBG\_DrawFeaturesText\ =\ 4,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ DBG\_DrawContactPoints\ =\ 8,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ DBG\_NoDeactivation\ =\ 16,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ DBG\_NoHelpText\ =\ 32,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ DBG\_DrawText\ =\ 64,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ DBG\_ProfileTimings\ =\ 128,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ DBG\_EnableSatComparison\ =\ 256,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ DBG\_DisableBulletLCP\ =\ 512,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ DBG\_EnableCCD\ =\ 1024,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ DBG\_DrawConstraints\ =\ (1\ <<\ 11),}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ DBG\_DrawConstraintLimits\ =\ (1\ <<\ 12),}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ DBG\_FastWireframe\ =\ (1\ <<\ 13),}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ DBG\_DrawNormals\ =\ (1\ <<\ 14),}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ DBG\_DrawFrames\ =\ (1\ <<\ 15),}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ DBG\_MAX\_DEBUG\_DRAW\_MODE}
+\DoxyCodeLine{00072\ \ \ \ \ \};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_i_debug_draw}{\string~btIDebugDraw}}()\{\};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ DefaultColors\ getDefaultColors()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00077\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ DefaultColors\ colors;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ colors;}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_i_debug_draw_aec5aa09aa69cc324c98788a979b094ce}{setDefaultColors}}(\textcolor{keyword}{const}\ DefaultColors\&\ \textcolor{comment}{/*colors*/})\ \{\}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawLine(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keyword}{const}\ btVector3\&\ color)\ =\ 0;}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawLine(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keyword}{const}\ btVector3\&\ fromColor,\ \textcolor{keyword}{const}\ btVector3\&\ toColor)}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ (void)toColor;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ drawLine(from,\ to,\ fromColor);}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawSphere(btScalar\ radius,\ \textcolor{keyword}{const}\ btTransform\&\ transform,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00093\ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ btVector3\ center\ =\ transform.getOrigin();}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ btVector3\ up\ =\ transform.getBasis().getColumn(1);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}\ =\ transform.getBasis().getColumn(0);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ btScalar\ minTh\ =\ -\/SIMD\_HALF\_PI;}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ btScalar\ maxTh\ =\ SIMD\_HALF\_PI;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ btScalar\ minPs\ =\ -\/SIMD\_HALF\_PI;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ btScalar\ maxPs\ =\ SIMD\_HALF\_PI;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ btScalar\ stepDegrees\ =\ 30.f;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ drawSpherePatch(center,\ up,\ axis,\ radius,\ minTh,\ maxTh,\ minPs,\ maxPs,\ color,\ stepDegrees,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ drawSpherePatch(center,\ up,\ -\/axis,\ radius,\ minTh,\ maxTh,\ minPs,\ maxPs,\ color,\ stepDegrees,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawSphere(\textcolor{keyword}{const}\ btVector3\&\ p,\ btScalar\ radius,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ btTransform\ tr;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ tr.setIdentity();}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ tr.setOrigin(p);}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ drawSphere(radius,\ tr,\ color);}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawTriangle(\textcolor{keyword}{const}\ btVector3\&\ v0,\ \textcolor{keyword}{const}\ btVector3\&\ v1,\ \textcolor{keyword}{const}\ btVector3\&\ v2,\ \textcolor{keyword}{const}\ btVector3\&\ \textcolor{comment}{/*n0*/},\ \textcolor{keyword}{const}\ btVector3\&\ \textcolor{comment}{/*n1*/},\ \textcolor{keyword}{const}\ btVector3\&\ \textcolor{comment}{/*n2*/},\ \textcolor{keyword}{const}\ btVector3\&\ color,\ btScalar\ alpha)}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ drawTriangle(v0,\ v1,\ v2,\ color,\ alpha);}
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawTriangle(\textcolor{keyword}{const}\ btVector3\&\ v0,\ \textcolor{keyword}{const}\ btVector3\&\ v1,\ \textcolor{keyword}{const}\ btVector3\&\ v2,\ \textcolor{keyword}{const}\ btVector3\&\ color,\ btScalar\ \textcolor{comment}{/*alpha*/})}
+\DoxyCodeLine{00119\ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ drawLine(v0,\ v1,\ color);}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ drawLine(v1,\ v2,\ color);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ drawLine(v2,\ v0,\ color);}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawContactPoint(\textcolor{keyword}{const}\ btVector3\&\ PointOnB,\ \textcolor{keyword}{const}\ btVector3\&\ normalOnB,\ btScalar\ distance,\ \textcolor{keywordtype}{int}\ lifeTime,\ \textcolor{keyword}{const}\ btVector3\&\ color)\ =\ 0;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ reportErrorWarning(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ warningString)\ =\ 0;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ draw3dText(\textcolor{keyword}{const}\ btVector3\&\ location,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ textString)\ =\ 0;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setDebugMode(\textcolor{keywordtype}{int}\ debugMode)\ =\ 0;}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getDebugMode()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawAabb(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00136\ \ \ \ \ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ btVector3\ halfExtents\ =\ (to\ -\/\ from)\ *\ 0.5f;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ btVector3\ center\ =\ (to\ +\ from)\ *\ 0.5f;}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i,\ j;}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ btVector3\ edgecoord(1.f,\ 1.f,\ 1.f),\ pa,\ pb;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pa\ =\ btVector3(edgecoord[0]\ *\ halfExtents[0],\ edgecoord[1]\ *\ halfExtents[1],}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgecoord[2]\ *\ halfExtents[2]);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pa\ +=\ center;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ othercoord\ =\ j\ \%\ 3;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgecoord[othercoord]\ *=\ -\/1.f;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pb\ =\ btVector3(edgecoord[0]\ *\ halfExtents[0],\ edgecoord[1]\ *\ halfExtents[1],}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgecoord[2]\ *\ halfExtents[2]);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pb\ +=\ center;}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(pa,\ pb,\ color);}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ edgecoord\ =\ btVector3(-\/1.f,\ -\/1.f,\ -\/1.f);}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ 3)}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgecoord[i]\ *=\ -\/1.f;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawTransform(\textcolor{keyword}{const}\ btTransform\&\ transform,\ btScalar\ orthoLen)}
+\DoxyCodeLine{00164\ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ btVector3\ start\ =\ transform.getOrigin();}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ drawLine(start,\ start\ +\ transform.getBasis()\ *\ btVector3(orthoLen,\ 0,\ 0),\ btVector3(btScalar(1.),\ btScalar(0.3),\ btScalar(0.3)));}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ drawLine(start,\ start\ +\ transform.getBasis()\ *\ btVector3(0,\ orthoLen,\ 0),\ btVector3(btScalar(0.3),\ btScalar(1.),\ btScalar(0.3)));}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ drawLine(start,\ start\ +\ transform.getBasis()\ *\ btVector3(0,\ 0,\ orthoLen),\ btVector3(btScalar(0.3),\ btScalar(0.3),\ btScalar(1.)));}
+\DoxyCodeLine{00169\ \ \ \ \ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawArc(\textcolor{keyword}{const}\ btVector3\&\ center,\ \textcolor{keyword}{const}\ btVector3\&\ normal,\ \textcolor{keyword}{const}\ btVector3\&\ axis,\ btScalar\ radiusA,\ btScalar\ radiusB,\ btScalar\ minAngle,\ btScalar\ maxAngle,}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ color,\ \textcolor{keywordtype}{bool}\ drawSect,\ btScalar\ stepDegrees\ =\ btScalar(10.f))}
+\DoxyCodeLine{00173\ \ \ \ \ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vx\ =\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}};}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ btVector3\ vy\ =\ normal.cross(axis);}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ btScalar\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}}\ =\ stepDegrees\ *\ SIMD\_RADS\_PER\_DEG;}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nSteps\ =\ (int)btFabs((maxAngle\ -\/\ minAngle)\ /\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}});}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!nSteps)\ nSteps\ =\ 1;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ btVector3\ prev\ =\ center\ +\ radiusA\ *\ vx\ *\ btCos(minAngle)\ +\ radiusB\ *\ vy\ *\ btSin(minAngle);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (drawSect)}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(center,\ prev,\ color);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 1;\ i\ <=\ nSteps;\ i++)}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ angle\ =\ minAngle\ +\ (maxAngle\ -\/\ minAngle)\ *\ btScalar(i)\ /\ btScalar(nSteps);}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ next\ =\ center\ +\ radiusA\ *\ vx\ *\ btCos(angle)\ +\ radiusB\ *\ vy\ *\ btSin(angle);}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(prev,\ next,\ color);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ prev\ =\ next;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (drawSect)}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(center,\ prev,\ color);}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawSpherePatch(\textcolor{keyword}{const}\ btVector3\&\ center,\ \textcolor{keyword}{const}\ btVector3\&\ up,\ \textcolor{keyword}{const}\ btVector3\&\ axis,\ btScalar\ radius,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minTh,\ btScalar\ maxTh,\ btScalar\ minPs,\ btScalar\ maxPs,\ \textcolor{keyword}{const}\ btVector3\&\ color,\ btScalar\ stepDegrees\ =\ btScalar(10.f),\ \textcolor{keywordtype}{bool}\ drawCenter\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ btVector3\ vA[74];}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ btVector3\ vB[74];}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ btVector3\ *pvA\ =\ vA,\ *pvB\ =\ vB,\ *pT;}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ btVector3\ npole\ =\ center\ +\ up\ *\ radius;}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ btVector3\ spole\ =\ center\ -\/\ up\ *\ radius;}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ btVector3\ arcStart;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ btScalar\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}}\ =\ stepDegrees\ *\ SIMD\_RADS\_PER\_DEG;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ kv\ =\ up;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ iv\ =\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}};}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ btVector3\ jv\ =\ kv.cross(iv);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ drawN\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ drawS\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (minTh\ <=\ -\/SIMD\_HALF\_PI)}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ minTh\ =\ -\/SIMD\_HALF\_PI\ +\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}};}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ drawN\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxTh\ >=\ SIMD\_HALF\_PI)}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ maxTh\ =\ SIMD\_HALF\_PI\ -\/\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}};}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ drawS\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (minTh\ >\ maxTh)}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ minTh\ =\ -\/SIMD\_HALF\_PI\ +\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}};}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ maxTh\ =\ SIMD\_HALF\_PI\ -\/\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}};}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ drawN\ =\ drawS\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ n\_hor\ =\ (int)((maxTh\ -\/\ minTh)\ /\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}})\ +\ 1;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n\_hor\ <\ 2)\ n\_hor\ =\ 2;}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ btScalar\ step\_h\ =\ (maxTh\ -\/\ minTh)\ /\ btScalar(n\_hor\ -\/\ 1);}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isClosed\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (minPs\ >\ maxPs)}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ minPs\ =\ -\/SIMD\_PI\ +\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}};}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ maxPs\ =\ SIMD\_PI;}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ isClosed\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ ((maxPs\ -\/\ minPs)\ >=\ SIMD\_PI\ *\ btScalar(2.f))}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ isClosed\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ isClosed\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ n\_vert\ =\ (int)((maxPs\ -\/\ minPs)\ /\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}})\ +\ 1;}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n\_vert\ <\ 2)\ n\_vert\ =\ 2;}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ btScalar\ step\_v\ =\ (maxPs\ -\/\ minPs)\ /\ btScalar(n\_vert\ -\/\ 1);}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n\_hor;\ i++)}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ th\ =\ minTh\ +\ btScalar(i)\ *\ step\_h;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ sth\ =\ radius\ *\ btSin(th);}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ cth\ =\ radius\ *\ btCos(th);}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ n\_vert;\ j++)}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ psi\ =\ minPs\ +\ btScalar(j)\ *\ step\_v;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ sps\ =\ btSin(psi);}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ cps\ =\ btCos(psi);}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pvB[j]\ =\ center\ +\ cth\ *\ cps\ *\ iv\ +\ cth\ *\ sps\ *\ jv\ +\ sth\ *\ kv;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i)}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(pvA[j],\ pvB[j],\ color);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (drawS)}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(spole,\ pvB[j],\ color);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (j)}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(pvB[j\ -\/\ 1],\ pvB[j],\ color);}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ arcStart\ =\ pvB[j];}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((i\ ==\ (n\_hor\ -\/\ 1))\ \&\&\ drawN)}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(npole,\ pvB[j],\ color);}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (drawCenter)}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isClosed)}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (j\ ==\ (n\_vert\ -\/\ 1))}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(arcStart,\ pvB[j],\ color);}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((!i)\ ||\ (i\ ==\ (n\_hor\ -\/\ 1)))\ \&\&\ ((!j)\ ||\ (j\ ==\ (n\_vert\ -\/\ 1))))}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(center,\ pvB[j],\ color);}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ pT\ =\ pvA;}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ pvA\ =\ pvB;}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ pvB\ =\ pT;}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00302\ \ \ \ \ \}}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawBox(\textcolor{keyword}{const}\ btVector3\&\ bbMin,\ \textcolor{keyword}{const}\ btVector3\&\ bbMax,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00305\ \ \ \ \ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMin[0],\ bbMin[1],\ bbMin[2]),\ btVector3(bbMax[0],\ bbMin[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMax[0],\ bbMin[1],\ bbMin[2]),\ btVector3(bbMax[0],\ bbMax[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMax[0],\ bbMax[1],\ bbMin[2]),\ btVector3(bbMin[0],\ bbMax[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMin[0],\ bbMax[1],\ bbMin[2]),\ btVector3(bbMin[0],\ bbMin[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMin[0],\ bbMin[1],\ bbMin[2]),\ btVector3(bbMin[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMax[0],\ bbMin[1],\ bbMin[2]),\ btVector3(bbMax[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMax[0],\ bbMax[1],\ bbMin[2]),\ btVector3(bbMax[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMin[0],\ bbMax[1],\ bbMin[2]),\ btVector3(bbMin[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMin[0],\ bbMin[1],\ bbMax[2]),\ btVector3(bbMax[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMax[0],\ bbMin[1],\ bbMax[2]),\ btVector3(bbMax[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMax[0],\ bbMax[1],\ bbMax[2]),\ btVector3(bbMin[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ drawLine(btVector3(bbMin[0],\ bbMax[1],\ bbMax[2]),\ btVector3(bbMin[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00318\ \ \ \ \ \}}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawBox(\textcolor{keyword}{const}\ btVector3\&\ bbMin,\ \textcolor{keyword}{const}\ btVector3\&\ bbMax,\ \textcolor{keyword}{const}\ btTransform\&\ trans,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00320\ \ \ \ \ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMin[0],\ bbMin[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMax[0],\ bbMin[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMax[0],\ bbMin[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMax[0],\ bbMax[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMax[0],\ bbMax[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMin[0],\ bbMax[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMin[0],\ bbMax[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMin[0],\ bbMin[1],\ bbMin[2]),\ color);}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMin[0],\ bbMin[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMin[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMax[0],\ bbMin[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMax[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMax[0],\ bbMax[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMax[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMin[0],\ bbMax[1],\ bbMin[2]),\ trans\ *\ btVector3(bbMin[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMin[0],\ bbMin[1],\ bbMax[2]),\ trans\ *\ btVector3(bbMax[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMax[0],\ bbMin[1],\ bbMax[2]),\ trans\ *\ btVector3(bbMax[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMax[0],\ bbMax[1],\ bbMax[2]),\ trans\ *\ btVector3(bbMin[0],\ bbMax[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ drawLine(trans\ *\ btVector3(bbMin[0],\ bbMax[1],\ bbMax[2]),\ trans\ *\ btVector3(bbMin[0],\ bbMin[1],\ bbMax[2]),\ color);}
+\DoxyCodeLine{00333\ \ \ \ \ \}}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawCapsule(btScalar\ radius,\ btScalar\ halfHeight,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keyword}{const}\ btTransform\&\ transform,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00336\ \ \ \ \ \{}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ stepDegrees\ =\ 30;}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ btVector3\ capStart(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ capStart[upAxis]\ =\ -\/halfHeight;}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ btVector3\ capEnd(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ capEnd[upAxis]\ =\ halfHeight;}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Draw\ the\ ends}}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childTransform\ =\ transform;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ childTransform.getOrigin()\ =\ transform\ *\ capStart;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ center\ =\ childTransform.getOrigin();}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ up\ =\ childTransform.getBasis().getColumn((upAxis\ +\ 1)\ \%\ 3);}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}\ =\ -\/childTransform.getBasis().getColumn(upAxis);}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minTh\ =\ -\/SIMD\_HALF\_PI;}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maxTh\ =\ SIMD\_HALF\_PI;}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minPs\ =\ -\/SIMD\_HALF\_PI;}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maxPs\ =\ SIMD\_HALF\_PI;}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawSpherePatch(center,\ up,\ axis,\ radius,\ minTh,\ maxTh,\ minPs,\ maxPs,\ color,\ btScalar(stepDegrees),\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childTransform\ =\ transform;}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ childTransform.getOrigin()\ =\ transform\ *\ capEnd;}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ center\ =\ childTransform.getOrigin();}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ up\ =\ childTransform.getBasis().getColumn((upAxis\ +\ 1)\ \%\ 3);}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}\ =\ childTransform.getBasis().getColumn(upAxis);}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minTh\ =\ -\/SIMD\_HALF\_PI;}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maxTh\ =\ SIMD\_HALF\_PI;}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minPs\ =\ -\/SIMD\_HALF\_PI;}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maxPs\ =\ SIMD\_HALF\_PI;}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drawSpherePatch(center,\ up,\ axis,\ radius,\ minTh,\ maxTh,\ minPs,\ maxPs,\ color,\ btScalar(stepDegrees),\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Draw\ some\ additional\ lines}}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ btVector3\ start\ =\ transform.getOrigin();}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 360;\ i\ +=\ stepDegrees)}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ capEnd[(upAxis\ +\ 1)\ \%\ 3]\ =\ capStart[(upAxis\ +\ 1)\ \%\ 3]\ =\ btSin(btScalar(i)\ *\ SIMD\_RADS\_PER\_DEG)\ *\ radius;}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ capEnd[(upAxis\ +\ 2)\ \%\ 3]\ =\ capStart[(upAxis\ +\ 2)\ \%\ 3]\ =\ btCos(btScalar(i)\ *\ SIMD\_RADS\_PER\_DEG)\ *\ radius;}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(start\ +\ transform.getBasis()\ *\ capStart,\ start\ +\ transform.getBasis()\ *\ capEnd,\ color);}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawCylinder(btScalar\ radius,\ btScalar\ halfHeight,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keyword}{const}\ btTransform\&\ transform,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00389\ \ \ \ \ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ btVector3\ start\ =\ transform.getOrigin();}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ btVector3\ offsetHeight(0,\ 0,\ 0);}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ offsetHeight[upAxis]\ =\ halfHeight;}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ stepDegrees\ =\ 30;}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ btVector3\ capStart(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ capStart[upAxis]\ =\ -\/halfHeight;}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ btVector3\ capEnd(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ capEnd[upAxis]\ =\ halfHeight;}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 360;\ i\ +=\ stepDegrees)}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ capEnd[(upAxis\ +\ 1)\ \%\ 3]\ =\ capStart[(upAxis\ +\ 1)\ \%\ 3]\ =\ btSin(btScalar(i)\ *\ SIMD\_RADS\_PER\_DEG)\ *\ radius;}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ capEnd[(upAxis\ +\ 2)\ \%\ 3]\ =\ capStart[(upAxis\ +\ 2)\ \%\ 3]\ =\ btCos(btScalar(i)\ *\ SIMD\_RADS\_PER\_DEG)\ *\ radius;}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(start\ +\ transform.getBasis()\ *\ capStart,\ start\ +\ transform.getBasis()\ *\ capEnd,\ color);}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Drawing\ top\ and\ bottom\ caps\ of\ the\ cylinder}}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ btVector3\ yaxis(0,\ 0,\ 0);}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ yaxis[upAxis]\ =\ btScalar(1.0);}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ btVector3\ xaxis(0,\ 0,\ 0);}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ xaxis[(upAxis\ +\ 1)\ \%\ 3]\ =\ btScalar(1.0);}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ drawArc(start\ -\/\ transform.getBasis()\ *\ (offsetHeight),\ transform.getBasis()\ *\ yaxis,\ transform.getBasis()\ *\ xaxis,\ radius,\ radius,\ 0,\ SIMD\_2\_PI,\ color,\ \textcolor{keyword}{false},\ btScalar(10.0));}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ drawArc(start\ +\ transform.getBasis()\ *\ (offsetHeight),\ transform.getBasis()\ *\ yaxis,\ transform.getBasis()\ *\ xaxis,\ radius,\ radius,\ 0,\ SIMD\_2\_PI,\ color,\ \textcolor{keyword}{false},\ btScalar(10.0));}
+\DoxyCodeLine{00412\ \ \ \ \ \}}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawCone(btScalar\ radius,\ btScalar\ height,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keyword}{const}\ btTransform\&\ transform,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00415\ \ \ \ \ \{}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ stepDegrees\ =\ 30;}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ btVector3\ start\ =\ transform.getOrigin();}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ btVector3\ offsetHeight(0,\ 0,\ 0);}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ btScalar\ halfHeight\ =\ height\ *\ btScalar(0.5);}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ offsetHeight[upAxis]\ =\ halfHeight;}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ btVector3\ offsetRadius(0,\ 0,\ 0);}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ offsetRadius[(upAxis\ +\ 1)\ \%\ 3]\ =\ radius;}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ btVector3\ offset2Radius(0,\ 0,\ 0);}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ offset2Radius[(upAxis\ +\ 2)\ \%\ 3]\ =\ radius;}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ btVector3\ capEnd(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ capEnd[upAxis]\ =\ -\/halfHeight;}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 360;\ i\ +=\ stepDegrees)}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ capEnd[(upAxis\ +\ 1)\ \%\ 3]\ =\ btSin(btScalar(i)\ *\ SIMD\_RADS\_PER\_DEG)\ *\ radius;}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ capEnd[(upAxis\ +\ 2)\ \%\ 3]\ =\ btCos(btScalar(i)\ *\ SIMD\_RADS\_PER\_DEG)\ *\ radius;}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ drawLine(start\ +\ transform.getBasis()\ *\ (offsetHeight),\ start\ +\ transform.getBasis()\ *\ capEnd,\ color);}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ drawLine(start\ +\ transform.getBasis()\ *\ (offsetHeight),\ start\ +\ transform.getBasis()\ *\ (-\/offsetHeight\ +\ offsetRadius),\ color);}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ drawLine(start\ +\ transform.getBasis()\ *\ (offsetHeight),\ start\ +\ transform.getBasis()\ *\ (-\/offsetHeight\ -\/\ offsetRadius),\ color);}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ drawLine(start\ +\ transform.getBasis()\ *\ (offsetHeight),\ start\ +\ transform.getBasis()\ *\ (-\/offsetHeight\ +\ offset2Radius),\ color);}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ drawLine(start\ +\ transform.getBasis()\ *\ (offsetHeight),\ start\ +\ transform.getBasis()\ *\ (-\/offsetHeight\ -\/\ offset2Radius),\ color);}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Drawing\ the\ base\ of\ the\ cone}}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ btVector3\ yaxis(0,\ 0,\ 0);}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ yaxis[upAxis]\ =\ btScalar(1.0);}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ btVector3\ xaxis(0,\ 0,\ 0);}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ xaxis[(upAxis\ +\ 1)\ \%\ 3]\ =\ btScalar(1.0);}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ drawArc(start\ -\/\ transform.getBasis()\ *\ (offsetHeight),\ transform.getBasis()\ *\ yaxis,\ transform.getBasis()\ *\ xaxis,\ radius,\ radius,\ 0,\ SIMD\_2\_PI,\ color,\ \textcolor{keyword}{false},\ 10.0);}
+\DoxyCodeLine{00448\ \ \ \ \ \}}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ drawPlane(\textcolor{keyword}{const}\ btVector3\&\ planeNormal,\ btScalar\ planeConst,\ \textcolor{keyword}{const}\ btTransform\&\ transform,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00451\ \ \ \ \ \{}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ btVector3\ planeOrigin\ =\ planeNormal\ *\ planeConst;}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ btVector3\ vec0,\ \mbox{\hyperlink{group__ext__vector__float1_ga16030dae9029ed1eab1553a2183bbb79}{vec1}};}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ btPlaneSpace1(planeNormal,\ vec0,\ vec1);}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ btScalar\ vecLen\ =\ 100.f;}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ btVector3\ pt0\ =\ planeOrigin\ +\ vec0\ *\ vecLen;}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ btVector3\ pt1\ =\ planeOrigin\ -\/\ vec0\ *\ vecLen;}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ btVector3\ pt2\ =\ planeOrigin\ +\ \mbox{\hyperlink{group__ext__vector__float1_ga16030dae9029ed1eab1553a2183bbb79}{vec1}}\ *\ vecLen;}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ btVector3\ pt3\ =\ planeOrigin\ -\/\ \mbox{\hyperlink{group__ext__vector__float1_ga16030dae9029ed1eab1553a2183bbb79}{vec1}}\ *\ vecLen;}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ drawLine(transform\ *\ pt0,\ transform\ *\ pt1,\ color);}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ drawLine(transform\ *\ pt2,\ transform\ *\ pt3,\ color);}
+\DoxyCodeLine{00462\ \ \ \ \ \}}
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ clearLines()}
+\DoxyCodeLine{00465\ \ \ \ \ \{}
+\DoxyCodeLine{00466\ \ \ \ \ \}}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ flushLines()}
+\DoxyCodeLine{00469\ \ \ \ \ \{}
+\DoxyCodeLine{00470\ \ \ \ \ \}}
+\DoxyCodeLine{00471\ \};}
+\DoxyCodeLine{00472\ }
+\DoxyCodeLine{00473\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_IDEBUG\_DRAW\_\_H}}
+
+\end{DoxyCode}

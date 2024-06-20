@@ -1,0 +1,77 @@
+\doxysection{node.\+hpp}
+\hypertarget{node_8hpp_source}{}\label{node_8hpp_source}\index{pruebas-\/c/Practica Graficos/Code/Headers/node.hpp@{pruebas-\/c/Practica Graficos/Code/Headers/node.hpp}}
+\mbox{\hyperlink{node_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{math_8hpp}{math.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{using\ namespace\ }\mbox{\hyperlink{namespacemath}{math}};}
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_node}{Node}}}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_node}{Node}}*\ father=\textcolor{keyword}{nullptr};\ \textcolor{comment}{//reference\ to\ the\ father\ Node\ }}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ angle\ =\ 0;\textcolor{comment}{//vertex\ rotation\ value}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scaleFactor\ =\ 1;\textcolor{comment}{//vertex\ scale\ value}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_ad66d71e8f34df992b8540b96f9c71332}{math::Vector3f}}\ position\ =\ \mbox{\hyperlink{namespacemath_ad66d71e8f34df992b8540b96f9c71332}{math::Vector3f}}(0.0f,\ 0.0f,\ 0.0f);\textcolor{comment}{//vertex\ value\ info}}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_a073d70d56291fcf74c4c8871620537f8}{Matrix44}}\ transformation;\ \textcolor{comment}{//matrix\ containing\ all\ the\ transformations}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_a073d70d56291fcf74c4c8871620537f8}{Matrix44}}\ \mbox{\hyperlink{classmisi_1_1_node_a54c22e1505adbbf4463715e4fa7211c2}{GetTransform}}()}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ transformation;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_node_a5adc971bebfe4401b71de4d8a4d178e3}{SetScale}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{namespacemath_a52dea24b484cbfe9c32d1497861195ca}{scale}});}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_node_a85fdfd589b047c8652dd7bfb2ad8c85d}{SetAngle}}(\textcolor{keywordtype}{float}\ givenAngle);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_node_affb1821bc354f52aa56447e50967f624}{SetPosition}}(\mbox{\hyperlink{namespacemath_ad66d71e8f34df992b8540b96f9c71332}{math::Vector3f}}\ given\_position);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_ad66d71e8f34df992b8540b96f9c71332}{math::Vector3f}}\ \mbox{\hyperlink{classmisi_1_1_node_a4c182510bfef91fda962066766852cc9}{GetPosition}}()}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ position;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classmisi_1_1_node_a1b4ad1f7bd69ec79ba748df50d6f6b73}{GetAngle}}()}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ angle;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classmisi_1_1_node_a49f00d77b2a7c7109314336815518c30}{GetScale}}()}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ scaleFactor;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_node_a8cc64ca776c6535592e89628835a5401}{SetFather}}(\mbox{\hyperlink{classmisi_1_1_node}{Node}}*\ fatherNode)}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ father\ =\ fatherNode;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ transformation\ =\ fatherNode-\/>\mbox{\hyperlink{classmisi_1_1_node_a54c22e1505adbbf4463715e4fa7211c2}{GetTransform}}()\ *\ transformation;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_node_a6cb97839bebe8d4c67833267db4c6065}{SetMatrix}}();\ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_node}{Node}}*\ \mbox{\hyperlink{classmisi_1_1_node_a3c0d14942020af375dd2e444e36cd919}{GetFather}}()}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ father;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_node_a6cb97839bebe8d4c67833267db4c6065}{SetMatrix}}()}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_a073d70d56291fcf74c4c8871620537f8}{Matrix44}}\ identity(1.f);}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_a073d70d56291fcf74c4c8871620537f8}{Matrix44}}\ scaling\ =\ \mbox{\hyperlink{namespacemath_a52dea24b484cbfe9c32d1497861195ca}{scale}}(identity,\ scaleFactor);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_a073d70d56291fcf74c4c8871620537f8}{Matrix44}}\ rotation\_y\ =\ \mbox{\hyperlink{namespacemath_a35d1dc4496bf810b0967440664e8dc0b}{rotate\_around\_y}}(identity,\ angle);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_a073d70d56291fcf74c4c8871620537f8}{Matrix44}}\ translation\ =\ \mbox{\hyperlink{namespacemath_a0f7d8e9529ec497bbcc38e250918b110}{translate}}(identity,\ position);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ transformation\ =\ translation\ *\ rotation\_y\ *\ scaling;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (father)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ transformation\ *=\ \mbox{\hyperlink{classmisi_1_1_node_a3c0d14942020af375dd2e444e36cd919}{GetFather}}()-\/>\mbox{\hyperlink{classmisi_1_1_node_a54c22e1505adbbf4463715e4fa7211c2}{GetTransform}}();}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \};}
+\DoxyCodeLine{00094\ \}}
+
+\end{DoxyCode}

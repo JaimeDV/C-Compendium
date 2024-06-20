@@ -1,0 +1,75 @@
+\doxysection{b3\+Collidable.\+h}
+\hypertarget{b3_collidable_8h_source}{}\label{b3_collidable_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_COLLIDABLE\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_COLLIDABLE\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Float4.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Quat.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{enum}\ b3ShapeTypes}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ SHAPE\_HEIGHT\_FIELD\ =\ 1,}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ SHAPE\_CONVEX\_HULL\ =\ 3,}
+\DoxyCodeLine{00013\ \ \ \ \ SHAPE\_PLANE\ =\ 4,}
+\DoxyCodeLine{00014\ \ \ \ \ SHAPE\_CONCAVE\_TRIMESH\ =\ 5,}
+\DoxyCodeLine{00015\ \ \ \ \ SHAPE\_COMPOUND\_OF\_CONVEX\_HULLS\ =\ 6,}
+\DoxyCodeLine{00016\ \ \ \ \ SHAPE\_SPHERE\ =\ 7,}
+\DoxyCodeLine{00017\ \ \ \ \ MAX\_NUM\_SHAPE\_TYPES,}
+\DoxyCodeLine{00018\ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_collidable}{b3Collidable}}\ \mbox{\hyperlink{structb3_collidable}{b3Collidable\_t}};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_collidable}{b3Collidable}}}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numChildShapes;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bvhIndex;}
+\DoxyCodeLine{00027\ \ \ \ \ \};}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_radius;}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_compoundBvhIndex;}
+\DoxyCodeLine{00031\ \ \ \ \ \};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_shapeType;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_shapeIndex;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_height;}
+\DoxyCodeLine{00037\ \ \ \ \ \};}
+\DoxyCodeLine{00038\ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_gpu_child_shape}{b3GpuChildShape}}\ \mbox{\hyperlink{structb3_gpu_child_shape}{b3GpuChildShape\_t}};}
+\DoxyCodeLine{00041\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_gpu_child_shape}{b3GpuChildShape}}}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ b3Float4\ m\_childPosition;}
+\DoxyCodeLine{00044\ \ \ \ \ b3Quat\ m\_childOrientation;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_shapeIndex;\ \ \textcolor{comment}{//used\ for\ SHAPE\_COMPOUND\_OF\_CONVEX\_HULLS}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_capsuleAxis;}
+\DoxyCodeLine{00048\ \ \ \ \ \};}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_radius;\ \ \ \ \ \ \ \ \textcolor{comment}{//used\ for\ childshape\ of\ SHAPE\_COMPOUND\_OF\_SPHERES\ or\ SHAPE\_COMPOUND\_OF\_CAPSULES}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numChildShapes;\ \ \textcolor{comment}{//used\ for\ compound\ shape}}
+\DoxyCodeLine{00052\ \ \ \ \ \};}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_height;\ \ \textcolor{comment}{//used\ for\ childshape\ of\ SHAPE\_COMPOUND\_OF\_CAPSULES}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_collidableShapeIndex;}
+\DoxyCodeLine{00056\ \ \ \ \ \};}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_shapeType;}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_compound_overlapping_pair}{b3CompoundOverlappingPair}}}
+\DoxyCodeLine{00061\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bodyIndexA;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bodyIndexB;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//\ \ int\ m\_pairType;}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_childShapeIndexA;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_childShapeIndexB;}
+\DoxyCodeLine{00067\ \};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_COLLIDABLE\_H}}
+
+\end{DoxyCode}

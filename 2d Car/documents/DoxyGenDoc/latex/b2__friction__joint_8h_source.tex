@@ -1,0 +1,114 @@
+\doxysection{b2\+\_\+friction\+\_\+joint.\+h}
+\hypertarget{b2__friction__joint_8h_source}{}\label{b2__friction__joint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_friction\_joint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_friction\_joint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_FRICTION\_JOINT\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_FRICTION\_JOINT\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}b2\_joint.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_friction_joint_def}{b2FrictionJointDef}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structb2_joint_def}{b2JointDef}}}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{structb2_friction_joint_def}{b2FrictionJointDef}}()}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ type\ =\ e\_frictionJoint;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ localAnchorA.SetZero();}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ localAnchorB.SetZero();}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ maxForce\ =\ 0.0f;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ maxTorque\ =\ 0.0f;}
+\DoxyCodeLine{00039\ \ \ \ \ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb2_friction_joint_def_aee104f2aeb34dec4e17e3c52a98f7915}{Initialize}}(\mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyA,\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ anchor);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_friction_joint_def_a00b246e60ae282a956a42b662993e92a}{localAnchorA}};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_friction_joint_def_ad6d5a5614a7ac77b13e53fda3e32ed05}{localAnchorB}};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_friction_joint_def_ab481751b52e3c4a9b11592b4bb248928}{maxForce}};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_friction_joint_def_ad3a5caf9f40f632e996c2b0717ba0948}{maxTorque}};}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_friction_joint}{b2FrictionJoint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb2_joint}{b2Joint}}}
+\DoxyCodeLine{00061\ \{}
+\DoxyCodeLine{00062\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_friction_joint_a8e0bf2e9eba24f326d060789fedc7278}{GetAnchorA}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_friction_joint_af5a025b64221aafa98393d47d8414328}{GetAnchorB}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_friction_joint_ac04ce66163ed256d72c38e289f94c768}{GetReactionForce}}(\textcolor{keywordtype}{float}\ inv\_dt)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_friction_joint_a048b773f56e987a6aa030b61b33e5a85}{GetReactionTorque}}(\textcolor{keywordtype}{float}\ inv\_dt)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_friction_joint_af1a8fd38440d8803b6ae4fc4f2004896}{GetLocalAnchorA}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_localAnchorA;\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_friction_joint_a2e21a2c909321627867fa7e0d22b1dc9}{GetLocalAnchorB}}()\textcolor{keyword}{\ const\ \ }\{\ \textcolor{keywordflow}{return}\ m\_localAnchorB;\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_friction_joint_ab0cbe3ff75cb072187950923e7e023a9}{SetMaxForce}}(\textcolor{keywordtype}{float}\ force);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_friction_joint_a6f05f6a65ce7a62cd96ba04d06ce34d2}{GetMaxForce}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_friction_joint_a909cf64070371f60bc856d2c8eca2c49}{SetMaxTorque}}(\textcolor{keywordtype}{float}\ torque);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_friction_joint_a53d81e82c633b9be1223200f6df60e69}{GetMaxTorque}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_friction_joint_a934a3ce5bda09bc07111c1dd4e192406}{Dump}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_joint}{b2Joint}};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \mbox{\hyperlink{classb2_friction_joint}{b2FrictionJoint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_friction_joint_def}{b2FrictionJointDef}}*\ def);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{void}\ InitVelocityConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveVelocityConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{bool}\ SolvePositionConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localAnchorA;}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localAnchorB;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//\ Solver\ shared}}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_linearImpulse;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_angularImpulse;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxForce;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxTorque;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{//\ Solver\ temp}}
+\DoxyCodeLine{00110\ \ \ \ \ int32\ m\_indexA;}
+\DoxyCodeLine{00111\ \ \ \ \ int32\ m\_indexB;}
+\DoxyCodeLine{00112\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_rA;}
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_rB;}
+\DoxyCodeLine{00114\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localCenterA;}
+\DoxyCodeLine{00115\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localCenterB;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invMassA;}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invMassB;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invIA;}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invIB;}
+\DoxyCodeLine{00120\ \ \ \ \ \mbox{\hyperlink{structb2_mat22}{b2Mat22}}\ m\_linearMass;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_angularMass;}
+\DoxyCodeLine{00122\ \};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

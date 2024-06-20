@@ -1,0 +1,125 @@
+\doxysection{Math.\+hpp}
+\hypertarget{_math_8hpp_source}{}\label{_math_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/opengl-\/toolkit/headers/Math.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/opengl-\/toolkit/headers/Math.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ MATH}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ ©\ 2016+\ Ángel\ Rodríguez\ Ballesteros}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Distributed\ under\ the\ Boost\ Software\ License,\ version\ \ 1.0}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ See\ documents/LICENSE.TXT\ or\ www.boost.org/LICENSE\_1\_0.txt}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ angel.rodriguez@esne.edu}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OPENGL\_TOOLKIT\_MATH\_HEADER}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ OPENGL\_TOOLKIT\_MATH\_HEADER}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\ \ \ \ \#include\ <glm/glm.hpp>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\ \ \ \ \#include\ <glm/gtc/type\_ptr.hpp>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\ \ \ \ \#include\ <glm/gtx/matrix\_decompose.hpp>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\ \ \ \ \#include\ <glm/gtc/matrix\_transform.hpp>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{namespace\ }glt}
+\DoxyCodeLine{00020\ \ \ \ \ \{}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec2}}\ Vector2;}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}\ Vector3;}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec4}}\ \mbox{\hyperlink{struct_vector4}{Vector4}};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1qua}{glm::quat}}\ Quaternion;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1mat}{glm::mat2}}\ Matrix22;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1mat}{glm::mat3}}\ Matrix33;}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1mat}{glm::mat4}}\ Matrix44;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec2}}\ Point2;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}\ Point3;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec4}}\ Point4;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}<\ \textcolor{keyword}{class}\ CLASS\ >}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ *\ get\_values\ (\textcolor{keyword}{const}\ CLASS\ \&\ \textcolor{keywordtype}{object})}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__gtc__type__ptr_gaada83809aefafd7c3264772e6b24b685}{glm::value\_ptr}}(\textcolor{keywordtype}{object});}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ inverse\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix)}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__core__func__matrix_gace61e11fc177491beeca0c6971e2f3fc}{glm::inverse}}\ (matrix);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ transpose\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix)}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__core__func__matrix_ga4d251df5957b62996391bccb61cc9974}{glm::transpose}}\ (matrix);}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ \mbox{\hyperlink{group__ext__matrix__transform_ga67d8473d6b293d1bb2b4eaf249795cab}{translate}}\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix,\ \textcolor{keyword}{const}\ Vector3\ \&\ displacement)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_ga67d8473d6b293d1bb2b4eaf249795cab}{glm::translate}}\ (matrix,\ displacement);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix,\ \textcolor{keywordtype}{float}\ scale)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{glm::scale}}\ (matrix,\ Vector3(scale,\ scale,\ scale));}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix,\ \textcolor{keywordtype}{float}\ scale\_x,\ \textcolor{keywordtype}{float}\ scale\_y,\ \textcolor{keywordtype}{float}\ scale\_z)}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{glm::scale}}\ (matrix,\ Vector3(scale\_x,\ scale\_y,\ scale\_z));}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ rotate\_around\_x\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix,\ \textcolor{keywordtype}{float}\ angle)}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_ga42613eb0c7deb5f5188fc159df6c8950}{glm::rotate}}\ (matrix,\ angle,\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}(1.f,\ 0.f,\ 0.f));}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ rotate\_around\_y\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix,\ \textcolor{keywordtype}{float}\ angle)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_ga42613eb0c7deb5f5188fc159df6c8950}{glm::rotate}}\ (matrix,\ angle,\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}(0.f,\ 1.f,\ 0.f));}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ rotate\_around\_z\ (\textcolor{keyword}{const}\ Matrix44\ \&\ matrix,\ \textcolor{keywordtype}{float}\ angle)}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_ga42613eb0c7deb5f5188fc159df6c8950}{glm::rotate}}\ (matrix,\ angle,\ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}(0.f,\ 0.f,\ 1.f));}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga9e13be491fd69a438c8fda440cf0156e}{perspective}}\ (\textcolor{keywordtype}{float}\ fov,\ \textcolor{keywordtype}{float}\ near,\ \textcolor{keywordtype}{float}\ far,\ \textcolor{keywordtype}{float}\ aspect\_ratio)}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga9e13be491fd69a438c8fda440cf0156e}{glm::perspective}}\ (fov,\ aspect\_ratio,\ near,\ far);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Vector2\ extract\_translation\ (\textcolor{keyword}{const}\ Matrix33\ \&\ transformation)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \ Vector3\ \&\ translation\ =\ transformation[2];}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Vector2(translation[0],\ translation[1]);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Vector3\ extract\_translation\ (\textcolor{keyword}{const}\ Matrix44\ \&\ transformation)}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \ \mbox{\hyperlink{struct_vector4}{Vector4}}\ \&\ translation\ =\ transformation[3];}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Vector3(translation[0],\ translation[1],\ translation[2]);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Quaternion\ extract\_rotation\ (\textcolor{keyword}{const}\ Matrix44\ \&\ transformation)}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}};}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1qua}{glm::quat}}\ \mbox{\hyperlink{group__gtx__quaternion_gadbb992b52cef49dd3b11966e34260d17}{rotation}};}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}\ translation;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1vec}{glm::vec3}}\ skew;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1vec}{glm::vec4}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga9e13be491fd69a438c8fda440cf0156e}{perspective}};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtx__matrix__decompose_gac0e342656ba09a9bc97c57182ba73124}{glm::decompose}}\ (transformation,\ scale,\ rotation,\ translation,\ skew,\ perspective);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__gtx__quaternion_gadbb992b52cef49dd3b11966e34260d17}{rotation}};}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ Matrix44\ look\_at\ (\textcolor{keyword}{const}\ Point3\ \&\ from,\ \textcolor{keyword}{const}\ Point3\ \&\ to)}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_ga894735fbf8f3d25628c127712d0285f7}{glm::lookAt}}\ (from,\ to,\ Vector3(0.f,\ 1.f,\ 0.f));}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

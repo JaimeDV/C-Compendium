@@ -1,0 +1,110 @@
+\doxysection{bt\+CGProjection.\+h}
+\hypertarget{bt_c_g_projection_8h_source}{}\label{bt_c_g_projection_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btCGProjection.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btCGProjection.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_CG\_PROJECTION\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_CG\_PROJECTION\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btSoftBody.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyConstraint.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_deformable_contact_constraint}{DeformableContactConstraint}}}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ m\_node;}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btSoftBody::RContact*>}}\ m\_contact;}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ m\_total\_normal\_dv;}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ m\_total\_tangent\_dv;}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<bool>}}\ m\_static;}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<bool>}}\ m\_can\_be\_dynamic;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{struct_deformable_contact_constraint}{DeformableContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_r_contact}{btSoftBody::RContact}}\&\ rcontact)\ :\ m\_node(rcontact.m\_node)}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ append(rcontact);}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{struct_deformable_contact_constraint}{DeformableContactConstraint}}()\ :\ m\_node(NULL)}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ m\_contact.push\_back(NULL);}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ append(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_r_contact}{btSoftBody::RContact}}\&\ rcontact)}
+\DoxyCodeLine{00043\ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ m\_contact.push\_back(\&rcontact);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ m\_total\_normal\_dv.push\_back(btVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ m\_total\_tangent\_dv.push\_back(btVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ m\_static.push\_back(\textcolor{keyword}{false});}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ m\_can\_be\_dynamic.push\_back(\textcolor{keyword}{true});}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ replace(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_r_contact}{btSoftBody::RContact}}\&\ rcontact)}
+\DoxyCodeLine{00052\ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ m\_contact.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ m\_total\_normal\_dv.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ m\_total\_tangent\_dv.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ m\_static.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ m\_can\_be\_dynamic.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ append(rcontact);}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{struct_deformable_contact_constraint}{\string~DeformableContactConstraint}}()}
+\DoxyCodeLine{00062\ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_c_g_projection}{btCGProjection}}}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btAlignedObjectArray<btVector3>}}\ >\ \mbox{\hyperlink{classbt_aligned_object_array}{TVArrayStack}};}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btAlignedObjectArray<btScalar>}}\ >\ \mbox{\hyperlink{classbt_aligned_object_array}{TArrayStack}};}
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ m\_softBodies;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\&\ m\_dt;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ map\ from\ node\ indices\ to\ node\ pointers}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody::Node*>}}*\ m\_nodes;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{classbt_c_g_projection}{btCGProjection}}(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ softBodies,\ \textcolor{keyword}{const}\ btScalar\&\ dt)}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ :\ m\_softBodies(softBodies),\ m\_dt(dt)}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_c_g_projection}{\string~btCGProjection}}()}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//\ apply\ the\ constraints}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ project(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ x)\ =\ 0;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setConstraints()\ =\ 0;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//\ update\ the\ constraints}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ update()\ =\ 0;}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ reinitialize(\textcolor{keywordtype}{bool}\ nodeUpdated)}
+\DoxyCodeLine{00095\ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setIndices(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody::Node*>}}*\ nodes)}
+\DoxyCodeLine{00099\ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ m\_nodes\ =\ nodes;}
+\DoxyCodeLine{00101\ \ \ \ \ \}}
+\DoxyCodeLine{00102\ \};}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btCGProjection\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

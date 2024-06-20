@@ -1,0 +1,178 @@
+\doxysection{Shader\+\_\+\+Program.\+hpp}
+\hypertarget{_shader___program_8hpp_source}{}\label{_shader___program_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/opengl-\/toolkit/headers/Shader\_Program.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/opengl-\/toolkit/headers/Shader\_Program.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ SHADER\ PROGRAM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ ©\ 2014+\ Ángel\ Rodríguez\ Ballesteros}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Distributed\ under\ the\ Boost\ Software\ License,\ version\ \ 1.0}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ See\ documents/LICENSE.TXT\ or\ www.boost.org/LICENSE\_1\_0.txt}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ angel.rodriguez@esne.edu}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OPENGL\_TOOLKIT\_SHADER\_PROGRAM\_HEADER}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ OPENGL\_TOOLKIT\_SHADER\_PROGRAM\_HEADER}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\ \ \ \ \#include\ <map>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\ \ \ \ \#include\ <string>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\ \ \ \ \#include\ <cassert>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\ \ \ \ \#include\ <Math.hpp>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\ \ \ \ \#include\ <Shader.hpp>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{namespace\ }glt}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classglt_1_1_shader___program}{Shader\_Program}}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ std::map<\ std::string,\ GLint\ >\ Uniform\_Map;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classglt_1_1_shader___program}{Shader\_Program}}\ *\ active\_shader\_program;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ instance\_count;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classglt_1_1_shader___program}{Shader\_Program}}\ *\ get\_active\_shader\_program\ ()}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ active\_shader\_program;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ disable\ ()}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ glUseProgram\ (0);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ instance\_id;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ GLuint\ \ \ \ \ \ program\_object\_id;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ link\_completed;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ log\_string;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_shader___program}{Shader\_Program}}()}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ instance\_id\ \ \ \ \ \ \ =\ instance\_count++;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ program\_object\_id\ =\ glCreateProgram\ ();}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ link\_completed\ \ \ \ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert(program\_object\_id\ !=\ 0);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_shader___program}{\string~Shader\_Program}}()}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ glDeleteProgram\ (program\_object\_id);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ program\_object\_id\ =\ 0;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_shader___program}{Shader\_Program}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classglt_1_1_shader___program}{Shader\_Program}}\ \&\ )}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ id\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00080\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ instance\_id;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_usable\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00085\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (link\_completed);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ attach\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{classglt_1_1_shader}{Shader}}\ \&\ shader)}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ glAttachShader\ (program\_object\_id,\ shader);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ detach\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{classglt_1_1_shader}{Shader}}\ \&\ shader)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ glDetachShader\ (program\_object\_id,\ shader);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ link\ ();}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ use\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00106\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert(is\_usable\ ());}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{this}\ !=\ active\_shader\_program)}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ glUseProgram\ (program\_object\_id);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ active\_shader\_program\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ GLint\ get\_uniform\_id\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\ identifier)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00120\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert\ (is\_usable\ ());}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GLint\ \ \ uniform\_id\ \ =\ glGetUniformLocation\ (program\_object\_id,\ identifier);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert\ (uniform\_id\ !=\ -\/1);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uniform\_id);}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ GLint\ \ \ \ \&\ value\ \ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniform1i\ \ (uniform\_id,\ value);\ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ GLuint\ \ \ \&\ value\ \ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniform1ui\ (uniform\_id,\ value);\ \}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \ \ \ \&\ value\ \ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniform1f\ \ (uniform\_id,\ value);\ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \ \ (\&\ vector)[2])\textcolor{keyword}{\ const\ }\{\ glUniform2f\ \ (uniform\_id,\ vector[0],\ vector[1]);\ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \ \ (\&\ vector)[3])\textcolor{keyword}{\ const\ }\{\ glUniform3f\ \ (uniform\_id,\ vector[0],\ vector[1],\ vector[2]);\ \}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \ \ (\&\ vector)[4])\textcolor{keyword}{\ const\ }\{\ glUniform4f\ \ (uniform\_id,\ vector[0],\ vector[1],\ vector[2],\ vector[3]);\ \}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1vec}{Vector2}}\ \ \&\ vector\ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniform2f\ \ (uniform\_id,\ vector[0],\ vector[1]);\ \}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1vec}{Vector3}}\ \ \&\ vector\ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniform3f\ \ (uniform\_id,\ vector[0],\ vector[1],\ vector[2]);\ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1vec}{Vector4}}\ \ \&\ vector\ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniform4f\ \ (uniform\_id,\ vector[0],\ vector[1],\ vector[2],\ vector[3]);\ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1mat}{Matrix22}}\ \&\ matrix\ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniformMatrix2fv\ (uniform\_id,\ 1,\ GL\_FALSE,\ get\_values\ (matrix));\ \}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1mat}{Matrix33}}\ \&\ matrix\ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniformMatrix3fv\ (uniform\_id,\ 1,\ GL\_FALSE,\ get\_values\ (matrix));\ \}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_uniform\_value\ (GLint\ uniform\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1mat}{Matrix44}}\ \&\ matrix\ \ \ \ )\textcolor{keyword}{\ const\ }\{\ glUniformMatrix4fv\ (uniform\_id,\ 1,\ GL\_FALSE,\ get\_values\ (matrix));\ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ GLint\ get\_vertex\_attribute\_id\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\ identifier)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00146\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert\ (is\_usable\ ());}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GLint\ \ \ attribute\_id\ \ =\ glGetAttribLocation\ (program\_object\_id,\ identifier);}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert\ (attribute\_id\ !=\ -\/1);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (attribute\_id);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_vertex\_attribute\ (GLint\ attribute\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \ \ \&\ value\ )\ \{\ glVertexAttrib1f\ \ (attribute\_id,\ \ \ \ \ \ \ \ \ \ \ \ \ value\ \ );\ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_vertex\_attribute\ (GLint\ attribute\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1vec}{Vector2}}\ \&\ vector)\ \{\ glVertexAttrib2fv\ (attribute\_id,\ get\_values\ (vector));\ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_vertex\_attribute\ (GLint\ attribute\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1vec}{Vector3}}\ \&\ vector)\ \{\ glVertexAttrib3fv\ (attribute\_id,\ get\_values\ (vector));\ \}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_vertex\_attribute\ (GLint\ attribute\_id,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structglm_1_1vec}{Vector4}}\ \&\ vector)\ \{\ glVertexAttrib4fv\ (attribute\_id,\ get\_values\ (vector));\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&\ log\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00164\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (log\_string);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

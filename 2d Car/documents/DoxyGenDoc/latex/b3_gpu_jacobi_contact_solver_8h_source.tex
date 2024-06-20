@@ -1,0 +1,62 @@
+\doxysection{b3\+Gpu\+Jacobi\+Contact\+Solver.\+h}
+\hypertarget{b3_gpu_jacobi_contact_solver_8h_source}{}\label{b3_gpu_jacobi_contact_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/RigidBody/b3GpuJacobiContactSolver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/RigidBody/b3GpuJacobiContactSolver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_GPU\_JACOBI\_CONTACT\_SOLVER\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_GPU\_JACOBI\_CONTACT\_SOLVER\_H}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/Initialize/b3OpenCLInclude.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3Contact4Data.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{//struct\ b3InertiaData;}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//b3InertiaData}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }b3TypedConstraint;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_jacobi_solver_info}{b3JacobiSolverInfo}}}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_fixedBodyIndex;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_deltaTime;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_positionDrift;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_positionConstraintCoeff;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numIterations;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{structb3_jacobi_solver_info}{b3JacobiSolverInfo}}()}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ :\ m\_fixedBodyIndex(0),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ m\_deltaTime(1.\ /\ 60.f),}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ m\_positionDrift(0.005f),}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ m\_positionConstraintCoeff(0.99f),}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ m\_numIterations(7)}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \};}
+\DoxyCodeLine{00034\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_gpu_jacobi_contact_solver}{b3GpuJacobiContactSolver}}}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_gpu_jacobi_solver_internal_data}{b3GpuJacobiSolverInternalData}}*\ m\_data;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ cl\_context\ m\_context;}
+\DoxyCodeLine{00040\ \ \ \ \ cl\_device\_id\ m\_device;}
+\DoxyCodeLine{00041\ \ \ \ \ cl\_command\_queue\ m\_queue;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{classb3_gpu_jacobi_contact_solver}{b3GpuJacobiContactSolver}}(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ queue,\ \textcolor{keywordtype}{int}\ pairCapacity);}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_gpu_jacobi_contact_solver}{\string~b3GpuJacobiContactSolver}}();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ solveContacts(\textcolor{keywordtype}{int}\ numBodies,\ cl\_mem\ bodyBuf,\ cl\_mem\ inertiaBuf,\ \textcolor{keywordtype}{int}\ numContacts,\ cl\_mem\ contactBuf,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_config}{b3Config}}\&\ config,\ \textcolor{keywordtype}{int}\ static0Index);}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ solveGroupHost(\mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ bodies,\ \mbox{\hyperlink{structb3_inertia_data}{b3InertiaData}}*\ inertias,\ \textcolor{keywordtype}{int}\ numBodies,\ \textcolor{keyword}{struct}\ b3Contact4*\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_jacobi_solver_info}{b3JacobiSolverInfo}}\&\ solverInfo);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{//void\ \ solveGroupHost(btRigidBodyCL*\ bodies,b3InertiaData*\ inertias,int\ numBodies,btContact4*\ manifoldPtr,\ int\ numManifolds,btTypedConstraint**\ constraints,int\ numConstraints,const\ btJacobiSolverInfo\&\ solverInfo);}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//b3Scalar\ solveGroup(b3OpenCLArray<b3RigidBodyData>*\ gpuBodies,b3OpenCLArray<b3InertiaData>*\ gpuInertias,\ int\ numBodies,b3OpenCLArray<b3GpuGenericConstraint>*\ gpuConstraints,int\ numConstraints,const\ b3ContactSolverInfo\&\ infoGlobal);}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//void\ \ solveGroup(btOpenCLArray<btRigidBodyCL>*\ bodies,btOpenCLArray<btInertiaCL>*\ inertias,btOpenCLArray<btContact4>*\ manifoldPtr,const\ btJacobiSolverInfo\&\ solverInfo);}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//void\ \ solveGroupMixed(btOpenCLArray<btRigidBodyCL>*\ bodies,btOpenCLArray<btInertiaCL>*\ inertias,btOpenCLArray<btContact4>*\ manifoldPtr,const\ btJacobiSolverInfo\&\ solverInfo);}}
+\DoxyCodeLine{00055\ \};}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_GPU\_JACOBI\_CONTACT\_SOLVER\_H}}
+
+\end{DoxyCode}

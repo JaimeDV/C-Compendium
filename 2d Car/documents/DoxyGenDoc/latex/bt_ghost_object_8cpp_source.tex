@@ -1,0 +1,169 @@
+\doxysection{bt\+Ghost\+Object.\+cpp}
+\hypertarget{bt_ghost_object_8cpp_source}{}\label{bt_ghost_object_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btGhostObject.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btGhostObject.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2008\ Erwin\ Coumans\ \ http://bulletphysics.com}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btGhostObject.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}btCollisionWorld.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexShape.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAabbUtil2.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ btGhostObject::btGhostObject()}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ m\_internalType\ =\ CO\_GHOST\_OBJECT;}
+\DoxyCodeLine{00024\ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ btGhostObject::\string~btGhostObject()}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ btAssert(!m\_overlappingObjects.size());}
+\DoxyCodeLine{00030\ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ btGhostObject::addOverlappingObjectInternal(btBroadphaseProxy*\ otherProxy,\ btBroadphaseProxy*\ thisProxy)}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ btCollisionObject*\ otherObject\ =\ (btCollisionObject*)otherProxy-\/>m\_clientObject;}
+\DoxyCodeLine{00035\ \ \ \ \ btAssert(otherObject);}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ m\_overlappingObjects.findLinearSearch(otherObject);}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ ==\ m\_overlappingObjects.size())}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//not\ found}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ m\_overlappingObjects.push\_back(otherObject);}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ btGhostObject::removeOverlappingObjectInternal(btBroadphaseProxy*\ otherProxy,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ btBroadphaseProxy*\ thisProxy)}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ btCollisionObject*\ otherObject\ =\ (btCollisionObject*)otherProxy-\/>m\_clientObject;}
+\DoxyCodeLine{00048\ \ \ \ \ btAssert(otherObject);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ m\_overlappingObjects.findLinearSearch(otherObject);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ <\ m\_overlappingObjects.size())}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ m\_overlappingObjects[index]\ =\ m\_overlappingObjects[m\_overlappingObjects.size()\ -\/\ 1];}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ m\_overlappingObjects.pop\_back();}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ btPairCachingGhostObject::btPairCachingGhostObject()}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ m\_hashPairCache\ =\ \textcolor{keyword}{new}\ (btAlignedAlloc(\textcolor{keyword}{sizeof}(btHashedOverlappingPairCache),\ 16))\ btHashedOverlappingPairCache();}
+\DoxyCodeLine{00060\ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ btPairCachingGhostObject::\string~btPairCachingGhostObject()}
+\DoxyCodeLine{00063\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ m\_hashPairCache-\/>\string~btHashedOverlappingPairCache();}
+\DoxyCodeLine{00065\ \ \ \ \ btAlignedFree(m\_hashPairCache);}
+\DoxyCodeLine{00066\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_pair_caching_ghost_object_a636e114951f6fdf8a1f5a2b46849a9a7}{btPairCachingGhostObject::addOverlappingObjectInternal}}(btBroadphaseProxy*\ otherProxy,\ btBroadphaseProxy*\ thisProxy)}
+\DoxyCodeLine{00069\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ btBroadphaseProxy*\ actualThisProxy\ =\ thisProxy\ ?\ thisProxy\ :\ getBroadphaseHandle();}
+\DoxyCodeLine{00071\ \ \ \ \ btAssert(actualThisProxy);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ btCollisionObject*\ otherObject\ =\ (btCollisionObject*)otherProxy-\/>m\_clientObject;}
+\DoxyCodeLine{00074\ \ \ \ \ btAssert(otherObject);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ m\_overlappingObjects.findLinearSearch(otherObject);}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ ==\ m\_overlappingObjects.size())}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ m\_overlappingObjects.push\_back(otherObject);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ m\_hashPairCache-\/>addOverlappingPair(actualThisProxy,\ otherProxy);}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ btPairCachingGhostObject::removeOverlappingObjectInternal(btBroadphaseProxy*\ otherProxy,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ btBroadphaseProxy*\ thisProxy1)}
+\DoxyCodeLine{00084\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ btCollisionObject*\ otherObject\ =\ (btCollisionObject*)otherProxy-\/>m\_clientObject;}
+\DoxyCodeLine{00086\ \ \ \ \ btBroadphaseProxy*\ actualThisProxy\ =\ thisProxy1\ ?\ thisProxy1\ :\ getBroadphaseHandle();}
+\DoxyCodeLine{00087\ \ \ \ \ btAssert(actualThisProxy);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ btAssert(otherObject);}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ m\_overlappingObjects.findLinearSearch(otherObject);}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ <\ m\_overlappingObjects.size())}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ m\_overlappingObjects[index]\ =\ m\_overlappingObjects[m\_overlappingObjects.size()\ -\/\ 1];}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ m\_overlappingObjects.pop\_back();}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ m\_hashPairCache-\/>removeOverlappingPair(actualThisProxy,\ otherProxy,\ dispatcher);}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{void}\ btGhostObject::convexSweepTest(\textcolor{keyword}{const}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ convexFromWorld,\ \textcolor{keyword}{const}\ btTransform\&\ convexToWorld,\ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}\&\ resultCallback,\ btScalar\ allowedCcdPenetration)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00101\ \ \ \ \ btTransform\ convexFromTrans,\ convexToTrans;}
+\DoxyCodeLine{00102\ \ \ \ \ convexFromTrans\ =\ convexFromWorld;}
+\DoxyCodeLine{00103\ \ \ \ \ convexToTrans\ =\ convexToWorld;}
+\DoxyCodeLine{00104\ \ \ \ \ btVector3\ castShapeAabbMin,\ castShapeAabbMax;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{/*\ Compute\ AABB\ that\ encompasses\ angular\ movement\ */}}
+\DoxyCodeLine{00106\ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ btVector3\ linVel,\ angVel;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ btTransformUtil::calculateVelocity(convexFromTrans,\ convexToTrans,\ 1.0,\ linVel,\ angVel);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ btTransform\ R;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ R.setIdentity();}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ R.setRotation(convexFromTrans.getRotation());}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ castShape-\/>calculateTemporalAabb(R,\ linVel,\ angVel,\ 1.0,\ castShapeAabbMin,\ castShapeAabbMax);}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{comment}{//\ do\ a\ ray-\/shape\ query\ using\ convexCaster\ (CCD)}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_overlappingObjects.size();\ i++)}
+\DoxyCodeLine{00119\ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ m\_overlappingObjects[i];}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ perform\ raycast\ if\ filterMask\ matches}}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultCallback.needsCollision(collisionObject-\/>getBroadphaseHandle()))}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//RigidcollisionObject*\ collisionObject\ =\ ctrl-\/>GetRigidcollisionObject();}}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ collisionObjectAabbMin,\ collisionObjectAabbMax;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape()-\/>getAabb(collisionObject-\/>getWorldTransform(),\ collisionObjectAabbMin,\ collisionObjectAabbMax);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ AabbExpand(collisionObjectAabbMin,\ collisionObjectAabbMax,\ castShapeAabbMin,\ castShapeAabbMax);}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ hitLambda\ =\ btScalar(1.);\ \ \textcolor{comment}{//could\ use\ resultCallback.m\_closestHitFraction,\ but\ needs\ testing}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ hitNormal;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btRayAabb(convexFromWorld.getOrigin(),\ convexToWorld.getOrigin(),\ collisionObjectAabbMin,\ collisionObjectAabbMax,\ hitLambda,\ hitNormal))}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_aa63de55ff9451a80c8c825cafd64d9ba}{btCollisionWorld::objectQuerySingle}}(castShape,\ convexFromTrans,\ convexToTrans,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape(),}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getWorldTransform(),}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allowedCcdPenetration);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00140\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{void}\ btGhostObject::rayTest(\textcolor{keyword}{const}\ btVector3\&\ rayFromWorld,\ \textcolor{keyword}{const}\ btVector3\&\ rayToWorld,\ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}\&\ resultCallback)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00144\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00145\ \ \ \ \ btTransform\ rayFromTrans;}
+\DoxyCodeLine{00146\ \ \ \ \ rayFromTrans.setIdentity();}
+\DoxyCodeLine{00147\ \ \ \ \ rayFromTrans.setOrigin(rayFromWorld);}
+\DoxyCodeLine{00148\ \ \ \ \ btTransform\ rayToTrans;}
+\DoxyCodeLine{00149\ \ \ \ \ rayToTrans.setIdentity();}
+\DoxyCodeLine{00150\ \ \ \ \ rayToTrans.setOrigin(rayToWorld);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_overlappingObjects.size();\ i++)}
+\DoxyCodeLine{00154\ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ m\_overlappingObjects[i];}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ perform\ raycast\ if\ filterMask\ matches}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultCallback.needsCollision(collisionObject-\/>getBroadphaseHandle()))}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_aca2a9413508b4a2449fe83ff93ea564e}{btCollisionWorld::rayTestSingle}}(rayFromTrans,\ rayToTrans,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape(),}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getWorldTransform(),}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00165\ \ \ \ \ \}}
+\DoxyCodeLine{00166\ \}}
+
+\end{DoxyCode}

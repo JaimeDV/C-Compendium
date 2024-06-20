@@ -1,0 +1,151 @@
+\doxysection{func\+\_\+exponential.\+inl}
+\hypertarget{libraries_2opengl-toolkit_2headers_2glm_2detail_2func__exponential_8inl_source}{}\label{libraries_2opengl-toolkit_2headers_2glm_2detail_2func__exponential_8inl_source}\index{libraries/opengl-\/toolkit/headers/glm/detail/func\_exponential.inl@{libraries/opengl-\/toolkit/headers/glm/detail/func\_exponential.inl}}
+\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2detail_2func__exponential_8inl}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{func__vector__relational_8hpp}{func\_vector\_relational.hpp}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2detail_2__vectorize_8hpp}{\_vectorize.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <limits>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglm}{glm}}\{}
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }detail}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ \ \ if\ GLM\_HAS\_CXX11\_STL}}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }std::log2;}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ genType>}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ genType\ \mbox{\hyperlink{namespaceglm_1_1detail_a3d24a612f2c5fa4f3aaf97dcd979ef1c}{log2}}(genType\ Value)}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::log(Value)\ *\ \textcolor{keyword}{static\_cast<}genType\textcolor{keyword}{>}(1.4426950408889634073599246810019);}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType,\ \textcolor{keywordtype}{bool}\ isFloat,\ \textcolor{keywordtype}{bool}\ Aligned>}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{struct\ }compute\_log2}
+\DoxyCodeLine{00025\ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<T,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__log2_aa180342c08b8211ba91b6591e23b1c9e}{call}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{structglm_1_1vec}{vec}})}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1functor1}{detail::functor1<T,\ T,\ P,\ vecType>::call}}(\mbox{\hyperlink{namespaceglm_1_1detail_a3d24a612f2c5fa4f3aaf97dcd979ef1c}{log2}},\ \mbox{\hyperlink{structglm_1_1vec}{vec}});}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00030\ \ \ \ \ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType,\ \textcolor{keyword}{typename}\ T,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545}{precision}}\ P,\ \textcolor{keywordtype}{bool}\ Aligned>}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{struct\ }compute\_sqrt}
+\DoxyCodeLine{00034\ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<T,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__sqrt_a084e3b07b72b54486fd9a9a913f70ac5}{call}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1functor1}{detail::functor1<T,\ T,\ P,\ vecType>::call}}(std::sqrt,\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00039\ \ \ \ \ \};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType,\ \textcolor{keyword}{typename}\ T,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545}{precision}}\ P,\ \textcolor{keywordtype}{bool}\ Aligned>}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{struct\ }compute\_inversesqrt}
+\DoxyCodeLine{00043\ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<T,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__inversesqrt_ab0506b4514e6d5811d7ee9ba785969a9}{call}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ \mbox{\hyperlink{group__core__func__exponential_ga1f904e09827e939a56e4158f45ca8ede}{sqrt}}(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \ \ \ \ \};}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType,\ \textcolor{keywordtype}{bool}\ Aligned>}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__inversesqrt}{compute\_inversesqrt}}<vecType,\ float,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545a3b763a530cd95d31fb1ea64574700061}{lowp}},\ Aligned>}
+\DoxyCodeLine{00052\ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<float,\ lowp>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__inversesqrt_3_01vec_type_00_01float_00_01lowp_00_01_aligned_01_4_a189bf0a7ebcac47df279e9fd3890a62f}{call}}(vecType<float,\ lowp>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ vecType<float,\ lowp>\ tmp(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ vecType<float,\ lowp>\ xhalf(tmp\ *\ 0.5f);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ vecType<uint,\ lowp>*\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_aa5367c14d90f462230c2611b81b41d23}{p}}\ =\ \textcolor{keyword}{reinterpret\_cast<}vecType<uint,\ lowp>*\textcolor{keyword}{>}(\textcolor{keyword}{const\_cast<}vecType<float,\ lowp>*\textcolor{keyword}{>}(\&\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}}));}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ vecType<uint,\ lowp>\ i\ =\ vecType<uint,\ lowp>(0x5f375a86)\ -\/\ (*\mbox{\hyperlink{_s_d_l__opengl__glext_8h_aa5367c14d90f462230c2611b81b41d23}{p}}\ >>\ vecType<uint,\ lowp>(1));}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ vecType<float,\ lowp>*\ ptmp\ =\ \textcolor{keyword}{reinterpret\_cast<}vecType<float,\ lowp>*\textcolor{keyword}{>}(\&i);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ tmp\ =\ *ptmp;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ tmp\ =\ tmp\ *\ (1.5f\ -\/\ xhalf\ *\ tmp\ *\ tmp);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \};}
+\DoxyCodeLine{00065\ \}\textcolor{comment}{//namespace\ detail}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{//\ pow}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{using\ }std::pow;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__core__func__exponential_ga717a43207fffc8b5e8e66cf56ded5ace}{pow}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ base,\ vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5088c45c98574ff28866140a93356e75}{exponent}})}
+\DoxyCodeLine{00071\ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1functor2}{detail::functor2<T,\ P,\ vecType>::call}}(pow,\ base,\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5088c45c98574ff28866140a93356e75}{exponent}});}
+\DoxyCodeLine{00073\ \ \ \ \ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//\ exp}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{using\ }std::exp;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__core__func__exponential_gaf6342f49d902286a599ceb86036236ce}{exp}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1functor1}{detail::functor1<T,\ T,\ P,\ vecType>::call}}(exp,\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ log}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{using\ }std::log;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__core__func__exponential_gad26901b9f2fdd30612867a8dcfa73fbc}{log}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1functor1}{detail::functor1<T,\ T,\ P,\ vecType>::call}}(log,\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//exp2,\ ln2\ =\ 0.69314718055994530941723212145818f}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ genType>}
+\DoxyCodeLine{00093\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ genType\ \mbox{\hyperlink{namespaceglm_a8f6240c6756f850537398b1af2751c4b}{exp2}}(genType\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a6893d4a6bf0ecab00f7c73166379245a}{GLM\_STATIC\_ASSERT}}(std::numeric\_limits<genType>::is\_iec559,\ \textcolor{stringliteral}{"{}'exp2'\ only\ accept\ floating-\/point\ inputs"{}});}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::exp(\textcolor{keyword}{static\_cast<}genType\textcolor{keyword}{>}(0.69314718055994530941723212145818)\ *\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{namespaceglm_a8f6240c6756f850537398b1af2751c4b}{exp2}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1functor1}{detail::functor1<T,\ T,\ P,\ vecType>::call}}(\mbox{\hyperlink{namespaceglm_a8f6240c6756f850537398b1af2751c4b}{exp2}},\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//\ log2,\ ln2\ =\ 0.69314718055994530941723212145818f}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ genType>}
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ genType\ \mbox{\hyperlink{namespaceglm_ab47f0f29ead9cefd62d62ba5f83fe81b}{log2}}(genType\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00109\ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{namespaceglm_ab47f0f29ead9cefd62d62ba5f83fe81b}{log2}}(tvec1<genType>(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})).x;}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00114\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{namespaceglm_ab47f0f29ead9cefd62d62ba5f83fe81b}{log2}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__log2}{detail::compute\_log2<T,\ P,\ vecType,\ std::numeric\_limits<T>::is\_iec559}},\ \mbox{\hyperlink{structglm_1_1detail_1_1is__aligned}{detail::is\_aligned<P>::value}}>::call(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//\ sqrt}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{using\ }std::sqrt;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__core__func__exponential_ga1f904e09827e939a56e4158f45ca8ede}{sqrt}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00123\ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a6893d4a6bf0ecab00f7c73166379245a}{GLM\_STATIC\_ASSERT}}(std::numeric\_limits<T>::is\_iec559,\ \textcolor{stringliteral}{"{}'sqrt'\ only\ accept\ floating-\/point\ inputs"{}});}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__sqrt}{detail::compute\_sqrt<vecType,\ T,\ P,\ detail::is\_aligned<P>::value}}>::call(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{comment}{//\ inversesqrt}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ genType>}
+\DoxyCodeLine{00130\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ genType\ \mbox{\hyperlink{namespaceglm_a5e3dd2bba414db15477d43ca9d71acf5}{inversesqrt}}(genType\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00131\ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}genType\textcolor{keyword}{>}(1)\ /\ \mbox{\hyperlink{group__core__func__exponential_ga1f904e09827e939a56e4158f45ca8ede}{sqrt}}(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00136\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{namespaceglm_a5e3dd2bba414db15477d43ca9d71acf5}{inversesqrt}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}})}
+\DoxyCodeLine{00137\ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a6893d4a6bf0ecab00f7c73166379245a}{GLM\_STATIC\_ASSERT}}(std::numeric\_limits<T>::is\_iec559,\ \textcolor{stringliteral}{"{}'inversesqrt'\ only\ accept\ floating-\/point\ inputs"{}});}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__inversesqrt}{detail::compute\_inversesqrt<vecType,\ T,\ P,\ detail::is\_aligned<P>::value}}>::call(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}});}
+\DoxyCodeLine{00140\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \}\textcolor{comment}{//namespace\ glm}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#if\ GLM\_ARCH\ !=\ GLM\_ARCH\_PURE\ \&\&\ GLM\_HAS\_UNRESTRICTED\_UNIONS}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#\ \ \ include\ "{}\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2detail_2func__exponential__simd_8inl}{func\_exponential\_simd.inl}}"{}}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00146\ }
+
+\end{DoxyCode}

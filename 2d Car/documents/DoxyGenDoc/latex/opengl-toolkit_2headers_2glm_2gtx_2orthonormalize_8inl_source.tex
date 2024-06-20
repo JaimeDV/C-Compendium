@@ -1,0 +1,35 @@
+\doxysection{orthonormalize.\+inl}
+\hypertarget{opengl-toolkit_2headers_2glm_2gtx_2orthonormalize_8inl_source}{}\label{opengl-toolkit_2headers_2glm_2gtx_2orthonormalize_8inl_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/opengl-\/toolkit/headers/glm/gtx/orthonormalize.inl@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/opengl-\/toolkit/headers/glm/gtx/orthonormalize.inl}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglm}{glm}}}
+\DoxyCodeLine{00005\ \{}
+\DoxyCodeLine{00006\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00007\ \ \ \ \ GLM\_FUNC\_QUALIFIER\ \mbox{\hyperlink{structglm_1_1tmat3x3}{tmat3x3<T,\ P>}}\ \mbox{\hyperlink{group__gtx__orthonormalize_ga63f33b913d71219449b1aa5e2d68cff5}{orthonormalize}}(\mbox{\hyperlink{structglm_1_1tmat3x3}{tmat3x3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ m)}
+\DoxyCodeLine{00008\ \ \ \ \ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat3x3}{tmat3x3<T,\ P>}}\ r\ =\ m;}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ r[0]\ =\ normalize(r[0]);}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ T\ d0\ =\ dot(r[0],\ r[1]);}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ r[1]\ -\/=\ r[0]\ *\ d0;}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ r[1]\ =\ normalize(r[1]);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ T\ d1\ =\ dot(r[1],\ r[2]);}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ d0\ =\ dot(r[0],\ r[2]);}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ r[2]\ -\/=\ r[0]\ *\ d0\ +\ r[1]\ *\ d1;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ r[2]\ =\ normalize(r[2]);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00023\ \ \ \ \ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>\ }
+\DoxyCodeLine{00026\ \ \ \ \ GLM\_FUNC\_QUALIFIER\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \mbox{\hyperlink{group__gtx__orthonormalize_ga63f33b913d71219449b1aa5e2d68cff5}{orthonormalize}}(\mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ x,\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ y)}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ normalize(x\ -\/\ y\ *\ dot(y,\ x));}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+\DoxyCodeLine{00030\ \}\textcolor{comment}{//namespace\ glm}}
+
+\end{DoxyCode}

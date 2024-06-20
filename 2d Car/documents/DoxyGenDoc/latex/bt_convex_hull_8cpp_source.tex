@@ -1,0 +1,1125 @@
+\doxysection{bt\+Convex\+Hull.\+cpp}
+\hypertarget{bt_convex_hull_8cpp_source}{}\label{bt_convex_hull_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btConvexHull.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btConvexHull.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Stan\ Melax\ Convex\ Hull\ Computation}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Stan\ Melax\ http://www.melax.com/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}btConvexHull.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btMinMax.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btVector3.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classint3}{int3}}}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ x,\ y,\ z;}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{classint3}{int3}}()\{\};}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classint3}{int3}}(\textcolor{keywordtype}{int}\ \_x,\ \textcolor{keywordtype}{int}\ \_y,\ \textcolor{keywordtype}{int}\ \_z)}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ x\ =\ \_x;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ y\ =\ \_y;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ z\ =\ \_z;}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \&operator[](\textcolor{keywordtype}{int}\ i)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (\&x)[i];\ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ \&operator[](\textcolor{keywordtype}{int}\ i)\ \{\ \textcolor{keywordflow}{return}\ (\&x)[i];\ \}}
+\DoxyCodeLine{00038\ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/\ btPlane\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ PlaneFlip(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&plane)\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classbt_plane}{btPlane}}(-\/plane.normal,\ -\/plane.dist);\ \}}
+\DoxyCodeLine{00043\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ operator==(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&b)\ \{\ \textcolor{keywordflow}{return}\ (a.normal\ ==\ b.normal\ \&\&\ a.dist\ ==\ b.dist);\ \}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ coplanar(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&b)\ \{\ \textcolor{keywordflow}{return}\ (a\ ==\ b\ ||\ a\ ==\ PlaneFlip(b));\ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/\ Utility\ Functions\ -\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ btVector3\ PlaneLineIntersection(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&plane,\ \textcolor{keyword}{const}\ btVector3\ \&p0,\ \textcolor{keyword}{const}\ btVector3\ \&p1);}
+\DoxyCodeLine{00049\ btVector3\ PlaneProject(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&plane,\ \textcolor{keyword}{const}\ btVector3\ \&point);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ btVector3\ ThreePlaneIntersection(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p0,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p2);}
+\DoxyCodeLine{00052\ btVector3\ ThreePlaneIntersection(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p0,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p2)}
+\DoxyCodeLine{00053\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ btVector3\ N1\ =\ p0.normal;}
+\DoxyCodeLine{00055\ \ \ \ \ btVector3\ N2\ =\ p1.normal;}
+\DoxyCodeLine{00056\ \ \ \ \ btVector3\ N3\ =\ p2.normal;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ btVector3\ n2n3;}
+\DoxyCodeLine{00059\ \ \ \ \ n2n3\ =\ N2.cross(N3);}
+\DoxyCodeLine{00060\ \ \ \ \ btVector3\ n3n1;}
+\DoxyCodeLine{00061\ \ \ \ \ n3n1\ =\ N3.cross(N1);}
+\DoxyCodeLine{00062\ \ \ \ \ btVector3\ n1n2;}
+\DoxyCodeLine{00063\ \ \ \ \ n1n2\ =\ N1.cross(N2);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ btScalar\ quotient\ =\ (N1.dot(n2n3));}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ btAssert(btFabs(quotient)\ >\ btScalar(0.000001));}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ quotient\ =\ btScalar(-\/1.)\ /\ quotient;}
+\DoxyCodeLine{00070\ \ \ \ \ n2n3\ *=\ p0.dist;}
+\DoxyCodeLine{00071\ \ \ \ \ n3n1\ *=\ p1.dist;}
+\DoxyCodeLine{00072\ \ \ \ \ n1n2\ *=\ p2.dist;}
+\DoxyCodeLine{00073\ \ \ \ \ btVector3\ potentialVertex\ =\ n2n3;}
+\DoxyCodeLine{00074\ \ \ \ \ potentialVertex\ +=\ n3n1;}
+\DoxyCodeLine{00075\ \ \ \ \ potentialVertex\ +=\ n1n2;}
+\DoxyCodeLine{00076\ \ \ \ \ potentialVertex\ *=\ quotient;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ btVector3\ result(potentialVertex.getX(),\ potentialVertex.getY(),\ potentialVertex.getZ());}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00080\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ btScalar\ DistanceBetweenLines(\textcolor{keyword}{const}\ btVector3\ \&ustart,\ \textcolor{keyword}{const}\ btVector3\ \&udir,\ \textcolor{keyword}{const}\ btVector3\ \&vstart,\ \textcolor{keyword}{const}\ btVector3\ \&vdir,\ btVector3\ *upoint\ =\ NULL,\ btVector3\ *vpoint\ =\ NULL);}
+\DoxyCodeLine{00083\ btVector3\ TriNormal(\textcolor{keyword}{const}\ btVector3\ \&v0,\ \textcolor{keyword}{const}\ btVector3\ \&v1,\ \textcolor{keyword}{const}\ btVector3\ \&v2);}
+\DoxyCodeLine{00084\ btVector3\ NormalOf(\textcolor{keyword}{const}\ btVector3\ *vert,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ btVector3\ PlaneLineIntersection(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&plane,\ \textcolor{keyword}{const}\ btVector3\ \&p0,\ \textcolor{keyword}{const}\ btVector3\ \&p1)}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{//\ returns\ the\ point\ where\ the\ line\ p0-\/p1\ intersects\ the\ plane\ n\&d}}
+\DoxyCodeLine{00089\ \ \ \ \ btVector3\ dif;}
+\DoxyCodeLine{00090\ \ \ \ \ dif\ =\ p1\ -\/\ p0;}
+\DoxyCodeLine{00091\ \ \ \ \ btScalar\ dn\ =\ btDot(plane.normal,\ dif);}
+\DoxyCodeLine{00092\ \ \ \ \ btScalar\ t\ =\ -\/(plane.dist\ +\ btDot(plane.normal,\ p0))\ /\ dn;}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{return}\ p0\ +\ (dif\ *\ t);}
+\DoxyCodeLine{00094\ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ btVector3\ PlaneProject(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&plane,\ \textcolor{keyword}{const}\ btVector3\ \&point)}
+\DoxyCodeLine{00097\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{return}\ point\ -\/\ plane.normal\ *\ (btDot(point,\ plane.normal)\ +\ plane.dist);}
+\DoxyCodeLine{00099\ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ btVector3\ TriNormal(\textcolor{keyword}{const}\ btVector3\ \&v0,\ \textcolor{keyword}{const}\ btVector3\ \&v1,\ \textcolor{keyword}{const}\ btVector3\ \&v2)}
+\DoxyCodeLine{00102\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//\ return\ the\ normal\ of\ the\ triangle}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{//\ inscribed\ by\ v0,\ v1,\ and\ v2}}
+\DoxyCodeLine{00105\ \ \ \ \ btVector3\ cp\ =\ btCross(v1\ -\/\ v0,\ v2\ -\/\ v1);}
+\DoxyCodeLine{00106\ \ \ \ \ btScalar\ m\ =\ cp.length();}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ ==\ 0)\ \textcolor{keywordflow}{return}\ btVector3(1,\ 0,\ 0);}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordflow}{return}\ cp\ *\ (btScalar(1.0)\ /\ m);}
+\DoxyCodeLine{00109\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ btScalar\ DistanceBetweenLines(\textcolor{keyword}{const}\ btVector3\ \&ustart,\ \textcolor{keyword}{const}\ btVector3\ \&udir,\ \textcolor{keyword}{const}\ btVector3\ \&vstart,\ \textcolor{keyword}{const}\ btVector3\ \&vdir,\ btVector3\ *upoint,\ btVector3\ *vpoint)}
+\DoxyCodeLine{00112\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ btVector3\ cp;}
+\DoxyCodeLine{00114\ \ \ \ \ cp\ =\ btCross(udir,\ vdir).normalized();}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ btScalar\ distu\ =\ -\/btDot(cp,\ ustart);}
+\DoxyCodeLine{00117\ \ \ \ \ btScalar\ distv\ =\ -\/btDot(cp,\ vstart);}
+\DoxyCodeLine{00118\ \ \ \ \ btScalar\ dist\ =\ (btScalar)fabs(distu\ -\/\ distv);}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordflow}{if}\ (upoint)}
+\DoxyCodeLine{00120\ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_plane}{btPlane}}\ plane;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ plane.normal\ =\ btCross(vdir,\ cp).normalized();}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ plane.dist\ =\ -\/btDot(plane.normal,\ vstart);}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ *upoint\ =\ PlaneLineIntersection(plane,\ ustart,\ ustart\ +\ udir);}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{if}\ (vpoint)}
+\DoxyCodeLine{00127\ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_plane}{btPlane}}\ plane;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ plane.normal\ =\ btCross(udir,\ cp).normalized();}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ plane.dist\ =\ -\/btDot(plane.normal,\ ustart);}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ *vpoint\ =\ PlaneLineIntersection(plane,\ vstart,\ vstart\ +\ vdir);}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordflow}{return}\ dist;}
+\DoxyCodeLine{00134\ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#define\ COPLANAR\ (0)}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#define\ UNDER\ (1)}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#define\ OVER\ (2)}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#define\ SPLIT\ (OVER\ |\ UNDER)}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#define\ PAPERWIDTH\ (btScalar(0.001))}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ btScalar\ planetestepsilon\ =\ PAPERWIDTH;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{class_convex_h_1_1_half_edge}{ConvexH::HalfEdge}}\ \mbox{\hyperlink{class_convex_h_1_1_half_edge}{HalfEdge}};}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ ConvexH::ConvexH(\textcolor{keywordtype}{int}\ vertices\_size,\ \textcolor{keywordtype}{int}\ edges\_size,\ \textcolor{keywordtype}{int}\ facets\_size)}
+\DoxyCodeLine{00147\ \{}
+\DoxyCodeLine{00148\ \ \ \ \ vertices.resize(vertices\_size);}
+\DoxyCodeLine{00149\ \ \ \ \ edges.resize(edges\_size);}
+\DoxyCodeLine{00150\ \ \ \ \ facets.resize(facets\_size);}
+\DoxyCodeLine{00151\ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{int}\ PlaneTest(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p,\ \textcolor{keyword}{const}\ btVector3\ \&v);}
+\DoxyCodeLine{00154\ \textcolor{keywordtype}{int}\ PlaneTest(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&p,\ \textcolor{keyword}{const}\ btVector3\ \&v)}
+\DoxyCodeLine{00155\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ btScalar\ a\ =\ btDot(v,\ p.normal)\ +\ p.dist;}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{int}\ flag\ =\ (a\ >\ planetestepsilon)\ ?\ OVER\ :\ ((a\ <\ -\/planetestepsilon)\ ?\ UNDER\ :\ COPLANAR);}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordflow}{return}\ flag;}
+\DoxyCodeLine{00159\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{int}\ SplitTest(\mbox{\hyperlink{class_convex_h}{ConvexH}}\ \&convex,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&plane);}
+\DoxyCodeLine{00162\ \textcolor{keywordtype}{int}\ SplitTest(\mbox{\hyperlink{class_convex_h}{ConvexH}}\ \&convex,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\ \&plane)}
+\DoxyCodeLine{00163\ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{int}\ flag\ =\ 0;}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ convex.vertices.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00166\ \ \ \ \ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ flag\ |=\ PlaneTest(plane,\ convex.vertices[i]);}
+\DoxyCodeLine{00168\ \ \ \ \ \}}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{return}\ flag;}
+\DoxyCodeLine{00170\ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_vert_flag}{VertFlag}}}
+\DoxyCodeLine{00173\ \{}
+\DoxyCodeLine{00174\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ planetest;}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ junk;}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ undermap;}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ overmap;}
+\DoxyCodeLine{00179\ \};}
+\DoxyCodeLine{00180\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_edge_flag}{EdgeFlag}}}
+\DoxyCodeLine{00181\ \{}
+\DoxyCodeLine{00182\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ planetest;}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ fixes;}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordtype}{short}\ undermap;}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordtype}{short}\ overmap;}
+\DoxyCodeLine{00187\ \};}
+\DoxyCodeLine{00188\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_plane_flag}{PlaneFlag}}}
+\DoxyCodeLine{00189\ \{}
+\DoxyCodeLine{00190\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ undermap;}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ overmap;}
+\DoxyCodeLine{00193\ \};}
+\DoxyCodeLine{00194\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_coplanar}{Coplanar}}}
+\DoxyCodeLine{00195\ \{}
+\DoxyCodeLine{00196\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ ea;}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ v0;}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ v1;}
+\DoxyCodeLine{00200\ \};}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00203\ \textcolor{keywordtype}{int}\ maxdirfiltered(\textcolor{keyword}{const}\ T\ *p,\ \textcolor{keywordtype}{int}\ count,\ \textcolor{keyword}{const}\ T\ \&dir,\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ \&allow)}
+\DoxyCodeLine{00204\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ btAssert(count);}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordtype}{int}\ m\ =\ -\/1;}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ count;\ i++)}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (allow[i])}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\ ==\ -\/1\ ||\ btDot(p[i],\ dir)\ >\ btDot(p[m],\ dir))}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\ =\ i;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00213\ \ \ \ \ btAssert(m\ !=\ -\/1);}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{return}\ m;}
+\DoxyCodeLine{00215\ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ btVector3\ orth(\textcolor{keyword}{const}\ btVector3\ \&v);}
+\DoxyCodeLine{00218\ btVector3\ orth(\textcolor{keyword}{const}\ btVector3\ \&v)}
+\DoxyCodeLine{00219\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ btVector3\ a\ =\ btCross(v,\ btVector3(0,\ 0,\ 1));}
+\DoxyCodeLine{00221\ \ \ \ \ btVector3\ b\ =\ btCross(v,\ btVector3(0,\ 1,\ 0));}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.length()\ >\ b.length())}
+\DoxyCodeLine{00223\ \ \ \ \ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ a.normalized();}
+\DoxyCodeLine{00225\ \ \ \ \ \}}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00227\ \ \ \ \ \{}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b.normalized();}
+\DoxyCodeLine{00229\ \ \ \ \ \}}
+\DoxyCodeLine{00230\ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00233\ \textcolor{keywordtype}{int}\ maxdirsterid(\textcolor{keyword}{const}\ T\ *p,\ \textcolor{keywordtype}{int}\ count,\ \textcolor{keyword}{const}\ T\ \&dir,\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ \&allow)}
+\DoxyCodeLine{00234\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keywordtype}{int}\ m\ =\ -\/1;}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordflow}{while}\ (m\ ==\ -\/1)}
+\DoxyCodeLine{00237\ \ \ \ \ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ m\ =\ maxdirfiltered(p,\ count,\ dir,\ allow);}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (allow[m]\ ==\ 3)\ \textcolor{keywordflow}{return}\ m;}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ T\ u\ =\ orth(dir);}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ T\ v\ =\ btCross(u,\ dir);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ma\ =\ -\/1;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (btScalar\ x\ =\ btScalar(0.0);\ x\ <=\ btScalar(360.0);\ x\ +=\ btScalar(45.0))}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ s\ =\ btSin(SIMD\_RADS\_PER\_DEG\ *\ (x));}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ c\ =\ btCos(SIMD\_RADS\_PER\_DEG\ *\ (x));}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mb\ =\ maxdirfiltered(p,\ count,\ dir\ +\ (u\ *\ s\ +\ v\ *\ c)\ *\ btScalar(0.025),\ allow);}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ma\ ==\ m\ \&\&\ mb\ ==\ m)}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allow[m]\ =\ 3;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ma\ !=\ -\/1\ \&\&\ ma\ !=\ mb)\ \ \textcolor{comment}{//\ Yuck\ -\/\ this\ is\ really\ ugly}}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mc\ =\ ma;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (btScalar\ xx\ =\ x\ -\/\ btScalar(40.0);\ xx\ <=\ x;\ xx\ +=\ btScalar(5.0))}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ s\ =\ btSin(SIMD\_RADS\_PER\_DEG\ *\ (xx));}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ c\ =\ btCos(SIMD\_RADS\_PER\_DEG\ *\ (xx));}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ md\ =\ maxdirfiltered(p,\ count,\ dir\ +\ (u\ *\ s\ +\ v\ *\ c)\ *\ btScalar(0.025),\ allow);}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mc\ ==\ m\ \&\&\ md\ ==\ m)}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allow[m]\ =\ 3;}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m;}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mc\ =\ md;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ ma\ =\ mb;}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ allow[m]\ =\ 0;}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ m\ =\ -\/1;}
+\DoxyCodeLine{00273\ \ \ \ \ \}}
+\DoxyCodeLine{00274\ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keywordflow}{return}\ m;}
+\DoxyCodeLine{00276\ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{keywordtype}{int}\ operator==(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&b);}
+\DoxyCodeLine{00279\ \textcolor{keywordtype}{int}\ operator==(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&b)}
+\DoxyCodeLine{00280\ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00282\ \ \ \ \ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (a[i]\ !=\ b[i])\ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00284\ \ \ \ \ \}}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00286\ \}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \textcolor{keywordtype}{int}\ above(btVector3\ *vertices,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&t,\ \textcolor{keyword}{const}\ btVector3\ \&p,\ btScalar\ epsilon);}
+\DoxyCodeLine{00289\ \textcolor{keywordtype}{int}\ above(btVector3\ *vertices,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&t,\ \textcolor{keyword}{const}\ btVector3\ \&p,\ btScalar\ epsilon)}
+\DoxyCodeLine{00290\ \{}
+\DoxyCodeLine{00291\ \ \ \ \ btVector3\ n\ =\ TriNormal(vertices[t[0]],\ vertices[t[1]],\ vertices[t[2]]);}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{keywordflow}{return}\ (btDot(n,\ p\ -\/\ vertices[t[0]])\ >\ epsilon);\ \ \textcolor{comment}{//\ EPSILON???}}
+\DoxyCodeLine{00293\ \}}
+\DoxyCodeLine{00294\ \textcolor{keywordtype}{int}\ hasedge(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&t,\ \textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b);}
+\DoxyCodeLine{00295\ \textcolor{keywordtype}{int}\ hasedge(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&t,\ \textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b)}
+\DoxyCodeLine{00296\ \{}
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00298\ \ \ \ \ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i1\ =\ (i\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t[i]\ ==\ a\ \&\&\ t[i1]\ ==\ b)\ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00301\ \ \ \ \ \}}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00303\ \}}
+\DoxyCodeLine{00304\ \textcolor{keywordtype}{int}\ hasvert(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&t,\ \textcolor{keywordtype}{int}\ v);}
+\DoxyCodeLine{00305\ \textcolor{keywordtype}{int}\ hasvert(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&t,\ \textcolor{keywordtype}{int}\ v)}
+\DoxyCodeLine{00306\ \{}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordflow}{return}\ (t[0]\ ==\ v\ ||\ t[1]\ ==\ v\ ||\ t[2]\ ==\ v);}
+\DoxyCodeLine{00308\ \}}
+\DoxyCodeLine{00309\ \textcolor{keywordtype}{int}\ shareedge(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&b);}
+\DoxyCodeLine{00310\ \textcolor{keywordtype}{int}\ shareedge(\textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classint3}{int3}}\ \&b)}
+\DoxyCodeLine{00311\ \{}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00314\ \ \ \ \ \{}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i1\ =\ (i\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hasedge(a,\ b[i1],\ b[i]))\ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00317\ \ \ \ \ \}}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00319\ \}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}};}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classint3}{int3}}}
+\DoxyCodeLine{00324\ \{}
+\DoxyCodeLine{00325\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00326\ \ \ \ \ \mbox{\hyperlink{classint3}{int3}}\ n;}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{keywordtype}{int}\ id;}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keywordtype}{int}\ vmax;}
+\DoxyCodeLine{00329\ \ \ \ \ btScalar\ rise;}
+\DoxyCodeLine{00330\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c)\ :\ \mbox{\hyperlink{classint3}{int3}}(a,\ b,\ c),\ n(-\/1,\ -\/1,\ -\/1)}
+\DoxyCodeLine{00331\ \ \ \ \ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ vmax\ =\ -\/1;}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ rise\ =\ btScalar(0.0);}
+\DoxyCodeLine{00334\ \ \ \ \ \}}
+\DoxyCodeLine{00335\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{\string~btHullTriangle}}()}
+\DoxyCodeLine{00336\ \ \ \ \ \{}
+\DoxyCodeLine{00337\ \ \ \ \ \}}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordtype}{int}\ \&neib(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b);}
+\DoxyCodeLine{00339\ \};}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{keywordtype}{int}\ \&btHullTriangle::neib(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b)}
+\DoxyCodeLine{00342\ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ er\ =\ -\/1;}
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00346\ \ \ \ \ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i1\ =\ (i\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i2\ =\ (i\ +\ 2)\ \%\ 3;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((*\textcolor{keyword}{this})[i]\ ==\ a\ \&\&\ (*this)[i1]\ ==\ b)\ \textcolor{keywordflow}{return}\ n[i2];}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((*\textcolor{keyword}{this})[i]\ ==\ b\ \&\&\ (*this)[i1]\ ==\ a)\ \textcolor{keywordflow}{return}\ n[i2];}
+\DoxyCodeLine{00351\ \ \ \ \ \}}
+\DoxyCodeLine{00352\ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keywordflow}{return}\ er;}
+\DoxyCodeLine{00354\ \}}
+\DoxyCodeLine{00355\ \textcolor{keywordtype}{void}\ HullLibrary::b2bfix(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *s,\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t)}
+\DoxyCodeLine{00356\ \{}
+\DoxyCodeLine{00357\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00359\ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i1\ =\ (i\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i2\ =\ (i\ +\ 2)\ \%\ 3;}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ a\ =\ (*s)[i1];}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ b\ =\ (*s)[i2];}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ btAssert(m\_tris[s-\/>neib(a,\ b)]-\/>neib(b,\ a)\ ==\ s-\/>id);}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ btAssert(m\_tris[t-\/>neib(a,\ b)]-\/>neib(b,\ a)\ ==\ t-\/>id);}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ m\_tris[s-\/>neib(a,\ b)]-\/>neib(b,\ a)\ =\ t-\/>neib(b,\ a);}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ m\_tris[t-\/>neib(b,\ a)]-\/>neib(a,\ b)\ =\ s-\/>neib(a,\ b);}
+\DoxyCodeLine{00368\ \ \ \ \ \}}
+\DoxyCodeLine{00369\ \}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \textcolor{keywordtype}{void}\ HullLibrary::removeb2b(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *s,\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t)}
+\DoxyCodeLine{00372\ \{}
+\DoxyCodeLine{00373\ \ \ \ \ b2bfix(s,\ t);}
+\DoxyCodeLine{00374\ \ \ \ \ deAllocateTriangle(s);}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \ \ \ \ deAllocateTriangle(t);}
+\DoxyCodeLine{00377\ \}}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \textcolor{keywordtype}{void}\ HullLibrary::checkit(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t)}
+\DoxyCodeLine{00380\ \{}
+\DoxyCodeLine{00381\ \ \ \ \ (void)t;}
+\DoxyCodeLine{00382\ }
+\DoxyCodeLine{00383\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00384\ \ \ \ \ btAssert(m\_tris[t-\/>id]\ ==\ t);}
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00386\ \ \ \ \ \{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i1\ =\ (i\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i2\ =\ (i\ +\ 2)\ \%\ 3;}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ a\ =\ (*t)[i1];}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ b\ =\ (*t)[i2];}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ release\ compile\ fix}}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ (void)i1;}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ (void)i2;}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ (void)a;}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ (void)b;}
+\DoxyCodeLine{00397\ }
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ btAssert(a\ !=\ b);}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ btAssert(m\_tris[t-\/>n[i]]-\/>neib(b,\ a)\ ==\ t-\/>id);}
+\DoxyCodeLine{00400\ \ \ \ \ \}}
+\DoxyCodeLine{00401\ \}}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *HullLibrary::allocateTriangle(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c)}
+\DoxyCodeLine{00404\ \{}
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keywordtype}{void}\ *mem\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}),\ 16);}
+\DoxyCodeLine{00406\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *tr\ =\ \textcolor{keyword}{new}\ (mem)\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}(a,\ b,\ c);}
+\DoxyCodeLine{00407\ \ \ \ \ tr-\/>id\ =\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00408\ \ \ \ \ m\_tris.push\_back(tr);}
+\DoxyCodeLine{00409\ }
+\DoxyCodeLine{00410\ \ \ \ \ \textcolor{keywordflow}{return}\ tr;}
+\DoxyCodeLine{00411\ \}}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00413\ \textcolor{keywordtype}{void}\ HullLibrary::deAllocateTriangle(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *tri)}
+\DoxyCodeLine{00414\ \{}
+\DoxyCodeLine{00415\ \ \ \ \ btAssert(m\_tris[tri-\/>id]\ ==\ tri);}
+\DoxyCodeLine{00416\ \ \ \ \ m\_tris[tri-\/>id]\ =\ NULL;}
+\DoxyCodeLine{00417\ \ \ \ \ tri-\/>\string~btHullTriangle();}
+\DoxyCodeLine{00418\ \ \ \ \ btAlignedFree(tri);}
+\DoxyCodeLine{00419\ \}}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00421\ \textcolor{keywordtype}{void}\ HullLibrary::extrude(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t0,\ \textcolor{keywordtype}{int}\ v)}
+\DoxyCodeLine{00422\ \{}
+\DoxyCodeLine{00423\ \ \ \ \ \mbox{\hyperlink{classint3}{int3}}\ t\ =\ *t0;}
+\DoxyCodeLine{00424\ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00425\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *ta\ =\ allocateTriangle(v,\ t[1],\ t[2]);}
+\DoxyCodeLine{00426\ \ \ \ \ ta-\/>n\ =\ \mbox{\hyperlink{classint3}{int3}}(t0-\/>n[0],\ n\ +\ 1,\ n\ +\ 2);}
+\DoxyCodeLine{00427\ \ \ \ \ m\_tris[t0-\/>n[0]]-\/>neib(t[1],\ t[2])\ =\ n\ +\ 0;}
+\DoxyCodeLine{00428\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *tb\ =\ allocateTriangle(v,\ t[2],\ t[0]);}
+\DoxyCodeLine{00429\ \ \ \ \ tb-\/>n\ =\ \mbox{\hyperlink{classint3}{int3}}(t0-\/>n[1],\ n\ +\ 2,\ n\ +\ 0);}
+\DoxyCodeLine{00430\ \ \ \ \ m\_tris[t0-\/>n[1]]-\/>neib(t[2],\ t[0])\ =\ n\ +\ 1;}
+\DoxyCodeLine{00431\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *tc\ =\ allocateTriangle(v,\ t[0],\ t[1]);}
+\DoxyCodeLine{00432\ \ \ \ \ tc-\/>n\ =\ \mbox{\hyperlink{classint3}{int3}}(t0-\/>n[2],\ n\ +\ 0,\ n\ +\ 1);}
+\DoxyCodeLine{00433\ \ \ \ \ m\_tris[t0-\/>n[2]]-\/>neib(t[0],\ t[1])\ =\ n\ +\ 2;}
+\DoxyCodeLine{00434\ \ \ \ \ checkit(ta);}
+\DoxyCodeLine{00435\ \ \ \ \ checkit(tb);}
+\DoxyCodeLine{00436\ \ \ \ \ checkit(tc);}
+\DoxyCodeLine{00437\ \ \ \ \ \textcolor{keywordflow}{if}\ (hasvert(*m\_tris[ta-\/>n[0]],\ v))\ removeb2b(ta,\ m\_tris[ta-\/>n[0]]);}
+\DoxyCodeLine{00438\ \ \ \ \ \textcolor{keywordflow}{if}\ (hasvert(*m\_tris[tb-\/>n[0]],\ v))\ removeb2b(tb,\ m\_tris[tb-\/>n[0]]);}
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{keywordflow}{if}\ (hasvert(*m\_tris[tc-\/>n[0]],\ v))\ removeb2b(tc,\ m\_tris[tc-\/>n[0]]);}
+\DoxyCodeLine{00440\ \ \ \ \ deAllocateTriangle(t0);}
+\DoxyCodeLine{00441\ \}}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *HullLibrary::extrudable(btScalar\ epsilon)}
+\DoxyCodeLine{00444\ \{}
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00446\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t\ =\ NULL;}
+\DoxyCodeLine{00447\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00448\ \ \ \ \ \{}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!t\ ||\ (m\_tris[i]\ \&\&\ t-\/>rise\ <\ m\_tris[i]-\/>rise))}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ m\_tris[i];}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00453\ \ \ \ \ \}}
+\DoxyCodeLine{00454\ \ \ \ \ \textcolor{keywordflow}{return}\ (t-\/>rise\ >\ epsilon)\ ?\ t\ :\ NULL;}
+\DoxyCodeLine{00455\ \}}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \mbox{\hyperlink{classint4}{int4}}\ HullLibrary::FindSimplex(btVector3\ *verts,\ \textcolor{keywordtype}{int}\ verts\_count,\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ \&allow)}
+\DoxyCodeLine{00458\ \{}
+\DoxyCodeLine{00459\ \ \ \ \ btVector3\ basis[3];}
+\DoxyCodeLine{00460\ \ \ \ \ basis[0]\ =\ btVector3(btScalar(0.01),\ btScalar(0.02),\ btScalar(1.0));}
+\DoxyCodeLine{00461\ \ \ \ \ \textcolor{keywordtype}{int}\ p0\ =\ maxdirsterid(verts,\ verts\_count,\ basis[0],\ allow);}
+\DoxyCodeLine{00462\ \ \ \ \ \textcolor{keywordtype}{int}\ p1\ =\ maxdirsterid(verts,\ verts\_count,\ -\/basis[0],\ allow);}
+\DoxyCodeLine{00463\ \ \ \ \ basis[0]\ =\ verts[p0]\ -\/\ verts[p1];}
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keywordflow}{if}\ (p0\ ==\ p1\ ||\ basis[0]\ ==\ btVector3(0,\ 0,\ 0))}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classint4}{int4}}(-\/1,\ -\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00466\ \ \ \ \ basis[1]\ =\ btCross(btVector3(btScalar(1),\ btScalar(0.02),\ btScalar(0)),\ basis[0]);}
+\DoxyCodeLine{00467\ \ \ \ \ basis[2]\ =\ btCross(btVector3(btScalar(-\/0.02),\ btScalar(1),\ btScalar(0)),\ basis[0]);}
+\DoxyCodeLine{00468\ \ \ \ \ \textcolor{keywordflow}{if}\ (basis[1].length()\ >\ basis[2].length())}
+\DoxyCodeLine{00469\ \ \ \ \ \{}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ basis[1].normalize();}
+\DoxyCodeLine{00471\ \ \ \ \ \}}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00473\ \ \ \ \ \{}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ basis[1]\ =\ basis[2];}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ basis[1].normalize();}
+\DoxyCodeLine{00476\ \ \ \ \ \}}
+\DoxyCodeLine{00477\ \ \ \ \ \textcolor{keywordtype}{int}\ p2\ =\ maxdirsterid(verts,\ verts\_count,\ basis[1],\ allow);}
+\DoxyCodeLine{00478\ \ \ \ \ \textcolor{keywordflow}{if}\ (p2\ ==\ p0\ ||\ p2\ ==\ p1)}
+\DoxyCodeLine{00479\ \ \ \ \ \{}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ p2\ =\ maxdirsterid(verts,\ verts\_count,\ -\/basis[1],\ allow);}
+\DoxyCodeLine{00481\ \ \ \ \ \}}
+\DoxyCodeLine{00482\ \ \ \ \ \textcolor{keywordflow}{if}\ (p2\ ==\ p0\ ||\ p2\ ==\ p1)}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classint4}{int4}}(-\/1,\ -\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00484\ \ \ \ \ basis[1]\ =\ verts[p2]\ -\/\ verts[p0];}
+\DoxyCodeLine{00485\ \ \ \ \ basis[2]\ =\ btCross(basis[1],\ basis[0]).normalized();}
+\DoxyCodeLine{00486\ \ \ \ \ \textcolor{keywordtype}{int}\ p3\ =\ maxdirsterid(verts,\ verts\_count,\ basis[2],\ allow);}
+\DoxyCodeLine{00487\ \ \ \ \ \textcolor{keywordflow}{if}\ (p3\ ==\ p0\ ||\ p3\ ==\ p1\ ||\ p3\ ==\ p2)\ p3\ =\ maxdirsterid(verts,\ verts\_count,\ -\/basis[2],\ allow);}
+\DoxyCodeLine{00488\ \ \ \ \ \textcolor{keywordflow}{if}\ (p3\ ==\ p0\ ||\ p3\ ==\ p1\ ||\ p3\ ==\ p2)}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classint4}{int4}}(-\/1,\ -\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00490\ \ \ \ \ btAssert(!(p0\ ==\ p1\ ||\ p0\ ==\ p2\ ||\ p0\ ==\ p3\ ||\ p1\ ==\ p2\ ||\ p1\ ==\ p3\ ||\ p2\ ==\ p3));}
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keywordflow}{if}\ (btDot(verts[p3]\ -\/\ verts[p0],\ btCross(verts[p1]\ -\/\ verts[p0],\ verts[p2]\ -\/\ verts[p0]))\ <\ 0)}
+\DoxyCodeLine{00492\ \ \ \ \ \{}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ btSwap(p2,\ p3);}
+\DoxyCodeLine{00494\ \ \ \ \ \}}
+\DoxyCodeLine{00495\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classint4}{int4}}(p0,\ p1,\ p2,\ p3);}
+\DoxyCodeLine{00496\ \}}
+\DoxyCodeLine{00497\ }
+\DoxyCodeLine{00498\ \textcolor{keywordtype}{int}\ HullLibrary::calchullgen(btVector3\ *verts,\ \textcolor{keywordtype}{int}\ verts\_count,\ \textcolor{keywordtype}{int}\ vlimit)}
+\DoxyCodeLine{00499\ \{}
+\DoxyCodeLine{00500\ \ \ \ \ \textcolor{keywordflow}{if}\ (verts\_count\ <\ 4)\ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00501\ \ \ \ \ \textcolor{keywordflow}{if}\ (vlimit\ ==\ 0)\ vlimit\ =\ 1000000000;}
+\DoxyCodeLine{00502\ \ \ \ \ \textcolor{keywordtype}{int}\ j;}
+\DoxyCodeLine{00503\ \ \ \ \ btVector3\ bmin(*verts),\ bmax(*verts);}
+\DoxyCodeLine{00504\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ isextreme;}
+\DoxyCodeLine{00505\ \ \ \ \ isextreme.reserve(verts\_count);}
+\DoxyCodeLine{00506\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ allow;}
+\DoxyCodeLine{00507\ \ \ \ \ allow.reserve(verts\_count);}
+\DoxyCodeLine{00508\ }
+\DoxyCodeLine{00509\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ verts\_count;\ j++)}
+\DoxyCodeLine{00510\ \ \ \ \ \{}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ allow.push\_back(1);}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ isextreme.push\_back(0);}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ bmin.setMin(verts[j]);}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ bmax.setMax(verts[j]);}
+\DoxyCodeLine{00515\ \ \ \ \ \}}
+\DoxyCodeLine{00516\ \ \ \ \ btScalar\ \mbox{\hyperlink{group__ext__scalar__constants_ga2a1e57fc5592b69cfae84174cbfc9429}{epsilon}}\ =\ (bmax\ -\/\ bmin).length()\ *\ btScalar(0.001);}
+\DoxyCodeLine{00517\ \ \ \ \ btAssert(epsilon\ !=\ 0.0);}
+\DoxyCodeLine{00518\ }
+\DoxyCodeLine{00519\ \ \ \ \ \mbox{\hyperlink{classint4}{int4}}\ p\ =\ FindSimplex(verts,\ verts\_count,\ allow);}
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{keywordflow}{if}\ (p.x\ ==\ -\/1)\ \textcolor{keywordflow}{return}\ 0;\ \ \textcolor{comment}{//\ simplex\ failed}}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \ \ \ \ btVector3\ center\ =\ (verts[p[0]]\ +\ verts[p[1]]\ +\ verts[p[2]]\ +\ verts[p[3]])\ /\ btScalar(4.0);\ \ \textcolor{comment}{//\ a\ valid\ interior\ point}}
+\DoxyCodeLine{00523\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t0\ =\ allocateTriangle(p[2],\ p[3],\ p[1]);}
+\DoxyCodeLine{00524\ \ \ \ \ t0-\/>n\ =\ \mbox{\hyperlink{classint3}{int3}}(2,\ 3,\ 1);}
+\DoxyCodeLine{00525\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t1\ =\ allocateTriangle(p[3],\ p[2],\ p[0]);}
+\DoxyCodeLine{00526\ \ \ \ \ t1-\/>n\ =\ \mbox{\hyperlink{classint3}{int3}}(3,\ 2,\ 0);}
+\DoxyCodeLine{00527\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t2\ =\ allocateTriangle(p[0],\ p[1],\ p[3]);}
+\DoxyCodeLine{00528\ \ \ \ \ t2-\/>n\ =\ \mbox{\hyperlink{classint3}{int3}}(0,\ 1,\ 3);}
+\DoxyCodeLine{00529\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t3\ =\ allocateTriangle(p[1],\ p[0],\ p[2]);}
+\DoxyCodeLine{00530\ \ \ \ \ t3-\/>n\ =\ \mbox{\hyperlink{classint3}{int3}}(1,\ 0,\ 2);}
+\DoxyCodeLine{00531\ \ \ \ \ isextreme[p[0]]\ =\ isextreme[p[1]]\ =\ isextreme[p[2]]\ =\ isextreme[p[3]]\ =\ 1;}
+\DoxyCodeLine{00532\ \ \ \ \ checkit(t0);}
+\DoxyCodeLine{00533\ \ \ \ \ checkit(t1);}
+\DoxyCodeLine{00534\ \ \ \ \ checkit(t2);}
+\DoxyCodeLine{00535\ \ \ \ \ checkit(t3);}
+\DoxyCodeLine{00536\ }
+\DoxyCodeLine{00537\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ j++)}
+\DoxyCodeLine{00538\ \ \ \ \ \{}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t\ =\ m\_tris[j];}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ btAssert(t);}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ btAssert(t-\/>vmax\ <\ 0);}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ btVector3\ n\ =\ TriNormal(verts[(*t)[0]],\ verts[(*t)[1]],\ verts[(*t)[2]]);}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ t-\/>vmax\ =\ maxdirsterid(verts,\ verts\_count,\ n,\ allow);}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ t-\/>rise\ =\ btDot(n,\ verts[t-\/>vmax]\ -\/\ verts[(*t)[0]]);}
+\DoxyCodeLine{00545\ \ \ \ \ \}}
+\DoxyCodeLine{00546\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *te;}
+\DoxyCodeLine{00547\ \ \ \ \ vlimit\ -\/=\ 4;}
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keywordflow}{while}\ (vlimit\ >\ 0\ \&\&\ ((te\ =\ extrudable(epsilon))\ !=\ 0))}
+\DoxyCodeLine{00549\ \ \ \ \ \{}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \textcolor{comment}{//int3\ ti=*te;}}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ v\ =\ te-\/>vmax;}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ btAssert(v\ !=\ -\/1);}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ btAssert(!isextreme[v]);\ \ \textcolor{comment}{//\ wtf\ we've\ already\ done\ this\ vertex}}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ isextreme[v]\ =\ 1;}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \textcolor{comment}{//if(v==p0\ ||\ v==p1\ ||\ v==p2\ ||\ v==p3)\ continue;\ //\ done\ these\ already}}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ j\ =\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (j-\/-\/)}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_tris[j])\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classint3}{int3}}\ t\ =\ *m\_tris[j];}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (above(verts,\ t,\ verts[v],\ btScalar(0.01)\ *\ epsilon))}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ extrude(m\_tris[j],\ v);}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ now\ check\ for\ those\ degenerate\ cases\ where\ we\ have\ a\ flipped\ triangle\ or\ a\ really\ skinny\ triangle}}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ j\ =\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (j-\/-\/)}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_tris[j])\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!hasvert(*m\_tris[j],\ v))\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classint3}{int3}}\ nt\ =\ *m\_tris[j];}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (above(verts,\ nt,\ center,\ btScalar(0.01)\ *\ epsilon)\ ||\ btCross(verts[nt[1]]\ -\/\ verts[nt[0]],\ verts[nt[2]]\ -\/\ verts[nt[1]]).length()\ <\ epsilon\ *\ epsilon\ *\ btScalar(0.1))}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *nb\ =\ m\_tris[m\_tris[j]-\/>n[0]];}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(nb);}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(!hasvert(*nb,\ v));}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(nb-\/>id\ <\ j);}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ extrude(nb,\ v);}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ j\ =\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ j\ =\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (j-\/-\/)}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}\ *t\ =\ m\_tris[j];}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!t)\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t-\/>vmax\ >=\ 0)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ n\ =\ TriNormal(verts[(*t)[0]],\ verts[(*t)[1]],\ verts[(*t)[2]]);}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ t-\/>vmax\ =\ maxdirsterid(verts,\ verts\_count,\ n,\ allow);}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isextreme[t-\/>vmax])}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t-\/>vmax\ =\ -\/1;\ \ \textcolor{comment}{//\ already\ done\ that\ vertex\ -\/\ algorithm\ needs\ to\ be\ able\ to\ terminate.}}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t-\/>rise\ =\ btDot(n,\ verts[t-\/>vmax]\ -\/\ verts[(*t)[0]]);}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ vlimit-\/-\/;}
+\DoxyCodeLine{00601\ \ \ \ \ \}}
+\DoxyCodeLine{00602\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00603\ \}}
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ \textcolor{keywordtype}{int}\ HullLibrary::calchull(btVector3\ *verts,\ \textcolor{keywordtype}{int}\ verts\_count,\ \mbox{\hyperlink{classbt_aligned_object_array}{TUIntArray}}\ \&tris\_out,\ \textcolor{keywordtype}{int}\ \&tris\_count,\ \textcolor{keywordtype}{int}\ vlimit)}
+\DoxyCodeLine{00606\ \{}
+\DoxyCodeLine{00607\ \ \ \ \ \textcolor{keywordtype}{int}\ rc\ =\ calchullgen(verts,\ verts\_count,\ vlimit);}
+\DoxyCodeLine{00608\ \ \ \ \ \textcolor{keywordflow}{if}\ (!rc)\ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00609\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ ts;}
+\DoxyCodeLine{00610\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_tris.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00613\ \ \ \ \ \{}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_tris[i])}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ts.push\_back((*m\_tris[i])[j]);}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ deAllocateTriangle(m\_tris[i]);}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00620\ \ \ \ \ \}}
+\DoxyCodeLine{00621\ \ \ \ \ tris\_count\ =\ ts.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ /\ 3;}
+\DoxyCodeLine{00622\ \ \ \ \ tris\_out.resize(ts.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00623\ }
+\DoxyCodeLine{00624\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ ts.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00625\ \ \ \ \ \{}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ tris\_out[i]\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\textcolor{keyword}{>}(ts[i]);}
+\DoxyCodeLine{00627\ \ \ \ \ \}}
+\DoxyCodeLine{00628\ \ \ \ \ m\_tris.resize(0);}
+\DoxyCodeLine{00629\ }
+\DoxyCodeLine{00630\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00631\ \}}
+\DoxyCodeLine{00632\ }
+\DoxyCodeLine{00633\ \textcolor{keywordtype}{bool}\ HullLibrary::ComputeHull(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vcount,\ \textcolor{keyword}{const}\ btVector3\ *vertices,\ \mbox{\hyperlink{class_p_hull_result}{PHullResult}}\ \&result,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vlimit)}
+\DoxyCodeLine{00634\ \{}
+\DoxyCodeLine{00635\ \ \ \ \ \textcolor{keywordtype}{int}\ tris\_count;}
+\DoxyCodeLine{00636\ \ \ \ \ \textcolor{keywordtype}{int}\ ret\ =\ calchull((btVector3\ *)vertices,\ (\textcolor{keywordtype}{int})vcount,\ result.m\_Indices,\ tris\_count,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(vlimit));}
+\DoxyCodeLine{00637\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ret)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00638\ \ \ \ \ result.mIndexCount\ =\ (\textcolor{keywordtype}{unsigned}\ int)(tris\_count\ *\ 3);}
+\DoxyCodeLine{00639\ \ \ \ \ result.mFaceCount\ =\ (\textcolor{keywordtype}{unsigned}\ int)tris\_count;}
+\DoxyCodeLine{00640\ \ \ \ \ result.mVertices\ =\ (btVector3\ *)vertices;}
+\DoxyCodeLine{00641\ \ \ \ \ result.mVcount\ =\ (\textcolor{keywordtype}{unsigned}\ int)vcount;}
+\DoxyCodeLine{00642\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00643\ \}}
+\DoxyCodeLine{00644\ }
+\DoxyCodeLine{00645\ \textcolor{keywordtype}{void}\ ReleaseHull(\mbox{\hyperlink{class_p_hull_result}{PHullResult}}\ \&result);}
+\DoxyCodeLine{00646\ \textcolor{keywordtype}{void}\ ReleaseHull(\mbox{\hyperlink{class_p_hull_result}{PHullResult}}\ \&result)}
+\DoxyCodeLine{00647\ \{}
+\DoxyCodeLine{00648\ \ \ \ \ \textcolor{keywordflow}{if}\ (result.m\_Indices.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{00649\ \ \ \ \ \{}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ result.m\_Indices.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00651\ \ \ \ \ \}}
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00653\ \ \ \ \ result.mVcount\ =\ 0;}
+\DoxyCodeLine{00654\ \ \ \ \ result.mIndexCount\ =\ 0;}
+\DoxyCodeLine{00655\ \ \ \ \ result.mVertices\ =\ 0;}
+\DoxyCodeLine{00656\ \}}
+\DoxyCodeLine{00657\ }
+\DoxyCodeLine{00658\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00659\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00660\ \textcolor{comment}{//********\ \ HullLib\ header}}
+\DoxyCodeLine{00661\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00662\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00663\ }
+\DoxyCodeLine{00664\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00665\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00666\ \textcolor{comment}{//********\ \ HullLib\ implementation}}
+\DoxyCodeLine{00667\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00668\ \textcolor{comment}{//*********************************************************************}}
+\DoxyCodeLine{00669\ }
+\DoxyCodeLine{00670\ HullError\ HullLibrary::CreateConvexHull(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_hull_desc}{HullDesc}}\ \&desc,\ \ \textcolor{comment}{//\ describes\ the\ input\ request}}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_hull_result}{HullResult}}\ \&result)\ \ \ \ \textcolor{comment}{//\ contains\ the\ resulst}}
+\DoxyCodeLine{00672\ \{}
+\DoxyCodeLine{00673\ \ \ \ \ HullError\ ret\ =\ QE\_FAIL;}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00675\ \ \ \ \ \mbox{\hyperlink{class_p_hull_result}{PHullResult}}\ hr;}
+\DoxyCodeLine{00676\ }
+\DoxyCodeLine{00677\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vcount\ =\ desc.mVcount;}
+\DoxyCodeLine{00678\ \ \ \ \ \textcolor{keywordflow}{if}\ (vcount\ <\ 8)\ vcount\ =\ 8;}
+\DoxyCodeLine{00679\ }
+\DoxyCodeLine{00680\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ vertexSource;}
+\DoxyCodeLine{00681\ \ \ \ \ vertexSource.resize(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(vcount));}
+\DoxyCodeLine{00682\ }
+\DoxyCodeLine{00683\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}};}
+\DoxyCodeLine{00684\ }
+\DoxyCodeLine{00685\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ ovcount;}
+\DoxyCodeLine{00686\ }
+\DoxyCodeLine{00687\ \ \ \ \ \textcolor{keywordtype}{bool}\ ok\ =\ CleanupVertices(desc.mVcount,\ desc.mVertices,\ desc.mVertexStride,\ ovcount,\ \&vertexSource[0],\ desc.mNormalEpsilon,\ scale);\ \ \textcolor{comment}{//\ normalize\ point\ cloud,\ remove\ duplicates!}}
+\DoxyCodeLine{00688\ }
+\DoxyCodeLine{00689\ \ \ \ \ \textcolor{keywordflow}{if}\ (ok)}
+\DoxyCodeLine{00690\ \ \ \ \ \{}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ if\ (\ 1\ )\ //\ scale\ vertices\ back\ to\ their\ original\ size.}}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ ovcount;\ i++)}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ \&v\ =\ vertexSource[\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(i)];}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v[0]\ *=\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[0];}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v[1]\ *=\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[1];}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v[2]\ *=\ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[2];}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00701\ }
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ ok\ =\ ComputeHull(ovcount,\ \&vertexSource[0],\ hr,\ desc.mMaxVertices);}
+\DoxyCodeLine{00703\ }
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ok)}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00706\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ re-\/index\ triangle\ mesh\ so\ it\ refers\ to\ only\ used\ vertices,\ rebuild\ a\ new\ vertex\ table.}}
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ vertexScratch;}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ \ \ \ \ vertexScratch.resize(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(hr.mVcount));}
+\DoxyCodeLine{00709\ }
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \ \ \ \ BringOutYourDead(hr.mVertices,\ hr.mVcount,\ \&vertexScratch[0],\ ovcount,\ \&hr.m\_Indices[0],\ hr.mIndexCount);}
+\DoxyCodeLine{00711\ }
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ ret\ =\ QE\_OK;}
+\DoxyCodeLine{00713\ }
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (desc.HasHullFlag(QF\_TRIANGLES))\ \ \textcolor{comment}{//\ if\ he\ wants\ the\ results\ as\ triangle!}}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mPolygons\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mNumOutputVertices\ =\ ovcount;}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_OutputVertices.resize(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ovcount));}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mNumFaces\ =\ hr.mFaceCount;}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mNumIndices\ =\ hr.mIndexCount;}
+\DoxyCodeLine{00721\ }
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_Indices.resize(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(hr.mIndexCount));}
+\DoxyCodeLine{00723\ }
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(\&result.m\_OutputVertices[0],\ \&vertexScratch[0],\ \textcolor{keyword}{sizeof}(btVector3)\ *\ ovcount);}
+\DoxyCodeLine{00725\ }
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (desc.HasHullFlag(QF\_REVERSE\_ORDER))}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *source\ =\ \&hr.m\_Indices[0];}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *dest\ =\ \&result.m\_Indices[0];}
+\DoxyCodeLine{00730\ }
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ hr.mFaceCount;\ i++)}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[0]\ =\ source[2];}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[1]\ =\ source[1];}
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[2]\ =\ source[0];}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest\ +=\ 3;}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ source\ +=\ 3;}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(\&result.m\_Indices[0],\ \&hr.m\_Indices[0],\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})\ *\ hr.mIndexCount);}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mPolygons\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mNumOutputVertices\ =\ ovcount;}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_OutputVertices.resize(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ovcount));}
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mNumFaces\ =\ hr.mFaceCount;}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.mNumIndices\ =\ hr.mIndexCount\ +\ hr.mFaceCount;}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_Indices.resize(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(result.mNumIndices));}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(\&result.m\_OutputVertices[0],\ \&vertexScratch[0],\ \textcolor{keyword}{sizeof}(btVector3)\ *\ ovcount);}
+\DoxyCodeLine{00754\ }
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ (\ 1\ )}}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *source\ =\ \&hr.m\_Indices[0];}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *dest\ =\ \&result.m\_Indices[0];}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ hr.mFaceCount;\ i++)}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[0]\ =\ 3;}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (desc.HasHullFlag(QF\_REVERSE\_ORDER))}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[1]\ =\ source[2];}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[2]\ =\ source[1];}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[3]\ =\ source[0];}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[1]\ =\ source[0];}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[2]\ =\ source[1];}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[3]\ =\ source[2];}
+\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00774\ }
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest\ +=\ 4;}
+\DoxyCodeLine{00776\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ source\ +=\ 3;}
+\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ ReleaseHull(hr);}
+\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00782\ \ \ \ \ \}}
+\DoxyCodeLine{00783\ }
+\DoxyCodeLine{00784\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00785\ \}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ HullError\ HullLibrary::ReleaseResult(\mbox{\hyperlink{class_hull_result}{HullResult}}\ \&result)\ \ \textcolor{comment}{//\ release\ memory\ allocated\ for\ this\ result,\ we\ are\ done\ with\ it.}}
+\DoxyCodeLine{00788\ \{}
+\DoxyCodeLine{00789\ \ \ \ \ \textcolor{keywordflow}{if}\ (result.m\_OutputVertices.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{00790\ \ \ \ \ \{}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ result.mNumOutputVertices\ =\ 0;}
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ result.m\_OutputVertices.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00793\ \ \ \ \ \}}
+\DoxyCodeLine{00794\ \ \ \ \ \textcolor{keywordflow}{if}\ (result.m\_Indices.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{00795\ \ \ \ \ \{}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ result.mNumIndices\ =\ 0;}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ result.m\_Indices.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00798\ \ \ \ \ \}}
+\DoxyCodeLine{00799\ \ \ \ \ \textcolor{keywordflow}{return}\ QE\_OK;}
+\DoxyCodeLine{00800\ \}}
+\DoxyCodeLine{00801\ }
+\DoxyCodeLine{00802\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ addPoint(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \&vcount,\ btVector3\ *p,\ btScalar\ x,\ btScalar\ y,\ btScalar\ z)}
+\DoxyCodeLine{00803\ \{}
+\DoxyCodeLine{00804\ \ \ \ \ \textcolor{comment}{//\ XXX,\ might\ be\ broken}}
+\DoxyCodeLine{00805\ \ \ \ \ btVector3\ \&dest\ =\ p[vcount];}
+\DoxyCodeLine{00806\ \ \ \ \ dest[0]\ =\ x;}
+\DoxyCodeLine{00807\ \ \ \ \ dest[1]\ =\ y;}
+\DoxyCodeLine{00808\ \ \ \ \ dest[2]\ =\ z;}
+\DoxyCodeLine{00809\ \ \ \ \ vcount++;}
+\DoxyCodeLine{00810\ \}}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ btScalar\ GetDist(btScalar\ px,\ btScalar\ py,\ btScalar\ pz,\ \textcolor{keyword}{const}\ btScalar\ *p2);}
+\DoxyCodeLine{00813\ btScalar\ GetDist(btScalar\ px,\ btScalar\ py,\ btScalar\ pz,\ \textcolor{keyword}{const}\ btScalar\ *p2)}
+\DoxyCodeLine{00814\ \{}
+\DoxyCodeLine{00815\ \ \ \ \ btScalar\ dx\ =\ px\ -\/\ p2[0];}
+\DoxyCodeLine{00816\ \ \ \ \ btScalar\ dy\ =\ py\ -\/\ p2[1];}
+\DoxyCodeLine{00817\ \ \ \ \ btScalar\ dz\ =\ pz\ -\/\ p2[2];}
+\DoxyCodeLine{00818\ }
+\DoxyCodeLine{00819\ \ \ \ \ \textcolor{keywordflow}{return}\ dx\ *\ dx\ +\ dy\ *\ dy\ +\ dz\ *\ dz;}
+\DoxyCodeLine{00820\ \}}
+\DoxyCodeLine{00821\ }
+\DoxyCodeLine{00822\ \textcolor{keywordtype}{bool}\ HullLibrary::CleanupVertices(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ svcount,}
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *svertices,}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ stride,}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \&vcount,\ \ \textcolor{comment}{//\ output\ number\ of\ vertices}}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ *vertices,\ \ \ \textcolor{comment}{//\ location\ to\ store\ the\ results.}}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ normalepsilon,}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ \&scale)}
+\DoxyCodeLine{00829\ \{}
+\DoxyCodeLine{00830\ \ \ \ \ \textcolor{keywordflow}{if}\ (svcount\ ==\ 0)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00831\ }
+\DoxyCodeLine{00832\ \ \ \ \ m\_vertexIndexMapping.resize(0);}
+\DoxyCodeLine{00833\ }
+\DoxyCodeLine{00834\ \textcolor{preprocessor}{\#define\ EPSILON\ btScalar(0.000001)\ }\textcolor{comment}{/*\ close\ enough\ to\ consider\ two\ btScalaring\ point\ numbers\ to\ be\ 'the\ same'.\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00835\ }
+\DoxyCodeLine{00836\ \ \ \ \ vcount\ =\ 0;}
+\DoxyCodeLine{00837\ }
+\DoxyCodeLine{00838\ \ \ \ \ btScalar\ recip[3]\ =\ \{0.f,\ 0.f,\ 0.f\};}
+\DoxyCodeLine{00839\ }
+\DoxyCodeLine{00840\ \ \ \ \ \textcolor{keywordflow}{if}\ (scale)}
+\DoxyCodeLine{00841\ \ \ \ \ \{}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[0]\ =\ 1;}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[1]\ =\ 1;}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[2]\ =\ 1;}
+\DoxyCodeLine{00845\ \ \ \ \ \}}
+\DoxyCodeLine{00846\ }
+\DoxyCodeLine{00847\ \ \ \ \ btScalar\ bmin[3]\ =\ \{FLT\_MAX,\ FLT\_MAX,\ FLT\_MAX\};}
+\DoxyCodeLine{00848\ \ \ \ \ btScalar\ bmax[3]\ =\ \{-\/FLT\_MAX,\ -\/FLT\_MAX,\ -\/FLT\_MAX\};}
+\DoxyCodeLine{00849\ }
+\DoxyCodeLine{00850\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *vtx\ =\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *)svertices;}
+\DoxyCodeLine{00851\ }
+\DoxyCodeLine{00852\ \ \ \ \ \textcolor{comment}{//\ \ if\ (\ 1\ )}}
+\DoxyCodeLine{00853\ \ \ \ \ \{}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ svcount;\ i++)}
+\DoxyCodeLine{00855\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ *p\ =\ (\textcolor{keyword}{const}\ btScalar\ *)vtx;}
+\DoxyCodeLine{00857\ }
+\DoxyCodeLine{00858\ \ \ \ \ \ \ \ \ \ \ \ \ vtx\ +=\ stride;}
+\DoxyCodeLine{00859\ }
+\DoxyCodeLine{00860\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00861\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00862\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p[j]\ <\ bmin[j])\ bmin[j]\ =\ p[j];}
+\DoxyCodeLine{00863\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p[j]\ >\ bmax[j])\ bmax[j]\ =\ p[j];}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00866\ \ \ \ \ \}}
+\DoxyCodeLine{00867\ }
+\DoxyCodeLine{00868\ \ \ \ \ btScalar\ dx\ =\ bmax[0]\ -\/\ bmin[0];}
+\DoxyCodeLine{00869\ \ \ \ \ btScalar\ dy\ =\ bmax[1]\ -\/\ bmin[1];}
+\DoxyCodeLine{00870\ \ \ \ \ btScalar\ dz\ =\ bmax[2]\ -\/\ bmin[2];}
+\DoxyCodeLine{00871\ }
+\DoxyCodeLine{00872\ \ \ \ \ btVector3\ center;}
+\DoxyCodeLine{00873\ }
+\DoxyCodeLine{00874\ \ \ \ \ center[0]\ =\ dx\ *\ btScalar(0.5)\ +\ bmin[0];}
+\DoxyCodeLine{00875\ \ \ \ \ center[1]\ =\ dy\ *\ btScalar(0.5)\ +\ bmin[1];}
+\DoxyCodeLine{00876\ \ \ \ \ center[2]\ =\ dz\ *\ btScalar(0.5)\ +\ bmin[2];}
+\DoxyCodeLine{00877\ }
+\DoxyCodeLine{00878\ \ \ \ \ \textcolor{keywordflow}{if}\ (dx\ <\ EPSILON\ ||\ dy\ <\ EPSILON\ ||\ dz\ <\ EPSILON\ ||\ svcount\ <\ 3)}
+\DoxyCodeLine{00879\ \ \ \ \ \{}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ btScalar\ len\ =\ FLT\_MAX;}
+\DoxyCodeLine{00881\ }
+\DoxyCodeLine{00882\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dx\ >\ EPSILON\ \&\&\ dx\ <\ len)\ len\ =\ dx;}
+\DoxyCodeLine{00883\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dy\ >\ EPSILON\ \&\&\ dy\ <\ len)\ len\ =\ dy;}
+\DoxyCodeLine{00884\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dz\ >\ EPSILON\ \&\&\ dz\ <\ len)\ len\ =\ dz;}
+\DoxyCodeLine{00885\ }
+\DoxyCodeLine{00886\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ ==\ FLT\_MAX)}
+\DoxyCodeLine{00887\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \ \ \ \ dx\ =\ dy\ =\ dz\ =\ btScalar(0.01);\ \ \textcolor{comment}{//\ one\ centimeter}}
+\DoxyCodeLine{00889\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dx\ <\ EPSILON)\ dx\ =\ len\ *\ btScalar(0.05);\ \ \textcolor{comment}{//\ 1/5th\ the\ shortest\ non-\/zero\ edge.}}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dy\ <\ EPSILON)\ dy\ =\ len\ *\ btScalar(0.05);}
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dz\ <\ EPSILON)\ dz\ =\ len\ *\ btScalar(0.05);}
+\DoxyCodeLine{00895\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00896\ }
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ btScalar\ x1\ =\ center[0]\ -\/\ dx;}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ btScalar\ x2\ =\ center[0]\ +\ dx;}
+\DoxyCodeLine{00899\ }
+\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ btScalar\ y1\ =\ center[1]\ -\/\ dy;}
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ btScalar\ y2\ =\ center[1]\ +\ dy;}
+\DoxyCodeLine{00902\ }
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ btScalar\ z1\ =\ center[2]\ -\/\ dz;}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ \ \ btScalar\ z2\ =\ center[2]\ +\ dz;}
+\DoxyCodeLine{00905\ }
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y1,\ z1);}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y1,\ z1);}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y2,\ z1);}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y2,\ z1);}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y1,\ z2);}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y1,\ z2);}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y2,\ z2);}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y2,\ z2);}
+\DoxyCodeLine{00914\ }
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \ \textcolor{comment}{//\ return\ cube}}
+\DoxyCodeLine{00916\ \ \ \ \ \}}
+\DoxyCodeLine{00917\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00918\ \ \ \ \ \{}
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (scale)}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[0]\ =\ dx;}
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[1]\ =\ dy;}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__matrix__transform_gaae2f8b2080622b24b85e1096748599b6}{scale}}[2]\ =\ dz;}
+\DoxyCodeLine{00924\ }
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ recip[0]\ =\ 1\ /\ dx;}
+\DoxyCodeLine{00926\ \ \ \ \ \ \ \ \ \ \ \ \ recip[1]\ =\ 1\ /\ dy;}
+\DoxyCodeLine{00927\ \ \ \ \ \ \ \ \ \ \ \ \ recip[2]\ =\ 1\ /\ dz;}
+\DoxyCodeLine{00928\ }
+\DoxyCodeLine{00929\ \ \ \ \ \ \ \ \ \ \ \ \ center[0]\ *=\ recip[0];}
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ center[1]\ *=\ recip[1];}
+\DoxyCodeLine{00931\ \ \ \ \ \ \ \ \ \ \ \ \ center[2]\ *=\ recip[2];}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00933\ \ \ \ \ \}}
+\DoxyCodeLine{00934\ }
+\DoxyCodeLine{00935\ \ \ \ \ vtx\ =\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *)svertices;}
+\DoxyCodeLine{00936\ }
+\DoxyCodeLine{00937\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ svcount;\ i++)}
+\DoxyCodeLine{00938\ \ \ \ \ \{}
+\DoxyCodeLine{00939\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *p\ =\ (\textcolor{keyword}{const}\ btVector3\ *)vtx;}
+\DoxyCodeLine{00940\ \ \ \ \ \ \ \ \ vtx\ +=\ stride;}
+\DoxyCodeLine{00941\ }
+\DoxyCodeLine{00942\ \ \ \ \ \ \ \ \ btScalar\ px\ =\ p-\/>getX();}
+\DoxyCodeLine{00943\ \ \ \ \ \ \ \ \ btScalar\ py\ =\ p-\/>getY();}
+\DoxyCodeLine{00944\ \ \ \ \ \ \ \ \ btScalar\ pz\ =\ p-\/>getZ();}
+\DoxyCodeLine{00945\ }
+\DoxyCodeLine{00946\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (scale)}
+\DoxyCodeLine{00947\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00948\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ px\ *\ recip[0];\ \ \textcolor{comment}{//\ normalize}}
+\DoxyCodeLine{00949\ \ \ \ \ \ \ \ \ \ \ \ \ py\ =\ py\ *\ recip[1];\ \ \textcolor{comment}{//\ normalize}}
+\DoxyCodeLine{00950\ \ \ \ \ \ \ \ \ \ \ \ \ pz\ =\ pz\ *\ recip[2];\ \ \textcolor{comment}{//\ normalize}}
+\DoxyCodeLine{00951\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00952\ }
+\DoxyCodeLine{00953\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ if\ (\ 1\ )}}
+\DoxyCodeLine{00954\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00955\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ j;}
+\DoxyCodeLine{00956\ }
+\DoxyCodeLine{00957\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ vcount;\ j++)}
+\DoxyCodeLine{00958\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00960\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ \&v\ =\ vertices[j];}
+\DoxyCodeLine{00961\ }
+\DoxyCodeLine{00962\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ x\ =\ v[0];}
+\DoxyCodeLine{00963\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ y\ =\ v[1];}
+\DoxyCodeLine{00964\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ z\ =\ v[2];}
+\DoxyCodeLine{00965\ }
+\DoxyCodeLine{00966\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dx\ =\ btFabs(x\ -\/\ px);}
+\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dy\ =\ btFabs(y\ -\/\ py);}
+\DoxyCodeLine{00968\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dz\ =\ btFabs(z\ -\/\ pz);}
+\DoxyCodeLine{00969\ }
+\DoxyCodeLine{00970\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dx\ <\ normalepsilon\ \&\&\ dy\ <\ normalepsilon\ \&\&\ dz\ <\ normalepsilon)}
+\DoxyCodeLine{00971\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00972\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ok,\ it\ is\ close\ enough\ to\ the\ old\ one}}
+\DoxyCodeLine{00973\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ now\ let\ us\ see\ if\ it\ is\ further\ from\ the\ center\ of\ the\ point\ cloud\ than\ the\ one\ we\ already\ recorded.}}
+\DoxyCodeLine{00974\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ in\ which\ case\ we\ keep\ this\ one\ instead.}}
+\DoxyCodeLine{00975\ }
+\DoxyCodeLine{00976\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dist1\ =\ GetDist(px,\ py,\ pz,\ center);}
+\DoxyCodeLine{00977\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dist2\ =\ GetDist(v[0],\ v[1],\ v[2],\ center);}
+\DoxyCodeLine{00978\ }
+\DoxyCodeLine{00979\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist1\ >\ dist2)}
+\DoxyCodeLine{00980\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v[0]\ =\ px;}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v[1]\ =\ py;}
+\DoxyCodeLine{00983\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v[2]\ =\ pz;}
+\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00985\ }
+\DoxyCodeLine{00986\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00987\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00988\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00989\ }
+\DoxyCodeLine{00990\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (j\ ==\ vcount)}
+\DoxyCodeLine{00991\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00992\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ \&dest\ =\ vertices[vcount];}
+\DoxyCodeLine{00993\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[0]\ =\ px;}
+\DoxyCodeLine{00994\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[1]\ =\ py;}
+\DoxyCodeLine{00995\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest[2]\ =\ pz;}
+\DoxyCodeLine{00996\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vcount++;}
+\DoxyCodeLine{00997\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00998\ \ \ \ \ \ \ \ \ \ \ \ \ m\_vertexIndexMapping.push\_back(j);}
+\DoxyCodeLine{00999\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01000\ \ \ \ \ \}}
+\DoxyCodeLine{01001\ }
+\DoxyCodeLine{01002\ \ \ \ \ \textcolor{comment}{//\ ok..now\ make\ sure\ we\ didn't\ prune\ so\ many\ vertices\ it\ is\ now\ invalid.}}
+\DoxyCodeLine{01003\ \ \ \ \ \textcolor{comment}{//\ \ if\ (\ 1\ )}}
+\DoxyCodeLine{01004\ \ \ \ \ \{}
+\DoxyCodeLine{01005\ \ \ \ \ \ \ \ \ btScalar\ bmin[3]\ =\ \{FLT\_MAX,\ FLT\_MAX,\ FLT\_MAX\};}
+\DoxyCodeLine{01006\ \ \ \ \ \ \ \ \ btScalar\ bmax[3]\ =\ \{-\/FLT\_MAX,\ -\/FLT\_MAX,\ -\/FLT\_MAX\};}
+\DoxyCodeLine{01007\ }
+\DoxyCodeLine{01008\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ vcount;\ i++)}
+\DoxyCodeLine{01009\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01010\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&p\ =\ vertices[i];}
+\DoxyCodeLine{01011\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{01012\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01013\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p[j]\ <\ bmin[j])\ bmin[j]\ =\ p[j];}
+\DoxyCodeLine{01014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p[j]\ >\ bmax[j])\ bmax[j]\ =\ p[j];}
+\DoxyCodeLine{01015\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01016\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01017\ }
+\DoxyCodeLine{01018\ \ \ \ \ \ \ \ \ btScalar\ dx\ =\ bmax[0]\ -\/\ bmin[0];}
+\DoxyCodeLine{01019\ \ \ \ \ \ \ \ \ btScalar\ dy\ =\ bmax[1]\ -\/\ bmin[1];}
+\DoxyCodeLine{01020\ \ \ \ \ \ \ \ \ btScalar\ dz\ =\ bmax[2]\ -\/\ bmin[2];}
+\DoxyCodeLine{01021\ }
+\DoxyCodeLine{01022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dx\ <\ EPSILON\ ||\ dy\ <\ EPSILON\ ||\ dz\ <\ EPSILON\ ||\ vcount\ <\ 3)}
+\DoxyCodeLine{01023\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01024\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ cx\ =\ dx\ *\ btScalar(0.5)\ +\ bmin[0];}
+\DoxyCodeLine{01025\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ cy\ =\ dy\ *\ btScalar(0.5)\ +\ bmin[1];}
+\DoxyCodeLine{01026\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ cz\ =\ dz\ *\ btScalar(0.5)\ +\ bmin[2];}
+\DoxyCodeLine{01027\ }
+\DoxyCodeLine{01028\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ len\ =\ FLT\_MAX;}
+\DoxyCodeLine{01029\ }
+\DoxyCodeLine{01030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dx\ >=\ EPSILON\ \&\&\ dx\ <\ len)\ len\ =\ dx;}
+\DoxyCodeLine{01031\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dy\ >=\ EPSILON\ \&\&\ dy\ <\ len)\ len\ =\ dy;}
+\DoxyCodeLine{01032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dz\ >=\ EPSILON\ \&\&\ dz\ <\ len)\ len\ =\ dz;}
+\DoxyCodeLine{01033\ }
+\DoxyCodeLine{01034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ ==\ FLT\_MAX)}
+\DoxyCodeLine{01035\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dx\ =\ dy\ =\ dz\ =\ btScalar(0.01);\ \ \textcolor{comment}{//\ one\ centimeter}}
+\DoxyCodeLine{01037\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01039\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dx\ <\ EPSILON)\ dx\ =\ len\ *\ btScalar(0.05);\ \ \textcolor{comment}{//\ 1/5th\ the\ shortest\ non-\/zero\ edge.}}
+\DoxyCodeLine{01041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dy\ <\ EPSILON)\ dy\ =\ len\ *\ btScalar(0.05);}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dz\ <\ EPSILON)\ dz\ =\ len\ *\ btScalar(0.05);}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01044\ }
+\DoxyCodeLine{01045\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ x1\ =\ cx\ -\/\ dx;}
+\DoxyCodeLine{01046\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ x2\ =\ cx\ +\ dx;}
+\DoxyCodeLine{01047\ }
+\DoxyCodeLine{01048\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ y1\ =\ cy\ -\/\ dy;}
+\DoxyCodeLine{01049\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ y2\ =\ cy\ +\ dy;}
+\DoxyCodeLine{01050\ }
+\DoxyCodeLine{01051\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ z1\ =\ cz\ -\/\ dz;}
+\DoxyCodeLine{01052\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ z2\ =\ cz\ +\ dz;}
+\DoxyCodeLine{01053\ }
+\DoxyCodeLine{01054\ \ \ \ \ \ \ \ \ \ \ \ \ vcount\ =\ 0;\ \ \textcolor{comment}{//\ add\ box}}
+\DoxyCodeLine{01055\ }
+\DoxyCodeLine{01056\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y1,\ z1);}
+\DoxyCodeLine{01057\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y1,\ z1);}
+\DoxyCodeLine{01058\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y2,\ z1);}
+\DoxyCodeLine{01059\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y2,\ z1);}
+\DoxyCodeLine{01060\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y1,\ z2);}
+\DoxyCodeLine{01061\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y1,\ z2);}
+\DoxyCodeLine{01062\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x2,\ y2,\ z2);}
+\DoxyCodeLine{01063\ \ \ \ \ \ \ \ \ \ \ \ \ addPoint(vcount,\ vertices,\ x1,\ y2,\ z2);}
+\DoxyCodeLine{01064\ }
+\DoxyCodeLine{01065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01066\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01067\ \ \ \ \ \}}
+\DoxyCodeLine{01068\ }
+\DoxyCodeLine{01069\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01070\ \}}
+\DoxyCodeLine{01071\ }
+\DoxyCodeLine{01072\ \textcolor{keywordtype}{void}\ HullLibrary::BringOutYourDead(\textcolor{keyword}{const}\ btVector3\ *verts,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vcount,\ btVector3\ *overts,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \&ocount,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *indices,\ \textcolor{keywordtype}{unsigned}\ indexcount)}
+\DoxyCodeLine{01073\ \{}
+\DoxyCodeLine{01074\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ tmpIndices;}
+\DoxyCodeLine{01075\ \ \ \ \ tmpIndices.resize(m\_vertexIndexMapping.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{01076\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{01077\ }
+\DoxyCodeLine{01078\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_vertexIndexMapping.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{01079\ \ \ \ \ \{}
+\DoxyCodeLine{01080\ \ \ \ \ \ \ \ \ tmpIndices[i]\ =\ m\_vertexIndexMapping[i];}
+\DoxyCodeLine{01081\ \ \ \ \ \}}
+\DoxyCodeLine{01082\ }
+\DoxyCodeLine{01083\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TUIntArray}}\ usedIndices;}
+\DoxyCodeLine{01084\ \ \ \ \ usedIndices.resize(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(vcount));}
+\DoxyCodeLine{01085\ \ \ \ \ memset(\&usedIndices[0],\ 0,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})\ *\ vcount);}
+\DoxyCodeLine{01086\ }
+\DoxyCodeLine{01087\ \ \ \ \ ocount\ =\ 0;}
+\DoxyCodeLine{01088\ }
+\DoxyCodeLine{01089\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ int(indexcount);\ i++)}
+\DoxyCodeLine{01090\ \ \ \ \ \{}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ v\ =\ indices[i];\ \ \textcolor{comment}{//\ original\ array\ index}}
+\DoxyCodeLine{01092\ }
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ btAssert(v\ >=\ 0\ \&\&\ v\ <\ vcount);}
+\DoxyCodeLine{01094\ }
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (usedIndices[\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(v)])\ \ \textcolor{comment}{//\ if\ already\ remapped}}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01097\ \ \ \ \ \ \ \ \ \ \ \ \ indices[i]\ =\ usedIndices[\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(v)]\ -\/\ 1;\ \ \textcolor{comment}{//\ index\ to\ new\ array}}
+\DoxyCodeLine{01098\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01100\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \ \ \ \ indices[i]\ =\ ocount;\ \ \textcolor{comment}{//\ new\ index\ mapping}}
+\DoxyCodeLine{01102\ }
+\DoxyCodeLine{01103\ \ \ \ \ \ \ \ \ \ \ \ \ overts[ocount][0]\ =\ verts[v][0];\ \ \textcolor{comment}{//\ copy\ old\ vert\ to\ new\ vert\ array}}
+\DoxyCodeLine{01104\ \ \ \ \ \ \ \ \ \ \ \ \ overts[ocount][1]\ =\ verts[v][1];}
+\DoxyCodeLine{01105\ \ \ \ \ \ \ \ \ \ \ \ \ overts[ocount][2]\ =\ verts[v][2];}
+\DoxyCodeLine{01106\ }
+\DoxyCodeLine{01107\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ 0;\ k\ <\ m\_vertexIndexMapping.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ k++)}
+\DoxyCodeLine{01108\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tmpIndices[k]\ ==\ \textcolor{keywordtype}{int}(v))}
+\DoxyCodeLine{01110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_vertexIndexMapping[k]\ =\ ocount;}
+\DoxyCodeLine{01111\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01112\ }
+\DoxyCodeLine{01113\ \ \ \ \ \ \ \ \ \ \ \ \ ocount++;\ \ \textcolor{comment}{//\ increment\ output\ vert\ count}}
+\DoxyCodeLine{01114\ }
+\DoxyCodeLine{01115\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(ocount\ >=\ 0\ \&\&\ ocount\ <=\ vcount);}
+\DoxyCodeLine{01116\ }
+\DoxyCodeLine{01117\ \ \ \ \ \ \ \ \ \ \ \ \ usedIndices[\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(v)]\ =\ ocount;\ \ \textcolor{comment}{//\ assign\ new\ index\ remapping}}
+\DoxyCodeLine{01118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01119\ \ \ \ \ \}}
+\DoxyCodeLine{01120\ \}}
+
+\end{DoxyCode}

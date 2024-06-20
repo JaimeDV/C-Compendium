@@ -1,0 +1,203 @@
+\doxysection{b2\+\_\+joint.\+h}
+\hypertarget{b2__joint_8h_source}{}\label{b2__joint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_joint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_joint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_JOINT\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_JOINT\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}b2\_math.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_body}{b2Body}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_draw}{b2Draw}};}
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_joint}{b2Joint}};}
+\DoxyCodeLine{00032\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb2_solver_data}{b2SolverData}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{enum}\ b2JointType}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ e\_unknownJoint,}
+\DoxyCodeLine{00038\ \ \ \ \ e\_revoluteJoint,}
+\DoxyCodeLine{00039\ \ \ \ \ e\_prismaticJoint,}
+\DoxyCodeLine{00040\ \ \ \ \ e\_distanceJoint,}
+\DoxyCodeLine{00041\ \ \ \ \ e\_pulleyJoint,}
+\DoxyCodeLine{00042\ \ \ \ \ e\_mouseJoint,}
+\DoxyCodeLine{00043\ \ \ \ \ e\_gearJoint,}
+\DoxyCodeLine{00044\ \ \ \ \ e\_wheelJoint,}
+\DoxyCodeLine{00045\ \ \ \ \ e\_weldJoint,}
+\DoxyCodeLine{00046\ \ \ \ \ e\_frictionJoint,}
+\DoxyCodeLine{00047\ \ \ \ \ e\_ropeJoint,}
+\DoxyCodeLine{00048\ \ \ \ \ e\_motorJoint}
+\DoxyCodeLine{00049\ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_jacobian}{b2Jacobian}}}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ linear;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{float}\ angularA;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{float}\ angularB;}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00063\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}}
+\DoxyCodeLine{00064\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{structb2_joint_edge_a64aef21fb91211871de8796baecccb95}{other}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ \mbox{\hyperlink{structb2_joint_edge_ab5bac5d495af1280c50271f56a221503}{joint}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}*\ \mbox{\hyperlink{structb2_joint_edge_acc3621e38d9664db2805e0fc29d71335}{prev}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}*\ \mbox{\hyperlink{structb2_joint_edge_a3d17286bc697bb620ee151e4cd07438c}{next}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00069\ \};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_joint_def}{b2JointDef}}}
+\DoxyCodeLine{00073\ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{structb2_joint_def}{b2JointDef}}()}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ type\ =\ e\_unknownJoint;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ bodyA\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ bodyB\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ collideConnected\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00083\ \ \ \ \ b2JointType\ \mbox{\hyperlink{structb2_joint_def_a470f2879b24adb05facbd49f338856fb}{type}};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{structb2_joint_user_data}{b2JointUserData}}\ \mbox{\hyperlink{structb2_joint_def_a78ae1ebbdd3d9b9a6b409c0b05096ded}{userData}};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{structb2_joint_def_a8cd54c93da396be75a9788f2c6897f05}{bodyA}};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{structb2_joint_def_aa4f4dee2fbcd12187b19506b60e68e3d}{bodyB}};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_joint_def_aef099a1f89b64e230173b6016848ea9b}{collideConnected}};}
+\DoxyCodeLine{00096\ \};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00099\ B2\_API\ \textcolor{keywordtype}{void}\ b2LinearStiffness(\textcolor{keywordtype}{float}\&\ stiffness,\ \textcolor{keywordtype}{float}\&\ damping,}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{float}\ frequencyHertz,\ \textcolor{keywordtype}{float}\ dampingRatio,}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyB);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00104\ B2\_API\ \textcolor{keywordtype}{void}\ b2AngularStiffness(\textcolor{keywordtype}{float}\&\ stiffness,\ \textcolor{keywordtype}{float}\&\ damping,}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{float}\ frequencyHertz,\ \textcolor{keywordtype}{float}\ dampingRatio,}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyB);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00110\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_joint}{b2Joint}}}
+\DoxyCodeLine{00111\ \{}
+\DoxyCodeLine{00112\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00115\ \ \ \ \ b2JointType\ GetType()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00118\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ GetBodyA();}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00121\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ GetBodyB();}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_joint_abe46ca3aad5db73909a9b5a7b2117447}{GetAnchorA}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_joint_a88e947c65d4ea26fe539f02a8cb7f7a9}{GetAnchorB}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_joint_ad9f0c84f0292ab17cbdb6435c7a039b9}{GetReactionForce}}(\textcolor{keywordtype}{float}\ inv\_dt)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_joint_aeda5032fc551df6f488355d459ae60ef}{GetReactionTorque}}(\textcolor{keywordtype}{float}\ inv\_dt)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00136\ \ \ \ \ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ GetNext();}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ GetNext()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00140\ \ \ \ \ \mbox{\hyperlink{structb2_joint_user_data}{b2JointUserData}}\&\ GetUserData();}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_joint_ad8afc5c7b8b325e982e75fe35730253d}{IsEnabled}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{bool}\ GetCollideConnected()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_joint_abd35e7316017ad9a40d5dbf9b5ba3f36}{Dump}}()\ \{\ b2Dump(\textcolor{stringliteral}{"{}//\ Dump\ is\ not\ supported\ for\ this\ joint\ type.\(\backslash\)n"{}});\ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_joint_a7804f649e993dc0fd9ae47fde5601f90}{ShiftOrigin}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ newOrigin)\ \{\ B2\_NOT\_USED(newOrigin);\ \ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_joint_aea86b65244fc81ea1511d462b36ffbe4}{Draw}}(\mbox{\hyperlink{classb2_draw}{b2Draw}}*\ draw)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_world}{b2World}};}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_body}{b2Body}};}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }b2Island;}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_gear_joint}{b2GearJoint}};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ Create(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_joint_def}{b2JointDef}}*\ def,\ \mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Destroy(\mbox{\hyperlink{classb2_joint}{b2Joint}}*\ joint,\ \mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \mbox{\hyperlink{classb2_joint}{b2Joint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_joint_def}{b2JointDef}}*\ def);}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb2_joint}{\string~b2Joint}}()\ \{\}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ InitVelocityConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ =\ 0;}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ SolveVelocityConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ =\ 0;}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{//\ This\ returns\ true\ if\ the\ position\ errors\ are\ within\ tolerance.}}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ SolvePositionConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ =\ 0;}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ b2JointType\ m\_type;}
+\DoxyCodeLine{00178\ \ \ \ \ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ m\_prev;}
+\DoxyCodeLine{00179\ \ \ \ \ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ m\_next;}
+\DoxyCodeLine{00180\ \ \ \ \ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}\ m\_edgeA;}
+\DoxyCodeLine{00181\ \ \ \ \ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}\ m\_edgeB;}
+\DoxyCodeLine{00182\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ m\_bodyA;}
+\DoxyCodeLine{00183\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ m\_bodyB;}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ int32\ m\_index;}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_islandFlag;}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_collideConnected;}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \mbox{\hyperlink{structb2_joint_user_data}{b2JointUserData}}\ m\_userData;}
+\DoxyCodeLine{00191\ \};}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{keyword}{inline}\ b2JointType\ \mbox{\hyperlink{classb2_joint_ac56eef62fe1ac7c9e5e21a79fb035255}{b2Joint::GetType}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00194\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_type;}
+\DoxyCodeLine{00196\ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{classb2_joint_a2ed5eca3dbdce48665c14452b280613f}{b2Joint::GetBodyA}}()}
+\DoxyCodeLine{00199\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_bodyA;}
+\DoxyCodeLine{00201\ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{classb2_joint_a700b3d4c87f34f456151b9598e4641a0}{b2Joint::GetBodyB}}()}
+\DoxyCodeLine{00204\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_bodyB;}
+\DoxyCodeLine{00206\ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ \mbox{\hyperlink{classb2_joint_a1a0e2137b631010750c728cb4e276e5d}{b2Joint::GetNext}}()}
+\DoxyCodeLine{00209\ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00211\ \}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_joint}{b2Joint}}*\ \mbox{\hyperlink{classb2_joint_a1a0e2137b631010750c728cb4e276e5d}{b2Joint::GetNext}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00214\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00216\ \}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_joint_user_data}{b2JointUserData}}\&\ \mbox{\hyperlink{classb2_joint_ab31c3a0c5a494d21b1ca134d609ca8ab}{b2Joint::GetUserData}}()}
+\DoxyCodeLine{00219\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userData;}
+\DoxyCodeLine{00221\ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_joint_a48492903df96c8a7b8cad8ed826f8cb0}{b2Joint::GetCollideConnected}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00224\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_collideConnected;}
+\DoxyCodeLine{00226\ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,92 @@
+\doxysection{b3\+Quantized\+Bvh\+Node\+Data.\+h}
+\hypertarget{b3_quantized_bvh_node_data_8h_source}{}\label{b3_quantized_bvh_node_data_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#ifndef\ B3\_QUANTIZED\_BVH\_NODE\_H}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ B3\_QUANTIZED\_BVH\_NODE\_H}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Float4.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ B3\_MAX\_NUM\_PARTS\_IN\_BITS\ 10}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData}}\ \mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData\_t}};}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData}}}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{comment}{//12\ bytes}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_quantizedAabbMin[3];}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_quantizedAabbMax[3];}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{//4\ bytes}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_escapeIndexOrTriangleIndex;}
+\DoxyCodeLine{00021\ \};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ b3GetTriangleIndex(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData}}*\ rootNode)}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ x\ =\ 0;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ y\ =\ (\string~(x\ \&\ 0))\ <<\ (31\ -\/\ B3\_MAX\_NUM\_PARTS\_IN\_BITS);}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{//\ Get\ only\ the\ lower\ bits\ where\ the\ triangle\ index\ is\ stored}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordflow}{return}\ (rootNode-\/>m\_escapeIndexOrTriangleIndex\ \&\ \string~(y));}
+\DoxyCodeLine{00029\ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ b3IsLeaf(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData}}*\ rootNode)}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//skipindex\ is\ negative\ (internal\ node),\ triangleindex\ >=0\ (leafnode)}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordflow}{return}\ (rootNode-\/>m\_escapeIndexOrTriangleIndex\ >=\ 0)\ ?\ 1\ :\ 0;}
+\DoxyCodeLine{00035\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ b3GetEscapeIndex(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData}}*\ rootNode)}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/rootNode-\/>m\_escapeIndexOrTriangleIndex;}
+\DoxyCodeLine{00040\ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ b3QuantizeWithClamp(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ out,\ b3Float4ConstArg\ point2,\ \textcolor{keywordtype}{int}\ isMax,\ b3Float4ConstArg\ bvhAabbMin,\ b3Float4ConstArg\ bvhAabbMax,\ b3Float4ConstArg\ bvhQuantization)}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ b3Float4\ clampedPoint\ =\ b3MaxFloat4(point2,\ bvhAabbMin);}
+\DoxyCodeLine{00045\ \ \ \ \ clampedPoint\ =\ b3MinFloat4(clampedPoint,\ bvhAabbMax);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ b3Float4\ v\ =\ (clampedPoint\ -\/\ bvhAabbMin)\ *\ bvhQuantization;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordflow}{if}\ (isMax)}
+\DoxyCodeLine{00049\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ out[0]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.x\ +\ 1.f)\ |\ 1));}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ out[1]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.y\ +\ 1.f)\ |\ 1));}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ out[2]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.z\ +\ 1.f)\ |\ 1));}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ out[0]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.x)\ \&\ 0xfffe));}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ out[1]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.y)\ \&\ 0xfffe));}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ out[2]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.z)\ \&\ 0xfffe));}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ b3TestQuantizedAabbAgainstQuantizedAabbSlow(}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ aabbMin1,}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ aabbMax1,}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ aabbMin2,}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ aabbMax2)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//int\ overlap\ =\ 1;}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbMin1[0]\ >\ aabbMax2[0])}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbMax1[0]\ <\ aabbMin2[0])}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbMin1[1]\ >\ aabbMax2[1])}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbMax1[1]\ <\ aabbMin2[1])}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbMin1[2]\ >\ aabbMax2[2])}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbMax1[2]\ <\ aabbMin2[2])}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//overlap\ =\ ((aabbMin1[0]\ >\ aabbMax2[0])\ ||\ (aabbMax1[0]\ <\ aabbMin2[0]))\ ?\ 0\ :\ overlap;}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//overlap\ =\ ((aabbMin1[2]\ >\ aabbMax2[2])\ ||\ (aabbMax1[2]\ <\ aabbMin2[2]))\ ?\ 0\ :\ overlap;}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//overlap\ =\ ((aabbMin1[1]\ >\ aabbMax2[1])\ ||\ (aabbMax1[1]\ <\ aabbMin2[1]))\ ?\ 0\ :\ overlap;}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//return\ overlap;}}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_QUANTIZED\_BVH\_NODE\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,144 @@
+\doxysection{bt\+Gear\+Constraint.\+h}
+\hypertarget{bt_gear_constraint_8h_source}{}\label{bt_gear_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btGearConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btGearConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2012\ Advanced\ Micro\ Devices,\ Inc.\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_GEAR\_CONSTRAINT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_GEAR\_CONSTRAINT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btTypedConstraint.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ btGearConstraintData\ btGearConstraintDoubleData}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ btGearConstraintDataName\ "{}btGearConstraintDoubleData"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ btGearConstraintData\ btGearConstraintFloatData}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ btGearConstraintDataName\ "{}btGearConstraintFloatData"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_gear_constraint}{btGearConstraint}}\ :\ \textcolor{keyword}{public}\ btTypedConstraint}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00034\ \ \ \ \ btVector3\ m\_axisInA;}
+\DoxyCodeLine{00035\ \ \ \ \ btVector3\ m\_axisInB;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useFrameA;}
+\DoxyCodeLine{00037\ \ \ \ \ btScalar\ m\_ratio;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classbt_gear_constraint_aee33fd1dac22b6f0323757057204e891}{btGearConstraint}}(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbB,\ \textcolor{keyword}{const}\ btVector3\&\ axisInA,\ \textcolor{keyword}{const}\ btVector3\&\ axisInB,\ btScalar\ ratio\ =\ 1.f);}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_gear_constraint}{\string~btGearConstraint}}();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_gear_constraint_ae8e7d953740bff99eca4441b5d9c7eb1}{getInfo1}}(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}*\ info);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_gear_constraint_ae1c6770b8835458389ca7ae3ce7dfb05}{getInfo2}}(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}*\ info);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxisA(btVector3\&\ axisA)}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ m\_axisInA\ =\ axisA;}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxisB(btVector3\&\ axisB)}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ m\_axisInB\ =\ axisB;}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{void}\ setRatio(btScalar\ ratio)}
+\DoxyCodeLine{00058\ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ m\_ratio\ =\ ratio;}
+\DoxyCodeLine{00060\ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getAxisA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_axisInA;}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getAxisB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00066\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_axisInB;}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ \ \ \ \ btScalar\ getRatio()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00070\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_ratio;}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setParam(\textcolor{keywordtype}{int}\ num,\ btScalar\ value,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ (void)num;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ (void)value;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ (void)axis;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ \mbox{\hyperlink{classbt_gear_constraint_a522a5cd09cecc3ffae11e24019f07178}{getParam}}(\textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00084\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ (void)num;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ (void)axis;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.f;}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{classbt_gear_constraint_a11f076cf98d52f8219a6c6962fd69fed}{serialize}}(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00095\ \};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00098\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_gear_constraint_float_data}{btGearConstraintFloatData}}}
+\DoxyCodeLine{00099\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_float_data}{btTypedConstraintFloatData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_axisInA;}
+\DoxyCodeLine{00103\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_axisInB;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_ratio;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_padding[4];}
+\DoxyCodeLine{00107\ \};}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_gear_constraint_double_data}{btGearConstraintDoubleData}}}
+\DoxyCodeLine{00110\ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_double_data}{btTypedConstraintDoubleData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_axisInA;}
+\DoxyCodeLine{00114\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_axisInB;}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_ratio;}
+\DoxyCodeLine{00117\ \};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btGearConstraint::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00120\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(btGearConstraintData);}
+\DoxyCodeLine{00122\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00125\ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{classbt_gear_constraint_a11f076cf98d52f8219a6c6962fd69fed}{btGearConstraint::serialize}}(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00126\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00127\ \ \ \ \ btGearConstraintData*\ gear\ =\ (btGearConstraintData*)dataBuffer;}
+\DoxyCodeLine{00128\ \ \ \ \ btTypedConstraint::serialize(\&gear-\/>m\_typeConstraintData,\ serializer);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ m\_axisInA.serialize(gear-\/>m\_axisInA);}
+\DoxyCodeLine{00131\ \ \ \ \ m\_axisInB.serialize(gear-\/>m\_axisInB);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ gear-\/>m\_ratio\ =\ m\_ratio;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{//\ Fill\ padding\ with\ zeros\ to\ appease\ msan.}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#ifndef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00137\ \ \ \ \ gear-\/>m\_padding[0]\ =\ 0;}
+\DoxyCodeLine{00138\ \ \ \ \ gear-\/>m\_padding[1]\ =\ 0;}
+\DoxyCodeLine{00139\ \ \ \ \ gear-\/>m\_padding[2]\ =\ 0;}
+\DoxyCodeLine{00140\ \ \ \ \ gear-\/>m\_padding[3]\ =\ 0;}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordflow}{return}\ btGearConstraintDataName;}
+\DoxyCodeLine{00144\ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_GEAR\_CONSTRAINT\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,124 @@
+\doxysection{bt\+Triangle\+Index\+Vertex\+Array.\+h}
+\hypertarget{bt_triangle_index_vertex_array_8h_source}{}\label{bt_triangle_index_vertex_array_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_TRIANGLE\_INDEX\_VERTEX\_ARRAY\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_TRIANGLE\_INDEX\_VERTEX\_ARRAY\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btStridingMeshInterface.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00025\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00026\ btIndexedMesh}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numTriangles;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ m\_triangleIndexBase;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//\ Size\ in\ byte\ of\ the\ indices\ for\ one\ triangle\ (3*sizeof(index\_type)\ if\ the\ indices\ are\ tightly\ packed)}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_triangleIndexStride;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numVertices;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ m\_vertexBase;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{//\ Size\ of\ a\ vertex,\ in\ bytes}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_vertexStride;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//\ The\ index\ type\ is\ set\ when\ adding\ an\ indexed\ mesh\ to\ the}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ btTriangleIndexVertexArray,\ do\ not\ set\ it\ manually}}
+\DoxyCodeLine{00041\ \ \ \ \ PHY\_ScalarType\ m\_indexType;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//\ The\ vertex\ type\ has\ a\ default\ type\ similar\ to\ Bullet's\ precision\ mode\ (float\ or\ double)}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{//\ but\ can\ be\ set\ manually\ if\ you\ for\ example\ run\ Bullet\ with\ double\ precision\ but\ have}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{//\ mesh\ data\ in\ single\ precision..}}
+\DoxyCodeLine{00046\ \ \ \ \ PHY\_ScalarType\ m\_vertexType;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ btIndexedMesh()}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ :\ m\_indexType(PHY\_INTEGER),}
+\DoxyCodeLine{00050\ \#ifdef\ BT\_USE\_DOUBLE\_PRECISION}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ m\_vertexType(PHY\_DOUBLE)}
+\DoxyCodeLine{00052\ \#else\ \ \ \textcolor{comment}{//\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ m\_vertexType(PHY\_FLOAT)}
+\DoxyCodeLine{00054\ \#endif\ \ \textcolor{comment}{//\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btIndexedMesh>}}\ \mbox{\hyperlink{classb3_aligned_object_array}{IndexedMeshArray}};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00065\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00066\ btTriangleIndexVertexArray\ :\ public\ btStridingMeshInterface}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{IndexedMeshArray}}\ m\_indexedMeshes;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_pad[2];}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{mutable}\ \textcolor{keywordtype}{int}\ m\_hasAabb;\ \ \textcolor{comment}{//\ using\ int\ instead\ of\ bool\ to\ maintain\ alignment}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{mutable}\ btVector3\ m\_aabbMin;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{mutable}\ btVector3\ m\_aabbMax;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00076\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ btTriangleIndexVertexArray()\ :\ m\_hasAabb(0)}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btTriangleIndexVertexArray();}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//just\ to\ be\ backwards\ compatible}}
+\DoxyCodeLine{00085\ \ \ \ \ btTriangleIndexVertexArray(\textcolor{keywordtype}{int}\ numTriangles,\ \textcolor{keywordtype}{int}*\ triangleIndexBase,\ \textcolor{keywordtype}{int}\ triangleIndexStride,\ \textcolor{keywordtype}{int}\ numVertices,\ btScalar*\ vertexBase,\ \textcolor{keywordtype}{int}\ vertexStride);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{void}\ addIndexedMesh(\textcolor{keyword}{const}\ btIndexedMesh\&\ mesh,\ PHY\_ScalarType\ indexType\ =\ PHY\_INTEGER)}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ m\_indexedMeshes.push\_back(mesh);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ m\_indexedMeshes[m\_indexedMeshes.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}()\ -\/\ 1].m\_indexType\ =\ indexType;}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getLockedVertexIndexBase(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ vertexbase,\ \textcolor{keywordtype}{int}\&\ numverts,\ PHY\_ScalarType\&\ type,\ \textcolor{keywordtype}{int}\&\ vertexStride,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ indexbase,\ \textcolor{keywordtype}{int}\&\ indexstride,\ \textcolor{keywordtype}{int}\&\ numfaces,\ PHY\_ScalarType\&\ indicestype,\ \textcolor{keywordtype}{int}\ subpart\ =\ 0);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getLockedReadOnlyVertexIndexBase(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ vertexbase,\ \textcolor{keywordtype}{int}\&\ numverts,\ PHY\_ScalarType\&\ type,\ \textcolor{keywordtype}{int}\&\ vertexStride,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ indexbase,\ \textcolor{keywordtype}{int}\&\ indexstride,\ \textcolor{keywordtype}{int}\&\ numfaces,\ PHY\_ScalarType\&\ indicestype,\ \textcolor{keywordtype}{int}\ subpart\ =\ 0)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ unLockVertexBase(\textcolor{keywordtype}{int}\ subpart)\ \{\ (void)subpart;\ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ unLockReadOnlyVertexBase(\textcolor{keywordtype}{int}\ subpart)\textcolor{keyword}{\ const\ }\{\ (void)subpart;\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumSubParts()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00106\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})m\_indexedMeshes.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{IndexedMeshArray}}\&\ getIndexedMeshArray()}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_indexedMeshes;}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{IndexedMeshArray}}\&\ getIndexedMeshArray()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00116\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_indexedMeshes;}
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preallocateVertices(\textcolor{keywordtype}{int}\ numverts)\ \{\ (void)numverts;\ \}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preallocateIndices(\textcolor{keywordtype}{int}\ numindices)\ \{\ (void)numindices;\ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ hasPremadeAabb()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPremadeAabb(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getPremadeAabb(btVector3\ *\ aabbMin,\ btVector3\ *\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00126\ \};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_TRIANGLE\_INDEX\_VERTEX\_ARRAY\_H}}
+
+\end{DoxyCode}

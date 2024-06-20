@@ -1,0 +1,149 @@
+\doxysection{bt\+Simple\+Broadphase.\+h}
+\hypertarget{bt_simple_broadphase_8h_source}{}\label{bt_simple_broadphase_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_SIMPLE\_BROADPHASE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_SIMPLE\_BROADPHASE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btOverlappingPairCache.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}\ :\ \textcolor{keyword}{public}\ btBroadphaseProxy}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_nextFree;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ \ int\ \ \ \ \ \ \ \ \ m\_handleId;}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}()\{\};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}(\textcolor{keyword}{const}\ btVector3\&\ minpt,\ \textcolor{keyword}{const}\ btVector3\&\ maxpt,\ \textcolor{keywordtype}{int}\ shapeType,\ \textcolor{keywordtype}{void}*\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask)}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ :\ btBroadphaseProxy(minpt,\ maxpt,\ userPtr,\ collisionFilterGroup,\ collisionFilterMask)}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ (void)shapeType;}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ SetNextFree(\textcolor{keywordtype}{int}\ next)\ \{\ m\_nextFree\ =\ next;\ \}}
+\DoxyCodeLine{00036\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ GetNextFree()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_nextFree;\ \}}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_simple_broadphase}{btSimpleBroadphase}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_broadphase_interface}{btBroadphaseInterface}}}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numHandles;\ \ \textcolor{comment}{//\ number\ of\ active\ handles}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_maxHandles;\ \ \textcolor{comment}{//\ max\ number\ of\ handles}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_LastHandleIndex;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ m\_pHandles;\ \ \textcolor{comment}{//\ handles\ pool}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_pHandlesRawPtr;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_firstFreeHandle;\ \ \textcolor{comment}{//\ free\ handles\ list}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{int}\ allocHandle()}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ btAssert(m\_numHandles\ <\ m\_maxHandles);}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ freeHandle\ =\ m\_firstFreeHandle;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ m\_firstFreeHandle\ =\ m\_pHandles[freeHandle].GetNextFree();}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ m\_numHandles++;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (freeHandle\ >\ m\_LastHandleIndex)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ m\_LastHandleIndex\ =\ freeHandle;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ freeHandle;}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ freeHandle(\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy)}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ handle\ =\ int(proxy\ -\/\ m\_pHandles);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ btAssert(handle\ >=\ 0\ \&\&\ handle\ <\ m\_maxHandles);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (handle\ ==\ m\_LastHandleIndex)}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ m\_LastHandleIndex-\/-\/;}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ proxy-\/>SetNextFree(m\_firstFreeHandle);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ m\_firstFreeHandle\ =\ handle;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ proxy-\/>m\_clientObject\ =\ 0;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ m\_numHandles-\/-\/;}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ m\_pairCache;}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ownsPairCache;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_invalidPair;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ getSimpleProxyFromProxy(btBroadphaseProxy*\ proxy)}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy0\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\textcolor{keyword}{>}(proxy);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ proxy0;}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ getSimpleProxyFromProxy(btBroadphaseProxy*\ proxy)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00094\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy0\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\textcolor{keyword}{>}(proxy);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ proxy0;}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_simple_broadphase_a65c387ba0fa8690716296ee9d5f7550a}{resetPool}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ validate();}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00105\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00106\ \ \ \ \ \mbox{\hyperlink{classbt_simple_broadphase}{btSimpleBroadphase}}(\textcolor{keywordtype}{int}\ maxProxies\ =\ 16384,\ \mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ overlappingPairCache\ =\ 0);}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_simple_broadphase}{\string~btSimpleBroadphase}}();}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ aabbOverlap(\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy0,\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy1);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{virtual}\ btBroadphaseProxy*\ createProxy(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ shapeType,\ \textcolor{keywordtype}{void}*\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_simple_broadphase_ac899d483e888fa132677125c88991de8}{calculateOverlappingPairs}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ destroyProxy(btBroadphaseProxy*\ proxy,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setAabb(btBroadphaseProxy*\ proxy,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getAabb(btBroadphaseProxy*\ proxy,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ rayTest(\textcolor{keyword}{const}\ btVector3\&\ rayFrom,\ \textcolor{keyword}{const}\ btVector3\&\ rayTo,\ \mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}\&\ rayCallback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin\ =\ btVector3(0,\ 0,\ 0),\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax\ =\ btVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ aabbTest(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \mbox{\hyperlink{structbt_broadphase_aabb_callback}{btBroadphaseAabbCallback}}\&\ callback);}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ getOverlappingPairCache()}
+\DoxyCodeLine{00123\ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_pairCache;}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ getOverlappingPairCache()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00127\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_pairCache;}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{bool}\ testAabbOverlap(btBroadphaseProxy*\ proxy0,\ btBroadphaseProxy*\ proxy1);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_simple_broadphase_a4e8e5de5df6d3125631e3d94a67ac4d2}{getBroadphaseAabb}}(btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00136\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ aabbMin.setValue(-\/BT\_LARGE\_FLOAT,\ -\/BT\_LARGE\_FLOAT,\ -\/BT\_LARGE\_FLOAT);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ aabbMax.setValue(BT\_LARGE\_FLOAT,\ BT\_LARGE\_FLOAT,\ BT\_LARGE\_FLOAT);}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ printStats()}
+\DoxyCodeLine{00142\ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ printf("{}btSimpleBroadphase.h\(\backslash\)n"{});}}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ printf("{}numHandles\ =\ \%d,\ maxHandles\ =\ \%d\(\backslash\)n"{},m\_numHandles,m\_maxHandles);}}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ \};}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SIMPLE\_BROADPHASE\_H}}
+
+\end{DoxyCode}

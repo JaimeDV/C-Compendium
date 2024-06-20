@@ -1,0 +1,123 @@
+\doxysection{bt\+Multi\+Body\+Spherical\+Joint\+Motor.\+h}
+\hypertarget{bt_multi_body_spherical_joint_motor_8h_source}{}\label{bt_multi_body_spherical_joint_motor_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2018\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifndef\ BT\_MULTIBODY\_SPHERICAL\_JOINT\_MOTOR\_H}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ BT\_MULTIBODY\_SPHERICAL\_JOINT\_MOTOR\_H}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btMultiBodyConstraint.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{keyword}{struct\ }btSolverInfo;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_multi_body_spherical_joint_motor}{btMultiBodySphericalJointMotor}}\ :\ \textcolor{keyword}{public}\ btMultiBodyConstraint}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00027\ \ \ \ \ btVector3\ m\_desiredVelocity;}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ m\_desiredPosition;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_use\_multi\_dof\_params;}
+\DoxyCodeLine{00030\ \ \ \ \ btVector3\ m\_kd;}
+\DoxyCodeLine{00031\ \ \ \ \ btVector3\ m\_kp;}
+\DoxyCodeLine{00032\ \ \ \ \ btScalar\ m\_erp;}
+\DoxyCodeLine{00033\ \ \ \ \ btScalar\ m\_rhsClamp;\ \ \textcolor{comment}{//maximum\ error}}
+\DoxyCodeLine{00034\ \ \ \ \ btVector3\ m\_maxAppliedImpulseMultiDof;}
+\DoxyCodeLine{00035\ \ \ \ \ btVector3\ m\_damping;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{classbt_multi_body_spherical_joint_motor_a4d77e2289624d6ae21465df3fd44b475}{btMultiBodySphericalJointMotor}}(btMultiBody*\ body,\ \textcolor{keywordtype}{int}\ link,\ btScalar\ maxMotorImpulse);}
+\DoxyCodeLine{00039\ \ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_multi_body_spherical_joint_motor}{\string~btMultiBodySphericalJointMotor}}();}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ finalizeMultiDof();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getIslandIdA()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getIslandIdB()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ createConstraintRows(\mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}}\&\ constraintRows,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\&\ data,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setVelocityTarget(\textcolor{keyword}{const}\ btVector3\&\ velTarget,\ btScalar\ kd\ =\ 1.0)}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ m\_desiredVelocity\ =\ velTarget;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ m\_kd\ =\ btVector3(kd,\ kd,\ kd);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ m\_use\_multi\_dof\_params\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setVelocityTargetMultiDof(\textcolor{keyword}{const}\ btVector3\&\ velTarget,\ \textcolor{keyword}{const}\ btVector3\&\ kd\ =\ btVector3(1.0,\ 1.0,\ 1.0))}
+\DoxyCodeLine{00058\ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ m\_desiredVelocity\ =\ velTarget;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ m\_kd\ =\ kd;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ m\_use\_multi\_dof\_params\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPositionTarget(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\&\ posTarget,\ btScalar\ kp\ =1.f)}
+\DoxyCodeLine{00065\ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ m\_desiredPosition\ =\ posTarget;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ m\_kp\ =\ btVector3(kp,\ kp,\ kp);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ m\_use\_multi\_dof\_params\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00069\ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPositionTargetMultiDof(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\&\ posTarget,\ \textcolor{keyword}{const}\ btVector3\&\ kp\ =\ btVector3(1.f,\ 1.f,\ 1.f))}
+\DoxyCodeLine{00072\ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ m\_desiredPosition\ =\ posTarget;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ m\_kp\ =\ kp;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ m\_use\_multi\_dof\_params\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setErp(btScalar\ erp)}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ m\_erp\ =\ erp;}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ getErp()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00083\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_erp;}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setRhsClamp(btScalar\ rhsClamp)}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ m\_rhsClamp\ =\ rhsClamp;}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ btScalar\ getMaxAppliedImpulseMultiDof(\textcolor{keywordtype}{int}\ i)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00092\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_maxAppliedImpulseMultiDof[i];}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxAppliedImpulseMultiDof(\textcolor{keyword}{const}\ btVector3\&\ maxImp)}
+\DoxyCodeLine{00097\ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ m\_maxAppliedImpulseMultiDof\ =\ maxImp;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ m\_use\_multi\_dof\_params\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ btScalar\ getDamping(\textcolor{keywordtype}{int}\ i)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00103\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_damping[i];}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ setDamping(\textcolor{keyword}{const}\ btVector3\&\ damping)}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ m\_damping\ =\ damping;}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ debugDraw(\textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ drawer)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{comment}{//todo(erwincoumans)}}
+\DoxyCodeLine{00115\ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MULTIBODY\_SPHERICAL\_JOINT\_MOTOR\_H}}
+
+\end{DoxyCode}

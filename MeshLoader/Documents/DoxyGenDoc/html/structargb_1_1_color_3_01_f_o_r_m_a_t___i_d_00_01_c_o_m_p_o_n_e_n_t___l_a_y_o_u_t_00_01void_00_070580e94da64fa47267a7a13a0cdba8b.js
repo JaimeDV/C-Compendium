@@ -1,0 +1,8 @@
+var structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01void_00_070580e94da64fa47267a7a13a0cdba8b =
+[
+    [ "Component_Layout", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01void_00_070580e94da64fa47267a7a13a0cdba8b.html#a11a3734990a58984705f08fad071933d", null ],
+    [ "Composite_Type", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01void_00_070580e94da64fa47267a7a13a0cdba8b.html#ae9baf03ac5f11d1891b5c950c605a053", null ],
+    [ "Color", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01void_00_070580e94da64fa47267a7a13a0cdba8b.html#a81a307c855c41e9e6920ffff09fb4b1c", null ],
+    [ "Color", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01void_00_070580e94da64fa47267a7a13a0cdba8b.html#accfcf6a0ae22099c03d7424d386e5088", null ],
+    [ "value", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01void_00_070580e94da64fa47267a7a13a0cdba8b.html#a677c32887b53ac756705347e4cae2a7b", null ]
+];

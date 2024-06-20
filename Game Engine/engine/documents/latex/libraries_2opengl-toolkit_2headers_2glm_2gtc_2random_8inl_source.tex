@@ -1,0 +1,355 @@
+\doxysection{random.\+inl}
+\hypertarget{libraries_2opengl-toolkit_2headers_2glm_2gtc_2random_8inl_source}{}\label{libraries_2opengl-toolkit_2headers_2glm_2gtc_2random_8inl_source}\index{libraries/opengl-\/toolkit/headers/glm/gtc/random.inl@{libraries/opengl-\/toolkit/headers/glm/gtc/random.inl}}
+\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2gtc_2random_8inl}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2geometric_8hpp}{../geometric.hpp}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2exponential_8hpp}{../exponential.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <ctime>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglm}{glm}}\{}
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }detail}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{struct\ }compute\_rand}
+\DoxyCodeLine{00015\ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<T,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_adb92e2830a89f40a8604f3dd355f5afe}{call}}();}
+\DoxyCodeLine{00017\ \ \ \ \ \};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P>}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand}}<\mbox{\hyperlink{namespaceglm_1_1detail_aef2588f97d090cc19fbbe0c74fe17c8f}{uint8}},\ P,\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1}}>}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<uint8,\ P>}}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_3_01uint8_00_01_p_00_01tvec1_01_4_a7361e7687e7c4c21c4e5ea2d9dceafa1}{call}}()}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<uint8,\ P>}}(}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max());}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00027\ \ \ \ \ \};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P>}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand}}<\mbox{\hyperlink{namespaceglm_1_1detail_aef2588f97d090cc19fbbe0c74fe17c8f}{uint8}},\ P,\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2}}>}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<uint8,\ P>}}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_3_01uint8_00_01_p_00_01tvec2_01_4_acdaaf644abf6d571b9a3c8930e2460a0}{call}}()}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<uint8,\ P>}}(}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max(),}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max());}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00038\ \ \ \ \ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P>}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand}}<\mbox{\hyperlink{namespaceglm_1_1detail_aef2588f97d090cc19fbbe0c74fe17c8f}{uint8}},\ P,\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3}}>}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<uint8,\ P>}}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_3_01uint8_00_01_p_00_01tvec3_01_4_a122f5a561012e3d867eb2f1f808b184a}{call}}()}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<uint8,\ P>}}(}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max(),}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max(),}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max());}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P>}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand}}<\mbox{\hyperlink{namespaceglm_1_1detail_aef2588f97d090cc19fbbe0c74fe17c8f}{uint8}},\ P,\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4}}>}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<uint8,\ P>}}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_3_01uint8_00_01_p_00_01tvec4_01_4_aeced5f116940ea34aa5ea9b69534ef66}{call}}()}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<uint8,\ P>}}(}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max(),}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max(),}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max(),}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::rand()\ \%\ std::numeric\_limits<uint8>::max());}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ \ \ \ \ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand}}<\mbox{\hyperlink{namespaceglm_1_1detail_a47b2a7d006d187338e8031a352d1ce56}{uint16}},\ P,\ vecType>}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<uint16,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_3_01uint16_00_01_p_00_01vec_type_01_4_abe927b018e1f3676dd7804a1f0917a6e}{call}}()}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (vecType<uint16,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint8,\ P,\ vecType>::call}}())\ <<\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_a47b2a7d006d187338e8031a352d1ce56}{uint16}}\textcolor{keyword}{>}(8))\ |}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (vecType<uint16,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint8,\ P,\ vecType>::call}}())\ <<\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_a47b2a7d006d187338e8031a352d1ce56}{uint16}}\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \ \ \ \ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand}}<\mbox{\hyperlink{namespaceglm_1_1detail_ade6cfbf377022aaa391af8cd50489222}{uint32}},\ P,\ vecType>}
+\DoxyCodeLine{00078\ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<uint32,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_3_01uint32_00_01_p_00_01vec_type_01_4_a0c07a8605c470f1091e20e6fc961d5ed}{call}}()}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (vecType<uint32,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint16,\ P,\ vecType>::call}}())\ <<\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_ade6cfbf377022aaa391af8cd50489222}{uint32}}\textcolor{keyword}{>}(16))\ |}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (vecType<uint32,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint16,\ P,\ vecType>::call}}())\ <<\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_ade6cfbf377022aaa391af8cd50489222}{uint32}}\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \ \ \};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand}}<\mbox{\hyperlink{namespaceglm_1_1detail_adec4b19bf4982125e122db2fe03c5810}{uint64}},\ P,\ vecType>}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<uint64,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rand_3_01uint64_00_01_p_00_01vec_type_01_4_a5709f3110968e80c0d535eb08f6d41ac}{call}}()}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (vecType<uint64,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint32,\ P,\ vecType>::call}}())\ <<\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_adec4b19bf4982125e122db2fe03c5810}{uint64}}\textcolor{keyword}{>}(32))\ |}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (vecType<uint64,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint32,\ P,\ vecType>::call}}())\ <<\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_adec4b19bf4982125e122db2fe03c5810}{uint64}}\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{struct\ }compute\_linearRand}
+\DoxyCodeLine{00100\ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<T,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_a20f51c211fcde9fca151be9c68493dbc}{call}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ Max);}
+\DoxyCodeLine{00102\ \ \ \ \ \};}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_a04b526a8d7a9b455602a0afa78c531e0}{int8}},\ P,\ vecType>}
+\DoxyCodeLine{00106\ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<int8,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01int8_00_01_p_00_01vec_type_01_4_a2f3d46a83b7179bb9ec7e5e4a77ec37d}{call}}(vecType<int8,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<int8,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (vecType<int8,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint8,\ P,\ vecType>::call}}()\ \%\ vecType<uint8,\ P>(Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_a04b526a8d7a9b455602a0afa78c531e0}{int8}}\textcolor{keyword}{>}(1)\ -\/\ Min)))\ +\ Min;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00111\ \ \ \ \ \};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_aef2588f97d090cc19fbbe0c74fe17c8f}{uint8}},\ P,\ vecType>}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<uint8,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01uint8_00_01_p_00_01vec_type_01_4_aed3d804201a94a2748ef7f59143df7ff}{call}}(vecType<uint8,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<uint8,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint8,\ P,\ vecType>::call}}()\ \%\ (Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_aef2588f97d090cc19fbbe0c74fe17c8f}{uint8}}\textcolor{keyword}{>}(1)\ -\/\ Min))\ +\ Min;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \ \ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_a375938874ca4f0a0982ec6373b56117b}{int16}},\ P,\ vecType>}
+\DoxyCodeLine{00124\ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<int16,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01int16_00_01_p_00_01vec_type_01_4_ab95e57ff3da6c2ec0e564753b9fbad34}{call}}(vecType<int16,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<int16,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (vecType<int16,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint16,\ P,\ vecType>::call}}()\ \%\ vecType<uint16,\ P>(Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_a375938874ca4f0a0982ec6373b56117b}{int16}}\textcolor{keyword}{>}(1)\ -\/\ Min)))\ +\ Min;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \};}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_a47b2a7d006d187338e8031a352d1ce56}{uint16}},\ P,\ vecType>}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<uint16,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01uint16_00_01_p_00_01vec_type_01_4_a2e679de5d0f853ae08ab7cd1ca5ebd72}{call}}(vecType<uint16,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<uint16,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint16,\ P,\ vecType>::call}}()\ \%\ (Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_a47b2a7d006d187338e8031a352d1ce56}{uint16}}\textcolor{keyword}{>}(1)\ -\/\ Min))\ +\ Min;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \};}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_a9f85b4efeca416cdcec2fd08939a2e17}{int32}},\ P,\ vecType>}
+\DoxyCodeLine{00142\ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<int32,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01int32_00_01_p_00_01vec_type_01_4_a7e8fd933e066050783752dd164455ed3}{call}}(vecType<int32,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<int32,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (vecType<int32,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint32,\ P,\ vecType>::call}}()\ \%\ vecType<uint32,\ P>(Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_a9f85b4efeca416cdcec2fd08939a2e17}{int32}}\textcolor{keyword}{>}(1)\ -\/\ Min)))\ +\ Min;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \ \ \};}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_ade6cfbf377022aaa391af8cd50489222}{uint32}},\ P,\ vecType>}
+\DoxyCodeLine{00151\ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<uint32,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01uint32_00_01_p_00_01vec_type_01_4_abdb990c2b1118a6287a26b9e307cbbcd}{call}}(vecType<uint32,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<uint32,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint32,\ P,\ vecType>::call}}()\ \%\ (Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_ade6cfbf377022aaa391af8cd50489222}{uint32}}\textcolor{keyword}{>}(1)\ -\/\ Min))\ +\ Min;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ \ \ \ \ \};}
+\DoxyCodeLine{00157\ \ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_a5b1c3227ec636c24a0676746381adfc8}{int64}},\ P,\ vecType>}
+\DoxyCodeLine{00160\ \ \ \ \ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<int64,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01int64_00_01_p_00_01vec_type_01_4_ab62eef6d7008fa46009d511275d89b18}{call}}(vecType<int64,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<int64,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (vecType<int64,\ P>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint64,\ P,\ vecType>::call}}()\ \%\ vecType<uint64,\ P>(Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_a5b1c3227ec636c24a0676746381adfc8}{int64}}\textcolor{keyword}{>}(1)\ -\/\ Min)))\ +\ Min;}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00165\ \ \ \ \ \};}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{template}\ <precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<\mbox{\hyperlink{namespaceglm_1_1detail_adec4b19bf4982125e122db2fe03c5810}{uint64}},\ P,\ vecType>}
+\DoxyCodeLine{00169\ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<uint64,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01uint64_00_01_p_00_01vec_type_01_4_a2a44a8bc250d1b0ddc1b522e77c88e48}{call}}(vecType<uint64,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<uint64,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint64,\ P,\ vecType>::call}}()\ \%\ (Max\ +\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespaceglm_1_1detail_adec4b19bf4982125e122db2fe03c5810}{uint64}}\textcolor{keyword}{>}(1)\ -\/\ Min))\ +\ Min;}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00174\ \ \ \ \ \};}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<float,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545a3b763a530cd95d31fb1ea64574700061}{lowp}},\ vecType>}
+\DoxyCodeLine{00178\ \ \ \ \ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<float,\ lowp>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01float_00_01lowp_00_01vec_type_01_4_a0d8b9e0cd69e25d40b601c6200921717}{call}}(vecType<float,\ lowp>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<float,\ lowp>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<float,\ lowp>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint8,\ lowp,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(std::numeric\_limits<uint8>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00183\ \ \ \ \ \};}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<float,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545ad1a8e0700b4cc8f9dbdb945b73aadde2}{mediump}},\ vecType>}
+\DoxyCodeLine{00187\ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<float,\ mediump>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01float_00_01mediump_00_01vec_type_01_4_a8cc4d6b2fa0b01183784f4202192dd74}{call}}(vecType<float,\ mediump>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<float,\ mediump>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<float,\ mediump>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint16,\ mediump,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(std::numeric\_limits<uint16>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \ \ \ \ \};}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<float,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545afc564c0029f5cc26a932512b034e2b51}{highp}},\ vecType>}
+\DoxyCodeLine{00196\ \ \ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<float,\ highp>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01float_00_01highp_00_01vec_type_01_4_a3d46b61d29b69a0225eea425b9efd190}{call}}(vecType<float,\ highp>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<float,\ highp>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<float,\ highp>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint32,\ highp,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(std::numeric\_limits<uint32>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \};}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<double,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545a3b763a530cd95d31fb1ea64574700061}{lowp}},\ vecType>}
+\DoxyCodeLine{00205\ \ \ \ \ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<double,\ lowp>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01double_00_01lowp_00_01vec_type_01_4_ab33457256a951aebb4a7995fe257d61f}{call}}(vecType<double,\ lowp>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<double,\ lowp>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<double,\ lowp>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint16,\ lowp,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::numeric\_limits<uint16>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00210\ \ \ \ \ \};}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<double,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545ad1a8e0700b4cc8f9dbdb945b73aadde2}{mediump}},\ vecType>}
+\DoxyCodeLine{00214\ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<double,\ mediump>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01double_00_01mediump_00_01vec_type_01_4_aecb62dec1b4d7274468001bbb88e8a85}{call}}(vecType<double,\ mediump>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<double,\ mediump>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<double,\ mediump>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint32,\ mediump,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::numeric\_limits<uint32>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00219\ \ \ \ \ \};}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<double,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545afc564c0029f5cc26a932512b034e2b51}{highp}},\ vecType>}
+\DoxyCodeLine{00223\ \ \ \ \ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<double,\ highp>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01double_00_01highp_00_01vec_type_01_4_a9b2386a31493033c61a16a229bfc3543}{call}}(vecType<double,\ highp>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<double,\ highp>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<double,\ highp>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint64,\ highp,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::numeric\_limits<uint64>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \ \ \};}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<long\ double,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545a3b763a530cd95d31fb1ea64574700061}{lowp}},\ vecType>}
+\DoxyCodeLine{00232\ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<long\ double,\ lowp>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01long_01double_00_01lowp_00_01vec_type_01_4_aef9a50ec7f295e12c6c76c3a29df88b3}{call}}(vecType<long\ double,\ lowp>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<long\ double,\ lowp>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<long\ double,\ lowp>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint32,\ lowp,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::numeric\_limits<uint32>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \ \ \ \ \};}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<long\ double,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545ad1a8e0700b4cc8f9dbdb945b73aadde2}{mediump}},\ vecType>}
+\DoxyCodeLine{00241\ \ \ \ \ \{}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<long\ double,\ mediump>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01long_01double_00_01mediump_00_01vec_type_01_4_aad9d58528d52f0ba4009f0c30ad92759}{call}}(vecType<long\ double,\ mediump>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<long\ double,\ mediump>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<long\ double,\ mediump>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint64,\ mediump,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::numeric\_limits<uint64>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \};}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand}{compute\_linearRand}}<long\ double,\ \mbox{\hyperlink{namespaceglm_a0f04f086094c747d227af4425893f545afc564c0029f5cc26a932512b034e2b51}{highp}},\ vecType>}
+\DoxyCodeLine{00250\ \ \ \ \ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<long\ double,\ highp>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_3_01long_01double_00_01highp_00_01vec_type_01_4_abe160286d134b0e420bfc9c552decd0d}{call}}(vecType<long\ double,\ highp>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<long\ double,\ highp>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecType<long\ double,\ highp>(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rand}{compute\_rand<uint64,\ highp,\ vecType>::call}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{long}\ \textcolor{keywordtype}{double}\textcolor{keyword}{>}(std::numeric\_limits<uint64>::max())\ *\ (Max\ -\/\ Min)\ +\ Min;}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00255\ \ \ \ \ \};}
+\DoxyCodeLine{00256\ \}\textcolor{comment}{//namespace\ detail}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ genType>}
+\DoxyCodeLine{00259\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ genType\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(genType\ Min,\ genType\ Max)}
+\DoxyCodeLine{00260\ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_a95f08651312e1f320463a26f2c08bc94}{detail::compute\_linearRand<genType,\ highp,\ tvec1>::call}}(}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ tvec1<genType,\ highp>(Min),}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ tvec1<genType,\ highp>(Max)).x;}
+\DoxyCodeLine{00264\ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00267\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ Min,\ vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ Max)}
+\DoxyCodeLine{00268\ \ \ \ \ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__linear_rand_a95f08651312e1f320463a26f2c08bc94}{detail::compute\_linearRand<T,\ P,\ vecType>::call}}(Min,\ Max);}
+\DoxyCodeLine{00270\ \ \ \ \ \}}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ genType>}
+\DoxyCodeLine{00273\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ genType\ \mbox{\hyperlink{group__gtc__random_ga5193a83e49e4fdc5652c084711083574}{gaussRand}}(genType\ Mean,\ genType\ Deviation)}
+\DoxyCodeLine{00274\ \ \ \ \ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ genType\ \mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a49825216c96caaeb09237b36651181c5}{x1}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b907a03236685c534d89d604cff23c8}{x2}};}
+\DoxyCodeLine{00276\ \ \ \ \ }
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a49825216c96caaeb09237b36651181c5}{x1}}\ =\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(genType(-\/1),\ genType(1));}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b907a03236685c534d89d604cff23c8}{x2}}\ =\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(genType(-\/1),\ genType(1));}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a49825216c96caaeb09237b36651181c5}{x1}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a49825216c96caaeb09237b36651181c5}{x1}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b907a03236685c534d89d604cff23c8}{x2}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b907a03236685c534d89d604cff23c8}{x2}};}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}(\mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}}\ >\ genType(1));}
+\DoxyCodeLine{00284\ \ \ \ \ }
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b907a03236685c534d89d604cff23c8}{x2}}\ *\ Deviation\ *\ Deviation\ *\ \mbox{\hyperlink{group__core__func__exponential_ga1f904e09827e939a56e4158f45ca8ede}{sqrt}}((genType(-\/2)\ *\ \mbox{\hyperlink{group__core__func__exponential_gad26901b9f2fdd30612867a8dcfa73fbc}{log}}(\mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}}))\ /\ \mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}})\ +\ Mean;}
+\DoxyCodeLine{00286\ \ \ \ \ \}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00289\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__gtc__random_ga5193a83e49e4fdc5652c084711083574}{gaussRand}}(vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ Mean,\ vecType<T,\ P>\ \textcolor{keyword}{const}\ \&\ Deviation)}
+\DoxyCodeLine{00290\ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1functor2}{detail::functor2<T,\ P,\ vecType>::call}}(\mbox{\hyperlink{group__gtc__random_ga5193a83e49e4fdc5652c084711083574}{gaussRand}},\ Mean,\ Deviation);}
+\DoxyCodeLine{00292\ \ \ \ \ \}}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00295\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ defaultp>}}\ \mbox{\hyperlink{group__gtc__random_ga5d06c2fa63362899b6b3b92fd7574b84}{diskRand}}(T\ Radius)}
+\DoxyCodeLine{00296\ \ \ \ \ \{\ \ \ \ \ \ \ }
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ defaultp>}}\ Result(T(0));}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ T\ LenRadius(T(0));}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ Result\ =\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ defaultp>}}(-\/Radius),}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ defaultp>}}(Radius));}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ LenRadius\ =\ \mbox{\hyperlink{glad_8h_ab9c919755bde3b34349e23a32b4e0fa7}{length}}(Result);}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(LenRadius\ >\ Radius);}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00310\ \ \ \ \ \}}
+\DoxyCodeLine{00311\ \ \ \ \ }
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00313\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ defaultp>}}\ \mbox{\hyperlink{group__gtc__random_gaee9e73396e6d094699de6684ea17ce3c}{ballRand}}(T\ Radius)}
+\DoxyCodeLine{00314\ \ \ \ \ \{\ \ \ \ \ \ \ }
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ defaultp>}}\ Result(T(0));}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ T\ LenRadius(T(0));}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ Result\ =\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ defaultp>}}(-\/Radius),}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ defaultp>}}(Radius));}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ LenRadius\ =\ \mbox{\hyperlink{glad_8h_ab9c919755bde3b34349e23a32b4e0fa7}{length}}(Result);}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(LenRadius\ >\ Radius);}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00328\ \ \ \ \ \}}
+\DoxyCodeLine{00329\ \ \ \ \ }
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00331\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ defaultp>}}\ \mbox{\hyperlink{group__gtc__random_gaed9dfacc8a20e691e22aafa944b1d3bf}{circularRand}}(T\ Radius)}
+\DoxyCodeLine{00332\ \ \ \ \ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}}\ =\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(T(0),\ T(6.283185307179586476925286766559f));}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ defaultp>}}(\mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{cos}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}}),\ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{sin}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}}))\ *\ Radius;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00335\ \ \ \ \ \}}
+\DoxyCodeLine{00336\ \ \ \ \ }
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00338\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ defaultp>}}\ \mbox{\hyperlink{group__gtc__random_ga33e342051ba8122d91ec76b8a240d6e4}{sphericalRand}}(T\ Radius)}
+\DoxyCodeLine{00339\ \ \ \ \ \{}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{glad_8h_a1c599441d9dece861ee2cd70e31ce120}{z}}\ =\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(T(-\/1),\ T(1));}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}}\ =\ \mbox{\hyperlink{group__gtc__random_ga04e241ab88374a477a2c2ceadd2fa03d}{linearRand}}(T(0),\ T(6.283185307179586476925286766559f));}
+\DoxyCodeLine{00342\ \ \ \ \ }
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{glad_8h_abe08814c2f72843fde4d8df41440d5a0}{r}}\ =\ \mbox{\hyperlink{group__core__func__exponential_ga1f904e09827e939a56e4158f45ca8ede}{sqrt}}(T(1)\ -\/\ \mbox{\hyperlink{glad_8h_a1c599441d9dece861ee2cd70e31ce120}{z}}\ *\ \mbox{\hyperlink{glad_8h_a1c599441d9dece861ee2cd70e31ce120}{z}});}
+\DoxyCodeLine{00344\ \ \ \ \ }
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}}\ =\ \mbox{\hyperlink{glad_8h_abe08814c2f72843fde4d8df41440d5a0}{r}}\ *\ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{cos}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}});}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{glad_8h_a1675d9d7bb68e1657ff028643b4037e3}{y}}\ =\ \mbox{\hyperlink{glad_8h_abe08814c2f72843fde4d8df41440d5a0}{r}}\ *\ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{sin}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}});}
+\DoxyCodeLine{00347\ \ \ \ \ }
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ defaultp>}}(\mbox{\hyperlink{glad_8h_abe1577120f1766eff913e9a74879f373}{x}},\ \mbox{\hyperlink{glad_8h_a1675d9d7bb68e1657ff028643b4037e3}{y}},\ \mbox{\hyperlink{glad_8h_a1c599441d9dece861ee2cd70e31ce120}{z}})\ *\ Radius;\ \ \ }
+\DoxyCodeLine{00349\ \ \ \ \ \}}
+\DoxyCodeLine{00350\ \}\textcolor{comment}{//namespace\ glm}}
+
+\end{DoxyCode}

@@ -1,0 +1,216 @@
+\doxysection{bt\+Sequential\+Impulse\+Constraint\+Solver.\+h}
+\hypertarget{bt_sequential_impulse_constraint_solver_8h_source}{}\label{bt_sequential_impulse_constraint_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_SEQUENTIAL\_IMPULSE\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_SEQUENTIAL\_IMPULSE\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}};}
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }btPersistentManifold;}
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}};}
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }btCollisionObject;}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btTypedConstraint.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btContactSolverInfo.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btSolverBody.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btSolverConstraint.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btConstraintSolver.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ btScalar\ (*btSingleConstraintRowSolver)(btSolverBody\&,\ btSolverBody\&,\ \textcolor{keyword}{const}\ btSolverConstraint\&);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_solver_analytics_data}{btSolverAnalyticsData}}}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structbt_solver_analytics_data}{btSolverAnalyticsData}}()}
+\DoxyCodeLine{00035\ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ m\_numSolverCalls\ =\ 0;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ m\_numIterationsUsed\ =\ -\/1;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ m\_remainingLeastSquaresResidual\ =\ -\/1;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ m\_islandId\ =\ -\/2;}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_islandId;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numBodies;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numContactManifolds;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numSolverCalls;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numIterationsUsed;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_remainingLeastSquaresResidual;}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00050\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00051\ btSequentialImpulseConstraintSolver\ :\ public\ \mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00056\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSolverBody>}}\ m\_tmpSolverBodyPool;}
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btConstraintArray}}\ m\_tmpSolverContactConstraintPool;}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btConstraintArray}}\ m\_tmpSolverNonContactConstraintPool;}
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btConstraintArray}}\ m\_tmpSolverContactFrictionConstraintPool;}
+\DoxyCodeLine{00060\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btConstraintArray}}\ m\_tmpSolverContactRollingFrictionConstraintPool;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ m\_orderTmpConstraintPool;}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ m\_orderNonContactConstraintPool;}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ m\_orderFrictionConstraintPool;}
+\DoxyCodeLine{00065\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTypedConstraint::btConstraintInfo1>}}\ m\_tmpConstraintSizesPool;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_maxOverrideNumSolverIterations;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_fixedBodyId;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ When\ running\ solvers\ on\ multiple\ threads,\ a\ race\ condition\ exists\ for\ Kinematic\ objects\ that}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ participate\ in\ more\ than\ one\ solver.}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ The\ getOrInitSolverBody()\ function\ writes\ the\ companionId\ of\ each\ body\ (storing\ the\ index\ of\ the\ solver\ body}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{//\ for\ the\ current\ solver).\ For\ normal\ dynamic\ bodies\ it\ isn't\ an\ issue\ because\ they\ can\ only\ be\ in\ one\ island}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//\ (and\ therefore\ one\ thread)\ at\ a\ time.\ But\ kinematic\ bodies\ can\ be\ in\ multiple\ islands\ at\ once.}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{//\ To\ avoid\ this\ race\ condition,\ this\ solver\ does\ not\ write\ the\ companionId,\ instead\ it\ stores\ the\ solver\ body}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ index\ in\ this\ solver-\/local\ table,\ indexed\ by\ the\ uniqueId\ of\ the\ body.}}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ m\_kinematicBodyUniqueIdToSolverBodyTable;\ \ \textcolor{comment}{//\ only\ used\ for\ multithreading}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ btSingleConstraintRowSolver\ m\_resolveSingleConstraintRowGeneric;}
+\DoxyCodeLine{00078\ \ \ \ \ btSingleConstraintRowSolver\ m\_resolveSingleConstraintRowLowerLimit;}
+\DoxyCodeLine{00079\ \ \ \ \ btSingleConstraintRowSolver\ m\_resolveSplitPenetrationImpulse;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_cachedSolverMode;\ \ \textcolor{comment}{//\ used\ to\ check\ if\ SOLVER\_SIMD\ flag\ has\ been\ changed}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ setupSolverFunctions(\textcolor{keywordtype}{bool}\ useSimd);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ btScalar\ m\_leastSquaresResidual;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ setupFrictionConstraint(btSolverConstraint\ \&\ solverConstraint,\ \textcolor{keyword}{const}\ btVector3\&\ normalAxis,\ \textcolor{keywordtype}{int}\ solverBodyIdA,\ \textcolor{keywordtype}{int}\ solverBodyIdB,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos1,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos2,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj0,\ btCollisionObject*\ colObj1,\ btScalar\ relaxation,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ btScalar\ desiredVelocity\ =\ 0.,\ btScalar\ cfmSlip\ =\ 0.);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ setupTorsionalFrictionConstraint(btSolverConstraint\ \&\ solverConstraint,\ \textcolor{keyword}{const}\ btVector3\&\ normalAxis,\ \textcolor{keywordtype}{int}\ solverBodyIdA,\ \textcolor{keywordtype}{int}\ solverBodyIdB,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,\ btScalar\ combinedTorsionalFriction,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos1,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos2,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj0,\ btCollisionObject*\ colObj1,\ btScalar\ relaxation,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ btScalar\ desiredVelocity\ =\ 0.,\ btScalar\ cfmSlip\ =\ 0.);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ btSolverConstraint\&\ addFrictionConstraint(\textcolor{keyword}{const}\ btVector3\&\ normalAxis,\ \textcolor{keywordtype}{int}\ solverBodyIdA,\ \textcolor{keywordtype}{int}\ solverBodyIdB,\ \textcolor{keywordtype}{int}\ frictionIndex,\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos1,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos2,\ btCollisionObject*\ colObj0,\ btCollisionObject*\ colObj1,\ btScalar\ relaxation,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ btScalar\ desiredVelocity\ =\ 0.,\ btScalar\ cfmSlip\ =\ 0.);}
+\DoxyCodeLine{00097\ \ \ \ \ btSolverConstraint\&\ addTorsionalFrictionConstraint(\textcolor{keyword}{const}\ btVector3\&\ normalAxis,\ \textcolor{keywordtype}{int}\ solverBodyIdA,\ \textcolor{keywordtype}{int}\ solverBodyIdB,\ \textcolor{keywordtype}{int}\ frictionIndex,\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,\ btScalar\ torsionalFriction,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos1,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos2,\ btCollisionObject*\ colObj0,\ btCollisionObject*\ colObj1,\ btScalar\ relaxation,\ btScalar\ desiredVelocity\ =\ 0,\ btScalar\ cfmSlip\ =\ 0.f);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ setupContactConstraint(btSolverConstraint\ \&\ solverConstraint,\ \textcolor{keywordtype}{int}\ solverBodyIdA,\ \textcolor{keywordtype}{int}\ solverBodyIdB,\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ btScalar\&\ relaxation,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos1,\ \textcolor{keyword}{const}\ btVector3\&\ rel\_pos2);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ applyAnisotropicFriction(btCollisionObject\ *\ colObj,\ btVector3\ \&\ frictionDirection,\ \textcolor{keywordtype}{int}\ frictionMode);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{void}\ setFrictionConstraintImpulse(btSolverConstraint\ \&\ solverConstraint,\ \textcolor{keywordtype}{int}\ solverBodyIdA,\ \textcolor{keywordtype}{int}\ solverBodyIdB,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ m\_btSeed2;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ btScalar\ restitutionCurve(btScalar\ rel\_vel,\ btScalar\ restitution,\ btScalar\ velocityThreshold);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ convertContacts(btPersistentManifold\ *\ *manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{void}\ convertContact(btPersistentManifold\ *\ manifold,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ convertJoints(btTypedConstraint\ *\ *constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{void}\ convertJoint(btSolverConstraint\ *\ currentConstraintRow,\ btTypedConstraint\ *\ constraint,\ \textcolor{keyword}{const}\ btTypedConstraint::btConstraintInfo1\&\ info1,\ \textcolor{keywordtype}{int}\ solverBodyIdA,\ \textcolor{keywordtype}{int}\ solverBodyIdB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ convertBodies(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ btScalar\ resolveSplitPenetrationSIMD(btSolverBody\ \&\ bodyA,\ btSolverBody\ \&\ bodyB,\ \textcolor{keyword}{const}\ btSolverConstraint\&\ contactConstraint)}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resolveSplitPenetrationImpulse(bodyA,\ bodyB,\ contactConstraint);}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ btScalar\ resolveSplitPenetrationImpulseCacheFriendly(btSolverBody\ \&\ bodyA,\ btSolverBody\ \&\ bodyB,\ \textcolor{keyword}{const}\ btSolverConstraint\&\ contactConstraint)}
+\DoxyCodeLine{00127\ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resolveSplitPenetrationImpulse(bodyA,\ bodyB,\ contactConstraint);}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{comment}{//internal\ method}}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{int}\ getOrInitSolverBody(btCollisionObject\ \&\ body,\ btScalar\ timeStep);}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{void}\ initSolverBody(btSolverBody\ *\ solverBody,\ btCollisionObject\ *\ collisionObject,\ btScalar\ timeStep);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ btScalar\ resolveSingleConstraintRowGeneric(btSolverBody\ \&\ bodyA,\ btSolverBody\ \&\ bodyB,\ \textcolor{keyword}{const}\ btSolverConstraint\&\ contactConstraint);}
+\DoxyCodeLine{00136\ \ \ \ \ btScalar\ resolveSingleConstraintRowGenericSIMD(btSolverBody\ \&\ bodyA,\ btSolverBody\ \&\ bodyB,\ \textcolor{keyword}{const}\ btSolverConstraint\&\ contactConstraint);}
+\DoxyCodeLine{00137\ \ \ \ \ btScalar\ resolveSingleConstraintRowLowerLimit(btSolverBody\ \&\ bodyA,\ btSolverBody\ \&\ bodyB,\ \textcolor{keyword}{const}\ btSolverConstraint\&\ contactConstraint);}
+\DoxyCodeLine{00138\ \ \ \ \ btScalar\ resolveSingleConstraintRowLowerLimitSIMD(btSolverBody\ \&\ bodyA,\ btSolverBody\ \&\ bodyB,\ \textcolor{keyword}{const}\ btSolverConstraint\&\ contactConstraint);}
+\DoxyCodeLine{00139\ \ \ \ \ btScalar\ resolveSplitPenetrationImpulse(btSolverBody\ \&\ bodyA,\ btSolverBody\ \&\ bodyB,\ \textcolor{keyword}{const}\ btSolverConstraint\&\ contactConstraint)}
+\DoxyCodeLine{00140\ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resolveSplitPenetrationImpulse(bodyA,\ bodyB,\ contactConstraint);}
+\DoxyCodeLine{00142\ \ \ \ \ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{void}\ writeBackContacts(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{void}\ writeBackJoints(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ writeBackBodies(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveGroupCacheFriendlySplitImpulseIterations(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveGroupCacheFriendlyFinish(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveSingleIteration(\textcolor{keywordtype}{int}\ iteration,\ btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveGroupCacheFriendlySetup(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveGroupCacheFriendlyIterations(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00156\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ btSequentialImpulseConstraintSolver();}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btSequentialImpulseConstraintSolver();}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveGroup(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifold,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ info,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ reset();}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ btRand2();}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{int}\ btRandInt2(\textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{void}\ setRandSeed(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ seed)}
+\DoxyCodeLine{00171\ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ m\_btSeed2\ =\ seed;}
+\DoxyCodeLine{00173\ \ \ \ \ \}}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ getRandSeed()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00175\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_btSeed2;}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keyword}{virtual}\ btConstraintSolverType\ getSolverType()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00180\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_SEQUENTIAL\_IMPULSE\_SOLVER;}
+\DoxyCodeLine{00182\ \ \ \ \ \}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ btSingleConstraintRowSolver\ getActiveConstraintRowSolverGeneric()}
+\DoxyCodeLine{00185\ \ \ \ \ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resolveSingleConstraintRowGeneric;}
+\DoxyCodeLine{00187\ \ \ \ \ \}}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{void}\ setConstraintRowSolverGeneric(btSingleConstraintRowSolver\ rowSolver)}
+\DoxyCodeLine{00189\ \ \ \ \ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ m\_resolveSingleConstraintRowGeneric\ =\ rowSolver;}
+\DoxyCodeLine{00191\ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \ \ \ \ btSingleConstraintRowSolver\ getActiveConstraintRowSolverLowerLimit()}
+\DoxyCodeLine{00193\ \ \ \ \ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resolveSingleConstraintRowLowerLimit;}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{void}\ setConstraintRowSolverLowerLimit(btSingleConstraintRowSolver\ rowSolver)}
+\DoxyCodeLine{00197\ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ m\_resolveSingleConstraintRowLowerLimit\ =\ rowSolver;}
+\DoxyCodeLine{00199\ \ \ \ \ \}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00204\ \ \ \ \ btSingleConstraintRowSolver\ getScalarConstraintRowSolverGeneric();}
+\DoxyCodeLine{00205\ \ \ \ \ btSingleConstraintRowSolver\ getSSE2ConstraintRowSolverGeneric();}
+\DoxyCodeLine{00206\ \ \ \ \ btSingleConstraintRowSolver\ getSSE4\_1ConstraintRowSolverGeneric();}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00209\ \ \ \ \ btSingleConstraintRowSolver\ getScalarConstraintRowSolverLowerLimit();}
+\DoxyCodeLine{00210\ \ \ \ \ btSingleConstraintRowSolver\ getSSE2ConstraintRowSolverLowerLimit();}
+\DoxyCodeLine{00211\ \ \ \ \ btSingleConstraintRowSolver\ getSSE4\_1ConstraintRowSolverLowerLimit();}
+\DoxyCodeLine{00212\ \ \ \ \ \mbox{\hyperlink{structbt_solver_analytics_data}{btSolverAnalyticsData}}\ m\_analyticsData;}
+\DoxyCodeLine{00213\ \};}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SEQUENTIAL\_IMPULSE\_CONSTRAINT\_SOLVER\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,234 @@
+\doxysection{bt\+Discrete\+Dynamics\+World.\+h}
+\hypertarget{bt_discrete_dynamics_world_8h_source}{}\label{bt_discrete_dynamics_world_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DISCRETE\_DYNAMICS\_WORLD\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DISCRETE\_DYNAMICS\_WORLD\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btDynamicsWorld.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}};}
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}};}
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}};}
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_simulation_island_manager}{btSimulationIslandManager}};}
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }btTypedConstraint;}
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_action_interface}{btActionInterface}};}
+\DoxyCodeLine{00026\ \textcolor{keyword}{class\ }btPersistentManifold;}
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_inplace_solver_island_callback}{InplaceSolverIslandCallback}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btThreads.h"{}}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00036\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00037\ btDiscreteDynamicsWorld\ :\ public\ \mbox{\hyperlink{classbt_dynamics_world}{btDynamicsWorld}}}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTypedConstraint*>}}\ m\_sortedConstraints;}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{struct_inplace_solver_island_callback}{InplaceSolverIslandCallback}}*\ m\_solverIslandCallback;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}*\ m\_constraintSolver;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{classbt_simulation_island_manager}{btSimulationIslandManager}}*\ m\_islandManager;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTypedConstraint*>}}\ m\_constraints;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btRigidBody*>}}\ m\_nonStaticRigidBodies;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ btVector3\ m\_gravity;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//for\ variable\ timesteps}}
+\DoxyCodeLine{00054\ \ \ \ \ btScalar\ m\_localTime;}
+\DoxyCodeLine{00055\ \ \ \ \ btScalar\ m\_fixedTimeStep;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{//for\ variable\ timesteps}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ownsIslandManager;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ownsConstraintSolver;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_synchronizeAllMotionStates;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_applySpeculativeContactRestitution;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btActionInterface*>}}\ m\_actions;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_profileTimings;}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_latencyMotionStateInterpolation;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btPersistentManifold*>}}\ m\_predictiveManifolds;}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{classbt_spin_mutex}{btSpinMutex}}\ m\_predictiveManifoldsMutex;\ \ \textcolor{comment}{//\ used\ to\ synchronize\ threads\ creating\ predictive\ contacts}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ predictUnconstraintMotion(btScalar\ timeStep);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{void}\ integrateTransformsInternal(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btScalar\ timeStep);\ \ \textcolor{comment}{//\ can\ be\ called\ in\ parallel}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ integrateTransforms(btScalar\ timeStep);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateSimulationIslands();}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ }
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ updateActivationState(btScalar\ timeStep);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{void}\ updateActions(btScalar\ timeStep);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ startProfiling(btScalar\ timeStep);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ internalSingleStepSimulation(btScalar\ timeStep);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ releasePredictiveContacts();}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{void}\ createPredictiveContactsInternal(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btScalar\ timeStep);\ \ \textcolor{comment}{//\ can\ be\ called\ in\ parallel}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ createPredictiveContacts(btScalar\ timeStep);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ saveKinematicState(btScalar\ timeStep);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ serializeRigidBodies(\mbox{\hyperlink{classbt_serializer}{btSerializer}}\ *\ serializer);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{void}\ serializeDynamicsWorldInfo(\mbox{\hyperlink{classbt_serializer}{btSerializer}}\ *\ serializer);}
+\DoxyCodeLine{00098\ \ \ \ \ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00100\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00103\ \ \ \ \ btDiscreteDynamicsWorld(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}\ *\ dispatcher,\ \mbox{\hyperlink{classbt_broadphase_interface}{btBroadphaseInterface}}\ *\ pairCache,\ \mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}\ *\ constraintSolver,\ \mbox{\hyperlink{classbt_collision_configuration}{btCollisionConfiguration}}\ *\ collisionConfiguration);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btDiscreteDynamicsWorld();}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ stepSimulation(btScalar\ timeStep,\ \textcolor{keywordtype}{int}\ maxSubSteps\ =\ 1,\ btScalar\ fixedTimeStep\ =\ btScalar(1.)\ /\ btScalar(60.));}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveConstraints(\mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\ \&\ solverInfo);}
+\DoxyCodeLine{00111\ \ \ \ \ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ synchronizeMotionStates();}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{void}\ synchronizeSingleMotionState(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ *\ body);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addConstraint(btTypedConstraint\ *\ constraint,\ \textcolor{keywordtype}{bool}\ disableCollisionsBetweenLinkedBodies\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeConstraint(btTypedConstraint\ *\ constraint);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addAction(\mbox{\hyperlink{classbt_action_interface}{btActionInterface}}*);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeAction(\mbox{\hyperlink{classbt_action_interface}{btActionInterface}}*);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \mbox{\hyperlink{classbt_simulation_island_manager}{btSimulationIslandManager}}*\ getSimulationIslandManager()}
+\DoxyCodeLine{00126\ \ \ \ \ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_islandManager;}
+\DoxyCodeLine{00128\ \ \ \ \ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_simulation_island_manager}{btSimulationIslandManager}}*\ getSimulationIslandManager()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00131\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_islandManager;}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ getCollisionWorld()}
+\DoxyCodeLine{00136\ \ \ \ \ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00138\ \ \ \ \ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setGravity(\textcolor{keyword}{const}\ btVector3\&\ gravity);}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getGravity()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addCollisionObject(btCollisionObject\ *\ collisionObject,\ \textcolor{keywordtype}{int}\ collisionFilterGroup\ =\ btBroadphaseProxy::StaticFilter,\ \textcolor{keywordtype}{int}\ collisionFilterMask\ =\ btBroadphaseProxy::AllFilter\ \string^\ btBroadphaseProxy::StaticFilter);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addRigidBody(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ *\ body);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addRigidBody(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ *\ body,\ \textcolor{keywordtype}{int}\ group,\ \textcolor{keywordtype}{int}\ mask);}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeRigidBody(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ *\ body);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeCollisionObject(btCollisionObject\ *\ collisionObject);}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ debugDrawConstraint(btTypedConstraint\ *\ constraint);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ debugDrawWorld();}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setConstraintSolver(\mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}\ *\ solver);}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}*\ getConstraintSolver();}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumConstraints()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{virtual}\ btTypedConstraint*\ getConstraint(\textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ btTypedConstraint*\ getConstraint(\textcolor{keywordtype}{int}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{virtual}\ btDynamicsWorldType\ getWorldType()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00170\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_DISCRETE\_DYNAMICS\_WORLD;}
+\DoxyCodeLine{00172\ \ \ \ \ \}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ clearForces();}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyGravity();}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setNumTasks(\textcolor{keywordtype}{int}\ numTasks)}
+\DoxyCodeLine{00181\ \ \ \ \ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ (void)numTasks;}
+\DoxyCodeLine{00183\ \ \ \ \ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ updateVehicles(btScalar\ timeStep)}
+\DoxyCodeLine{00187\ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ updateActions(timeStep);}
+\DoxyCodeLine{00189\ \ \ \ \ \}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addVehicle(\mbox{\hyperlink{classbt_action_interface}{btActionInterface}}\ *\ vehicle);}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeVehicle(\mbox{\hyperlink{classbt_action_interface}{btActionInterface}}\ *\ vehicle);}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addCharacter(\mbox{\hyperlink{classbt_action_interface}{btActionInterface}}\ *\ character);}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeCharacter(\mbox{\hyperlink{classbt_action_interface}{btActionInterface}}\ *\ character);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{void}\ setSynchronizeAllMotionStates(\textcolor{keywordtype}{bool}\ synchronizeAll)}
+\DoxyCodeLine{00201\ \ \ \ \ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ m\_synchronizeAllMotionStates\ =\ synchronizeAll;}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{bool}\ getSynchronizeAllMotionStates()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00205\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_synchronizeAllMotionStates;}
+\DoxyCodeLine{00207\ \ \ \ \ \}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordtype}{void}\ setApplySpeculativeContactRestitution(\textcolor{keywordtype}{bool}\ enable)}
+\DoxyCodeLine{00210\ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ m\_applySpeculativeContactRestitution\ =\ enable;}
+\DoxyCodeLine{00212\ \ \ \ \ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{bool}\ getApplySpeculativeContactRestitution()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00215\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_applySpeculativeContactRestitution;}
+\DoxyCodeLine{00217\ \ \ \ \ \}}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ serialize(\mbox{\hyperlink{classbt_serializer}{btSerializer}}\ *\ serializer);}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{void}\ setLatencyMotionStateInterpolation(\textcolor{keywordtype}{bool}\ latencyInterpolation)}
+\DoxyCodeLine{00225\ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ m\_latencyMotionStateInterpolation\ =\ latencyInterpolation;}
+\DoxyCodeLine{00227\ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordtype}{bool}\ getLatencyMotionStateInterpolation()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00229\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_latencyMotionStateInterpolation;}
+\DoxyCodeLine{00231\ \ \ \ \ \}}
+\DoxyCodeLine{00232\ \ \ \ \ }
+\DoxyCodeLine{00233\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btRigidBody*>}}\&\ getNonStaticRigidBodies()}
+\DoxyCodeLine{00234\ \ \ \ \ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_nonStaticRigidBodies;}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \ \ \ \ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btRigidBody*>}}\&\ getNonStaticRigidBodies()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00239\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_nonStaticRigidBodies;}
+\DoxyCodeLine{00241\ \ \ \ \ \}}
+\DoxyCodeLine{00242\ \};}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DISCRETE\_DYNAMICS\_WORLD\_H}}
+
+\end{DoxyCode}

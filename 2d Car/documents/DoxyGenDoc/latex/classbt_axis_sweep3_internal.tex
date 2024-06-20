@@ -1,0 +1,335 @@
+\doxysection{bt\+Axis\+Sweep3\+Internal\texorpdfstring{$<$}{<} BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classbt_axis_sweep3_internal}{}\label{classbt_axis_sweep3_internal}\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+
+
+{\ttfamily \#include $<$bt\+Axis\+Sweep3\+Internal.\+h$>$}
+
+Inheritance diagram for bt\+Axis\+Sweep3\+Internal\texorpdfstring{$<$}{<} BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE \texorpdfstring{$>$}{>}\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classbt_axis_sweep3_internal}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classbt_axis_sweep3_internal_1_1_edge}{Edge}}
+\item 
+class \mbox{\hyperlink{classbt_axis_sweep3_internal_1_1_handle}{Handle}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ad90bd2c40561f5151dee7a938a0afe44}\label{classbt_axis_sweep3_internal_ad90bd2c40561f5151dee7a938a0afe44} 
+{\bfseries BT\+\_\+\+DECLARE\+\_\+\+ALIGNED\+\_\+\+ALLOCATOR} ()
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ac995b48f3a60ffac694c1d3c1e891226}\label{classbt_axis_sweep3_internal_ac995b48f3a60ffac694c1d3c1e891226} 
+{\bfseries bt\+Axis\+Sweep3\+Internal} (const bt\+Vector3 \&world\+Aabb\+Min, const bt\+Vector3 \&world\+Aabb\+Max, BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE handle\+Mask, BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE handle\+Sentinel, BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE max\+Handles=16384, \mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*}pair\+Cache=0, bool disable\+Raycast\+Accelerator=false)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a86d2dfd94fee65d42d8c288de249681b}\label{classbt_axis_sweep3_internal_a86d2dfd94fee65d42d8c288de249681b} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries get\+Num\+Handles} () const
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_ab89835d4ecb51e2dadc7e3b6e7c29adb}{calculate\+Overlapping\+Pairs}} (\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\begin{DoxyCompactList}\small\item\em calculate\+Overlapping\+Pairs is optional\+: incremental algorithms (sweep and prune) might do it during the set aabb \end{DoxyCompactList}\item 
+\Hypertarget{classbt_axis_sweep3_internal_a4b1f4677ebd086c53474fd0f6730b71d}\label{classbt_axis_sweep3_internal_a4b1f4677ebd086c53474fd0f6730b71d} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries add\+Handle} (const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, void \texorpdfstring{$\ast$}{*}p\+Owner, int collision\+Filter\+Group, int collision\+Filter\+Mask, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\item 
+void \mbox{\hyperlink{classbt_axis_sweep3_internal_a4e26f4f8acf63f26451f6396223001bb}{remove\+Handle}} (BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE handle, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ac9852514d20572ebdde3e72215b09410}\label{classbt_axis_sweep3_internal_ac9852514d20572ebdde3e72215b09410} 
+void {\bfseries update\+Handle} (BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE handle, const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a2660c140f62d6121f378dc36f8128b9c}\label{classbt_axis_sweep3_internal_a2660c140f62d6121f378dc36f8128b9c} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE \mbox{\hyperlink{classbt_axis_sweep3_internal_1_1_handle}{Handle}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Handle} (BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE index) const
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_aeecfcc066ca77ec8b9bf2c8d422716ee}{reset\+Pool}} (\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\begin{DoxyCompactList}\small\item\em reset broadphase internal structures, to ensure determinism/reproducability \end{DoxyCompactList}\item 
+\Hypertarget{classbt_axis_sweep3_internal_adc81ed36fde6cccd3e9fcb2ec3bc759c}\label{classbt_axis_sweep3_internal_adc81ed36fde6cccd3e9fcb2ec3bc759c} 
+void {\bfseries process\+All\+Overlapping\+Pairs} (\mbox{\hyperlink{structbt_overlap_callback}{bt\+Overlap\+Callback}} \texorpdfstring{$\ast$}{*}callback)
+\item 
+virtual bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal_a5e669e352c8c3a4a25c73cae1d9c0ded}{create\+Proxy}} (const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, int shape\+Type, void \texorpdfstring{$\ast$}{*}user\+Ptr, int collision\+Filter\+Group, int collision\+Filter\+Mask, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_ad994787298649e89fc55a6d43af65a1e}{destroy\+Proxy}} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_ab75a4fc28e56239fe76c061f6ee9231c}{set\+Aabb}} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy, const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_a026daa514a4f37ecab5e49266c1203b2}{get\+Aabb}} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy, bt\+Vector3 \&aabb\+Min, bt\+Vector3 \&aabb\+Max) const
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_a370bc732655b33bf166114afe22fb9e7}{ray\+Test}} (const bt\+Vector3 \&ray\+From, const bt\+Vector3 \&ray\+To, \mbox{\hyperlink{structbt_broadphase_ray_callback}{bt\+Broadphase\+Ray\+Callback}} \&ray\+Callback, const bt\+Vector3 \&aabb\+Min=bt\+Vector3(0, 0, 0), const bt\+Vector3 \&aabb\+Max=bt\+Vector3(0, 0, 0))
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_ac93d0e99a1f936209fae09406663b9b6}{aabb\+Test}} (const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, \mbox{\hyperlink{structbt_broadphase_aabb_callback}{bt\+Broadphase\+Aabb\+Callback}} \&callback)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a852908ebce2e0b632f18cae17860fc47}\label{classbt_axis_sweep3_internal_a852908ebce2e0b632f18cae17860fc47} 
+void {\bfseries quantize} (BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE \texorpdfstring{$\ast$}{*}out, const bt\+Vector3 \&point, int is\+Max) const
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a33d53264ea5d7f695e97200ca752fbe5}\label{classbt_axis_sweep3_internal_a33d53264ea5d7f695e97200ca752fbe5} 
+void {\bfseries un\+Quantize} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy, bt\+Vector3 \&aabb\+Min, bt\+Vector3 \&aabb\+Max) const
+\begin{DoxyCompactList}\small\item\em un\+Quantize should be conservative\+: aabb\+Min/aabb\+Max should be larger then \textquotesingle{}get\+Aabb\textquotesingle{} result \end{DoxyCompactList}\item 
+\Hypertarget{classbt_axis_sweep3_internal_a24ac067f6bebde7e1905620d89c83686}\label{classbt_axis_sweep3_internal_a24ac067f6bebde7e1905620d89c83686} 
+bool {\bfseries test\+Aabb\+Overlap} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy0, bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy1)
+\item 
+\mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal_aa3f52da7e97b9ae6e559256898cb4b0f}{get\+Overlapping\+Pair\+Cache}} ()
+\item 
+const \mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal_a844cc9067095b34cd7195dcefadb4626}{get\+Overlapping\+Pair\+Cache}} () const
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ae8602eb252ae2085960583bd4f8e7451}\label{classbt_axis_sweep3_internal_ae8602eb252ae2085960583bd4f8e7451} 
+void {\bfseries set\+Overlapping\+Pair\+User\+Callback} (\mbox{\hyperlink{classbt_overlapping_pair_callback}{bt\+Overlapping\+Pair\+Callback}} \texorpdfstring{$\ast$}{*}pair\+Callback)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a49ebc32634f70afbff3c369fe77e1262}\label{classbt_axis_sweep3_internal_a49ebc32634f70afbff3c369fe77e1262} 
+const \mbox{\hyperlink{classbt_overlapping_pair_callback}{bt\+Overlapping\+Pair\+Callback}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Overlapping\+Pair\+User\+Callback} () const
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_ad1e0037e1ed62ef5049389bb4e8fd5b5}{get\+Broadphase\+Aabb}} (bt\+Vector3 \&aabb\+Min, bt\+Vector3 \&aabb\+Max) const
+\item 
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal_a5fe22bd436bcafe8f17b939cc6803a2d}{print\+Stats}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a40b3512ebfeefbec480a906328053988}\label{classbt_axis_sweep3_internal_a40b3512ebfeefbec480a906328053988} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries alloc\+Handle} ()
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ac40f411fe4911c17c681d47656296b26}\label{classbt_axis_sweep3_internal_ac40f411fe4911c17c681d47656296b26} 
+void {\bfseries free\+Handle} (BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE handle)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a49abf8db2723c3ec699031539ab6e06d}\label{classbt_axis_sweep3_internal_a49abf8db2723c3ec699031539ab6e06d} 
+bool {\bfseries test\+Overlap2D} (const \mbox{\hyperlink{classbt_axis_sweep3_internal_1_1_handle}{Handle}} \texorpdfstring{$\ast$}{*}p\+HandleA, const \mbox{\hyperlink{classbt_axis_sweep3_internal_1_1_handle}{Handle}} \texorpdfstring{$\ast$}{*}p\+HandleB, int axis0, int axis1)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ac12a6524d4fe2b30f084be1c556e8087}\label{classbt_axis_sweep3_internal_ac12a6524d4fe2b30f084be1c556e8087} 
+void {\bfseries sort\+Min\+Down} (int axis, BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE edge, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher, bool update\+Overlaps)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ae2547559962876e0da7899dadca7f9aa}\label{classbt_axis_sweep3_internal_ae2547559962876e0da7899dadca7f9aa} 
+void {\bfseries sort\+Min\+Up} (int axis, BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE edge, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher, bool update\+Overlaps)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a345b7d853ad2a2449da0b51b1f35ff49}\label{classbt_axis_sweep3_internal_a345b7d853ad2a2449da0b51b1f35ff49} 
+void {\bfseries sort\+Max\+Down} (int axis, BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE edge, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher, bool update\+Overlaps)
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_af8e014dfdce82a2d16dde9cb342fa58f}\label{classbt_axis_sweep3_internal_af8e014dfdce82a2d16dde9cb342fa58f} 
+void {\bfseries sort\+Max\+Up} (int axis, BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE edge, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher, bool update\+Overlaps)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a374ece6e21a89d616375bebb6493430d}\label{classbt_axis_sweep3_internal_a374ece6e21a89d616375bebb6493430d} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries m\+\_\+bp\+Handle\+Mask}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a18153ae465d1eeda11704d50948b777a}\label{classbt_axis_sweep3_internal_a18153ae465d1eeda11704d50948b777a} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries m\+\_\+handle\+Sentinel}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a1df6e697fc92e802bd62f9f0dafdc209}\label{classbt_axis_sweep3_internal_a1df6e697fc92e802bd62f9f0dafdc209} 
+bt\+Vector3 {\bfseries m\+\_\+world\+Aabb\+Min}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a2b397b8d483f546f7aeacfb55cc3cd6e}\label{classbt_axis_sweep3_internal_a2b397b8d483f546f7aeacfb55cc3cd6e} 
+bt\+Vector3 {\bfseries m\+\_\+world\+Aabb\+Max}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a9521807b9aa6d623f047fe84e74bc8bb}\label{classbt_axis_sweep3_internal_a9521807b9aa6d623f047fe84e74bc8bb} 
+bt\+Vector3 {\bfseries m\+\_\+quantize}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a47d1b6c41f837b5a2cf537dc262f890b}\label{classbt_axis_sweep3_internal_a47d1b6c41f837b5a2cf537dc262f890b} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries m\+\_\+num\+Handles}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ab129b793a163c711ef38d56e3d2a20cf}\label{classbt_axis_sweep3_internal_ab129b793a163c711ef38d56e3d2a20cf} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries m\+\_\+max\+Handles}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ad9f378e701ce52ccea0e01372850f7eb}\label{classbt_axis_sweep3_internal_ad9f378e701ce52ccea0e01372850f7eb} 
+\mbox{\hyperlink{classbt_axis_sweep3_internal_1_1_handle}{Handle}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+p\+Handles}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ae101ad664a9632021ca498894ebc046e}\label{classbt_axis_sweep3_internal_ae101ad664a9632021ca498894ebc046e} 
+BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE {\bfseries m\+\_\+first\+Free\+Handle}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a1266c6a2b447143e6b5ea94400d6d885}\label{classbt_axis_sweep3_internal_a1266c6a2b447143e6b5ea94400d6d885} 
+\mbox{\hyperlink{classbt_axis_sweep3_internal_1_1_edge}{Edge}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+p\+Edges} \mbox{[}3\mbox{]}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_aa561e1ee29af23667eb4a0ff11c30784}\label{classbt_axis_sweep3_internal_aa561e1ee29af23667eb4a0ff11c30784} 
+void \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+p\+Edges\+Raw\+Ptr} \mbox{[}3\mbox{]}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a09d00e46ae80be8dfbbba27a8b8a0924}\label{classbt_axis_sweep3_internal_a09d00e46ae80be8dfbbba27a8b8a0924} 
+\mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+pair\+Cache}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_ad26657cfc4245f099042178daf885563}\label{classbt_axis_sweep3_internal_ad26657cfc4245f099042178daf885563} 
+\mbox{\hyperlink{classbt_overlapping_pair_callback}{bt\+Overlapping\+Pair\+Callback}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+user\+Pair\+Callback}
+\begin{DoxyCompactList}\small\item\em \doxylink{classbt_overlapping_pair_callback}{bt\+Overlapping\+Pair\+Callback} is an additional optional user callback for adding/removing overlapping pairs, similar interface to \doxylink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_axis_sweep3_internal_a4ae7463e32030034f503bd6f32835108}\label{classbt_axis_sweep3_internal_a4ae7463e32030034f503bd6f32835108} 
+bool {\bfseries m\+\_\+owns\+Pair\+Cache}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_a6ecb6f04fd6ed4e84f99b0e934615537}\label{classbt_axis_sweep3_internal_a6ecb6f04fd6ed4e84f99b0e934615537} 
+int {\bfseries m\+\_\+invalid\+Pair}
+\item 
+\mbox{\hyperlink{structbt_dbvt_broadphase}{bt\+Dbvt\+Broadphase}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal_aa0c964a27cd6722bdd231890b1239528}{m\+\_\+raycast\+Accelerator}}
+\item 
+\Hypertarget{classbt_axis_sweep3_internal_af5f4d1cb0edb460383d81249947c71da}\label{classbt_axis_sweep3_internal_af5f4d1cb0edb460383d81249947c71da} 
+\mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+null\+Pair\+Cache}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE$>$\newline
+class bt\+Axis\+Sweep3\+Internal$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$}
+The internal templace class \doxylink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal} implements the sweep and prune broadphase. It uses quantized integers to represent the begin and end points for each of the 3 axis. Dont use this class directly, use \doxylink{classbt_axis_sweep3}{bt\+Axis\+Sweep3} or \doxylink{classbt32_bit_axis_sweep3}{bt32\+Bit\+Axis\+Sweep3} instead. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_axis_sweep3_internal_ac93d0e99a1f936209fae09406663b9b6}\label{classbt_axis_sweep3_internal_ac93d0e99a1f936209fae09406663b9b6} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!aabbTest@{aabbTest}}
+\index{aabbTest@{aabbTest}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{aabbTest()}{aabbTest()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::aabb\+Test (\begin{DoxyParamCaption}\item[{const bt\+Vector3 \&}]{aabb\+Min,  }\item[{const bt\+Vector3 \&}]{aabb\+Max,  }\item[{\mbox{\hyperlink{structbt_broadphase_aabb_callback}{bt\+Broadphase\+Aabb\+Callback}} \&}]{callback }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_ab89835d4ecb51e2dadc7e3b6e7c29adb}\label{classbt_axis_sweep3_internal_ab89835d4ecb51e2dadc7e3b6e7c29adb} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!calculateOverlappingPairs@{calculateOverlappingPairs}}
+\index{calculateOverlappingPairs@{calculateOverlappingPairs}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{calculateOverlappingPairs()}{calculateOverlappingPairs()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::calculate\+Overlapping\+Pairs (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+calculate\+Overlapping\+Pairs is optional\+: incremental algorithms (sweep and prune) might do it during the set aabb 
+
+important to use an AABB test that is consistent with the broadphase
+
+if you don\textquotesingle{}t like to skip the invalid pairs in the array, execute following code\+:
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface_a27e29cb6fd31e5fe626e7ba973e67ddb}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_a5e669e352c8c3a4a25c73cae1d9c0ded}\label{classbt_axis_sweep3_internal_a5e669e352c8c3a4a25c73cae1d9c0ded} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!createProxy@{createProxy}}
+\index{createProxy@{createProxy}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{createProxy()}{createProxy()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::create\+Proxy (\begin{DoxyParamCaption}\item[{const bt\+Vector3 \&}]{aabb\+Min,  }\item[{const bt\+Vector3 \&}]{aabb\+Max,  }\item[{int}]{shape\+Type,  }\item[{void \texorpdfstring{$\ast$}{*}}]{user\+Ptr,  }\item[{int}]{collision\+Filter\+Group,  }\item[{int}]{collision\+Filter\+Mask,  }\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_ad994787298649e89fc55a6d43af65a1e}\label{classbt_axis_sweep3_internal_ad994787298649e89fc55a6d43af65a1e} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!destroyProxy@{destroyProxy}}
+\index{destroyProxy@{destroyProxy}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{destroyProxy()}{destroyProxy()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::destroy\+Proxy (\begin{DoxyParamCaption}\item[{bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}}]{proxy,  }\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_a026daa514a4f37ecab5e49266c1203b2}\label{classbt_axis_sweep3_internal_a026daa514a4f37ecab5e49266c1203b2} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!getAabb@{getAabb}}
+\index{getAabb@{getAabb}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{getAabb()}{getAabb()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::get\+Aabb (\begin{DoxyParamCaption}\item[{bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}}]{proxy,  }\item[{bt\+Vector3 \&}]{aabb\+Min,  }\item[{bt\+Vector3 \&}]{aabb\+Max }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_ad1e0037e1ed62ef5049389bb4e8fd5b5}\label{classbt_axis_sweep3_internal_ad1e0037e1ed62ef5049389bb4e8fd5b5} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!getBroadphaseAabb@{getBroadphaseAabb}}
+\index{getBroadphaseAabb@{getBroadphaseAabb}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{getBroadphaseAabb()}{getBroadphaseAabb()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::get\+Broadphase\+Aabb (\begin{DoxyParamCaption}\item[{bt\+Vector3 \&}]{aabb\+Min,  }\item[{bt\+Vector3 \&}]{aabb\+Max }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+get\+Aabb returns the axis aligned bounding box in the \textquotesingle{}global\textquotesingle{} coordinate frame will add some transform later 
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface_ab5af9e26414f5a72a76040b8fab4d9e2}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_aa3f52da7e97b9ae6e559256898cb4b0f}\label{classbt_axis_sweep3_internal_aa3f52da7e97b9ae6e559256898cb4b0f} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!getOverlappingPairCache@{getOverlappingPairCache}}
+\index{getOverlappingPairCache@{getOverlappingPairCache}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{getOverlappingPairCache()}{getOverlappingPairCache()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+\mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::get\+Overlapping\+Pair\+Cache (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_a844cc9067095b34cd7195dcefadb4626}\label{classbt_axis_sweep3_internal_a844cc9067095b34cd7195dcefadb4626} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!getOverlappingPairCache@{getOverlappingPairCache}}
+\index{getOverlappingPairCache@{getOverlappingPairCache}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{getOverlappingPairCache()}{getOverlappingPairCache()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+const \mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::get\+Overlapping\+Pair\+Cache (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_a5fe22bd436bcafe8f17b939cc6803a2d}\label{classbt_axis_sweep3_internal_a5fe22bd436bcafe8f17b939cc6803a2d} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!printStats@{printStats}}
+\index{printStats@{printStats}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{printStats()}{printStats()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+virtual void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::print\+Stats (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_a370bc732655b33bf166114afe22fb9e7}\label{classbt_axis_sweep3_internal_a370bc732655b33bf166114afe22fb9e7} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!rayTest@{rayTest}}
+\index{rayTest@{rayTest}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{rayTest()}{rayTest()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::ray\+Test (\begin{DoxyParamCaption}\item[{const bt\+Vector3 \&}]{ray\+From,  }\item[{const bt\+Vector3 \&}]{ray\+To,  }\item[{\mbox{\hyperlink{structbt_broadphase_ray_callback}{bt\+Broadphase\+Ray\+Callback}} \&}]{ray\+Callback,  }\item[{const bt\+Vector3 \&}]{aabb\+Min = {\ttfamily btVector3(0,~0,~0)},  }\item[{const bt\+Vector3 \&}]{aabb\+Max = {\ttfamily btVector3(0,~0,~0)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_a4e26f4f8acf63f26451f6396223001bb}\label{classbt_axis_sweep3_internal_a4e26f4f8acf63f26451f6396223001bb} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!removeHandle@{removeHandle}}
+\index{removeHandle@{removeHandle}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{removeHandle()}{removeHandle()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::remove\+Handle (\begin{DoxyParamCaption}\item[{BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE}]{handle,  }\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000008}{Todo}}]\+: compare performance \end{DoxyRefDesc}
+\Hypertarget{classbt_axis_sweep3_internal_aeecfcc066ca77ec8b9bf2c8d422716ee}\label{classbt_axis_sweep3_internal_aeecfcc066ca77ec8b9bf2c8d422716ee} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!resetPool@{resetPool}}
+\index{resetPool@{resetPool}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{resetPool()}{resetPool()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::reset\+Pool (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+reset broadphase internal structures, to ensure determinism/reproducability 
+
+
+
+Reimplemented from \mbox{\hyperlink{classbt_broadphase_interface_a8135b10b29bced0b1c62ba6be060dc29}{bt\+Broadphase\+Interface}}.
+
+\Hypertarget{classbt_axis_sweep3_internal_ab75a4fc28e56239fe76c061f6ee9231c}\label{classbt_axis_sweep3_internal_ab75a4fc28e56239fe76c061f6ee9231c} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!setAabb@{setAabb}}
+\index{setAabb@{setAabb}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{setAabb()}{setAabb()}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+void \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::set\+Aabb (\begin{DoxyParamCaption}\item[{bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}}]{proxy,  }\item[{const bt\+Vector3 \&}]{aabb\+Min,  }\item[{const bt\+Vector3 \&}]{aabb\+Max,  }\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classbt_axis_sweep3_internal_aa0c964a27cd6722bdd231890b1239528}\label{classbt_axis_sweep3_internal_aa0c964a27cd6722bdd231890b1239528} 
+\index{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}!m\_raycastAccelerator@{m\_raycastAccelerator}}
+\index{m\_raycastAccelerator@{m\_raycastAccelerator}!btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$@{btAxisSweep3Internal$<$ BP\_FP\_INT\_TYPE $>$}}
+\doxysubsubsection{\texorpdfstring{m\_raycastAccelerator}{m\_raycastAccelerator}}
+{\footnotesize\ttfamily template$<$typename BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$ \\
+\mbox{\hyperlink{structbt_dbvt_broadphase}{bt\+Dbvt\+Broadphase}}\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classbt_axis_sweep3_internal}{bt\+Axis\+Sweep3\+Internal}}$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$\+::m\+\_\+raycast\+Accelerator\hspace{0.3cm}{\ttfamily [protected]}}
+
+additional dynamic aabb structure, used to accelerate ray cast queries. can be disabled using a optional argument in the constructor 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Broadphase\+Collision/bt\+Axis\+Sweep3\+Internal.\+h\end{DoxyCompactItemize}

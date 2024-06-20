@@ -1,0 +1,67 @@
+\doxysection{bt\+Hinge2\+Constraint.\+cpp}
+\hypertarget{bt_hinge2_constraint_8cpp_source}{}\label{bt_hinge2_constraint_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btHinge2Constraint.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btHinge2Constraint.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library,\ http://bulletphysics.org}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (C)\ 2006,\ 2007\ Sony\ Computer\ Entertainment\ Inc.\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btHinge2Constraint.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransformUtil.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ constructor}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ anchor,\ axis1\ and\ axis2\ are\ in\ world\ coordinate\ system}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ axis1\ must\ be\ orthogonal\ to\ axis2}}
+\DoxyCodeLine{00023\ btHinge2Constraint::btHinge2Constraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbB,\ btVector3\&\ anchor,\ btVector3\&\ axis1,\ btVector3\&\ axis2)}
+\DoxyCodeLine{00024\ \ \ \ \ :\ btGeneric6DofSpring2Constraint(rbA,\ rbB,\ btTransform::getIdentity(),\ btTransform::getIdentity(),\ RO\_XYZ),}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ m\_anchor(anchor),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ m\_axis1(axis1),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ m\_axis2(axis2)}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ build\ frame\ basis}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{//\ 6DOF\ constraint\ uses\ Euler\ angles\ and\ to\ define\ limits}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ it\ is\ assumed\ that\ rotational\ order\ is\ :}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//\ Z\ -\/\ first,\ allowed\ limits\ are\ (-\/PI,PI);}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//\ new\ position\ of\ Y\ -\/\ second\ (allowed\ limits\ are\ (-\/PI/2\ +\ epsilon,\ PI/2\ -\/\ epsilon),\ where\ epsilon\ is\ a\ small\ positive\ number}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ used\ to\ prevent\ constraint\ from\ instability\ on\ poles;}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{//\ new\ position\ of\ X,\ allowed\ limits\ are\ (-\/PI,PI);}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{//\ So\ to\ simulate\ ODE\ Universal\ joint\ we\ should\ use\ parent\ axis\ as\ Z,\ child\ axis\ as\ Y\ and\ limit\ all\ other\ DOFs}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//\ Build\ the\ frame\ in\ world\ coordinate\ system\ first}}
+\DoxyCodeLine{00038\ \ \ \ \ btVector3\ zAxis\ =\ axis1.normalize();}
+\DoxyCodeLine{00039\ \ \ \ \ btVector3\ xAxis\ =\ axis2.normalize();}
+\DoxyCodeLine{00040\ \ \ \ \ btVector3\ yAxis\ =\ zAxis.cross(xAxis);\ \ \textcolor{comment}{//\ we\ want\ right\ coordinate\ system}}
+\DoxyCodeLine{00041\ \ \ \ \ btTransform\ frameInW;}
+\DoxyCodeLine{00042\ \ \ \ \ frameInW.setIdentity();}
+\DoxyCodeLine{00043\ \ \ \ \ frameInW.getBasis().setValue(xAxis[0],\ yAxis[0],\ zAxis[0],}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xAxis[1],\ yAxis[1],\ zAxis[1],}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xAxis[2],\ yAxis[2],\ zAxis[2]);}
+\DoxyCodeLine{00046\ \ \ \ \ frameInW.setOrigin(anchor);}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//\ now\ get\ constraint\ frame\ in\ local\ coordinate\ systems}}
+\DoxyCodeLine{00048\ \ \ \ \ m\_frameInA\ =\ rbA.getCenterOfMassTransform().inverse()\ *\ frameInW;}
+\DoxyCodeLine{00049\ \ \ \ \ m\_frameInB\ =\ rbB.getCenterOfMassTransform().inverse()\ *\ frameInW;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ sei\ limits}}
+\DoxyCodeLine{00051\ \ \ \ \ setLinearLowerLimit(btVector3(0.f,\ 0.f,\ -\/1.f));}
+\DoxyCodeLine{00052\ \ \ \ \ setLinearUpperLimit(btVector3(0.f,\ 0.f,\ 1.f));}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ like\ front\ wheels\ of\ a\ car}}
+\DoxyCodeLine{00054\ \ \ \ \ setAngularLowerLimit(btVector3(1.f,\ 0.f,\ -\/SIMD\_HALF\_PI\ *\ 0.5f));}
+\DoxyCodeLine{00055\ \ \ \ \ setAngularUpperLimit(btVector3(-\/1.f,\ 0.f,\ SIMD\_HALF\_PI\ *\ 0.5f));}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{//\ enable\ suspension}}
+\DoxyCodeLine{00057\ \ \ \ \ enableSpring(2,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00058\ \ \ \ \ setStiffness(2,\ SIMD\_PI\ *\ SIMD\_PI\ *\ 4.f);}
+\DoxyCodeLine{00059\ \ \ \ \ setDamping(2,\ 0.01f);}
+\DoxyCodeLine{00060\ \ \ \ \ setEquilibriumPoint();}
+\DoxyCodeLine{00061\ \}}
+
+\end{DoxyCode}

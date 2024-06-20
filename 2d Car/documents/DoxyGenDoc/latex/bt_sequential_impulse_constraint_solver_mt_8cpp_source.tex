@@ -1,0 +1,1544 @@
+\doxysection{bt\+Sequential\+Impulse\+Constraint\+Solver\+Mt.\+cpp}
+\hypertarget{bt_sequential_impulse_constraint_solver_mt_8cpp_source}{}\label{bt_sequential_impulse_constraint_solver_mt_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btSequentialImpulseConstraintSolverMt.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuickprof.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btTypedConstraint.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{bool}\ btSequentialImpulseConstraintSolverMt::s\_allowNestedParallelForLoops\ =\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ some\ task\ schedulers\ don't\ like\ nested\ loops}}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{int}\ btSequentialImpulseConstraintSolverMt::s\_minimumContactManifoldsForBatching\ =\ 250;}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{int}\ btSequentialImpulseConstraintSolverMt::s\_minBatchSize\ =\ 50;}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ btSequentialImpulseConstraintSolverMt::s\_maxBatchSize\ =\ 100;}
+\DoxyCodeLine{00029\ btBatchedConstraints::BatchingMethod\ btSequentialImpulseConstraintSolverMt::s\_contactBatchingMethod\ =\ btBatchedConstraints::BATCHING\_METHOD\_SPATIAL\_GRID\_2D;}
+\DoxyCodeLine{00030\ btBatchedConstraints::BatchingMethod\ btSequentialImpulseConstraintSolverMt::s\_jointBatchingMethod\ =\ btBatchedConstraints::BATCHING\_METHOD\_SPATIAL\_GRID\_2D;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ btSequentialImpulseConstraintSolverMt::btSequentialImpulseConstraintSolverMt()}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ m\_numFrictionDirections\ =\ 1;}
+\DoxyCodeLine{00035\ \ \ \ \ m\_useBatching\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00036\ \ \ \ \ m\_useObsoleteJointConstraints\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ btSequentialImpulseConstraintSolverMt::\string~btSequentialImpulseConstraintSolverMt()}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::setupBatchedContactConstraints()}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}setupBatchedContactConstraints"{}});}
+\DoxyCodeLine{00046\ \ \ \ \ m\_batchedContactConstraints.setup(\&m\_tmpSolverContactConstraintPool,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverBodyPool,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_contactBatchingMethod,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_minBatchSize,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_maxBatchSize,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&m\_scratchMemory);}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::setupBatchedJointConstraints()}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}setupBatchedJointConstraints"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ m\_batchedJointConstraints.setup(\&m\_tmpSolverNonContactConstraintPool,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverBodyPool,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_jointBatchingMethod,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_minBatchSize,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_maxBatchSize,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&m\_scratchMemory);}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalSetupContactConstraints(\textcolor{keywordtype}{int}\ iContactConstraint,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00066\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ btSolverConstraint\&\ contactConstraint\ =\ m\_tmpSolverContactConstraintPool[iContactConstraint];}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ btVector3\ rel\_pos1;}
+\DoxyCodeLine{00070\ \ \ \ \ btVector3\ rel\_pos2;}
+\DoxyCodeLine{00071\ \ \ \ \ btScalar\ relaxation;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{int}\ solverBodyIdA\ =\ contactConstraint.m\_solverBodyIdA;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{int}\ solverBodyIdB\ =\ contactConstraint.m\_solverBodyIdB;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ btSolverBody*\ solverBodyA\ =\ \&m\_tmpSolverBodyPool[solverBodyIdA];}
+\DoxyCodeLine{00077\ \ \ \ \ btSolverBody*\ solverBodyB\ =\ \&m\_tmpSolverBodyPool[solverBodyIdB];}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ colObj0\ =\ solverBodyA-\/>m\_originalBody;}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ colObj1\ =\ solverBodyB-\/>m\_originalBody;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp\ =\ *\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}*\textcolor{keyword}{>}(contactConstraint.m\_originalContactPoint);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ pos1\ =\ cp.getPositionWorldOnA();}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ pos2\ =\ cp.getPositionWorldOnB();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ rel\_pos1\ =\ pos1\ -\/\ solverBodyA-\/>getWorldTransform().getOrigin();}
+\DoxyCodeLine{00088\ \ \ \ \ rel\_pos2\ =\ pos2\ -\/\ solverBodyB-\/>getWorldTransform().getOrigin();}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ btVector3\ vel1;}
+\DoxyCodeLine{00091\ \ \ \ \ btVector3\ vel2;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ solverBodyA-\/>getVelocityInLocalPointNoDelta(rel\_pos1,\ vel1);}
+\DoxyCodeLine{00094\ \ \ \ \ solverBodyB-\/>getVelocityInLocalPointNoDelta(rel\_pos2,\ vel2);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ btVector3\ vel\ =\ vel1\ -\/\ vel2;}
+\DoxyCodeLine{00097\ \ \ \ \ btScalar\ rel\_vel\ =\ cp.m\_normalWorldOnB.dot(vel);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ setupContactConstraint(contactConstraint,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ infoGlobal,\ relaxation,\ rel\_pos1,\ rel\_pos2);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{//\ setup\ rolling\ friction\ constraints}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{int}\ rollingFrictionIndex\ =\ m\_rollingFrictionIndexTable[iContactConstraint];}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordflow}{if}\ (rollingFrictionIndex\ >=\ 0)}
+\DoxyCodeLine{00104\ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ btSolverConstraint\&\ spinningFrictionConstraint\ =\ m\_tmpSolverContactRollingFrictionConstraintPool[rollingFrictionIndex];}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ btAssert(spinningFrictionConstraint.m\_frictionIndex\ ==\ iContactConstraint);}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ setupTorsionalFrictionConstraint(spinningFrictionConstraint,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_normalWorldOnB,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyIdA,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyIdB,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_combinedSpinningFriction,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rel\_pos1,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rel\_pos2,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObj0,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObj1,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ relaxation,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.0f,}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.0f);}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[2];}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ btPlaneSpace1(cp.m\_normalWorldOnB,\ axis[0],\ axis[1]);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[0].normalize();}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[1].normalize();}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj0,\ axis[0],\ btCollisionObject::CF\_ANISOTROPIC\_ROLLING\_FRICTION);}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj1,\ axis[0],\ btCollisionObject::CF\_ANISOTROPIC\_ROLLING\_FRICTION);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj0,\ axis[1],\ btCollisionObject::CF\_ANISOTROPIC\_ROLLING\_FRICTION);}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj1,\ axis[1],\ btCollisionObject::CF\_ANISOTROPIC\_ROLLING\_FRICTION);}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ put\ the\ largest\ axis\ first}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (axis[1].length2()\ >\ axis[0].length2())}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ btSwap(axis[0],\ axis[1]);}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ kRollingFrictionThreshold\ =\ 0.001f;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 2;\ ++i)}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iRollingFric\ =\ rollingFrictionIndex\ +\ 1\ +\ i;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ rollingFrictionConstraint\ =\ m\_tmpSolverContactRollingFrictionConstraintPool[iRollingFric];}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(rollingFrictionConstraint.m\_frictionIndex\ ==\ iContactConstraint);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\ =\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[i];}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dir.length()\ >\ kRollingFrictionThreshold)}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setupTorsionalFrictionConstraint(rollingFrictionConstraint,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dir,}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyIdA,}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyIdB,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_combinedRollingFriction,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rel\_pos1,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rel\_pos2,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObj0,}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObj1,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ relaxation,}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.0f,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.0f);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionConstraint.m\_frictionIndex\ =\ -\/1;\ \ \textcolor{comment}{//\ disable\ constraint}}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{comment}{//\ setup\ friction\ constraints}}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{comment}{//\ \ setupFrictionConstraint(solverConstraint,\ normalAxis,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ rel\_pos1,\ rel\_pos2,\ colObj0,\ colObj1,\ relaxation,\ infoGlobal,\ desiredVelocity,\ cfmSlip);}}
+\DoxyCodeLine{00166\ \ \ \ \ \{}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ btSolverConstraint*\ frictionConstraint1\ =\ \&m\_tmpSolverContactFrictionConstraintPool[contactConstraint.m\_frictionIndex];}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ btAssert(frictionConstraint1-\/>m\_frictionIndex\ ==\ iContactConstraint);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ btSolverConstraint*\ frictionConstraint2\ =\ NULL;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_solverMode\ \&\ SOLVER\_USE\_2\_FRICTION\_DIRECTIONS)}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ frictionConstraint2\ =\ \&m\_tmpSolverContactFrictionConstraintPool[contactConstraint.m\_frictionIndex\ +\ 1];}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(frictionConstraint2-\/>m\_frictionIndex\ ==\ iContactConstraint);}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!(infoGlobal.m\_solverMode\ \&\ SOLVER\_ENABLE\_FRICTION\_DIRECTION\_CACHING)\ ||\ !(cp.m\_contactPointFlags\ \&\ BT\_CONTACT\_FLAG\_LATERAL\_FRICTION\_INITIALIZED))}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_lateralFrictionDir1\ =\ vel\ -\/\ cp.m\_normalWorldOnB\ *\ rel\_vel;}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ lat\_rel\_vel\ =\ cp.m\_lateralFrictionDir1.length2();}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!(infoGlobal.m\_solverMode\ \&\ SOLVER\_DISABLE\_VELOCITY\_DEPENDENT\_FRICTION\_DIRECTION)\ \&\&\ lat\_rel\_vel\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_lateralFrictionDir1\ *=\ 1.f\ /\ btSqrt(lat\_rel\_vel);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj0,\ cp.m\_lateralFrictionDir1,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj1,\ cp.m\_lateralFrictionDir1,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setupFrictionConstraint(*frictionConstraint1,\ cp.m\_lateralFrictionDir1,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ rel\_pos1,\ rel\_pos2,\ colObj0,\ colObj1,\ relaxation,\ infoGlobal);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (frictionConstraint2)}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_lateralFrictionDir2\ =\ cp.m\_lateralFrictionDir1.cross(cp.m\_normalWorldOnB);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_lateralFrictionDir2.normalize();\ \ \textcolor{comment}{//??}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj0,\ cp.m\_lateralFrictionDir2,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj1,\ cp.m\_lateralFrictionDir2,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setupFrictionConstraint(*frictionConstraint2,\ cp.m\_lateralFrictionDir2,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ rel\_pos1,\ rel\_pos2,\ colObj0,\ colObj1,\ relaxation,\ infoGlobal);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btPlaneSpace1(cp.m\_normalWorldOnB,\ cp.m\_lateralFrictionDir1,\ cp.m\_lateralFrictionDir2);}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj0,\ cp.m\_lateralFrictionDir1,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj1,\ cp.m\_lateralFrictionDir1,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setupFrictionConstraint(*frictionConstraint1,\ cp.m\_lateralFrictionDir1,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ rel\_pos1,\ rel\_pos2,\ colObj0,\ colObj1,\ relaxation,\ infoGlobal);}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (frictionConstraint2)}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj0,\ cp.m\_lateralFrictionDir2,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applyAnisotropicFriction(colObj1,\ cp.m\_lateralFrictionDir2,\ btCollisionObject::CF\_ANISOTROPIC\_FRICTION);}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setupFrictionConstraint(*frictionConstraint2,\ cp.m\_lateralFrictionDir2,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ rel\_pos1,\ rel\_pos2,\ colObj0,\ colObj1,\ relaxation,\ infoGlobal);}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((infoGlobal.m\_solverMode\ \&\ SOLVER\_USE\_2\_FRICTION\_DIRECTIONS)\ \&\&\ (infoGlobal.m\_solverMode\ \&\ SOLVER\_DISABLE\_VELOCITY\_DEPENDENT\_FRICTION\_DIRECTION))}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_contactPointFlags\ |=\ BT\_CONTACT\_FLAG\_LATERAL\_FRICTION\_INITIALIZED;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ setupFrictionConstraint(*frictionConstraint1,\ cp.m\_lateralFrictionDir1,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ rel\_pos1,\ rel\_pos2,\ colObj0,\ colObj1,\ relaxation,\ infoGlobal,\ cp.m\_contactMotion1,\ cp.m\_frictionCFM);}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (frictionConstraint2)}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setupFrictionConstraint(*frictionConstraint2,\ cp.m\_lateralFrictionDir2,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ rel\_pos1,\ rel\_pos2,\ colObj0,\ colObj1,\ relaxation,\ infoGlobal,\ cp.m\_contactMotion2,\ cp.m\_frictionCFM);}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00241\ \ \ \ \ \}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ setFrictionConstraintImpulse(contactConstraint,\ solverBodyIdA,\ solverBodyIdB,\ cp,\ infoGlobal);}
+\DoxyCodeLine{00244\ \}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_setup_contact_constraints_loop}{SetupContactConstraintsLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{00247\ \{}
+\DoxyCodeLine{00248\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ m\_bc;}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_infoGlobal;}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \mbox{\hyperlink{struct_setup_contact_constraints_loop}{SetupContactConstraintsLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ bc,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00253\ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ m\_bc\ =\ bc;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ m\_infoGlobal\ =\ \&infoGlobal;}
+\DoxyCodeLine{00257\ \ \ \ \ \}}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{00259\ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}SetupContactConstraintsLoop"{}});}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ iBegin;\ iBatch\ <\ iEnd;\ ++iBatch)}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ m\_bc-\/>m\_batches[iBatch];}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ batch.begin;\ i\ <\ batch.end;\ ++i)}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iContact\ =\ m\_bc-\/>m\_constraintIndices[i];}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_solver-\/>internalSetupContactConstraints(iContact,\ *m\_infoGlobal);}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00270\ \ \ \ \ \}}
+\DoxyCodeLine{00271\ \};}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::setupAllContactConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00274\ \{}
+\DoxyCodeLine{00275\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}setupAllContactConstraints"{}});}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useBatching)}
+\DoxyCodeLine{00277\ \ \ \ \ \{}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ batchedCons\ =\ m\_batchedContactConstraints;}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_setup_contact_constraints_loop}{SetupContactConstraintsLoop}}\ loop(\textcolor{keyword}{this},\ \&batchedCons,\ infoGlobal);}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiPhase\ =\ 0;\ iiPhase\ <\ batchedCons.m\_phases.size();\ ++iiPhase)}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iPhase\ =\ batchedCons.m\_phaseOrder[iiPhase];}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ phase\ =\ batchedCons.m\_phases[iPhase];}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 1;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ btParallelFor(phase.begin,\ phase.end,\ grainSize,\ loop);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00287\ \ \ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00289\ \ \ \ \ \{}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ internalSetupContactConstraints(i,\ infoGlobal);}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00294\ \ \ \ \ \}}
+\DoxyCodeLine{00295\ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{keywordtype}{int}\ btSequentialImpulseConstraintSolverMt::getOrInitSolverBodyThreadsafe(btCollisionObject\&\ body,\ btScalar\ timeStep)}
+\DoxyCodeLine{00298\ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{comment}{//\ getOrInitSolverBody\ is\ threadsafe\ only\ for\ a\ single\ thread\ per\ solver\ (with\ potentially\ multiple\ solvers)}}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{comment}{//\ getOrInitSolverBodyThreadsafe\ -\/-\/\ attempts\ to\ be\ fully\ threadsafe\ (however\ may\ affect\ determinism)}}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordtype}{int}\ solverBodyId\ =\ -\/1;}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordtype}{bool}\ isRigidBodyType\ =\ \mbox{\hyperlink{classbt_rigid_body_ae4867a6bafb413e3a2e18dd1de125042}{btRigidBody::upcast}}(\&body)\ !=\ NULL;}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keywordflow}{if}\ (isRigidBodyType\ \&\&\ !body.isStaticOrKinematicObject())}
+\DoxyCodeLine{00307\ \ \ \ \ \{}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dynamic\ body}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Dynamic\ bodies\ can\ only\ be\ in\ one\ island,\ so\ it's\ safe\ to\ write\ to\ the\ companionId}}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ solverBodyId\ =\ body.getCompanionId();}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (solverBodyId\ <\ 0)}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ m\_bodySolverArrayMutex.lock();}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ now\ that\ we\ have\ the\ lock,\ check\ again}}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyId\ =\ body.getCompanionId();}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (solverBodyId\ <\ 0)}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyId\ =\ m\_tmpSolverBodyPool.size();}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ solverBody\ =\ m\_tmpSolverBodyPool.expand();}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ initSolverBody(\&solverBody,\ \&body,\ timeStep);}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ body.setCompanionId(solverBodyId);}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ m\_bodySolverArrayMutex.unlock();}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00325\ \ \ \ \ \}}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (isRigidBodyType\ \&\&\ body.isKinematicObject())}
+\DoxyCodeLine{00327\ \ \ \ \ \{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NOTE:\ must\ test\ for\ kinematic\ before\ static\ because\ some\ kinematic\ objects\ also}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ identify\ as\ "{}static"{}}}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Kinematic\ bodies\ can\ be\ in\ multiple\ islands\ at\ once,\ so\ it\ is\ a}}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ race\ condition\ to\ write\ to\ them,\ so\ we\ use\ an\ alternate\ method}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ record\ the\ solverBodyId}}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ uniqueId\ =\ body.getWorldArrayIndex();}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ INVALID\_SOLVER\_BODY\_ID\ =\ -\/1;}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_kinematicBodyUniqueIdToSolverBodyTable.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ <=\ uniqueId)}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ m\_kinematicBodyUniqueIdToSolverBodyTableMutex.lock();}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ now\ that\ we\ have\ the\ lock,\ check\ again}}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_kinematicBodyUniqueIdToSolverBodyTable.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ <=\ uniqueId)}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_kinematicBodyUniqueIdToSolverBodyTable.resize(uniqueId\ +\ 1,\ INVALID\_SOLVER\_BODY\_ID);}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ m\_kinematicBodyUniqueIdToSolverBodyTableMutex.unlock();}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ solverBodyId\ =\ m\_kinematicBodyUniqueIdToSolverBodyTable[uniqueId];}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ no\ table\ entry\ yet,}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (INVALID\_SOLVER\_BODY\_ID\ ==\ solverBodyId)}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ need\ to\ acquire\ both\ locks}}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ m\_kinematicBodyUniqueIdToSolverBodyTableMutex.lock();}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ m\_bodySolverArrayMutex.lock();}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ now\ that\ we\ have\ the\ lock,\ check\ again}}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyId\ =\ m\_kinematicBodyUniqueIdToSolverBodyTable[uniqueId];}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (INVALID\_SOLVER\_BODY\_ID\ ==\ solverBodyId)}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ create\ a\ table\ entry\ for\ this\ body}}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyId\ =\ m\_tmpSolverBodyPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ solverBody\ =\ m\_tmpSolverBodyPool.expand();}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ initSolverBody(\&solverBody,\ \&body,\ timeStep);}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_kinematicBodyUniqueIdToSolverBodyTable[uniqueId]\ =\ solverBodyId;}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ m\_bodySolverArrayMutex.unlock();}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ m\_kinematicBodyUniqueIdToSolverBodyTableMutex.unlock();}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00367\ \ \ \ \ \}}
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00369\ \ \ \ \ \{}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ all\ fixed\ bodies\ (inf\ mass)\ get\ mapped\ to\ a\ single\ solver\ id}}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_fixedBodyId\ <\ 0)}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ m\_bodySolverArrayMutex.lock();}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ now\ that\ we\ have\ the\ lock,\ check\ again}}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_fixedBodyId\ <\ 0)}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_fixedBodyId\ =\ m\_tmpSolverBodyPool.size();}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ fixedBody\ =\ m\_tmpSolverBodyPool.expand();}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ initSolverBody(\&fixedBody,\ 0,\ timeStep);}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ m\_bodySolverArrayMutex.unlock();}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ solverBodyId\ =\ m\_fixedBodyId;}
+\DoxyCodeLine{00384\ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ btAssert(solverBodyId\ >=\ 0\ \&\&\ solverBodyId\ <\ m\_tmpSolverBodyPool.size());}
+\DoxyCodeLine{00386\ \ \ \ \ \textcolor{keywordflow}{return}\ solverBodyId;}
+\DoxyCodeLine{00387\ \}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalCollectContactManifoldCachedInfo(\mbox{\hyperlink{structbt_contact_manifold_cached_info}{btContactManifoldCachedInfo}}*\ cachedInfoArray,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00390\ \{}
+\DoxyCodeLine{00391\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalCollectContactManifoldCachedInfo"{}});}
+\DoxyCodeLine{00392\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numManifolds;\ ++i)}
+\DoxyCodeLine{00393\ \ \ \ \ \{}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_contact_manifold_cached_info}{btContactManifoldCachedInfo}}*\ cachedInfo\ =\ \&cachedInfoArray[i];}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ btPersistentManifold*\ manifold\ =\ manifoldPtr[i];}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj0\ =\ (btCollisionObject*)manifold-\/>getBody0();}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj1\ =\ (btCollisionObject*)manifold-\/>getBody1();}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ solverBodyIdA\ =\ getOrInitSolverBodyThreadsafe(*colObj0,\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ solverBodyIdB\ =\ getOrInitSolverBodyThreadsafe(*colObj1,\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ cachedInfo-\/>solverBodyIds[0]\ =\ solverBodyIdA;}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ cachedInfo-\/>solverBodyIds[1]\ =\ solverBodyIdB;}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ cachedInfo-\/>numTouchingContacts\ =\ 0;}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ btSolverBody*\ solverBodyA\ =\ \&m\_tmpSolverBodyPool[solverBodyIdA];}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ btSolverBody*\ solverBodyB\ =\ \&m\_tmpSolverBodyPool[solverBodyIdB];}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ A\ contact\ manifold\ between\ 2\ static\ object\ should\ not\ exist!}}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ check\ the\ collision\ flags\ of\ your\ objects\ if\ this\ assert\ fires.}}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Incorrectly\ set\ collision\ object\ flags\ can\ degrade\ performance\ in\ various\ ways.}}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ btAssert(!m\_tmpSolverBodyPool[solverBodyIdA].m\_invMass.isZero()\ ||\ !m\_tmpSolverBodyPool[solverBodyIdB].m\_invMass.isZero());}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iContact\ =\ 0;}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ manifold-\/>getNumContacts();\ j++)}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp\ =\ manifold-\/>getContactPoint(j);}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cp.getDistance()\ <=\ manifold-\/>getContactProcessingThreshold())}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedInfo-\/>contactPoints[iContact]\ =\ \&cp;}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedInfo-\/>contactHasRollingFriction[iContact]\ =\ (cp.m\_combinedRollingFriction\ >\ 0.f);}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iContact++;}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ cachedInfo-\/>numTouchingContacts\ =\ iContact;}
+\DoxyCodeLine{00427\ \ \ \ \ \}}
+\DoxyCodeLine{00428\ \}}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_collect_contact_manifold_cached_info_loop}{CollectContactManifoldCachedInfoLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{00431\ \{}
+\DoxyCodeLine{00432\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{00433\ \ \ \ \ btSequentialImpulseConstraintSolverMt::btContactManifoldCachedInfo*\ m\_cachedInfoArray;}
+\DoxyCodeLine{00434\ \ \ \ \ btPersistentManifold**\ m\_manifoldPtr;}
+\DoxyCodeLine{00435\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_infoGlobal;}
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00437\ \ \ \ \ \mbox{\hyperlink{struct_collect_contact_manifold_cached_info_loop}{CollectContactManifoldCachedInfoLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ btSequentialImpulseConstraintSolverMt::btContactManifoldCachedInfo*\ cachedInfoArray,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00438\ \ \ \ \ \{}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ m\_cachedInfoArray\ =\ cachedInfoArray;}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ m\_manifoldPtr\ =\ manifoldPtr;}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ m\_infoGlobal\ =\ \&infoGlobal;}
+\DoxyCodeLine{00443\ \ \ \ \ \}}
+\DoxyCodeLine{00444\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{00445\ \ \ \ \ \{}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ m\_solver-\/>internalCollectContactManifoldCachedInfo(m\_cachedInfoArray\ +\ iBegin,\ m\_manifoldPtr\ +\ iBegin,\ iEnd\ -\/\ iBegin,\ *m\_infoGlobal);}
+\DoxyCodeLine{00447\ \ \ \ \ \}}
+\DoxyCodeLine{00448\ \};}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalAllocContactConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_manifold_cached_info}{btContactManifoldCachedInfo}}*\ cachedInfoArray,\ \textcolor{keywordtype}{int}\ numManifolds)}
+\DoxyCodeLine{00451\ \{}
+\DoxyCodeLine{00452\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalAllocContactConstraints"{}});}
+\DoxyCodeLine{00453\ \ \ \ \ \textcolor{comment}{//\ possibly\ parallel\ part}}
+\DoxyCodeLine{00454\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iManifold\ =\ 0;\ iManifold\ <\ numManifolds;\ ++iManifold)}
+\DoxyCodeLine{00455\ \ \ \ \ \{}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_manifold_cached_info}{btContactManifoldCachedInfo}}\&\ cachedInfo\ =\ cachedInfoArray[iManifold];}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ contactIndex\ =\ cachedInfo.contactIndex;}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ frictionIndex\ =\ contactIndex\ *\ m\_numFrictionDirections;}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rollingFrictionIndex\ =\ cachedInfo.rollingFrictionIndex;}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ cachedInfo.numTouchingContacts;\ i++)}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ contactConstraint\ =\ m\_tmpSolverContactConstraintPool[contactIndex];}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ contactConstraint.m\_solverBodyIdA\ =\ cachedInfo.solverBodyIds[0];}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ contactConstraint.m\_solverBodyIdB\ =\ cachedInfo.solverBodyIds[1];}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ contactConstraint.m\_originalContactPoint\ =\ cachedInfo.contactPoints[i];}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ allocate\ the\ friction\ constraints}}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ contactConstraint.m\_frictionIndex\ =\ frictionIndex;}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iDir\ =\ 0;\ iDir\ <\ m\_numFrictionDirections;\ ++iDir)}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ frictionConstraint\ =\ m\_tmpSolverContactFrictionConstraintPool[frictionIndex];}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frictionConstraint.m\_frictionIndex\ =\ contactIndex;}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frictionIndex++;}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00475\ }
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ allocate\ rolling\ friction\ constraints}}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cachedInfo.contactHasRollingFriction[i])}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rollingFrictionIndexTable[contactIndex]\ =\ rollingFrictionIndex;}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ allocate\ 3\ (although\ we\ may\ use\ only\ 2\ sometimes)}}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverContactRollingFrictionConstraintPool[rollingFrictionIndex].m\_frictionIndex\ =\ contactIndex;}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionIndex++;}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ indicate\ there\ is\ no\ rolling\ friction\ for\ this\ contact\ point}}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rollingFrictionIndexTable[contactIndex]\ =\ -\/1;}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ contactIndex++;}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00494\ \ \ \ \ \}}
+\DoxyCodeLine{00495\ \}}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_alloc_contact_constraints_loop}{AllocContactConstraintsLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{00498\ \{}
+\DoxyCodeLine{00499\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{00500\ \ \ \ \ \textcolor{keyword}{const}\ btSequentialImpulseConstraintSolverMt::btContactManifoldCachedInfo*\ m\_cachedInfoArray;}
+\DoxyCodeLine{00501\ }
+\DoxyCodeLine{00502\ \ \ \ \ \mbox{\hyperlink{struct_alloc_contact_constraints_loop}{AllocContactConstraintsLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ btSequentialImpulseConstraintSolverMt::btContactManifoldCachedInfo*\ cachedInfoArray)}
+\DoxyCodeLine{00503\ \ \ \ \ \{}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ m\_cachedInfoArray\ =\ cachedInfoArray;}
+\DoxyCodeLine{00506\ \ \ \ \ \}}
+\DoxyCodeLine{00507\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{00508\ \ \ \ \ \{}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ m\_solver-\/>internalAllocContactConstraints(m\_cachedInfoArray\ +\ iBegin,\ iEnd\ -\/\ iBegin);}
+\DoxyCodeLine{00510\ \ \ \ \ \}}
+\DoxyCodeLine{00511\ \};}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::allocAllContactConstraints(btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00514\ \{}
+\DoxyCodeLine{00515\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}allocAllContactConstraints"{}});}
+\DoxyCodeLine{00516\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btContactManifoldCachedInfo>}}\ cachedInfoArray;\ \ \textcolor{comment}{//\ =\ m\_manifoldCachedInfoArray;}}
+\DoxyCodeLine{00517\ \ \ \ \ cachedInfoArray.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(numManifolds);}
+\DoxyCodeLine{00518\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{comment}{/*\ DISABLES\ CODE\ */}\ (\textcolor{keyword}{false}))}
+\DoxyCodeLine{00519\ \ \ \ \ \{}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sequential}}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ internalCollectContactManifoldCachedInfo(\&cachedInfoArray[0],\ manifoldPtr,\ numManifolds,\ infoGlobal);}
+\DoxyCodeLine{00522\ \ \ \ \ \}}
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00524\ \ \ \ \ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ may\ alter\ ordering\ of\ bodies\ which\ affects\ determinism}}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_collect_contact_manifold_cached_info_loop}{CollectContactManifoldCachedInfoLoop}}\ loop(\textcolor{keyword}{this},\ \&cachedInfoArray[0],\ manifoldPtr,\ infoGlobal);}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 200;}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ btParallelFor(0,\ numManifolds,\ grainSize,\ loop);}
+\DoxyCodeLine{00529\ \ \ \ \ \}}
+\DoxyCodeLine{00530\ }
+\DoxyCodeLine{00531\ \ \ \ \ \{}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ serial\ part}}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numContacts\ =\ 0;}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numRollingFrictionConstraints\ =\ 0;}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iManifold\ =\ 0;\ iManifold\ <\ numManifolds;\ ++iManifold)}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_contact_manifold_cached_info}{btContactManifoldCachedInfo}}\&\ cachedInfo\ =\ cachedInfoArray[iManifold];}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ cachedInfo.contactIndex\ =\ numContacts;}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ cachedInfo.rollingFrictionIndex\ =\ numRollingFrictionConstraints;}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ numContacts\ +=\ cachedInfo.numTouchingContacts;}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ cachedInfo.numTouchingContacts;\ ++i)}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cachedInfo.contactHasRollingFriction[i])}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numRollingFrictionConstraints\ +=\ 3;}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}allocPools"{}});}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a1baf76f9f52df3c2d742194ba33e8788}{capacity}}()\ <\ numContacts)}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ we\ need\ to\ reallocate,\ reserve\ some\ extra\ so\ we\ don't\ have\ to\ reallocate\ again\ next\ frame}}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ extraReserve\ =\ numContacts\ /\ 16;}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverContactConstraintPool.reserve(numContacts\ +\ extraReserve);}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rollingFrictionIndexTable.reserve(numContacts\ +\ extraReserve);}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverContactFrictionConstraintPool.reserve((numContacts\ +\ extraReserve)\ *\ m\_numFrictionDirections);}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverContactRollingFrictionConstraintPool.reserve(numRollingFrictionConstraints\ +\ extraReserve);}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(numContacts);}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ m\_rollingFrictionIndexTable.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(numContacts);}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverContactFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(numContacts\ *\ m\_numFrictionDirections);}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ m\_tmpSolverContactRollingFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(numRollingFrictionConstraints);}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00565\ \ \ \ \ \}}
+\DoxyCodeLine{00566\ \ \ \ \ \{}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_alloc_contact_constraints_loop}{AllocContactConstraintsLoop}}\ loop(\textcolor{keyword}{this},\ \&cachedInfoArray[0]);}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 200;}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ btParallelFor(0,\ numManifolds,\ grainSize,\ loop);}
+\DoxyCodeLine{00570\ \ \ \ \ \}}
+\DoxyCodeLine{00571\ \}}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::convertContacts(btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00574\ \{}
+\DoxyCodeLine{00575\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_useBatching)}
+\DoxyCodeLine{00576\ \ \ \ \ \{}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ btSequentialImpulseConstraintSolver::convertContacts(manifoldPtr,\ numManifolds,\ infoGlobal);}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00579\ \ \ \ \ \}}
+\DoxyCodeLine{00580\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}convertContacts"{}});}
+\DoxyCodeLine{00581\ \ \ \ \ \textcolor{keywordflow}{if}\ (numManifolds\ >\ 0)}
+\DoxyCodeLine{00582\ \ \ \ \ \{}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_fixedBodyId\ <\ 0)}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ m\_fixedBodyId\ =\ m\_tmpSolverBodyPool.size();}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ fixedBody\ =\ m\_tmpSolverBodyPool.expand();}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ initSolverBody(\&fixedBody,\ 0,\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ allocAllContactConstraints(manifoldPtr,\ numManifolds,\ infoGlobal);}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useBatching)}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ setupBatchedContactConstraints();}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ setupAllContactConstraints(infoGlobal);}
+\DoxyCodeLine{00595\ \ \ \ \ \}}
+\DoxyCodeLine{00596\ \}}
+\DoxyCodeLine{00597\ }
+\DoxyCodeLine{00598\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalInitMultipleJoints(btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)}
+\DoxyCodeLine{00599\ \{}
+\DoxyCodeLine{00600\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalInitMultipleJoints"{}});}
+\DoxyCodeLine{00601\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ iBegin;\ i\ <\ iEnd;\ i++)}
+\DoxyCodeLine{00602\ \ \ \ \ \{}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ btTypedConstraint*\ constraint\ =\ constraints[i];}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ btTypedConstraint::btConstraintInfo1\&\ info1\ =\ m\_tmpConstraintSizesPool[i];}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (constraint-\/>isEnabled())}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ constraint-\/>buildJacobian();}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ constraint-\/>internalSetAppliedImpulse(0.0f);}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ btJointFeedback*\ fb\ =\ constraint-\/>getJointFeedback();}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fb)}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fb-\/>m\_appliedForceBodyA.setZero();}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fb-\/>m\_appliedTorqueBodyA.setZero();}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fb-\/>m\_appliedForceBodyB.setZero();}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fb-\/>m\_appliedTorqueBodyB.setZero();}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ constraint-\/>getInfo1(\&info1);}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ info1.m\_numConstraintRows\ =\ 0;}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ info1.nub\ =\ 0;}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00624\ \ \ \ \ \}}
+\DoxyCodeLine{00625\ \}}
+\DoxyCodeLine{00626\ }
+\DoxyCodeLine{00627\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_init_joints_loop}{InitJointsLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{00628\ \{}
+\DoxyCodeLine{00629\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{00630\ \ \ \ \ btTypedConstraint**\ m\_constraints;}
+\DoxyCodeLine{00631\ }
+\DoxyCodeLine{00632\ \ \ \ \ \mbox{\hyperlink{struct_init_joints_loop}{InitJointsLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ btTypedConstraint**\ constraints)}
+\DoxyCodeLine{00633\ \ \ \ \ \{}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ m\_constraints\ =\ constraints;}
+\DoxyCodeLine{00636\ \ \ \ \ \}}
+\DoxyCodeLine{00637\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{00638\ \ \ \ \ \{}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ m\_solver-\/>internalInitMultipleJoints(m\_constraints,\ iBegin,\ iEnd);}
+\DoxyCodeLine{00640\ \ \ \ \ \}}
+\DoxyCodeLine{00641\ \};}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalConvertMultipleJoints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<JointParams>}}\&\ jointParamsArray,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00644\ \{}
+\DoxyCodeLine{00645\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalConvertMultipleJoints"{}});}
+\DoxyCodeLine{00646\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ iBegin;\ i\ <\ iEnd;\ ++i)}
+\DoxyCodeLine{00647\ \ \ \ \ \{}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_joint_params}{JointParams}}\&\ jointParams\ =\ jointParamsArray[i];}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ currentRow\ =\ jointParams.m\_solverConstraint;}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (currentRow\ !=\ -\/1)}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTypedConstraint::btConstraintInfo1\&\ info1\ =\ m\_tmpConstraintSizesPool[i];}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(currentRow\ <\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(info1.m\_numConstraintRows\ >\ 0);}
+\DoxyCodeLine{00655\ }
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint*\ currentConstraintRow\ =\ \&m\_tmpSolverNonContactConstraintPool[currentRow];}
+\DoxyCodeLine{00657\ \ \ \ \ \ \ \ \ \ \ \ \ btTypedConstraint*\ constraint\ =\ constraints[i];}
+\DoxyCodeLine{00658\ }
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \ \ \ \ convertJoint(currentConstraintRow,\ constraint,\ info1,\ jointParams.m\_solverBodyA,\ jointParams.m\_solverBodyB,\ infoGlobal);}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00661\ \ \ \ \ \}}
+\DoxyCodeLine{00662\ \}}
+\DoxyCodeLine{00663\ }
+\DoxyCodeLine{00664\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_convert_joints_loop}{ConvertJointsLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{00665\ \{}
+\DoxyCodeLine{00666\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{00667\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSequentialImpulseConstraintSolverMt::JointParams>}}\&\ m\_jointParamsArray;}
+\DoxyCodeLine{00668\ \ \ \ \ btTypedConstraint**\ m\_srcConstraints;}
+\DoxyCodeLine{00669\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ m\_infoGlobal;}
+\DoxyCodeLine{00670\ }
+\DoxyCodeLine{00671\ \ \ \ \ \mbox{\hyperlink{struct_convert_joints_loop}{ConvertJointsLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSequentialImpulseConstraintSolverMt::JointParams>}}\&\ jointParamsArray,}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTypedConstraint**\ srcConstraints,}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)\ :\ m\_jointParamsArray(jointParamsArray),}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_infoGlobal(infoGlobal)}
+\DoxyCodeLine{00676\ \ \ \ \ \{}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ m\_srcConstraints\ =\ srcConstraints;}
+\DoxyCodeLine{00679\ \ \ \ \ \}}
+\DoxyCodeLine{00680\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{00681\ \ \ \ \ \{}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ m\_solver-\/>internalConvertMultipleJoints(m\_jointParamsArray,\ m\_srcConstraints,\ iBegin,\ iEnd,\ m\_infoGlobal);}
+\DoxyCodeLine{00683\ \ \ \ \ \}}
+\DoxyCodeLine{00684\ \};}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::convertJoints(btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00687\ \{}
+\DoxyCodeLine{00688\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_useBatching)}
+\DoxyCodeLine{00689\ \ \ \ \ \{}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ btSequentialImpulseConstraintSolver::convertJoints(constraints,\ numConstraints,\ infoGlobal);}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00692\ \ \ \ \ \}}
+\DoxyCodeLine{00693\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}convertJoints"{}});}
+\DoxyCodeLine{00694\ \ \ \ \ \textcolor{keywordtype}{bool}\ parallelJointSetup\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00695\ \ \ \ \ m\_tmpConstraintSizesPool.resizeNoInitialize(numConstraints);}
+\DoxyCodeLine{00696\ \ \ \ \ \textcolor{keywordflow}{if}\ (parallelJointSetup)}
+\DoxyCodeLine{00697\ \ \ \ \ \{}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_init_joints_loop}{InitJointsLoop}}\ loop(\textcolor{keyword}{this},\ constraints);}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 40;}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ btParallelFor(0,\ numConstraints,\ grainSize,\ loop);}
+\DoxyCodeLine{00701\ \ \ \ \ \}}
+\DoxyCodeLine{00702\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00703\ \ \ \ \ \{}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ internalInitMultipleJoints(constraints,\ 0,\ numConstraints);}
+\DoxyCodeLine{00705\ \ \ \ \ \}}
+\DoxyCodeLine{00706\ }
+\DoxyCodeLine{00707\ \ \ \ \ \textcolor{keywordtype}{int}\ totalNumRows\ =\ 0;}
+\DoxyCodeLine{00708\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<JointParams>}}\ jointParamsArray;}
+\DoxyCodeLine{00709\ \ \ \ \ jointParamsArray.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(numConstraints);}
+\DoxyCodeLine{00710\ }
+\DoxyCodeLine{00711\ \ \ \ \ \textcolor{comment}{//calculate\ the\ total\ number\ of\ contraint\ rows}}
+\DoxyCodeLine{00712\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numConstraints;\ i++)}
+\DoxyCodeLine{00713\ \ \ \ \ \{}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ btTypedConstraint*\ constraint\ =\ constraints[i];}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_joint_params}{JointParams}}\&\ params\ =\ jointParamsArray[i];}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTypedConstraint::btConstraintInfo1\&\ info1\ =\ m\_tmpConstraintSizesPool[i];}
+\DoxyCodeLine{00718\ }
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (info1.m\_numConstraintRows)}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \ \ \ \ params.m\_solverConstraint\ =\ totalNumRows;}
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \ \ \ \ params.m\_solverBodyA\ =\ getOrInitSolverBody(constraint-\/>getRigidBodyA(),\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \ \ \ \ params.m\_solverBodyB\ =\ getOrInitSolverBody(constraint-\/>getRigidBodyB(),\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ \ \ params.m\_solverConstraint\ =\ -\/1;}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ totalNumRows\ +=\ info1.m\_numConstraintRows;}
+\DoxyCodeLine{00730\ \ \ \ \ \}}
+\DoxyCodeLine{00731\ \ \ \ \ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(totalNumRows);}
+\DoxyCodeLine{00732\ }
+\DoxyCodeLine{00734\ \ \ \ \ \textcolor{keywordflow}{if}\ (parallelJointSetup)}
+\DoxyCodeLine{00735\ \ \ \ \ \{}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_convert_joints_loop}{ConvertJointsLoop}}\ loop(\textcolor{keyword}{this},\ jointParamsArray,\ constraints,\ infoGlobal);}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 20;}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ btParallelFor(0,\ numConstraints,\ grainSize,\ loop);}
+\DoxyCodeLine{00739\ \ \ \ \ \}}
+\DoxyCodeLine{00740\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00741\ \ \ \ \ \{}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ internalConvertMultipleJoints(jointParamsArray,\ constraints,\ 0,\ numConstraints,\ infoGlobal);}
+\DoxyCodeLine{00743\ \ \ \ \ \}}
+\DoxyCodeLine{00744\ \ \ \ \ setupBatchedJointConstraints();}
+\DoxyCodeLine{00745\ \}}
+\DoxyCodeLine{00746\ }
+\DoxyCodeLine{00747\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalConvertBodies(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00748\ \{}
+\DoxyCodeLine{00749\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalConvertBodies"{}});}
+\DoxyCodeLine{00750\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ iBegin;\ i\ <\ iEnd;\ i++)}
+\DoxyCodeLine{00751\ \ \ \ \ \{}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ btCollisionObject*\ obj\ =\ bodies[i];}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ obj-\/>setCompanionId(i);}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ btSolverBody\&\ solverBody\ =\ m\_tmpSolverBodyPool[i];}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ initSolverBody(\&solverBody,\ obj,\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00756\ }
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body\ =\ \mbox{\hyperlink{classbt_rigid_body_ae4867a6bafb413e3a2e18dd1de125042}{btRigidBody::upcast}}(obj);}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (body\ \&\&\ body-\/>getInvMass())}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ gyroForce(0,\ 0,\ 0);}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (body-\/>getFlags()\ \&\ BT\_ENABLE\_GYROSCOPIC\_FORCE\_EXPLICIT)}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gyroForce\ =\ body-\/>\mbox{\hyperlink{classbt_rigid_body_af9fa0fe9670f6b620c48a7e1c811b4b6}{computeGyroscopicForceExplicit}}(infoGlobal.m\_maxGyroscopicForce);}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBody.m\_externalTorqueImpulse\ -\/=\ gyroForce\ *\ body-\/>getInvInertiaTensorWorld()\ *\ infoGlobal.m\_timeStep;}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (body-\/>getFlags()\ \&\ BT\_ENABLE\_GYROSCOPIC\_FORCE\_IMPLICIT\_WORLD)}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gyroForce\ =\ body-\/>\mbox{\hyperlink{classbt_rigid_body_a79f82cfc25b4cfe73e93720dedc62bb8}{computeGyroscopicImpulseImplicit\_World}}(infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBody.m\_externalTorqueImpulse\ +=\ gyroForce;}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (body-\/>getFlags()\ \&\ BT\_ENABLE\_GYROSCOPIC\_FORCE\_IMPLICIT\_BODY)}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gyroForce\ =\ body-\/>\mbox{\hyperlink{classbt_rigid_body_a820e3d206da0673ce782fa57ae701437}{computeGyroscopicImpulseImplicit\_Body}}(infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBody.m\_externalTorqueImpulse\ +=\ gyroForce;}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00776\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00777\ \ \ \ \ \}}
+\DoxyCodeLine{00778\ \}}
+\DoxyCodeLine{00779\ }
+\DoxyCodeLine{00780\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_convert_bodies_loop}{ConvertBodiesLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{00781\ \{}
+\DoxyCodeLine{00782\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{00783\ \ \ \ \ btCollisionObject**\ m\_bodies;}
+\DoxyCodeLine{00784\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numBodies;}
+\DoxyCodeLine{00785\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ m\_infoGlobal;}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \ \ \ \ \mbox{\hyperlink{struct_convert_bodies_loop}{ConvertBodiesLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCollisionObject**\ bodies,}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numBodies,}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)\ :\ m\_infoGlobal(infoGlobal)}
+\DoxyCodeLine{00791\ \ \ \ \ \{}
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ m\_bodies\ =\ bodies;}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ m\_numBodies\ =\ numBodies;}
+\DoxyCodeLine{00795\ \ \ \ \ \}}
+\DoxyCodeLine{00796\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{00797\ \ \ \ \ \{}
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ m\_solver-\/>internalConvertBodies(m\_bodies,\ iBegin,\ iEnd,\ m\_infoGlobal);}
+\DoxyCodeLine{00799\ \ \ \ \ \}}
+\DoxyCodeLine{00800\ \};}
+\DoxyCodeLine{00801\ }
+\DoxyCodeLine{00802\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::convertBodies(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00803\ \{}
+\DoxyCodeLine{00804\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}convertBodies"{}});}
+\DoxyCodeLine{00805\ \ \ \ \ m\_kinematicBodyUniqueIdToSolverBodyTable.resize(0);}
+\DoxyCodeLine{00806\ }
+\DoxyCodeLine{00807\ \ \ \ \ m\_tmpSolverBodyPool.resizeNoInitialize(numBodies\ +\ 1);}
+\DoxyCodeLine{00808\ }
+\DoxyCodeLine{00809\ \ \ \ \ m\_fixedBodyId\ =\ numBodies;}
+\DoxyCodeLine{00810\ \ \ \ \ \{}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ btSolverBody\&\ fixedBody\ =\ m\_tmpSolverBodyPool[m\_fixedBodyId];}
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ initSolverBody(\&fixedBody,\ NULL,\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00813\ \ \ \ \ \}}
+\DoxyCodeLine{00814\ }
+\DoxyCodeLine{00815\ \ \ \ \ \textcolor{keywordtype}{bool}\ parallelBodySetup\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00816\ \ \ \ \ \textcolor{keywordflow}{if}\ (parallelBodySetup)}
+\DoxyCodeLine{00817\ \ \ \ \ \{}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_convert_bodies_loop}{ConvertBodiesLoop}}\ loop(\textcolor{keyword}{this},\ bodies,\ numBodies,\ infoGlobal);}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 40;}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ btParallelFor(0,\ numBodies,\ grainSize,\ loop);}
+\DoxyCodeLine{00821\ \ \ \ \ \}}
+\DoxyCodeLine{00822\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00823\ \ \ \ \ \{}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ internalConvertBodies(bodies,\ 0,\ numBodies,\ infoGlobal);}
+\DoxyCodeLine{00825\ \ \ \ \ \}}
+\DoxyCodeLine{00826\ \}}
+\DoxyCodeLine{00827\ }
+\DoxyCodeLine{00828\ btScalar\ btSequentialImpulseConstraintSolverMt::solveGroupCacheFriendlySetup(}
+\DoxyCodeLine{00829\ \ \ \ \ btCollisionObject**\ bodies,}
+\DoxyCodeLine{00830\ \ \ \ \ \textcolor{keywordtype}{int}\ numBodies,}
+\DoxyCodeLine{00831\ \ \ \ \ btPersistentManifold**\ manifoldPtr,}
+\DoxyCodeLine{00832\ \ \ \ \ \textcolor{keywordtype}{int}\ numManifolds,}
+\DoxyCodeLine{00833\ \ \ \ \ btTypedConstraint**\ constraints,}
+\DoxyCodeLine{00834\ \ \ \ \ \textcolor{keywordtype}{int}\ numConstraints,}
+\DoxyCodeLine{00835\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,}
+\DoxyCodeLine{00836\ \ \ \ \ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00837\ \{}
+\DoxyCodeLine{00838\ \ \ \ \ m\_numFrictionDirections\ =\ (infoGlobal.m\_solverMode\ \&\ SOLVER\_USE\_2\_FRICTION\_DIRECTIONS)\ ?\ 2\ :\ 1;}
+\DoxyCodeLine{00839\ \ \ \ \ m\_useBatching\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00840\ \ \ \ \ \textcolor{keywordflow}{if}\ (numManifolds\ >=\ s\_minimumContactManifoldsForBatching\ \&\&}
+\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ (s\_allowNestedParallelForLoops\ ||\ !btThreadsAreRunning()))}
+\DoxyCodeLine{00842\ \ \ \ \ \{}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ m\_useBatching\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ m\_batchedContactConstraints.m\_debugDrawer\ =\ debugDrawer;}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ m\_batchedJointConstraints.m\_debugDrawer\ =\ debugDrawer;}
+\DoxyCodeLine{00846\ \ \ \ \ \}}
+\DoxyCodeLine{00847\ \ \ \ \ btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(bodies,}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numBodies,}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ manifoldPtr,}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numManifolds,}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ constraints,}
+\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConstraints,}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ infoGlobal,}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ debugDrawer);}
+\DoxyCodeLine{00855\ \ \ \ \ \textcolor{keywordflow}{return}\ 0.0f;}
+\DoxyCodeLine{00856\ \}}
+\DoxyCodeLine{00857\ }
+\DoxyCodeLine{00858\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveMultipleContactSplitPenetrationImpulseConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ consIndices,\ \textcolor{keywordtype}{int}\ batchBegin,\ \textcolor{keywordtype}{int}\ batchEnd)}
+\DoxyCodeLine{00859\ \{}
+\DoxyCodeLine{00860\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{00861\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiCons\ =\ batchBegin;\ iiCons\ <\ batchEnd;\ ++iiCons)}
+\DoxyCodeLine{00862\ \ \ \ \ \{}
+\DoxyCodeLine{00863\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iCons\ =\ consIndices[iiCons];}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSolverConstraint\&\ solveManifold\ =\ m\_tmpSolverContactConstraintPool[iCons];}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyA\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdA];}
+\DoxyCodeLine{00866\ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyB\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdB];}
+\DoxyCodeLine{00867\ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSplitPenetrationImpulse(bodyA,\ bodyB,\ solveManifold);}
+\DoxyCodeLine{00868\ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{00869\ \ \ \ \ \}}
+\DoxyCodeLine{00870\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{00871\ \}}
+\DoxyCodeLine{00872\ }
+\DoxyCodeLine{00873\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_contact_split_penetration_impulse_solver_loop}{ContactSplitPenetrationImpulseSolverLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_sum_body}{btIParallelSumBody}}}
+\DoxyCodeLine{00874\ \{}
+\DoxyCodeLine{00875\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{00876\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ m\_bc;}
+\DoxyCodeLine{00877\ }
+\DoxyCodeLine{00878\ \ \ \ \ \mbox{\hyperlink{struct_contact_split_penetration_impulse_solver_loop}{ContactSplitPenetrationImpulseSolverLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ bc)}
+\DoxyCodeLine{00879\ \ \ \ \ \{}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00881\ \ \ \ \ \ \ \ \ m\_bc\ =\ bc;}
+\DoxyCodeLine{00882\ \ \ \ \ \}}
+\DoxyCodeLine{00883\ \ \ \ \ btScalar\ sumLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{00884\ \ \ \ \ \{}
+\DoxyCodeLine{00885\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}ContactSplitPenetrationImpulseSolverLoop"{}});}
+\DoxyCodeLine{00886\ \ \ \ \ \ \ \ \ btScalar\ sum\ =\ 0;}
+\DoxyCodeLine{00887\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ iBegin;\ iBatch\ <\ iEnd;\ ++iBatch)}
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00889\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ m\_bc-\/>m\_batches[iBatch];}
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \ \ \ \ sum\ +=\ m\_solver-\/>resolveMultipleContactSplitPenetrationImpulseConstraints(m\_bc-\/>m\_constraintIndices,\ batch.begin,\ batch.end);}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sum;}
+\DoxyCodeLine{00893\ \ \ \ \ \}}
+\DoxyCodeLine{00894\ \};}
+\DoxyCodeLine{00895\ }
+\DoxyCodeLine{00896\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::solveGroupCacheFriendlySplitImpulseIterations(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00897\ \{}
+\DoxyCodeLine{00898\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}solveGroupCacheFriendlySplitImpulseIterations"{}});}
+\DoxyCodeLine{00899\ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_splitImpulse)}
+\DoxyCodeLine{00900\ \ \ \ \ \{}
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iteration\ =\ 0;\ iteration\ <\ infoGlobal.m\_numIterations;\ iteration++)}
+\DoxyCodeLine{00902\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useBatching)}
+\DoxyCodeLine{00905\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ batchedCons\ =\ m\_batchedContactConstraints;}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_contact_split_penetration_impulse_solver_loop}{ContactSplitPenetrationImpulseSolverLoop}}\ loop(\textcolor{keyword}{this},\ \&batchedCons);}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiPhase\ =\ 0;\ iiPhase\ <\ batchedCons.m\_phases.size();\ ++iiPhase)}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iPhase\ =\ batchedCons.m\_phaseOrder[iiPhase];}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ phase\ =\ batchedCons.m\_phases[iPhase];}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ batchedCons.m\_phaseGrainSize[iPhase];}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ btParallelSum(phase.begin,\ phase.end,\ grainSize,\ loop);}
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00917\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ non-\/batched}}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ =\ resolveMultipleContactSplitPenetrationImpulseConstraints(m\_orderTmpConstraintPool,\ 0,\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (leastSquaresResidual\ <=\ infoGlobal.m\_leastSquaresResidualThreshold\ ||\ iteration\ >=\ (infoGlobal.m\_numIterations\ -\/\ 1))}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00924\ \textcolor{preprocessor}{\#ifdef\ VERBOSE\_RESIDUAL\_PRINTF}}
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}residual\ =\ \%f\ at\ iteration\ \#\%d\(\backslash\)n"{}},\ leastSquaresResidual,\ iteration);}
+\DoxyCodeLine{00926\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00927\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00928\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00929\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00930\ \ \ \ \ \}}
+\DoxyCodeLine{00931\ \}}
+\DoxyCodeLine{00932\ }
+\DoxyCodeLine{00933\ btScalar\ btSequentialImpulseConstraintSolverMt::solveSingleIteration(\textcolor{keywordtype}{int}\ iteration,\ btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00934\ \{}
+\DoxyCodeLine{00935\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_useBatching)}
+\DoxyCodeLine{00936\ \ \ \ \ \{}
+\DoxyCodeLine{00937\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btSequentialImpulseConstraintSolver::solveSingleIteration(iteration,\ bodies,\ numBodies,\ manifoldPtr,\ numManifolds,\ constraints,\ numConstraints,\ infoGlobal,\ debugDrawer);}
+\DoxyCodeLine{00938\ \ \ \ \ \}}
+\DoxyCodeLine{00939\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}solveSingleIterationMt"{}});}
+\DoxyCodeLine{00940\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{00941\ }
+\DoxyCodeLine{00942\ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_solverMode\ \&\ SOLVER\_RANDMIZE\_ORDER)}
+\DoxyCodeLine{00943\ \ \ \ \ \{}
+\DoxyCodeLine{00944\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (1)\ \ \textcolor{comment}{//\ uncomment\ this\ for\ a\ bit\ less\ random\ ((iteration\ \&\ 7)\ ==\ 0)}}
+\DoxyCodeLine{00945\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00946\ \ \ \ \ \ \ \ \ \ \ \ \ randomizeConstraintOrdering(iteration,\ infoGlobal.m\_numIterations);}
+\DoxyCodeLine{00947\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00948\ \ \ \ \ \}}
+\DoxyCodeLine{00949\ }
+\DoxyCodeLine{00950\ \ \ \ \ \{}
+\DoxyCodeLine{00952\ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ resolveAllJointConstraints(iteration);}
+\DoxyCodeLine{00953\ }
+\DoxyCodeLine{00954\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iteration\ <\ infoGlobal.m\_numIterations)}
+\DoxyCodeLine{00955\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00956\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ this\ loop\ is\ only\ used\ for\ cone-\/twist\ constraints,}}
+\DoxyCodeLine{00957\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ it\ would\ be\ nice\ to\ skip\ this\ loop\ if\ none\ of\ the\ constraints\ need\ it}}
+\DoxyCodeLine{00958\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useObsoleteJointConstraints)}
+\DoxyCodeLine{00959\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00960\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ numConstraints;\ j++)}
+\DoxyCodeLine{00961\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00962\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (constraints[j]-\/>isEnabled())}
+\DoxyCodeLine{00963\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00964\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bodyAid\ =\ getOrInitSolverBody(constraints[j]-\/>getRigidBodyA(),\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00965\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bodyBid\ =\ getOrInitSolverBody(constraints[j]-\/>getRigidBodyB(),\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00966\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyA\ =\ m\_tmpSolverBodyPool[bodyAid];}
+\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyB\ =\ m\_tmpSolverBodyPool[bodyBid];}
+\DoxyCodeLine{00968\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ constraints[j]-\/>solveConstraintObsolete(bodyA,\ bodyB,\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00969\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00970\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00971\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00972\ }
+\DoxyCodeLine{00973\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_solverMode\ \&\ SOLVER\_INTERLEAVE\_CONTACT\_AND\_FRICTION\_CONSTRAINTS)}
+\DoxyCodeLine{00974\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00975\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ solve\ all\ contact,\ contact-\/friction,\ and\ rolling\ friction\ constraints\ interleaved}}
+\DoxyCodeLine{00976\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ resolveAllContactConstraintsInterleaved();}
+\DoxyCodeLine{00977\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00978\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \ \textcolor{comment}{//SOLVER\_INTERLEAVE\_CONTACT\_AND\_FRICTION\_CONSTRAINTS}}
+\DoxyCodeLine{00979\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00980\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ don't\ interleave\ them}}
+\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ solve\ all\ contact\ constraints}}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ resolveAllContactConstraints();}
+\DoxyCodeLine{00983\ }
+\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ solve\ all\ contact\ friction\ constraints}}
+\DoxyCodeLine{00985\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ resolveAllContactFrictionConstraints();}
+\DoxyCodeLine{00986\ }
+\DoxyCodeLine{00987\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ solve\ all\ rolling\ friction\ constraints}}
+\DoxyCodeLine{00988\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ resolveAllRollingFrictionConstraints();}
+\DoxyCodeLine{00989\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00990\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00991\ \ \ \ \ \}}
+\DoxyCodeLine{00992\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{00993\ \}}
+\DoxyCodeLine{00994\ }
+\DoxyCodeLine{00995\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveMultipleJointConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ consIndices,\ \textcolor{keywordtype}{int}\ batchBegin,\ \textcolor{keywordtype}{int}\ batchEnd,\ \textcolor{keywordtype}{int}\ iteration)}
+\DoxyCodeLine{00996\ \{}
+\DoxyCodeLine{00997\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{00998\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiCons\ =\ batchBegin;\ iiCons\ <\ batchEnd;\ ++iiCons)}
+\DoxyCodeLine{00999\ \ \ \ \ \{}
+\DoxyCodeLine{01000\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iCons\ =\ consIndices[iiCons];}
+\DoxyCodeLine{01001\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSolverConstraint\&\ constraint\ =\ m\_tmpSolverNonContactConstraintPool[iCons];}
+\DoxyCodeLine{01002\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iteration\ <\ constraint.m\_overrideNumSolverIterations)}
+\DoxyCodeLine{01003\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01004\ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyA\ =\ m\_tmpSolverBodyPool[constraint.m\_solverBodyIdA];}
+\DoxyCodeLine{01005\ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyB\ =\ m\_tmpSolverBodyPool[constraint.m\_solverBodyIdB];}
+\DoxyCodeLine{01006\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowGeneric(bodyA,\ bodyB,\ constraint);}
+\DoxyCodeLine{01007\ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01008\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01009\ \ \ \ \ \}}
+\DoxyCodeLine{01010\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01011\ \}}
+\DoxyCodeLine{01012\ }
+\DoxyCodeLine{01013\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveMultipleContactConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ consIndices,\ \textcolor{keywordtype}{int}\ batchBegin,\ \textcolor{keywordtype}{int}\ batchEnd)}
+\DoxyCodeLine{01014\ \{}
+\DoxyCodeLine{01015\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01016\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiCons\ =\ batchBegin;\ iiCons\ <\ batchEnd;\ ++iiCons)}
+\DoxyCodeLine{01017\ \ \ \ \ \{}
+\DoxyCodeLine{01018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iCons\ =\ consIndices[iiCons];}
+\DoxyCodeLine{01019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSolverConstraint\&\ solveManifold\ =\ m\_tmpSolverContactConstraintPool[iCons];}
+\DoxyCodeLine{01020\ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyA\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdA];}
+\DoxyCodeLine{01021\ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyB\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdB];}
+\DoxyCodeLine{01022\ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowLowerLimit(bodyA,\ bodyB,\ solveManifold);}
+\DoxyCodeLine{01023\ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01024\ \ \ \ \ \}}
+\DoxyCodeLine{01025\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01026\ \}}
+\DoxyCodeLine{01027\ }
+\DoxyCodeLine{01028\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveMultipleContactFrictionConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ consIndices,\ \textcolor{keywordtype}{int}\ batchBegin,\ \textcolor{keywordtype}{int}\ batchEnd)}
+\DoxyCodeLine{01029\ \{}
+\DoxyCodeLine{01030\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01031\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiCons\ =\ batchBegin;\ iiCons\ <\ batchEnd;\ ++iiCons)}
+\DoxyCodeLine{01032\ \ \ \ \ \{}
+\DoxyCodeLine{01033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iContact\ =\ consIndices[iiCons];}
+\DoxyCodeLine{01034\ \ \ \ \ \ \ \ \ btScalar\ totalImpulse\ =\ m\_tmpSolverContactConstraintPool[iContact].m\_appliedImpulse;}
+\DoxyCodeLine{01035\ }
+\DoxyCodeLine{01036\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ apply\ sliding\ friction}}
+\DoxyCodeLine{01037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (totalImpulse\ >\ 0.0f)}
+\DoxyCodeLine{01038\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iBegin\ =\ iContact\ *\ m\_numFrictionDirections;}
+\DoxyCodeLine{01040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iEnd\ =\ iBegin\ +\ m\_numFrictionDirections;}
+\DoxyCodeLine{01041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iFriction\ =\ iBegin;\ iFriction\ <\ iEnd;\ ++iFriction)}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ solveManifold\ =\ m\_tmpSolverContactFrictionConstraintPool[iFriction++];}
+\DoxyCodeLine{01044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(solveManifold.m\_frictionIndex\ ==\ iContact);}
+\DoxyCodeLine{01045\ }
+\DoxyCodeLine{01046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solveManifold.m\_lowerLimit\ =\ -\/(solveManifold.m\_friction\ *\ totalImpulse);}
+\DoxyCodeLine{01047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solveManifold.m\_upperLimit\ =\ solveManifold.m\_friction\ *\ totalImpulse;}
+\DoxyCodeLine{01048\ }
+\DoxyCodeLine{01049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyA\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdA];}
+\DoxyCodeLine{01050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyB\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdB];}
+\DoxyCodeLine{01051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowGeneric(bodyA,\ bodyB,\ solveManifold);}
+\DoxyCodeLine{01052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01053\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01054\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01055\ \ \ \ \ \}}
+\DoxyCodeLine{01056\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01057\ \}}
+\DoxyCodeLine{01058\ }
+\DoxyCodeLine{01059\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveMultipleContactRollingFrictionConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ consIndices,\ \textcolor{keywordtype}{int}\ batchBegin,\ \textcolor{keywordtype}{int}\ batchEnd)}
+\DoxyCodeLine{01060\ \{}
+\DoxyCodeLine{01061\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01062\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiCons\ =\ batchBegin;\ iiCons\ <\ batchEnd;\ ++iiCons)}
+\DoxyCodeLine{01063\ \ \ \ \ \{}
+\DoxyCodeLine{01064\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iContact\ =\ consIndices[iiCons];}
+\DoxyCodeLine{01065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iFirstRollingFriction\ =\ m\_rollingFrictionIndexTable[iContact];}
+\DoxyCodeLine{01066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iFirstRollingFriction\ >=\ 0)}
+\DoxyCodeLine{01067\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01068\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ totalImpulse\ =\ m\_tmpSolverContactConstraintPool[iContact].m\_appliedImpulse;}
+\DoxyCodeLine{01069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ apply\ rolling\ friction}}
+\DoxyCodeLine{01070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (totalImpulse\ >\ 0.0f)}
+\DoxyCodeLine{01071\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iBegin\ =\ iFirstRollingFriction;}
+\DoxyCodeLine{01073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iEnd\ =\ iBegin\ +\ 3;}
+\DoxyCodeLine{01074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iRollingFric\ =\ iBegin;\ iRollingFric\ <\ iEnd;\ ++iRollingFric)}
+\DoxyCodeLine{01075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ rollingFrictionConstraint\ =\ m\_tmpSolverContactRollingFrictionConstraintPool[iRollingFric];}
+\DoxyCodeLine{01077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rollingFrictionConstraint.m\_frictionIndex\ !=\ iContact)}
+\DoxyCodeLine{01078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ rollingFrictionMagnitude\ =\ rollingFrictionConstraint.m\_friction\ *\ totalImpulse;}
+\DoxyCodeLine{01082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rollingFrictionMagnitude\ >\ rollingFrictionConstraint.m\_friction)}
+\DoxyCodeLine{01083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionMagnitude\ =\ rollingFrictionConstraint.m\_friction;}
+\DoxyCodeLine{01085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01086\ }
+\DoxyCodeLine{01087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionConstraint.m\_lowerLimit\ =\ -\/rollingFrictionMagnitude;}
+\DoxyCodeLine{01088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionConstraint.m\_upperLimit\ =\ rollingFrictionMagnitude;}
+\DoxyCodeLine{01089\ }
+\DoxyCodeLine{01090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowGeneric(m\_tmpSolverBodyPool[rollingFrictionConstraint.m\_solverBodyIdA],\ m\_tmpSolverBodyPool[rollingFrictionConstraint.m\_solverBodyIdB],\ rollingFrictionConstraint);}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01095\ \ \ \ \ \}}
+\DoxyCodeLine{01096\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01097\ \}}
+\DoxyCodeLine{01098\ }
+\DoxyCodeLine{01099\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveMultipleContactConstraintsInterleaved(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ contactIndices,}
+\DoxyCodeLine{01100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ batchBegin,}
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ batchEnd)}
+\DoxyCodeLine{01102\ \{}
+\DoxyCodeLine{01103\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01104\ \ \ \ \ \textcolor{keywordtype}{int}\ numPoolConstraints\ =\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{01105\ }
+\DoxyCodeLine{01106\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiCons\ =\ batchBegin;\ iiCons\ <\ batchEnd;\ iiCons++)}
+\DoxyCodeLine{01107\ \ \ \ \ \{}
+\DoxyCodeLine{01108\ \ \ \ \ \ \ \ \ btScalar\ totalImpulse\ =\ 0;}
+\DoxyCodeLine{01109\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iContact\ =\ contactIndices[iiCons];}
+\DoxyCodeLine{01110\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ apply\ penetration\ constraint}}
+\DoxyCodeLine{01111\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSolverConstraint\&\ solveManifold\ =\ m\_tmpSolverContactConstraintPool[iContact];}
+\DoxyCodeLine{01113\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowLowerLimit(m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdA],\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdB],\ solveManifold);}
+\DoxyCodeLine{01114\ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01115\ \ \ \ \ \ \ \ \ \ \ \ \ totalImpulse\ =\ solveManifold.m\_appliedImpulse;}
+\DoxyCodeLine{01116\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01117\ }
+\DoxyCodeLine{01118\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ apply\ sliding\ friction}}
+\DoxyCodeLine{01119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (totalImpulse\ >\ 0.0f)}
+\DoxyCodeLine{01120\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iBegin\ =\ iContact\ *\ m\_numFrictionDirections;}
+\DoxyCodeLine{01122\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iEnd\ =\ iBegin\ +\ m\_numFrictionDirections;}
+\DoxyCodeLine{01123\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iFriction\ =\ iBegin;\ iFriction\ <\ iEnd;\ ++iFriction)}
+\DoxyCodeLine{01124\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ solveManifold\ =\ m\_tmpSolverContactFrictionConstraintPool[iFriction];}
+\DoxyCodeLine{01126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(solveManifold.m\_frictionIndex\ ==\ iContact);}
+\DoxyCodeLine{01127\ }
+\DoxyCodeLine{01128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solveManifold.m\_lowerLimit\ =\ -\/(solveManifold.m\_friction\ *\ totalImpulse);}
+\DoxyCodeLine{01129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solveManifold.m\_upperLimit\ =\ solveManifold.m\_friction\ *\ totalImpulse;}
+\DoxyCodeLine{01130\ }
+\DoxyCodeLine{01131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyA\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdA];}
+\DoxyCodeLine{01132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ bodyB\ =\ m\_tmpSolverBodyPool[solveManifold.m\_solverBodyIdB];}
+\DoxyCodeLine{01133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowGeneric(bodyA,\ bodyB,\ solveManifold);}
+\DoxyCodeLine{01134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01135\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01136\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01137\ }
+\DoxyCodeLine{01138\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ apply\ rolling\ friction}}
+\DoxyCodeLine{01139\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iFirstRollingFriction\ =\ m\_rollingFrictionIndexTable[iContact];}
+\DoxyCodeLine{01140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (totalImpulse\ >\ 0.0f\ \&\&\ iFirstRollingFriction\ >=\ 0)}
+\DoxyCodeLine{01141\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01142\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iBegin\ =\ iFirstRollingFriction;}
+\DoxyCodeLine{01143\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iEnd\ =\ iBegin\ +\ 3;}
+\DoxyCodeLine{01144\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iRollingFric\ =\ iBegin;\ iRollingFric\ <\ iEnd;\ ++iRollingFric)}
+\DoxyCodeLine{01145\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ rollingFrictionConstraint\ =\ m\_tmpSolverContactRollingFrictionConstraintPool[iRollingFric];}
+\DoxyCodeLine{01147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rollingFrictionConstraint.m\_frictionIndex\ !=\ iContact)}
+\DoxyCodeLine{01148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ rollingFrictionMagnitude\ =\ rollingFrictionConstraint.m\_friction\ *\ totalImpulse;}
+\DoxyCodeLine{01152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rollingFrictionMagnitude\ >\ rollingFrictionConstraint.m\_friction)}
+\DoxyCodeLine{01153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionMagnitude\ =\ rollingFrictionConstraint.m\_friction;}
+\DoxyCodeLine{01155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01156\ }
+\DoxyCodeLine{01157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionConstraint.m\_lowerLimit\ =\ -\/rollingFrictionMagnitude;}
+\DoxyCodeLine{01158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionConstraint.m\_upperLimit\ =\ rollingFrictionMagnitude;}
+\DoxyCodeLine{01159\ }
+\DoxyCodeLine{01160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowGeneric(m\_tmpSolverBodyPool[rollingFrictionConstraint.m\_solverBodyIdA],\ m\_tmpSolverBodyPool[rollingFrictionConstraint.m\_solverBodyIdB],\ rollingFrictionConstraint);}
+\DoxyCodeLine{01161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01162\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01163\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01164\ \ \ \ \ \}}
+\DoxyCodeLine{01165\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01166\ \}}
+\DoxyCodeLine{01167\ }
+\DoxyCodeLine{01168\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::randomizeBatchedConstraintOrdering(\mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ batchedConstraints)}
+\DoxyCodeLine{01169\ \{}
+\DoxyCodeLine{01170\ \ \ \ \ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ bc\ =\ *batchedConstraints;}
+\DoxyCodeLine{01171\ \ \ \ \ \textcolor{comment}{//\ randomize\ ordering\ of\ phases}}
+\DoxyCodeLine{01172\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 1;\ ii\ <\ bc.m\_phaseOrder.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++ii)}
+\DoxyCodeLine{01173\ \ \ \ \ \{}
+\DoxyCodeLine{01174\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iSwap\ =\ btRandInt2(ii\ +\ 1);}
+\DoxyCodeLine{01175\ \ \ \ \ \ \ \ \ bc.m\_phaseOrder.swap(ii,\ iSwap);}
+\DoxyCodeLine{01176\ \ \ \ \ \}}
+\DoxyCodeLine{01177\ }
+\DoxyCodeLine{01178\ \ \ \ \ \textcolor{comment}{//\ for\ each\ batch,}}
+\DoxyCodeLine{01179\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ 0;\ iBatch\ <\ bc.m\_batches.size();\ ++iBatch)}
+\DoxyCodeLine{01180\ \ \ \ \ \{}
+\DoxyCodeLine{01181\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ randomize\ ordering\ of\ constraints\ within\ the\ batch}}
+\DoxyCodeLine{01182\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ bc.m\_batches[iBatch];}
+\DoxyCodeLine{01183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiCons\ =\ batch.begin;\ iiCons\ <\ batch.end;\ ++iiCons)}
+\DoxyCodeLine{01184\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01185\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iSwap\ =\ batch.begin\ +\ btRandInt2(iiCons\ -\/\ batch.begin\ +\ 1);}
+\DoxyCodeLine{01186\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(iSwap\ >=\ batch.begin\ \&\&\ iSwap\ <\ batch.end);}
+\DoxyCodeLine{01187\ \ \ \ \ \ \ \ \ \ \ \ \ bc.m\_constraintIndices.swap(iiCons,\ iSwap);}
+\DoxyCodeLine{01188\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01189\ \ \ \ \ \}}
+\DoxyCodeLine{01190\ \}}
+\DoxyCodeLine{01191\ }
+\DoxyCodeLine{01192\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::randomizeConstraintOrdering(\textcolor{keywordtype}{int}\ iteration,\ \textcolor{keywordtype}{int}\ numIterations)}
+\DoxyCodeLine{01193\ \{}
+\DoxyCodeLine{01194\ \ \ \ \ \textcolor{comment}{//\ randomize\ ordering\ of\ joint\ constraints}}
+\DoxyCodeLine{01195\ \ \ \ \ randomizeBatchedConstraintOrdering(\&m\_batchedJointConstraints);}
+\DoxyCodeLine{01196\ }
+\DoxyCodeLine{01197\ \ \ \ \ \textcolor{comment}{//contact/friction\ constraints\ are\ not\ solved\ more\ than\ numIterations}}
+\DoxyCodeLine{01198\ \ \ \ \ \textcolor{keywordflow}{if}\ (iteration\ <\ numIterations)}
+\DoxyCodeLine{01199\ \ \ \ \ \{}
+\DoxyCodeLine{01200\ \ \ \ \ \ \ \ \ randomizeBatchedConstraintOrdering(\&m\_batchedContactConstraints);}
+\DoxyCodeLine{01201\ \ \ \ \ \}}
+\DoxyCodeLine{01202\ \}}
+\DoxyCodeLine{01203\ }
+\DoxyCodeLine{01204\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_joint_solver_loop}{JointSolverLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_sum_body}{btIParallelSumBody}}}
+\DoxyCodeLine{01205\ \{}
+\DoxyCodeLine{01206\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01207\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ m\_bc;}
+\DoxyCodeLine{01208\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_iteration;}
+\DoxyCodeLine{01209\ }
+\DoxyCodeLine{01210\ \ \ \ \ \mbox{\hyperlink{struct_joint_solver_loop}{JointSolverLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ bc,\ \textcolor{keywordtype}{int}\ iteration)}
+\DoxyCodeLine{01211\ \ \ \ \ \{}
+\DoxyCodeLine{01212\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01213\ \ \ \ \ \ \ \ \ m\_bc\ =\ bc;}
+\DoxyCodeLine{01214\ \ \ \ \ \ \ \ \ m\_iteration\ =\ iteration;}
+\DoxyCodeLine{01215\ \ \ \ \ \}}
+\DoxyCodeLine{01216\ \ \ \ \ btScalar\ sumLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01217\ \ \ \ \ \{}
+\DoxyCodeLine{01218\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}JointSolverLoop"{}});}
+\DoxyCodeLine{01219\ \ \ \ \ \ \ \ \ btScalar\ sum\ =\ 0;}
+\DoxyCodeLine{01220\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ iBegin;\ iBatch\ <\ iEnd;\ ++iBatch)}
+\DoxyCodeLine{01221\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ m\_bc-\/>m\_batches[iBatch];}
+\DoxyCodeLine{01223\ \ \ \ \ \ \ \ \ \ \ \ \ sum\ +=\ m\_solver-\/>resolveMultipleJointConstraints(m\_bc-\/>m\_constraintIndices,\ batch.begin,\ batch.end,\ m\_iteration);}
+\DoxyCodeLine{01224\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01225\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sum;}
+\DoxyCodeLine{01226\ \ \ \ \ \}}
+\DoxyCodeLine{01227\ \};}
+\DoxyCodeLine{01228\ }
+\DoxyCodeLine{01229\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveAllJointConstraints(\textcolor{keywordtype}{int}\ iteration)}
+\DoxyCodeLine{01230\ \{}
+\DoxyCodeLine{01231\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}resolveAllJointConstraints"{}});}
+\DoxyCodeLine{01232\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ batchedCons\ =\ m\_batchedJointConstraints;}
+\DoxyCodeLine{01233\ \ \ \ \ \mbox{\hyperlink{struct_joint_solver_loop}{JointSolverLoop}}\ loop(\textcolor{keyword}{this},\ \&batchedCons,\ iteration);}
+\DoxyCodeLine{01234\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01235\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiPhase\ =\ 0;\ iiPhase\ <\ batchedCons.m\_phases.size();\ ++iiPhase)}
+\DoxyCodeLine{01236\ \ \ \ \ \{}
+\DoxyCodeLine{01237\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iPhase\ =\ batchedCons.m\_phaseOrder[iiPhase];}
+\DoxyCodeLine{01238\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ phase\ =\ batchedCons.m\_phases[iPhase];}
+\DoxyCodeLine{01239\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 1;}
+\DoxyCodeLine{01240\ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ btParallelSum(phase.begin,\ phase.end,\ grainSize,\ loop);}
+\DoxyCodeLine{01241\ \ \ \ \ \}}
+\DoxyCodeLine{01242\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01243\ \}}
+\DoxyCodeLine{01244\ }
+\DoxyCodeLine{01245\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_contact_solver_loop}{ContactSolverLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_sum_body}{btIParallelSumBody}}}
+\DoxyCodeLine{01246\ \{}
+\DoxyCodeLine{01247\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01248\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ m\_bc;}
+\DoxyCodeLine{01249\ }
+\DoxyCodeLine{01250\ \ \ \ \ \mbox{\hyperlink{struct_contact_solver_loop}{ContactSolverLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ bc)}
+\DoxyCodeLine{01251\ \ \ \ \ \{}
+\DoxyCodeLine{01252\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01253\ \ \ \ \ \ \ \ \ m\_bc\ =\ bc;}
+\DoxyCodeLine{01254\ \ \ \ \ \}}
+\DoxyCodeLine{01255\ \ \ \ \ btScalar\ sumLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01256\ \ \ \ \ \{}
+\DoxyCodeLine{01257\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}ContactSolverLoop"{}});}
+\DoxyCodeLine{01258\ \ \ \ \ \ \ \ \ btScalar\ sum\ =\ 0;}
+\DoxyCodeLine{01259\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ iBegin;\ iBatch\ <\ iEnd;\ ++iBatch)}
+\DoxyCodeLine{01260\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01261\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ m\_bc-\/>m\_batches[iBatch];}
+\DoxyCodeLine{01262\ \ \ \ \ \ \ \ \ \ \ \ \ sum\ +=\ m\_solver-\/>resolveMultipleContactConstraints(m\_bc-\/>m\_constraintIndices,\ batch.begin,\ batch.end);}
+\DoxyCodeLine{01263\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01264\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sum;}
+\DoxyCodeLine{01265\ \ \ \ \ \}}
+\DoxyCodeLine{01266\ \};}
+\DoxyCodeLine{01267\ }
+\DoxyCodeLine{01268\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveAllContactConstraints()}
+\DoxyCodeLine{01269\ \{}
+\DoxyCodeLine{01270\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}resolveAllContactConstraints"{}});}
+\DoxyCodeLine{01271\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ batchedCons\ =\ m\_batchedContactConstraints;}
+\DoxyCodeLine{01272\ \ \ \ \ \mbox{\hyperlink{struct_contact_solver_loop}{ContactSolverLoop}}\ loop(\textcolor{keyword}{this},\ \&batchedCons);}
+\DoxyCodeLine{01273\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01274\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiPhase\ =\ 0;\ iiPhase\ <\ batchedCons.m\_phases.size();\ ++iiPhase)}
+\DoxyCodeLine{01275\ \ \ \ \ \{}
+\DoxyCodeLine{01276\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iPhase\ =\ batchedCons.m\_phaseOrder[iiPhase];}
+\DoxyCodeLine{01277\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ phase\ =\ batchedCons.m\_phases[iPhase];}
+\DoxyCodeLine{01278\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ batchedCons.m\_phaseGrainSize[iPhase];}
+\DoxyCodeLine{01279\ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ btParallelSum(phase.begin,\ phase.end,\ grainSize,\ loop);}
+\DoxyCodeLine{01280\ \ \ \ \ \}}
+\DoxyCodeLine{01281\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01282\ \}}
+\DoxyCodeLine{01283\ }
+\DoxyCodeLine{01284\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_contact_friction_solver_loop}{ContactFrictionSolverLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_sum_body}{btIParallelSumBody}}}
+\DoxyCodeLine{01285\ \{}
+\DoxyCodeLine{01286\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01287\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ m\_bc;}
+\DoxyCodeLine{01288\ }
+\DoxyCodeLine{01289\ \ \ \ \ \mbox{\hyperlink{struct_contact_friction_solver_loop}{ContactFrictionSolverLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ bc)}
+\DoxyCodeLine{01290\ \ \ \ \ \{}
+\DoxyCodeLine{01291\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01292\ \ \ \ \ \ \ \ \ m\_bc\ =\ bc;}
+\DoxyCodeLine{01293\ \ \ \ \ \}}
+\DoxyCodeLine{01294\ \ \ \ \ btScalar\ sumLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01295\ \ \ \ \ \{}
+\DoxyCodeLine{01296\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}ContactFrictionSolverLoop"{}});}
+\DoxyCodeLine{01297\ \ \ \ \ \ \ \ \ btScalar\ sum\ =\ 0;}
+\DoxyCodeLine{01298\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ iBegin;\ iBatch\ <\ iEnd;\ ++iBatch)}
+\DoxyCodeLine{01299\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01300\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ m\_bc-\/>m\_batches[iBatch];}
+\DoxyCodeLine{01301\ \ \ \ \ \ \ \ \ \ \ \ \ sum\ +=\ m\_solver-\/>resolveMultipleContactFrictionConstraints(m\_bc-\/>m\_constraintIndices,\ batch.begin,\ batch.end);}
+\DoxyCodeLine{01302\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01303\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sum;}
+\DoxyCodeLine{01304\ \ \ \ \ \}}
+\DoxyCodeLine{01305\ \};}
+\DoxyCodeLine{01306\ }
+\DoxyCodeLine{01307\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveAllContactFrictionConstraints()}
+\DoxyCodeLine{01308\ \{}
+\DoxyCodeLine{01309\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}resolveAllContactFrictionConstraints"{}});}
+\DoxyCodeLine{01310\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ batchedCons\ =\ m\_batchedContactConstraints;}
+\DoxyCodeLine{01311\ \ \ \ \ \mbox{\hyperlink{struct_contact_friction_solver_loop}{ContactFrictionSolverLoop}}\ loop(\textcolor{keyword}{this},\ \&batchedCons);}
+\DoxyCodeLine{01312\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01313\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiPhase\ =\ 0;\ iiPhase\ <\ batchedCons.m\_phases.size();\ ++iiPhase)}
+\DoxyCodeLine{01314\ \ \ \ \ \{}
+\DoxyCodeLine{01315\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iPhase\ =\ batchedCons.m\_phaseOrder[iiPhase];}
+\DoxyCodeLine{01316\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ phase\ =\ batchedCons.m\_phases[iPhase];}
+\DoxyCodeLine{01317\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ batchedCons.m\_phaseGrainSize[iPhase];}
+\DoxyCodeLine{01318\ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ btParallelSum(phase.begin,\ phase.end,\ grainSize,\ loop);}
+\DoxyCodeLine{01319\ \ \ \ \ \}}
+\DoxyCodeLine{01320\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01321\ \}}
+\DoxyCodeLine{01322\ }
+\DoxyCodeLine{01323\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_interleaved_contact_solver_loop}{InterleavedContactSolverLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_sum_body}{btIParallelSumBody}}}
+\DoxyCodeLine{01324\ \{}
+\DoxyCodeLine{01325\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01326\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ m\_bc;}
+\DoxyCodeLine{01327\ }
+\DoxyCodeLine{01328\ \ \ \ \ \mbox{\hyperlink{struct_interleaved_contact_solver_loop}{InterleavedContactSolverLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ bc)}
+\DoxyCodeLine{01329\ \ \ \ \ \{}
+\DoxyCodeLine{01330\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01331\ \ \ \ \ \ \ \ \ m\_bc\ =\ bc;}
+\DoxyCodeLine{01332\ \ \ \ \ \}}
+\DoxyCodeLine{01333\ \ \ \ \ btScalar\ sumLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01334\ \ \ \ \ \{}
+\DoxyCodeLine{01335\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}InterleavedContactSolverLoop"{}});}
+\DoxyCodeLine{01336\ \ \ \ \ \ \ \ \ btScalar\ sum\ =\ 0;}
+\DoxyCodeLine{01337\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ iBegin;\ iBatch\ <\ iEnd;\ ++iBatch)}
+\DoxyCodeLine{01338\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01339\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ m\_bc-\/>m\_batches[iBatch];}
+\DoxyCodeLine{01340\ \ \ \ \ \ \ \ \ \ \ \ \ sum\ +=\ m\_solver-\/>resolveMultipleContactConstraintsInterleaved(m\_bc-\/>m\_constraintIndices,\ batch.begin,\ batch.end);}
+\DoxyCodeLine{01341\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01342\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sum;}
+\DoxyCodeLine{01343\ \ \ \ \ \}}
+\DoxyCodeLine{01344\ \};}
+\DoxyCodeLine{01345\ }
+\DoxyCodeLine{01346\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveAllContactConstraintsInterleaved()}
+\DoxyCodeLine{01347\ \{}
+\DoxyCodeLine{01348\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}resolveAllContactConstraintsInterleaved"{}});}
+\DoxyCodeLine{01349\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ batchedCons\ =\ m\_batchedContactConstraints;}
+\DoxyCodeLine{01350\ \ \ \ \ \mbox{\hyperlink{struct_interleaved_contact_solver_loop}{InterleavedContactSolverLoop}}\ loop(\textcolor{keyword}{this},\ \&batchedCons);}
+\DoxyCodeLine{01351\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01352\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiPhase\ =\ 0;\ iiPhase\ <\ batchedCons.m\_phases.size();\ ++iiPhase)}
+\DoxyCodeLine{01353\ \ \ \ \ \{}
+\DoxyCodeLine{01354\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iPhase\ =\ batchedCons.m\_phaseOrder[iiPhase];}
+\DoxyCodeLine{01355\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ phase\ =\ batchedCons.m\_phases[iPhase];}
+\DoxyCodeLine{01356\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 1;}
+\DoxyCodeLine{01357\ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ btParallelSum(phase.begin,\ phase.end,\ grainSize,\ loop);}
+\DoxyCodeLine{01358\ \ \ \ \ \}}
+\DoxyCodeLine{01359\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01360\ \}}
+\DoxyCodeLine{01361\ }
+\DoxyCodeLine{01362\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_contact_rolling_friction_solver_loop}{ContactRollingFrictionSolverLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_sum_body}{btIParallelSumBody}}}
+\DoxyCodeLine{01363\ \{}
+\DoxyCodeLine{01364\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01365\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ m\_bc;}
+\DoxyCodeLine{01366\ }
+\DoxyCodeLine{01367\ \ \ \ \ \mbox{\hyperlink{struct_contact_rolling_friction_solver_loop}{ContactRollingFrictionSolverLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}*\ bc)}
+\DoxyCodeLine{01368\ \ \ \ \ \{}
+\DoxyCodeLine{01369\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01370\ \ \ \ \ \ \ \ \ m\_bc\ =\ bc;}
+\DoxyCodeLine{01371\ \ \ \ \ \}}
+\DoxyCodeLine{01372\ \ \ \ \ btScalar\ sumLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01373\ \ \ \ \ \{}
+\DoxyCodeLine{01374\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}ContactFrictionSolverLoop"{}});}
+\DoxyCodeLine{01375\ \ \ \ \ \ \ \ \ btScalar\ sum\ =\ 0;}
+\DoxyCodeLine{01376\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iBatch\ =\ iBegin;\ iBatch\ <\ iEnd;\ ++iBatch)}
+\DoxyCodeLine{01377\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01378\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ batch\ =\ m\_bc-\/>m\_batches[iBatch];}
+\DoxyCodeLine{01379\ \ \ \ \ \ \ \ \ \ \ \ \ sum\ +=\ m\_solver-\/>resolveMultipleContactRollingFrictionConstraints(m\_bc-\/>m\_constraintIndices,\ batch.begin,\ batch.end);}
+\DoxyCodeLine{01380\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01381\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sum;}
+\DoxyCodeLine{01382\ \ \ \ \ \}}
+\DoxyCodeLine{01383\ \};}
+\DoxyCodeLine{01384\ }
+\DoxyCodeLine{01385\ btScalar\ btSequentialImpulseConstraintSolverMt::resolveAllRollingFrictionConstraints()}
+\DoxyCodeLine{01386\ \{}
+\DoxyCodeLine{01387\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}resolveAllRollingFrictionConstraints"{}});}
+\DoxyCodeLine{01388\ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01389\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01390\ \ \ \ \ \textcolor{comment}{//\ We\ do\ not\ generate\ batches\ for\ rolling\ friction\ constraints.\ We\ assume\ that}}
+\DoxyCodeLine{01391\ \ \ \ \ \textcolor{comment}{//\ one\ of\ two\ cases\ is\ true:}}
+\DoxyCodeLine{01392\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01393\ \ \ \ \ \textcolor{comment}{//\ \ 1.\ either\ most\ bodies\ in\ the\ simulation\ have\ rolling\ friction,\ in\ which\ case\ we\ can\ use\ the}}
+\DoxyCodeLine{01394\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ batches\ for\ contacts\ and\ use\ a\ lookup\ table\ to\ translate\ contact\ indices\ to\ rolling\ friction}}
+\DoxyCodeLine{01395\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ (ignoring\ any\ contact\ indices\ that\ don't\ map\ to\ a\ rolling\ friction\ constraint).\ As\ long\ as}}
+\DoxyCodeLine{01396\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ most\ contacts\ have\ a\ corresponding\ rolling\ friction\ constraint,\ this\ should\ parallelize\ well.}}
+\DoxyCodeLine{01397\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01398\ \ \ \ \ \textcolor{comment}{//\ \ -\/OR-\/}}
+\DoxyCodeLine{01399\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01400\ \ \ \ \ \textcolor{comment}{//\ \ 2.\ few\ bodies\ in\ the\ simulation\ have\ rolling\ friction,\ so\ it\ is\ not\ worth\ trying\ to\ use\ the}}
+\DoxyCodeLine{01401\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ batches\ from\ contacts\ as\ most\ of\ the\ contacts\ won't\ have\ corresponding\ rolling\ friction}}
+\DoxyCodeLine{01402\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ constraints\ and\ most\ threads\ would\ end\ up\ doing\ very\ little\ work.\ Most\ of\ the\ time\ would}}
+\DoxyCodeLine{01403\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ go\ to\ threading\ overhead,\ so\ we\ don't\ bother\ with\ threading.}}
+\DoxyCodeLine{01404\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01405\ \ \ \ \ \textcolor{keywordtype}{int}\ numRollingFrictionPoolConstraints\ =\ m\_tmpSolverContactRollingFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{01406\ \ \ \ \ \textcolor{keywordflow}{if}\ (numRollingFrictionPoolConstraints\ >=\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{01407\ \ \ \ \ \{}
+\DoxyCodeLine{01408\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ use\ batching\ if\ there\ are\ many\ rolling\ friction\ constraints}}
+\DoxyCodeLine{01409\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints}{btBatchedConstraints}}\&\ batchedCons\ =\ m\_batchedContactConstraints;}
+\DoxyCodeLine{01410\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_contact_rolling_friction_solver_loop}{ContactRollingFrictionSolverLoop}}\ loop(\textcolor{keyword}{this},\ \&batchedCons);}
+\DoxyCodeLine{01411\ \ \ \ \ \ \ \ \ btScalar\ leastSquaresResidual\ =\ 0.f;}
+\DoxyCodeLine{01412\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iiPhase\ =\ 0;\ iiPhase\ <\ batchedCons.m\_phases.size();\ ++iiPhase)}
+\DoxyCodeLine{01413\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01414\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iPhase\ =\ batchedCons.m\_phaseOrder[iiPhase];}
+\DoxyCodeLine{01415\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_batched_constraints_1_1_range}{btBatchedConstraints::Range}}\&\ phase\ =\ batchedCons.m\_phases[iPhase];}
+\DoxyCodeLine{01416\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 1;}
+\DoxyCodeLine{01417\ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ btParallelSum(phase.begin,\ phase.end,\ grainSize,\ loop);}
+\DoxyCodeLine{01418\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01419\ \ \ \ \ \}}
+\DoxyCodeLine{01420\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01421\ \ \ \ \ \{}
+\DoxyCodeLine{01422\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ no\ batching,\ also\ ignores\ SOLVER\_RANDMIZE\_ORDER}}
+\DoxyCodeLine{01423\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ numRollingFrictionPoolConstraints;\ j++)}
+\DoxyCodeLine{01424\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01425\ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ rollingFrictionConstraint\ =\ m\_tmpSolverContactRollingFrictionConstraintPool[j];}
+\DoxyCodeLine{01426\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rollingFrictionConstraint.m\_frictionIndex\ >=\ 0)}
+\DoxyCodeLine{01427\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ totalImpulse\ =\ m\_tmpSolverContactConstraintPool[rollingFrictionConstraint.m\_frictionIndex].m\_appliedImpulse;}
+\DoxyCodeLine{01429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (totalImpulse\ >\ 0.0f)}
+\DoxyCodeLine{01430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ rollingFrictionMagnitude\ =\ rollingFrictionConstraint.m\_friction\ *\ totalImpulse;}
+\DoxyCodeLine{01432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rollingFrictionMagnitude\ >\ rollingFrictionConstraint.m\_friction)}
+\DoxyCodeLine{01433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionMagnitude\ =\ rollingFrictionConstraint.m\_friction;}
+\DoxyCodeLine{01434\ }
+\DoxyCodeLine{01435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionConstraint.m\_lowerLimit\ =\ -\/rollingFrictionMagnitude;}
+\DoxyCodeLine{01436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFrictionConstraint.m\_upperLimit\ =\ rollingFrictionMagnitude;}
+\DoxyCodeLine{01437\ }
+\DoxyCodeLine{01438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ residual\ =\ resolveSingleConstraintRowGeneric(m\_tmpSolverBodyPool[rollingFrictionConstraint.m\_solverBodyIdA],\ m\_tmpSolverBodyPool[rollingFrictionConstraint.m\_solverBodyIdB],\ rollingFrictionConstraint);}
+\DoxyCodeLine{01439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leastSquaresResidual\ +=\ residual\ *\ residual;}
+\DoxyCodeLine{01440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01441\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01442\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01443\ \ \ \ \ \}}
+\DoxyCodeLine{01444\ \ \ \ \ \textcolor{keywordflow}{return}\ leastSquaresResidual;}
+\DoxyCodeLine{01445\ \}}
+\DoxyCodeLine{01446\ }
+\DoxyCodeLine{01447\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalWriteBackContacts(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{01448\ \{}
+\DoxyCodeLine{01449\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalWriteBackContacts"{}});}
+\DoxyCodeLine{01450\ \ \ \ \ writeBackContacts(iBegin,\ iEnd,\ infoGlobal);}
+\DoxyCodeLine{01451\ \ \ \ \ \textcolor{comment}{//for\ (\ int\ iContact\ =\ iBegin;\ iContact\ <\ iEnd;\ ++iContact)}}
+\DoxyCodeLine{01452\ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{01453\ \ \ \ \ \textcolor{comment}{//\ \ \ \ const\ btSolverConstraint\&\ contactConstraint\ =\ m\_tmpSolverContactConstraintPool[\ iContact\ ];}}
+\DoxyCodeLine{01454\ \ \ \ \ \textcolor{comment}{//\ \ \ \ btManifoldPoint*\ pt\ =\ (btManifoldPoint*)\ contactConstraint.m\_originalContactPoint;}}
+\DoxyCodeLine{01455\ \ \ \ \ \textcolor{comment}{//\ \ \ \ btAssert(\ pt\ );}}
+\DoxyCodeLine{01456\ \ \ \ \ \textcolor{comment}{//\ \ \ \ pt-\/>m\_appliedImpulse\ =\ contactConstraint.m\_appliedImpulse;}}
+\DoxyCodeLine{01457\ \ \ \ \ \textcolor{comment}{//\ \ \ \ pt-\/>m\_appliedImpulseLateral1\ =\ m\_tmpSolverContactFrictionConstraintPool[\ contactConstraint.m\_frictionIndex\ ].m\_appliedImpulse;}}
+\DoxyCodeLine{01458\ \ \ \ \ \textcolor{comment}{//\ \ \ \ if\ (\ m\_numFrictionDirections\ ==\ 2\ )}}
+\DoxyCodeLine{01459\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \{}}
+\DoxyCodeLine{01460\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ pt-\/>m\_appliedImpulseLateral2\ =\ m\_tmpSolverContactFrictionConstraintPool[\ contactConstraint.m\_frictionIndex\ +\ 1\ ].m\_appliedImpulse;}}
+\DoxyCodeLine{01461\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \}}}
+\DoxyCodeLine{01462\ \ \ \ \ \textcolor{comment}{//\}}}
+\DoxyCodeLine{01463\ \}}
+\DoxyCodeLine{01464\ }
+\DoxyCodeLine{01465\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalWriteBackJoints(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{01466\ \{}
+\DoxyCodeLine{01467\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalWriteBackJoints"{}});}
+\DoxyCodeLine{01468\ \ \ \ \ writeBackJoints(iBegin,\ iEnd,\ infoGlobal);}
+\DoxyCodeLine{01469\ \}}
+\DoxyCodeLine{01470\ }
+\DoxyCodeLine{01471\ \textcolor{keywordtype}{void}\ btSequentialImpulseConstraintSolverMt::internalWriteBackBodies(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{01472\ \{}
+\DoxyCodeLine{01473\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}internalWriteBackBodies"{}});}
+\DoxyCodeLine{01474\ \ \ \ \ writeBackBodies(iBegin,\ iEnd,\ infoGlobal);}
+\DoxyCodeLine{01475\ \}}
+\DoxyCodeLine{01476\ }
+\DoxyCodeLine{01477\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_write_contact_points_loop}{WriteContactPointsLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{01478\ \{}
+\DoxyCodeLine{01479\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01480\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_infoGlobal;}
+\DoxyCodeLine{01481\ }
+\DoxyCodeLine{01482\ \ \ \ \ \mbox{\hyperlink{struct_write_contact_points_loop}{WriteContactPointsLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{01483\ \ \ \ \ \{}
+\DoxyCodeLine{01484\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01485\ \ \ \ \ \ \ \ \ m\_infoGlobal\ =\ \&infoGlobal;}
+\DoxyCodeLine{01486\ \ \ \ \ \}}
+\DoxyCodeLine{01487\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01488\ \ \ \ \ \{}
+\DoxyCodeLine{01489\ \ \ \ \ \ \ \ \ m\_solver-\/>internalWriteBackContacts(iBegin,\ iEnd,\ *m\_infoGlobal);}
+\DoxyCodeLine{01490\ \ \ \ \ \}}
+\DoxyCodeLine{01491\ \};}
+\DoxyCodeLine{01492\ }
+\DoxyCodeLine{01493\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_write_joints_loop}{WriteJointsLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{01494\ \{}
+\DoxyCodeLine{01495\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01496\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_infoGlobal;}
+\DoxyCodeLine{01497\ }
+\DoxyCodeLine{01498\ \ \ \ \ \mbox{\hyperlink{struct_write_joints_loop}{WriteJointsLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{01499\ \ \ \ \ \{}
+\DoxyCodeLine{01500\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01501\ \ \ \ \ \ \ \ \ m\_infoGlobal\ =\ \&infoGlobal;}
+\DoxyCodeLine{01502\ \ \ \ \ \}}
+\DoxyCodeLine{01503\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01504\ \ \ \ \ \{}
+\DoxyCodeLine{01505\ \ \ \ \ \ \ \ \ m\_solver-\/>internalWriteBackJoints(iBegin,\ iEnd,\ *m\_infoGlobal);}
+\DoxyCodeLine{01506\ \ \ \ \ \}}
+\DoxyCodeLine{01507\ \};}
+\DoxyCodeLine{01508\ }
+\DoxyCodeLine{01509\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_write_bodies_loop}{WriteBodiesLoop}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{01510\ \{}
+\DoxyCodeLine{01511\ \ \ \ \ btSequentialImpulseConstraintSolverMt*\ m\_solver;}
+\DoxyCodeLine{01512\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_infoGlobal;}
+\DoxyCodeLine{01513\ }
+\DoxyCodeLine{01514\ \ \ \ \ \mbox{\hyperlink{struct_write_bodies_loop}{WriteBodiesLoop}}(btSequentialImpulseConstraintSolverMt*\ solver,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{01515\ \ \ \ \ \{}
+\DoxyCodeLine{01516\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{01517\ \ \ \ \ \ \ \ \ m\_infoGlobal\ =\ \&infoGlobal;}
+\DoxyCodeLine{01518\ \ \ \ \ \}}
+\DoxyCodeLine{01519\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\ \textcolor{keyword}{const}\ BT\_OVERRIDE}
+\DoxyCodeLine{01520\ \ \ \ \ \{}
+\DoxyCodeLine{01521\ \ \ \ \ \ \ \ \ m\_solver-\/>internalWriteBackBodies(iBegin,\ iEnd,\ *m\_infoGlobal);}
+\DoxyCodeLine{01522\ \ \ \ \ \}}
+\DoxyCodeLine{01523\ \};}
+\DoxyCodeLine{01524\ }
+\DoxyCodeLine{01525\ btScalar\ btSequentialImpulseConstraintSolverMt::solveGroupCacheFriendlyFinish(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{01526\ \{}
+\DoxyCodeLine{01527\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}solveGroupCacheFriendlyFinish"{}});}
+\DoxyCodeLine{01528\ }
+\DoxyCodeLine{01529\ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_solverMode\ \&\ SOLVER\_USE\_WARMSTARTING)}
+\DoxyCodeLine{01530\ \ \ \ \ \{}
+\DoxyCodeLine{01531\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_write_contact_points_loop}{WriteContactPointsLoop}}\ loop(\textcolor{keyword}{this},\ infoGlobal);}
+\DoxyCodeLine{01532\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 500;}
+\DoxyCodeLine{01533\ \ \ \ \ \ \ \ \ btParallelFor(0,\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ grainSize,\ loop);}
+\DoxyCodeLine{01534\ \ \ \ \ \}}
+\DoxyCodeLine{01535\ }
+\DoxyCodeLine{01536\ \ \ \ \ \{}
+\DoxyCodeLine{01537\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_write_joints_loop}{WriteJointsLoop}}\ loop(\textcolor{keyword}{this},\ infoGlobal);}
+\DoxyCodeLine{01538\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 400;}
+\DoxyCodeLine{01539\ \ \ \ \ \ \ \ \ btParallelFor(0,\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ grainSize,\ loop);}
+\DoxyCodeLine{01540\ \ \ \ \ \}}
+\DoxyCodeLine{01541\ \ \ \ \ \{}
+\DoxyCodeLine{01542\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_write_bodies_loop}{WriteBodiesLoop}}\ loop(\textcolor{keyword}{this},\ infoGlobal);}
+\DoxyCodeLine{01543\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ grainSize\ =\ 100;}
+\DoxyCodeLine{01544\ \ \ \ \ \ \ \ \ btParallelFor(0,\ m\_tmpSolverBodyPool.size(),\ grainSize,\ loop);}
+\DoxyCodeLine{01545\ \ \ \ \ \}}
+\DoxyCodeLine{01546\ }
+\DoxyCodeLine{01547\ \ \ \ \ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(0);}
+\DoxyCodeLine{01548\ \ \ \ \ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(0);}
+\DoxyCodeLine{01549\ \ \ \ \ m\_tmpSolverContactFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(0);}
+\DoxyCodeLine{01550\ \ \ \ \ m\_tmpSolverContactRollingFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(0);}
+\DoxyCodeLine{01551\ }
+\DoxyCodeLine{01552\ \ \ \ \ m\_tmpSolverBodyPool.resizeNoInitialize(0);}
+\DoxyCodeLine{01553\ \ \ \ \ \textcolor{keywordflow}{return}\ 0.f;}
+\DoxyCodeLine{01554\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,264 @@
+\doxysection{bt\+Dynamics\+World Class Reference}
+\hypertarget{classbt_dynamics_world}{}\label{classbt_dynamics_world}\index{btDynamicsWorld@{btDynamicsWorld}}
+
+
+The \doxylink{classbt_dynamics_world}{bt\+Dynamics\+World} is the interface class for several dynamics implementation, basic, discrete, parallel, and continuous etc.  
+
+
+
+
+{\ttfamily \#include $<$bt\+Dynamics\+World.\+h$>$}
+
+Inheritance diagram for bt\+Dynamics\+World\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classbt_dynamics_world}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_dynamics_world_ade9becb7e4f919d56a8c261baf560896}\label{classbt_dynamics_world_ade9becb7e4f919d56a8c261baf560896} 
+{\bfseries bt\+Dynamics\+World} (\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher, \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*}broadphase, \mbox{\hyperlink{classbt_collision_configuration}{bt\+Collision\+Configuration}} \texorpdfstring{$\ast$}{*}collision\+Configuration)
+\item 
+virtual int \mbox{\hyperlink{classbt_dynamics_world_a5ab26a0d6e8b2b21fbde2ed8f8dd6294}{step\+Simulation}} (bt\+Scalar time\+Step, int max\+Sub\+Steps=1, bt\+Scalar fixed\+Time\+Step=bt\+Scalar(1.)/bt\+Scalar(60.))=0
+\item 
+virtual void \mbox{\hyperlink{classbt_dynamics_world_a392b087f91a91a9b46a63ac790f72b80}{debug\+Draw\+World}} ()=0
+\item 
+\Hypertarget{classbt_dynamics_world_aafdfed3d693792d9280251ff8b9ae0d8}\label{classbt_dynamics_world_aafdfed3d693792d9280251ff8b9ae0d8} 
+virtual void {\bfseries add\+Constraint} (bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*}constraint, bool disable\+Collisions\+Between\+Linked\+Bodies=false)
+\item 
+\Hypertarget{classbt_dynamics_world_a89e0f17523fc4d65428545644f7e2515}\label{classbt_dynamics_world_a89e0f17523fc4d65428545644f7e2515} 
+virtual void {\bfseries remove\+Constraint} (bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*}constraint)
+\item 
+\Hypertarget{classbt_dynamics_world_ad8eea68a1bcbe55e6520aa3dee44a519}\label{classbt_dynamics_world_ad8eea68a1bcbe55e6520aa3dee44a519} 
+virtual void {\bfseries add\+Action} (\mbox{\hyperlink{classbt_action_interface}{bt\+Action\+Interface}} \texorpdfstring{$\ast$}{*}action)=0
+\item 
+\Hypertarget{classbt_dynamics_world_a391b665d8ceae4d793fa213c87b5461f}\label{classbt_dynamics_world_a391b665d8ceae4d793fa213c87b5461f} 
+virtual void {\bfseries remove\+Action} (\mbox{\hyperlink{classbt_action_interface}{bt\+Action\+Interface}} \texorpdfstring{$\ast$}{*}action)=0
+\item 
+\Hypertarget{classbt_dynamics_world_aee63562f8067022cca1b4999057c4373}\label{classbt_dynamics_world_aee63562f8067022cca1b4999057c4373} 
+virtual void {\bfseries set\+Gravity} (const bt\+Vector3 \&gravity)=0
+\item 
+\Hypertarget{classbt_dynamics_world_a2a1de7e4e5456428d4558be6f24723ef}\label{classbt_dynamics_world_a2a1de7e4e5456428d4558be6f24723ef} 
+virtual bt\+Vector3 {\bfseries get\+Gravity} () const =0
+\item 
+virtual void \mbox{\hyperlink{classbt_dynamics_world_aed92a7b6bc477b60d50988a048eaa5a6}{synchronize\+Motion\+States}} ()=0
+\item 
+\Hypertarget{classbt_dynamics_world_a8d8f03c04ba63f525e09cb95452687f0}\label{classbt_dynamics_world_a8d8f03c04ba63f525e09cb95452687f0} 
+virtual void {\bfseries add\+Rigid\+Body} (\mbox{\hyperlink{classbt_rigid_body}{bt\+Rigid\+Body}} \texorpdfstring{$\ast$}{*}body)=0
+\item 
+\Hypertarget{classbt_dynamics_world_a5c87b021a235ceb37c3c259972ed88bf}\label{classbt_dynamics_world_a5c87b021a235ceb37c3c259972ed88bf} 
+virtual void {\bfseries add\+Rigid\+Body} (\mbox{\hyperlink{classbt_rigid_body}{bt\+Rigid\+Body}} \texorpdfstring{$\ast$}{*}body, int group, int mask)=0
+\item 
+\Hypertarget{classbt_dynamics_world_a06ac55453d839d0a6cbc9c53e5537f73}\label{classbt_dynamics_world_a06ac55453d839d0a6cbc9c53e5537f73} 
+virtual void {\bfseries remove\+Rigid\+Body} (\mbox{\hyperlink{classbt_rigid_body}{bt\+Rigid\+Body}} \texorpdfstring{$\ast$}{*}body)=0
+\item 
+\Hypertarget{classbt_dynamics_world_a65cd45eeb235a87516f4f22383ceac49}\label{classbt_dynamics_world_a65cd45eeb235a87516f4f22383ceac49} 
+virtual void {\bfseries set\+Constraint\+Solver} (\mbox{\hyperlink{classbt_constraint_solver}{bt\+Constraint\+Solver}} \texorpdfstring{$\ast$}{*}solver)=0
+\item 
+\Hypertarget{classbt_dynamics_world_a23971cd09cce4dbc461a8a6d99b767ff}\label{classbt_dynamics_world_a23971cd09cce4dbc461a8a6d99b767ff} 
+virtual \mbox{\hyperlink{classbt_constraint_solver}{bt\+Constraint\+Solver}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Constraint\+Solver} ()=0
+\item 
+\Hypertarget{classbt_dynamics_world_a6578dac0bc85b792df55ebebd9feae61}\label{classbt_dynamics_world_a6578dac0bc85b792df55ebebd9feae61} 
+virtual int {\bfseries get\+Num\+Constraints} () const
+\item 
+\Hypertarget{classbt_dynamics_world_ae808d0d575cf569809ee78fd4b1806fe}\label{classbt_dynamics_world_ae808d0d575cf569809ee78fd4b1806fe} 
+virtual bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*} {\bfseries get\+Constraint} (int index)
+\item 
+\Hypertarget{classbt_dynamics_world_a782dcbb0338cd0df05ab0d7c85686b66}\label{classbt_dynamics_world_a782dcbb0338cd0df05ab0d7c85686b66} 
+virtual const bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*} {\bfseries get\+Constraint} (int index) const
+\item 
+\Hypertarget{classbt_dynamics_world_a7c657a2757b38c533dd6b3a7110624e1}\label{classbt_dynamics_world_a7c657a2757b38c533dd6b3a7110624e1} 
+virtual bt\+Dynamics\+World\+Type {\bfseries get\+World\+Type} () const =0
+\item 
+virtual void \mbox{\hyperlink{classbt_dynamics_world_a9a9d474cc43c25095cd32e1c3332152a}{clear\+Forces}} ()=0
+\item 
+\Hypertarget{classbt_dynamics_world_a6974c869e196322377e2d8c078db5805}\label{classbt_dynamics_world_a6974c869e196322377e2d8c078db5805} 
+void {\bfseries set\+Internal\+Tick\+Callback} (bt\+Internal\+Tick\+Callback cb, void \texorpdfstring{$\ast$}{*}world\+User\+Info=0, bool is\+Pre\+Tick=false)
+\begin{DoxyCompactList}\small\item\em Set the callback for when an internal tick (simulation substep) happens, optional user info. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_dynamics_world_ad1f3418fce3381a0fbd4419cc701a97d}\label{classbt_dynamics_world_ad1f3418fce3381a0fbd4419cc701a97d} 
+void {\bfseries set\+World\+User\+Info} (void \texorpdfstring{$\ast$}{*}world\+User\+Info)
+\item 
+\Hypertarget{classbt_dynamics_world_ab7833fe28599ff6acc22369443781f1a}\label{classbt_dynamics_world_ab7833fe28599ff6acc22369443781f1a} 
+void \texorpdfstring{$\ast$}{*} {\bfseries get\+World\+User\+Info} () const
+\item 
+\Hypertarget{classbt_dynamics_world_a4474b4e95def488dc8d6948d2bf8afa8}\label{classbt_dynamics_world_a4474b4e95def488dc8d6948d2bf8afa8} 
+\mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \& {\bfseries get\+Solver\+Info} ()
+\item 
+\Hypertarget{classbt_dynamics_world_a209f307e48cd01ee23da445bbbf0bb6f}\label{classbt_dynamics_world_a209f307e48cd01ee23da445bbbf0bb6f} 
+const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \& {\bfseries get\+Solver\+Info} () const
+\item 
+\Hypertarget{classbt_dynamics_world_ab897455739081304249e7af787cafa19}\label{classbt_dynamics_world_ab897455739081304249e7af787cafa19} 
+virtual void {\bfseries add\+Vehicle} (\mbox{\hyperlink{classbt_action_interface}{bt\+Action\+Interface}} \texorpdfstring{$\ast$}{*}vehicle)
+\begin{DoxyCompactList}\small\item\em obsolete, use add\+Action instead. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_dynamics_world_abb361ed4e22766cd79d22ece3f5869e6}\label{classbt_dynamics_world_abb361ed4e22766cd79d22ece3f5869e6} 
+virtual void {\bfseries remove\+Vehicle} (\mbox{\hyperlink{classbt_action_interface}{bt\+Action\+Interface}} \texorpdfstring{$\ast$}{*}vehicle)
+\begin{DoxyCompactList}\small\item\em obsolete, use remove\+Action instead \end{DoxyCompactList}\item 
+\Hypertarget{classbt_dynamics_world_a56e16159fdff1311706d4b73e0999e02}\label{classbt_dynamics_world_a56e16159fdff1311706d4b73e0999e02} 
+virtual void {\bfseries add\+Character} (\mbox{\hyperlink{classbt_action_interface}{bt\+Action\+Interface}} \texorpdfstring{$\ast$}{*}character)
+\begin{DoxyCompactList}\small\item\em obsolete, use add\+Action instead. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_dynamics_world_ae4daeac0b98e39a80bb960c5b995fd2a}\label{classbt_dynamics_world_ae4daeac0b98e39a80bb960c5b995fd2a} 
+virtual void {\bfseries remove\+Character} (\mbox{\hyperlink{classbt_action_interface}{bt\+Action\+Interface}} \texorpdfstring{$\ast$}{*}character)
+\begin{DoxyCompactList}\small\item\em obsolete, use remove\+Action instead \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classbt_collision_world}{bt\+Collision\+World}}}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries bt\+Collision\+World} (\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher, \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*}broadphase\+Pair\+Cache, \mbox{\hyperlink{classbt_collision_configuration}{bt\+Collision\+Configuration}} \texorpdfstring{$\ast$}{*}collision\+Configuration)
+\begin{DoxyCompactList}\small\item\em for debug drawing \end{DoxyCompactList}\item 
+void {\bfseries set\+Broadphase} (\mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*}pair\+Cache)
+\item 
+const \mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Broadphase} () const
+\item 
+\mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Broadphase} ()
+\item 
+\mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Pair\+Cache} ()
+\item 
+\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Dispatcher} ()
+\item 
+const \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Dispatcher} () const
+\item 
+void {\bfseries update\+Single\+Aabb} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}col\+Obj)
+\item 
+virtual void {\bfseries update\+Aabbs} ()
+\item 
+virtual void \mbox{\hyperlink{classbt_collision_world_afb32fb7ecb40aa6247fd3df18ba81098}{compute\+Overlapping\+Pairs}} ()
+\item 
+virtual void {\bfseries set\+Debug\+Drawer} (\mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*}debug\+Drawer)
+\item 
+virtual \mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Debug\+Drawer} ()
+\item 
+virtual void \mbox{\hyperlink{classbt_collision_world_ac1ca6489c220005798069152c3df0d08}{debug\+Draw\+Object}} (const bt\+Transform \&world\+Transform, const bt\+Collision\+Shape \texorpdfstring{$\ast$}{*}shape, const bt\+Vector3 \&color)
+\item 
+int {\bfseries get\+Num\+Collision\+Objects} () const
+\item 
+virtual void \mbox{\hyperlink{classbt_collision_world_a01fb1f5ff8a93c11f0c6837d225ae4b7}{ray\+Test}} (const bt\+Vector3 \&ray\+From\+World, const bt\+Vector3 \&ray\+To\+World, \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{Ray\+Result\+Callback}} \&result\+Callback) const
+\item 
+void \mbox{\hyperlink{classbt_collision_world_a8dcdf201fe1c98c633682cf3845d237f}{convex\+Sweep\+Test}} (const bt\+Convex\+Shape \texorpdfstring{$\ast$}{*}cast\+Shape, const bt\+Transform \&from, const bt\+Transform \&to, \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{Convex\+Result\+Callback}} \&result\+Callback, bt\+Scalar allowed\+Ccd\+Penetration=bt\+Scalar(0.)) const
+\item 
+void \mbox{\hyperlink{classbt_collision_world_ae1d167b53de82d4f97a47118f8480999}{contact\+Test}} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}col\+Obj, \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{Contact\+Result\+Callback}} \&result\+Callback)
+\item 
+void \mbox{\hyperlink{classbt_collision_world_aabbec542dcd348041db6d07b36a640c8}{contact\+Pair\+Test}} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}col\+ObjA, bt\+Collision\+Object \texorpdfstring{$\ast$}{*}col\+ObjB, \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{Contact\+Result\+Callback}} \&result\+Callback)
+\item 
+virtual void {\bfseries add\+Collision\+Object} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}collision\+Object, int collision\+Filter\+Group=bt\+Broadphase\+Proxy\+::\+Default\+Filter, int collision\+Filter\+Mask=bt\+Broadphase\+Proxy\+::\+All\+Filter)
+\item 
+virtual void {\bfseries refresh\+Broadphase\+Proxy} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}collision\+Object)
+\item 
+\mbox{\hyperlink{classbt_aligned_object_array}{bt\+Collision\+Object\+Array}} \& {\bfseries get\+Collision\+Object\+Array} ()
+\item 
+const \mbox{\hyperlink{classbt_aligned_object_array}{bt\+Collision\+Object\+Array}} \& {\bfseries get\+Collision\+Object\+Array} () const
+\item 
+virtual void \mbox{\hyperlink{classbt_collision_world_a4e995146fe0b4ba6ea0024c1ea0380c3}{remove\+Collision\+Object}} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}collision\+Object)
+\item 
+virtual void {\bfseries perform\+Discrete\+Collision\+Detection} ()
+\item 
+\mbox{\hyperlink{structbt_dispatcher_info}{bt\+Dispatcher\+Info}} \& {\bfseries get\+Dispatch\+Info} ()
+\item 
+const \mbox{\hyperlink{structbt_dispatcher_info}{bt\+Dispatcher\+Info}} \& {\bfseries get\+Dispatch\+Info} () const
+\item 
+bool {\bfseries get\+Force\+Update\+All\+Aabbs} () const
+\item 
+void {\bfseries set\+Force\+Update\+All\+Aabbs} (bool force\+Update\+All\+Aabbs)
+\item 
+virtual void {\bfseries serialize} (\mbox{\hyperlink{classbt_serializer}{bt\+Serializer}} \texorpdfstring{$\ast$}{*}serializer)
+\begin{DoxyCompactList}\small\item\em Preliminary serialization test for Bullet 2.\+76. Loading those files requires a separate parser (Bullet/\+Demos/\+Serialize\+Demo) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_dynamics_world_a705c6e3e8c08da630f5c6ad47fb0956e}\label{classbt_dynamics_world_a705c6e3e8c08da630f5c6ad47fb0956e} 
+bt\+Internal\+Tick\+Callback {\bfseries m\+\_\+internal\+Tick\+Callback}
+\item 
+\Hypertarget{classbt_dynamics_world_a72c993a0878ed549579516b9e123b87a}\label{classbt_dynamics_world_a72c993a0878ed549579516b9e123b87a} 
+bt\+Internal\+Tick\+Callback {\bfseries m\+\_\+internal\+Pre\+Tick\+Callback}
+\item 
+\Hypertarget{classbt_dynamics_world_ad1938eab3c06e3c85d3739eb2b7a5d4c}\label{classbt_dynamics_world_ad1938eab3c06e3c85d3739eb2b7a5d4c} 
+void \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+world\+User\+Info}
+\item 
+\Hypertarget{classbt_dynamics_world_a3e879581a620599c279b64bedaf8d583}\label{classbt_dynamics_world_a3e879581a620599c279b64bedaf8d583} 
+\mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} {\bfseries m\+\_\+solver\+Info}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{classbt_collision_world}{bt\+Collision\+World}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ bt\+Collision\+Object \texorpdfstring{$\ast$}{*} $>$ {\bfseries m\+\_\+collision\+Objects}
+\item 
+\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+dispatcher1}
+\item 
+\mbox{\hyperlink{structbt_dispatcher_info}{bt\+Dispatcher\+Info}} {\bfseries m\+\_\+dispatch\+Info}
+\item 
+\mbox{\hyperlink{classbt_broadphase_interface}{bt\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+broadphase\+Pair\+Cache}
+\item 
+\mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+debug\+Drawer}
+\item 
+bool \mbox{\hyperlink{classbt_collision_world_a91b110fc2501b965cdcaa2a6e1d89999}{m\+\_\+force\+Update\+All\+Aabbs}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Static Public Member Functions inherited from \mbox{\hyperlink{classbt_collision_world}{bt\+Collision\+World}}}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{classbt_collision_world_aca2a9413508b4a2449fe83ff93ea564e}{ray\+Test\+Single}} (const bt\+Transform \&ray\+From\+Trans, const bt\+Transform \&ray\+To\+Trans, bt\+Collision\+Object \texorpdfstring{$\ast$}{*}collision\+Object, const bt\+Collision\+Shape \texorpdfstring{$\ast$}{*}collision\+Shape, const bt\+Transform \&col\+Obj\+World\+Transform, \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{Ray\+Result\+Callback}} \&result\+Callback)
+\item 
+static void \mbox{\hyperlink{classbt_collision_world_a84bbeea09de9dc5c68e49826e58f7114}{ray\+Test\+Single\+Internal}} (const bt\+Transform \&ray\+From\+Trans, const bt\+Transform \&ray\+To\+Trans, const \mbox{\hyperlink{structbt_collision_object_wrapper}{bt\+Collision\+Object\+Wrapper}} \texorpdfstring{$\ast$}{*}collision\+Object\+Wrap, \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{Ray\+Result\+Callback}} \&result\+Callback)
+\item 
+static void {\bfseries object\+Query\+Single} (const bt\+Convex\+Shape \texorpdfstring{$\ast$}{*}cast\+Shape, const bt\+Transform \&ray\+From\+Trans, const bt\+Transform \&ray\+To\+Trans, bt\+Collision\+Object \texorpdfstring{$\ast$}{*}collision\+Object, const bt\+Collision\+Shape \texorpdfstring{$\ast$}{*}collision\+Shape, const bt\+Transform \&col\+Obj\+World\+Transform, \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{Convex\+Result\+Callback}} \&result\+Callback, bt\+Scalar allowed\+Penetration)
+\begin{DoxyCompactList}\small\item\em object\+Query\+Single performs a collision detection query and calls the result\+Callback. It is used internally by ray\+Test. \end{DoxyCompactList}\item 
+static void {\bfseries object\+Query\+Single\+Internal} (const bt\+Convex\+Shape \texorpdfstring{$\ast$}{*}cast\+Shape, const bt\+Transform \&convex\+From\+Trans, const bt\+Transform \&convex\+To\+Trans, const \mbox{\hyperlink{structbt_collision_object_wrapper}{bt\+Collision\+Object\+Wrapper}} \texorpdfstring{$\ast$}{*}col\+Obj\+Wrap, \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{Convex\+Result\+Callback}} \&result\+Callback, bt\+Scalar allowed\+Penetration)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{classbt_collision_world}{bt\+Collision\+World}}}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classbt_collision_world_aeed5861d66035fa72f40e27b04bdc056}{serialize\+Collision\+Objects}} (\mbox{\hyperlink{classbt_serializer}{bt\+Serializer}} \texorpdfstring{$\ast$}{*}serializer)
+\item 
+void {\bfseries serialize\+Contact\+Manifolds} (\mbox{\hyperlink{classbt_serializer}{bt\+Serializer}} \texorpdfstring{$\ast$}{*}serializer)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxylink{classbt_dynamics_world}{bt\+Dynamics\+World} is the interface class for several dynamics implementation, basic, discrete, parallel, and continuous etc. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_dynamics_world_a9a9d474cc43c25095cd32e1c3332152a}\label{classbt_dynamics_world_a9a9d474cc43c25095cd32e1c3332152a} 
+\index{btDynamicsWorld@{btDynamicsWorld}!clearForces@{clearForces}}
+\index{clearForces@{clearForces}!btDynamicsWorld@{btDynamicsWorld}}
+\doxysubsubsection{\texorpdfstring{clearForces()}{clearForces()}}
+{\footnotesize\ttfamily virtual void bt\+Dynamics\+World\+::clear\+Forces (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{classbt_simple_dynamics_world_ac44c80444f4d6d4e3c2955dd43b7a93a}{bt\+Simple\+Dynamics\+World}}.
+
+\Hypertarget{classbt_dynamics_world_a392b087f91a91a9b46a63ac790f72b80}\label{classbt_dynamics_world_a392b087f91a91a9b46a63ac790f72b80} 
+\index{btDynamicsWorld@{btDynamicsWorld}!debugDrawWorld@{debugDrawWorld}}
+\index{debugDrawWorld@{debugDrawWorld}!btDynamicsWorld@{btDynamicsWorld}}
+\doxysubsubsection{\texorpdfstring{debugDrawWorld()}{debugDrawWorld()}}
+{\footnotesize\ttfamily virtual void bt\+Dynamics\+World\+::debug\+Draw\+World (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{classbt_collision_world}{bt\+Collision\+World}}.
+
+\Hypertarget{classbt_dynamics_world_a5ab26a0d6e8b2b21fbde2ed8f8dd6294}\label{classbt_dynamics_world_a5ab26a0d6e8b2b21fbde2ed8f8dd6294} 
+\index{btDynamicsWorld@{btDynamicsWorld}!stepSimulation@{stepSimulation}}
+\index{stepSimulation@{stepSimulation}!btDynamicsWorld@{btDynamicsWorld}}
+\doxysubsubsection{\texorpdfstring{stepSimulation()}{stepSimulation()}}
+{\footnotesize\ttfamily virtual int bt\+Dynamics\+World\+::step\+Simulation (\begin{DoxyParamCaption}\item[{bt\+Scalar}]{time\+Step,  }\item[{int}]{max\+Sub\+Steps = {\ttfamily 1},  }\item[{bt\+Scalar}]{fixed\+Time\+Step = {\ttfamily btScalar(1.)/btScalar(60.)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+step\+Simulation proceeds the simulation over \textquotesingle{}time\+Step\textquotesingle{}, units in preferably in seconds. By default, Bullet will subdivide the timestep in constant substeps of each \textquotesingle{}fixed\+Time\+Step\textquotesingle{}. in order to keep the simulation real-\/time, the maximum number of substeps can be clamped to \textquotesingle{}max\+Sub\+Steps\textquotesingle{}. You can disable subdividing the timestep/substepping by passing max\+Sub\+Steps=0 as second argument to step\+Simulation, but in that case you have to keep the time\+Step constant. 
+
+Implemented in \mbox{\hyperlink{classbt_simple_dynamics_world_af6b4810b5018cbaf09f82839111a243d}{bt\+Simple\+Dynamics\+World}}.
+
+\Hypertarget{classbt_dynamics_world_aed92a7b6bc477b60d50988a048eaa5a6}\label{classbt_dynamics_world_aed92a7b6bc477b60d50988a048eaa5a6} 
+\index{btDynamicsWorld@{btDynamicsWorld}!synchronizeMotionStates@{synchronizeMotionStates}}
+\index{synchronizeMotionStates@{synchronizeMotionStates}!btDynamicsWorld@{btDynamicsWorld}}
+\doxysubsubsection{\texorpdfstring{synchronizeMotionStates()}{synchronizeMotionStates()}}
+{\footnotesize\ttfamily virtual void bt\+Dynamics\+World\+::synchronize\+Motion\+States (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{classbt_simple_dynamics_world_a91e996f5ce6e465e805565ee0ba14824}{bt\+Simple\+Dynamics\+World}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Dynamics/\+Dynamics/bt\+Dynamics\+World.\+h\end{DoxyCompactItemize}

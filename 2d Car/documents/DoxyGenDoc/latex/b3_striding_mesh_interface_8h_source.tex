@@ -1,0 +1,148 @@
+\doxysection{b3\+Striding\+Mesh\+Interface.\+h}
+\hypertarget{b3_striding_mesh_interface_8h_source}{}\label{b3_striding_mesh_interface_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/NarrowphaseCollision/b3StridingMeshInterface.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/NarrowphaseCollision/b3StridingMeshInterface.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ B3\_STRIDING\_MESHINTERFACE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ B3\_STRIDING\_MESHINTERFACE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Vector3.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}b3TriangleCallback.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\#include\ "{}b3ConcaveShape.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{enum}\ PHY\_ScalarType}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ PHY\_FLOAT,}
+\DoxyCodeLine{00026\ \ \ \ \ PHY\_DOUBLE,}
+\DoxyCodeLine{00027\ \ \ \ \ PHY\_INTEGER,}
+\DoxyCodeLine{00028\ \ \ \ \ PHY\_SHORT,}
+\DoxyCodeLine{00029\ \ \ \ \ PHY\_FIXEDPOINT88,}
+\DoxyCodeLine{00030\ \ \ \ \ PHY\_UCHAR}
+\DoxyCodeLine{00031\ \};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00036\ B3\_ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00037\ b3StridingMeshInterface}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00040\ \ \ \ \ b3Vector3\ m\_scaling;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00043\ \ \ \ \ B3\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ b3StridingMeshInterface()\ :\ m\_scaling(b3MakeVector3(b3Scalar(1.),\ b3Scalar(1.),\ b3Scalar(1.)))}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~b3StridingMeshInterface();}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ InternalProcessAllTriangles(\mbox{\hyperlink{classb3_internal_triangle_index_callback}{b3InternalTriangleIndexCallback}}\ *\ callback,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateAabbBruteForce(b3Vector3\ \&\ aabbMin,\ b3Vector3\ \&\ aabbMax);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getLockedVertexIndexBase(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ vertexbase,\ \textcolor{keywordtype}{int}\&\ numverts,\ PHY\_ScalarType\&\ type,\ \textcolor{keywordtype}{int}\&\ stride,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ indexbase,\ \textcolor{keywordtype}{int}\&\ indexstride,\ \textcolor{keywordtype}{int}\&\ numfaces,\ PHY\_ScalarType\&\ indicestype,\ \textcolor{keywordtype}{int}\ subpart\ =\ 0)\ =\ 0;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getLockedReadOnlyVertexIndexBase(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ vertexbase,\ \textcolor{keywordtype}{int}\&\ numverts,\ PHY\_ScalarType\&\ type,\ \textcolor{keywordtype}{int}\&\ stride,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ indexbase,\ \textcolor{keywordtype}{int}\&\ indexstride,\ \textcolor{keywordtype}{int}\&\ numfaces,\ PHY\_ScalarType\&\ indicestype,\ \textcolor{keywordtype}{int}\ subpart\ =\ 0)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ unLockVertexBase(\textcolor{keywordtype}{int}\ subpart)\ =\ 0;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ unLockReadOnlyVertexBase(\textcolor{keywordtype}{int}\ subpart)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumSubParts()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preallocateVertices(\textcolor{keywordtype}{int}\ numverts)\ =\ 0;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ preallocateIndices(\textcolor{keywordtype}{int}\ numindices)\ =\ 0;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ hasPremadeAabb()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPremadeAabb(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00080\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ (void)aabbMin;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ (void)aabbMax;}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getPremadeAabb(b3Vector3\ *\ aabbMin,\ b3Vector3\ *\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00085\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ (void)aabbMin;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ (void)aabbMax;}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keyword}{const}\ b3Vector3\&\ getScaling()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_scaling;}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{void}\ setScaling(\textcolor{keyword}{const}\ b3Vector3\&\ scaling)}
+\DoxyCodeLine{00095\ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ m\_scaling\ =\ scaling;}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{//virtual\ \ \ const\ char*\ serialize(void*\ dataBuffer,\ b3Serializer*\ serializer)\ const;}}
+\DoxyCodeLine{00103\ \};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_int_index_data}{b3IntIndexData}}}
+\DoxyCodeLine{00106\ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_value;}
+\DoxyCodeLine{00108\ \};}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_short_int_index_data}{b3ShortIntIndexData}}}
+\DoxyCodeLine{00111\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{short}\ m\_value;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_pad[2];}
+\DoxyCodeLine{00114\ \};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_short_int_index_triplet_data}{b3ShortIntIndexTripletData}}}
+\DoxyCodeLine{00117\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{short}\ m\_values[3];}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_pad[2];}
+\DoxyCodeLine{00120\ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_char_index_triplet_data}{b3CharIndexTripletData}}}
+\DoxyCodeLine{00123\ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ m\_values[3];}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_pad;}
+\DoxyCodeLine{00126\ \};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00129\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_mesh_part_data}{b3MeshPartData}}}
+\DoxyCodeLine{00130\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}*\ m\_vertices3f;}
+\DoxyCodeLine{00132\ \ \ \ \ \mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}*\ m\_vertices3d;}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{structb3_int_index_data}{b3IntIndexData}}*\ m\_indices32;}
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{structb3_short_int_index_triplet_data}{b3ShortIntIndexTripletData}}*\ m\_3indices16;}
+\DoxyCodeLine{00136\ \ \ \ \ \mbox{\hyperlink{structb3_char_index_triplet_data}{b3CharIndexTripletData}}*\ m\_3indices8;}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{structb3_short_int_index_data}{b3ShortIntIndexData}}*\ m\_indices16;\ \ \textcolor{comment}{//backwards\ compatibility}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numTriangles;\ \ \textcolor{comment}{//length\ of\ m\_indices\ =\ m\_numTriangles}}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numVertices;}
+\DoxyCodeLine{00142\ \};}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00145\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_striding_mesh_interface_data}{b3StridingMeshInterfaceData}}}
+\DoxyCodeLine{00146\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \mbox{\hyperlink{structb3_mesh_part_data}{b3MeshPartData}}*\ m\_meshPartsPtr;}
+\DoxyCodeLine{00148\ \ \ \ \ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}\ m\_scaling;}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numMeshParts;}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_padding[4];}
+\DoxyCodeLine{00151\ \};}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ b3StridingMeshInterface::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00154\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structb3_striding_mesh_interface_data}{b3StridingMeshInterfaceData}});}
+\DoxyCodeLine{00156\ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_STRIDING\_MESHINTERFACE\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,121 @@
+\doxysection{bt\+Wheel\+Info.\+h}
+\hypertarget{bt_wheel_info_8h_source}{}\label{bt_wheel_info_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Vehicle/btWheelInfo.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Vehicle/btWheelInfo.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2005\ Erwin\ Coumans\ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Permission\ to\ use,\ copy,\ modify,\ distribute\ and\ sell\ this\ software}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ and\ its\ documentation\ for\ any\ purpose\ is\ hereby\ granted\ without\ fee,}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ provided\ that\ the\ above\ copyright\ notice\ appear\ in\ all\ copies.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Erwin\ Coumans\ makes\ no\ representations\ about\ the\ suitability\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ of\ this\ software\ for\ any\ purpose.\ \ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ It\ is\ provided\ "{}as\ is"{}\ without\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ BT\_WHEEL\_INFO\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ BT\_WHEEL\_INFO\_H}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_wheel_info_construction_info}{btWheelInfoConstructionInfo}}}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ btVector3\ m\_chassisConnectionCS;}
+\DoxyCodeLine{00022\ \ \ \ \ btVector3\ m\_wheelDirectionCS;}
+\DoxyCodeLine{00023\ \ \ \ \ btVector3\ m\_wheelAxleCS;}
+\DoxyCodeLine{00024\ \ \ \ \ btScalar\ m\_suspensionRestLength;}
+\DoxyCodeLine{00025\ \ \ \ \ btScalar\ m\_maxSuspensionTravelCm;}
+\DoxyCodeLine{00026\ \ \ \ \ btScalar\ m\_wheelRadius;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ btScalar\ m\_suspensionStiffness;}
+\DoxyCodeLine{00029\ \ \ \ \ btScalar\ m\_wheelsDampingCompression;}
+\DoxyCodeLine{00030\ \ \ \ \ btScalar\ m\_wheelsDampingRelaxation;}
+\DoxyCodeLine{00031\ \ \ \ \ btScalar\ m\_frictionSlip;}
+\DoxyCodeLine{00032\ \ \ \ \ btScalar\ m\_maxSuspensionForce;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_bIsFrontWheel;}
+\DoxyCodeLine{00034\ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_wheel_info_1_1_raycast_info}{RaycastInfo}}}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{comment}{//set\ by\ raycaster}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ btVector3\ m\_contactNormalWS;\ \ \textcolor{comment}{//contactnormal}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ btVector3\ m\_contactPointWS;\ \ \ \textcolor{comment}{//raycast\ hitpoint}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ btScalar\ m\_suspensionLength;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ btVector3\ m\_hardPointWS;\ \ \ \ \ \ \ \textcolor{comment}{//raycast\ starting\ point}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ btVector3\ m\_wheelDirectionWS;\ \ \textcolor{comment}{//direction\ in\ worldspace}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ btVector3\ m\_wheelAxleWS;\ \ \ \ \ \ \ \textcolor{comment}{//\ axle\ in\ worldspace}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_isInContact;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_groundObject;\ \ \textcolor{comment}{//could\ be\ general\ void*\ ptr}}
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info_1_1_raycast_info}{RaycastInfo}}\ m\_raycastInfo;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ btTransform\ m\_worldTransform;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ btVector3\ m\_chassisConnectionPointCS;\ \ \textcolor{comment}{//const}}
+\DoxyCodeLine{00057\ \ \ \ \ btVector3\ m\_wheelDirectionCS;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//const}}
+\DoxyCodeLine{00058\ \ \ \ \ btVector3\ m\_wheelAxleCS;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ const\ or\ modified\ by\ steering}}
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ m\_suspensionRestLength1;\ \ \ \ \ \ \textcolor{comment}{//const}}
+\DoxyCodeLine{00060\ \ \ \ \ btScalar\ m\_maxSuspensionTravelCm;}
+\DoxyCodeLine{00061\ \ \ \ \ btScalar\ getSuspensionRestLength()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00062\ \ \ \ \ btScalar\ m\_wheelsRadius;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//const}}
+\DoxyCodeLine{00063\ \ \ \ \ btScalar\ m\_suspensionStiffness;\ \ \ \ \ \ \ \textcolor{comment}{//const}}
+\DoxyCodeLine{00064\ \ \ \ \ btScalar\ m\_wheelsDampingCompression;\ \ \textcolor{comment}{//const}}
+\DoxyCodeLine{00065\ \ \ \ \ btScalar\ m\_wheelsDampingRelaxation;\ \ \ \textcolor{comment}{//const}}
+\DoxyCodeLine{00066\ \ \ \ \ btScalar\ m\_frictionSlip;}
+\DoxyCodeLine{00067\ \ \ \ \ btScalar\ m\_steering;}
+\DoxyCodeLine{00068\ \ \ \ \ btScalar\ m\_rotation;}
+\DoxyCodeLine{00069\ \ \ \ \ btScalar\ m\_deltaRotation;}
+\DoxyCodeLine{00070\ \ \ \ \ btScalar\ m\_rollInfluence;}
+\DoxyCodeLine{00071\ \ \ \ \ btScalar\ m\_maxSuspensionForce;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ btScalar\ m\_engineForce;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ btScalar\ m\_brake;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_bIsFrontWheel;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_clientInfo;\ \ \textcolor{comment}{//can\ be\ used\ to\ store\ pointer\ to\ sync\ transforms...}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}()\ \{\}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}(\mbox{\hyperlink{structbt_wheel_info_construction_info}{btWheelInfoConstructionInfo}}\&\ ci)}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ m\_suspensionRestLength1\ =\ ci.m\_suspensionRestLength;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ m\_maxSuspensionTravelCm\ =\ ci.m\_maxSuspensionTravelCm;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ m\_wheelsRadius\ =\ ci.m\_wheelRadius;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ m\_suspensionStiffness\ =\ ci.m\_suspensionStiffness;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ m\_wheelsDampingCompression\ =\ ci.m\_wheelsDampingCompression;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ m\_wheelsDampingRelaxation\ =\ ci.m\_wheelsDampingRelaxation;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ m\_chassisConnectionPointCS\ =\ ci.m\_chassisConnectionCS;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ m\_wheelDirectionCS\ =\ ci.m\_wheelDirectionCS;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ m\_wheelAxleCS\ =\ ci.m\_wheelAxleCS;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ m\_frictionSlip\ =\ ci.m\_frictionSlip;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ m\_steering\ =\ btScalar(0.);}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ m\_engineForce\ =\ btScalar(0.);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ m\_rotation\ =\ btScalar(0.);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ m\_deltaRotation\ =\ btScalar(0.);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ m\_brake\ =\ btScalar(0.);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ m\_rollInfluence\ =\ btScalar(0.1);}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ m\_bIsFrontWheel\ =\ ci.m\_bIsFrontWheel;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ m\_maxSuspensionForce\ =\ ci.m\_maxSuspensionForce;}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ updateWheel(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ chassis,\ RaycastInfo\&\ raycastInfo);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ btScalar\ m\_clippedInvContactDotSuspension;}
+\DoxyCodeLine{00110\ \ \ \ \ btScalar\ m\_suspensionRelativeVelocity;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//calculated\ by\ suspension}}
+\DoxyCodeLine{00112\ \ \ \ \ btScalar\ m\_wheelsSuspensionForce;}
+\DoxyCodeLine{00113\ \ \ \ \ btScalar\ m\_skidInfo;}
+\DoxyCodeLine{00114\ \};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_WHEEL\_INFO\_H}}
+
+\end{DoxyCode}

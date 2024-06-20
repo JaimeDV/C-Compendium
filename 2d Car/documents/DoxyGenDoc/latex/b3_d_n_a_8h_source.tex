@@ -1,0 +1,107 @@
+\doxysection{b3\+DNA.\+h}
+\hypertarget{b3_d_n_a_8h_source}{}\label{b3_d_n_a_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Serialize/Bullet2FileLoader/b3DNA.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Serialize/Bullet2FileLoader/b3DNA.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{bParse}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2006-\/2009\ Charlie\ C\ \&\ Erwin\ Coumans\ \ http://gamekit.googlecode.com}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ \_\_BDNA\_H\_\_}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ \_\_BDNA\_H\_\_}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}b3Common.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{namespace\ }bParse}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb_parse_1_1b_name_info}{bNameInfo}}}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{char}\ *m\_name;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_isPointer;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_dim0;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_dim1;}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb_parse_1_1b_d_n_a}{bDNA}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{classb_parse_1_1b_d_n_a}{bDNA}}();}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{classb_parse_1_1b_d_n_a}{\string~bDNA}}();}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ init(\textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{int}\ len,\ \textcolor{keywordtype}{bool}\ swap\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{int}\ getArraySize(\textcolor{keywordtype}{char}\ *str);}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{int}\ getArraySizeNew(\textcolor{keywordtype}{short}\ name)}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb_parse_1_1b_name_info}{bNameInfo}}\ \&nameInfo\ =\ m\_Names[name];}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ nameInfo.m\_dim0\ *\ nameInfo.m\_dim1;}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ getElementSize(\textcolor{keywordtype}{short}\ type,\ \textcolor{keywordtype}{short}\ name)}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb_parse_1_1b_name_info}{bNameInfo}}\ \&nameInfo\ =\ m\_Names[name];}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ size\ =\ nameInfo.m\_isPointer\ ?\ mPtrLen\ *\ nameInfo.m\_dim0\ *\ nameInfo.m\_dim1\ :\ mTlens[type]\ *\ nameInfo.m\_dim0\ *\ nameInfo.m\_dim1;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ size;}
+\DoxyCodeLine{00050\ \ \ \ \ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumNames()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_Names.size();}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{char}\ *getName(\textcolor{keywordtype}{int}\ ind);}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{char}\ *getType(\textcolor{keywordtype}{int}\ ind);}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{short}\ *getStruct(\textcolor{keywordtype}{int}\ ind);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{short}\ getLength(\textcolor{keywordtype}{int}\ ind);}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{int}\ getReverseType(\textcolor{keywordtype}{short}\ type);}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ getReverseType(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *type);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumStructs();}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ lessThan(\mbox{\hyperlink{classb_parse_1_1b_d_n_a}{bDNA}}\ *other);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ initCmpFlags(\mbox{\hyperlink{classb_parse_1_1b_d_n_a}{bDNA}}\ *memDNA);}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ flagNotEqual(\textcolor{keywordtype}{int}\ dna\_nr);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{bool}\ flagEqual(\textcolor{keywordtype}{int}\ dna\_nr);}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{bool}\ flagNone(\textcolor{keywordtype}{int}\ dna\_nr);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{int}\ getPointerSize();}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ dumpTypeDefinitions();}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{enum}\ FileDNAFlags}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ FDF\_NONE\ =\ 0,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ FDF\_STRUCT\_NEQU,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ FDF\_STRUCT\_EQU}
+\DoxyCodeLine{00084\ \ \ \ \ \};}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{void}\ initRecurseCmpFlags(\textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ mCMPFlags;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<bNameInfo>}}\ m\_Names;}
+\DoxyCodeLine{00091\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<char\ *>}}\ mTypes;}
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<short\ *>}}\ mStructs;}
+\DoxyCodeLine{00093\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<short>}}\ mTlens;}
+\DoxyCodeLine{00094\ \ \ \ \ \mbox{\hyperlink{classb3_hash_map}{b3HashMap<b3HashInt,\ int>}}\ mStructReverse;}
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{classb3_hash_map}{b3HashMap<b3HashString,\ int>}}\ mTypeLookup;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{int}\ mPtrLen;}
+\DoxyCodeLine{00098\ \};}
+\DoxyCodeLine{00099\ \}\ \ \textcolor{comment}{//\ namespace\ bParse}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\_\_BDNA\_H\_\_}}
+
+\end{DoxyCode}

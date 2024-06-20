@@ -1,0 +1,159 @@
+\doxysection{bt\+Contact\+Constraint.\+cpp}
+\hypertarget{bt_contact_constraint_8cpp_source}{}\label{bt_contact_constraint_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btContactConstraint.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btContactConstraint.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btContactConstraint.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btJacobianEntry.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btContactSolverInfo.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btMinMax.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"{}}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ btContactConstraint::btContactConstraint(btPersistentManifold*\ contactManifold,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbB)}
+\DoxyCodeLine{00025\ \ \ \ \ :\ btTypedConstraint(CONTACT\_CONSTRAINT\_TYPE,\ rbA,\ rbB),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ m\_contactManifold(*contactManifold)}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ btContactConstraint::\string~btContactConstraint()}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ btContactConstraint::setContactManifold(btPersistentManifold*\ contactManifold)}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ m\_contactManifold\ =\ *contactManifold;}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ btContactConstraint::getInfo1(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}*\ info)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ btContactConstraint::getInfo2(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}*\ info)}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ btContactConstraint::buildJacobian()}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#include\ "{}btContactConstraint.h"{}}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ "{}btJacobianEntry.h"{}}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#include\ "{}btContactSolverInfo.h"{}}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btMinMax.h"{}}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"{}}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{//response\ \ between\ two\ dynamic\ objects\ without\ friction\ and\ no\ restitution,\ assuming\ 0\ penetration\ depth}}
+\DoxyCodeLine{00060\ btScalar\ resolveSingleCollision(}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body1,}
+\DoxyCodeLine{00062\ \ \ \ \ btCollisionObject*\ colObj2,}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ contactPositionWorld,}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ contactNormalOnB,}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ solverInfo,}
+\DoxyCodeLine{00066\ \ \ \ \ btScalar\ distance)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body2\ =\ \mbox{\hyperlink{classbt_rigid_body_ae4867a6bafb413e3a2e18dd1de125042}{btRigidBody::upcast}}(colObj2);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ normal\ =\ contactNormalOnB;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ btVector3\ rel\_pos1\ =\ contactPositionWorld\ -\/\ body1-\/>getWorldTransform().getOrigin();}
+\DoxyCodeLine{00073\ \ \ \ \ btVector3\ rel\_pos2\ =\ contactPositionWorld\ -\/\ colObj2-\/>getWorldTransform().getOrigin();}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ btVector3\ vel1\ =\ body1-\/>getVelocityInLocalPoint(rel\_pos1);}
+\DoxyCodeLine{00076\ \ \ \ \ btVector3\ vel2\ =\ body2\ ?\ body2-\/>getVelocityInLocalPoint(rel\_pos2)\ :\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00077\ \ \ \ \ btVector3\ vel\ =\ vel1\ -\/\ vel2;}
+\DoxyCodeLine{00078\ \ \ \ \ btScalar\ rel\_vel;}
+\DoxyCodeLine{00079\ \ \ \ \ rel\_vel\ =\ normal.dot(vel);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ btScalar\ combinedRestitution\ =\ 0.f;}
+\DoxyCodeLine{00082\ \ \ \ \ btScalar\ restitution\ =\ combinedRestitution\ *\ -\/rel\_vel;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ btScalar\ positionalError\ =\ solverInfo.m\_erp\ *\ -\/distance\ /\ solverInfo.m\_timeStep;}
+\DoxyCodeLine{00085\ \ \ \ \ btScalar\ velocityError\ =\ -\/(1.0f\ +\ restitution)\ *\ rel\_vel;\ \ \textcolor{comment}{//\ *\ damping;}}
+\DoxyCodeLine{00086\ \ \ \ \ btScalar\ denom0\ =\ body1-\/>computeImpulseDenominator(contactPositionWorld,\ normal);}
+\DoxyCodeLine{00087\ \ \ \ \ btScalar\ denom1\ =\ body2\ ?\ body2-\/>computeImpulseDenominator(contactPositionWorld,\ normal)\ :\ 0.f;}
+\DoxyCodeLine{00088\ \ \ \ \ btScalar\ relaxation\ =\ 1.f;}
+\DoxyCodeLine{00089\ \ \ \ \ btScalar\ jacDiagABInv\ =\ relaxation\ /\ (denom0\ +\ denom1);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ btScalar\ penetrationImpulse\ =\ positionalError\ *\ jacDiagABInv;}
+\DoxyCodeLine{00092\ \ \ \ \ btScalar\ velocityImpulse\ =\ velocityError\ *\ jacDiagABInv;}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ btScalar\ normalImpulse\ =\ penetrationImpulse\ +\ velocityImpulse;}
+\DoxyCodeLine{00095\ \ \ \ \ normalImpulse\ =\ 0.f\ >\ normalImpulse\ ?\ 0.f\ :\ normalImpulse;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ body1-\/>applyImpulse(normal\ *\ (normalImpulse),\ rel\_pos1);}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{if}\ (body2)}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ body2-\/>applyImpulse(-\/normal\ *\ (normalImpulse),\ rel\_pos2);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{return}\ normalImpulse;}
+\DoxyCodeLine{00102\ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{comment}{//bilateral\ constraint\ between\ two\ dynamic\ objects}}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ resolveSingleBilateral(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ body1,\ \textcolor{keyword}{const}\ btVector3\&\ pos1,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ body2,\ \textcolor{keyword}{const}\ btVector3\&\ pos2,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ distance,\ \textcolor{keyword}{const}\ btVector3\&\ normal,\ btScalar\&\ impulse,\ btScalar\ timeStep)}
+\DoxyCodeLine{00108\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ (void)timeStep;}
+\DoxyCodeLine{00110\ \ \ \ \ (void)distance;}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ btScalar\ normalLenSqr\ =\ normal.length2();}
+\DoxyCodeLine{00113\ \ \ \ \ btAssert(btFabs(normalLenSqr)\ <\ btScalar(1.1));}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordflow}{if}\ (normalLenSqr\ >\ btScalar(1.1))}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ impulse\ =\ btScalar(0.);}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ btVector3\ rel\_pos1\ =\ pos1\ -\/\ body1.getCenterOfMassPosition();}
+\DoxyCodeLine{00120\ \ \ \ \ btVector3\ rel\_pos2\ =\ pos2\ -\/\ body2.getCenterOfMassPosition();}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{//this\ jacobian\ entry\ could\ be\ re-\/used\ for\ all\ iterations}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ btVector3\ vel1\ =\ body1.getVelocityInLocalPoint(rel\_pos1);}
+\DoxyCodeLine{00124\ \ \ \ \ btVector3\ vel2\ =\ body2.getVelocityInLocalPoint(rel\_pos2);}
+\DoxyCodeLine{00125\ \ \ \ \ btVector3\ vel\ =\ vel1\ -\/\ vel2;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ btJacobianEntry\ jac(body1.getCenterOfMassTransform().getBasis().transpose(),}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ body2.getCenterOfMassTransform().getBasis().transpose(),}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rel\_pos1,\ rel\_pos2,\ normal,\ body1.getInvInertiaDiagLocal(),\ body1.getInvMass(),}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ body2.getInvInertiaDiagLocal(),\ body2.getInvMass());}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ btScalar\ jacDiagAB\ =\ jac.getDiagonal();}
+\DoxyCodeLine{00133\ \ \ \ \ btScalar\ jacDiagABInv\ =\ btScalar(1.)\ /\ jacDiagAB;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ btScalar\ rel\_vel\ =\ jac.getRelativeVelocity(}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ body1.getLinearVelocity(),}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ body1.getCenterOfMassTransform().getBasis().transpose()\ *\ body1.getAngularVelocity(),}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ body2.getLinearVelocity(),}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ body2.getCenterOfMassTransform().getBasis().transpose()\ *\ body2.getAngularVelocity());}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ rel\_vel\ =\ normal.dot(vel);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{comment}{//todo:\ move\ this\ into\ proper\ structure}}
+\DoxyCodeLine{00144\ \ \ \ \ btScalar\ contactDamping\ =\ btScalar(0.2);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#ifdef\ ONLY\_USE\_LINEAR\_MASS}}
+\DoxyCodeLine{00147\ \ \ \ \ btScalar\ massTerm\ =\ btScalar(1.)\ /\ (body1.getInvMass()\ +\ body2.getInvMass());}
+\DoxyCodeLine{00148\ \ \ \ \ impulse\ =\ -\/contactDamping\ *\ rel\_vel\ *\ massTerm;}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00150\ \ \ \ \ btScalar\ velocityImpulse\ =\ -\/contactDamping\ *\ rel\_vel\ *\ jacDiagABInv;}
+\DoxyCodeLine{00151\ \ \ \ \ impulse\ =\ velocityImpulse;}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00153\ \}}
+
+\end{DoxyCode}

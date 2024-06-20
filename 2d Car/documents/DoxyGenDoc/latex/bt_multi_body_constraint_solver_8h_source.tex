@@ -1,0 +1,106 @@
+\doxysection{bt\+Multi\+Body\+Constraint\+Solver.\+h}
+\hypertarget{bt_multi_body_constraint_solver_8h_source}{}\label{bt_multi_body_constraint_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_MULTIBODY\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_MULTIBODY\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btMultiBodySolverConstraint.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ DIRECTLY\_UPDATE\_VELOCITY\_DURING\_SOLVER\_ITERATIONS}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }btMultiBody;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}btMultiBodyConstraint.h"{}}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00029\ btMultiBodyConstraintSolver\ :\ public\ btSequentialImpulseConstraintSolver}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}}\ m\_multiBodyNonContactConstraints;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}}\ m\_multiBodyNormalContactConstraints;}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}}\ m\_multiBodyFrictionContactConstraints;}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}}\ m\_multiBodyTorsionalFrictionContactConstraints;}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}}\ m\_multiBodySpinningFrictionContactConstraints;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\ m\_data;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{//temp\ storage\ for\ multi\ body\ constraints\ for\ a\ specific\ island/group\ called\ by\ 'solveGroup'}}
+\DoxyCodeLine{00042\ \ \ \ \ btMultiBodyConstraint**\ m\_tmpMultiBodyConstraints;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_tmpNumMultiBodyConstraints;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ btScalar\ resolveSingleConstraintRowGeneric(\textcolor{keyword}{const}\ btMultiBodySolverConstraint\&\ c);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//solve\ 2\ friction\ directions\ and\ clamp\ against\ the\ implicit\ friction\ cone}}
+\DoxyCodeLine{00048\ \ \ \ \ btScalar\ resolveConeFrictionConstraintRows(\textcolor{keyword}{const}\ btMultiBodySolverConstraint\&\ cA1,\ \textcolor{keyword}{const}\ btMultiBodySolverConstraint\&\ cB);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ convertContacts(btPersistentManifold\ *\ *manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ btMultiBodySolverConstraint\&\ addMultiBodyFrictionConstraint(\textcolor{keyword}{const}\ btVector3\&\ normalAxis,\ \textcolor{keyword}{const}\ btScalar\&\ appliedImpulse,\ btPersistentManifold*\ manifold,\ \textcolor{keywordtype}{int}\ frictionIndex,\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,\ btCollisionObject*\ colObj0,\ btCollisionObject*\ colObj1,\ btScalar\ relaxation,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ btScalar\ desiredVelocity\ =\ 0,\ btScalar\ cfmSlip\ =\ 0);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ btMultiBodySolverConstraint\&\ addMultiBodyTorsionalFrictionConstraint(\textcolor{keyword}{const}\ btVector3\&\ normalAxis,\ btPersistentManifold*\ manifold,\ \textcolor{keywordtype}{int}\ frictionIndex,\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ combinedTorsionalFriction,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj0,\ btCollisionObject*\ colObj1,\ btScalar\ relaxation,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ btScalar\ desiredVelocity\ =\ 0,\ btScalar\ cfmSlip\ =\ 0);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ btMultiBodySolverConstraint\&\ addMultiBodySpinningFrictionConstraint(\textcolor{keyword}{const}\ btVector3\&\ normalAxis,\ btPersistentManifold*\ manifold,\ \textcolor{keywordtype}{int}\ frictionIndex,\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ btScalar\ combinedTorsionalFriction,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj0,\ btCollisionObject*\ colObj1,\ btScalar\ relaxation,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ btScalar\ desiredVelocity\ =\ 0,\ btScalar\ cfmSlip\ =\ 0);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{void}\ setupMultiBodyJointLimitConstraint(btMultiBodySolverConstraint\ \&\ constraintRow,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ *\ jacA,\ btScalar\ *\ jacB,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ penetration,\ btScalar\ combinedFrictionCoeff,\ btScalar\ combinedRestitutionCoeff,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ setupMultiBodyContactConstraint(btMultiBodySolverConstraint\ \&\ solverConstraint,}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ contactNormal,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\&\ appliedImpulse,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\&\ relaxation,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isFriction,\ btScalar\ desiredVelocity\ =\ 0,\ btScalar\ cfmSlip\ =\ 0);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//either\ rolling\ or\ spinning\ friction}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ setupMultiBodyTorsionalFrictionConstraint(btMultiBodySolverConstraint\ \&\ solverConstraint,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ contactNormal,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ combinedTorsionalFriction,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\&\ relaxation,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isFriction,\ btScalar\ desiredVelocity\ =\ 0,\ btScalar\ cfmSlip\ =\ 0);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ convertMultiBodyContact(btPersistentManifold\ *\ manifold,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveGroupCacheFriendlySetup(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//\ \ virtual\ btScalar\ solveGroupCacheFriendlyIterations(btCollisionObject**\ bodies,int\ numBodies,btPersistentManifold**\ manifoldPtr,\ int\ numManifolds,btTypedConstraint**\ constraints,int\ numConstraints,const\ btContactSolverInfo\&\ infoGlobal,btIDebugDraw*\ debugDrawer);}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveSingleIteration(\textcolor{keywordtype}{int}\ iteration,\ btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ applyDeltaVee(btScalar\ *\ deltaV,\ btScalar\ impulse,\ \textcolor{keywordtype}{int}\ velocityIndex,\ \textcolor{keywordtype}{int}\ ndof);}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ writeBackSolverBodyToMultiBody(btMultiBodySolverConstraint\ \&\ constraint,\ btScalar\ deltaTime);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00092\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveGroup(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifold,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ info,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveGroupCacheFriendlyFinish(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveMultiBodyGroup(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifold,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ btMultiBodyConstraint**\ multiBodyConstraints,\ \textcolor{keywordtype}{int}\ numMultiBodyConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ info,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00099\ \};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MULTIBODY\_CONSTRAINT\_SOLVER\_H}}
+
+\end{DoxyCode}

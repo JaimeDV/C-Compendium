@@ -1,0 +1,236 @@
+\doxysection{bt\+Convex\+Hull.\+h}
+\hypertarget{bt_convex_hull_8h_source}{}\label{bt_convex_hull_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btConvexHull.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btConvexHull.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Stan\ Melax\ Convex\ Hull\ Computation}}
+\DoxyCodeLine{00004\ \textcolor{comment}{Copyright\ (c)\ 2008\ Stan\ Melax\ http://www.melax.com/}}
+\DoxyCodeLine{00005\ \textcolor{comment}{}}
+\DoxyCodeLine{00006\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00010\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{}}
+\DoxyCodeLine{00012\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ BT\_CD\_HULL\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ BT\_CD\_HULL\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}btVector3.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<unsigned\ int>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TUIntArray}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_hull_result}{HullResult}}}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{class_hull_result}{HullResult}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ mPolygons\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ mNumOutputVertices\ =\ 0;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ mNumFaces\ =\ 0;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ mNumIndices\ =\ 0;}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{bool}\ mPolygons;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ true\ if\ indices\ represents\ polygons,\ false\ indices\ are\ triangles}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mNumOutputVertices;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ number\ of\ vertices\ in\ the\ output\ hull}}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ m\_OutputVertices;\ \ \textcolor{comment}{//\ array\ of\ vertices}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mNumFaces;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ number\ of\ faces\ produced}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mNumIndices;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ total\ number\ of\ indices}}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<unsigned\ int>}}\ m\_Indices;\ \ \ \ \ \ \textcolor{comment}{//\ pointer\ to\ indices.}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{//\ If\ triangles,\ then\ indices\ are\ array\ indexes\ into\ the\ vertex\ list.}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{//\ If\ polygons,\ indices\ are\ in\ the\ form\ (number\ of\ points\ in\ face)\ (p1,\ p2,\ p3,\ ..)\ etc..}}
+\DoxyCodeLine{00046\ \};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{enum}\ HullFlag}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ QF\_TRIANGLES\ =\ (1\ <<\ 0),\ \ \ \ \ \ \textcolor{comment}{//\ report\ results\ as\ triangles,\ not\ polygons.}}
+\DoxyCodeLine{00051\ \ \ \ \ QF\_REVERSE\_ORDER\ =\ (1\ <<\ 1),\ \ \textcolor{comment}{//\ reverse\ order\ of\ the\ triangle\ indices.}}
+\DoxyCodeLine{00052\ \ \ \ \ QF\_DEFAULT\ =\ QF\_TRIANGLES}
+\DoxyCodeLine{00053\ \};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_hull_desc}{HullDesc}}}
+\DoxyCodeLine{00056\ \{}
+\DoxyCodeLine{00057\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{class_hull_desc}{HullDesc}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ mFlags\ =\ QF\_DEFAULT;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ mVcount\ =\ 0;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ mVertices\ =\ 0;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ mVertexStride\ =\ \textcolor{keyword}{sizeof}(btVector3);}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ mNormalEpsilon\ =\ 0.001f;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ mMaxVertices\ =\ 4096;\ \ \textcolor{comment}{//\ maximum\ number\ of\ points\ to\ be\ considered\ for\ a\ convex\ hull.}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ mMaxFaces\ =\ 4096;}
+\DoxyCodeLine{00067\ \ \ \ \ \};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{class_hull_desc}{HullDesc}}(HullFlag\ flag,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vcount,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ vertices,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ stride\ =\ \textcolor{keyword}{sizeof}(btVector3))}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ mFlags\ =\ flag;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ mVcount\ =\ vcount;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ mVertices\ =\ vertices;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ mVertexStride\ =\ stride;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ mNormalEpsilon\ =\ btScalar(0.001);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ mMaxVertices\ =\ 4096;}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{bool}\ HasHullFlag(HullFlag\ flag)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00083\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mFlags\ \&\ flag)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00086\ \ \ \ \ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ SetHullFlag(HullFlag\ flag)}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ mFlags\ |=\ flag;}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{void}\ ClearHullFlag(HullFlag\ flag)}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ mFlags\ \&=\ \string~flag;}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mFlags;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ flags\ to\ use\ when\ generating\ the\ convex\ hull.}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mVcount;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ number\ of\ vertices\ in\ the\ input\ point\ cloud}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ mVertices;\ \ \textcolor{comment}{//\ the\ array\ of\ vertices.}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mVertexStride;\ \ \textcolor{comment}{//\ the\ stride\ of\ each\ vertex,\ in\ bytes.}}
+\DoxyCodeLine{00102\ \ \ \ \ btScalar\ mNormalEpsilon;\ \ \ \ \ \textcolor{comment}{//\ the\ epsilon\ for\ removing\ duplicates.\ \ This\ is\ a\ normalized\ value,\ if\ normalized\ bit\ is\ on.}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mMaxVertices;\ \ \ \textcolor{comment}{//\ maximum\ number\ of\ vertices\ to\ be\ considered\ for\ the\ hull!}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mMaxFaces;}
+\DoxyCodeLine{00105\ \};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{keyword}{enum}\ HullError}
+\DoxyCodeLine{00108\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ QE\_OK,\ \ \ \textcolor{comment}{//\ success!}}
+\DoxyCodeLine{00110\ \ \ \ \ QE\_FAIL\ \ \textcolor{comment}{//\ failed.}}
+\DoxyCodeLine{00111\ \};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_plane}{btPlane}}}
+\DoxyCodeLine{00114\ \{}
+\DoxyCodeLine{00115\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00116\ \ \ \ \ btVector3\ normal;}
+\DoxyCodeLine{00117\ \ \ \ \ btScalar\ dist;\ \ \textcolor{comment}{//\ distance\ below\ origin\ -\/\ the\ D\ from\ plane\ equasion\ Ax+By+Cz+D=0}}
+\DoxyCodeLine{00118\ \ \ \ \ \mbox{\hyperlink{classbt_plane}{btPlane}}(\textcolor{keyword}{const}\ btVector3\&\ n,\ btScalar\ d)\ :\ normal(n),\ dist(d)\ \{\}}
+\DoxyCodeLine{00119\ \ \ \ \ \mbox{\hyperlink{classbt_plane}{btPlane}}()\ :\ normal(),\ dist(0)\ \{\}}
+\DoxyCodeLine{00120\ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_convex_h}{ConvexH}}}
+\DoxyCodeLine{00123\ \{}
+\DoxyCodeLine{00124\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_convex_h_1_1_half_edge}{HalfEdge}}}
+\DoxyCodeLine{00126\ \ \ \ \ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{short}\ ea;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ other\ half\ of\ the\ edge\ (index\ into\ edges\ list)}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ v;\ \ \textcolor{comment}{//\ the\ vertex\ at\ the\ start\ of\ this\ edge\ (index\ into\ vertices\ list)}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ p;\ \ \textcolor{comment}{//\ the\ facet\ on\ which\ this\ edge\ lies\ (index\ into\ facets\ list)}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_convex_h_1_1_half_edge}{HalfEdge}}()\ \{\}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_convex_h_1_1_half_edge}{HalfEdge}}(\textcolor{keywordtype}{short}\ \_ea,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_v,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_p)\ :\ ea(\_ea),\ v(\_v),\ p(\_p)\ \{\}}
+\DoxyCodeLine{00133\ \ \ \ \ \};}
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{class_convex_h}{ConvexH}}()}
+\DoxyCodeLine{00135\ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00137\ \ \ \ \ \mbox{\hyperlink{class_convex_h}{\string~ConvexH}}()}
+\DoxyCodeLine{00138\ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ vertices;}
+\DoxyCodeLine{00141\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<HalfEdge>}}\ edges;}
+\DoxyCodeLine{00142\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btPlane>}}\ facets;}
+\DoxyCodeLine{00143\ \ \ \ \ \mbox{\hyperlink{class_convex_h}{ConvexH}}(\textcolor{keywordtype}{int}\ vertices\_size,\ \textcolor{keywordtype}{int}\ edges\_size,\ \textcolor{keywordtype}{int}\ facets\_size);}
+\DoxyCodeLine{00144\ \};}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classint4}{int4}}}
+\DoxyCodeLine{00147\ \{}
+\DoxyCodeLine{00148\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{int}\ x,\ y,\ z,\ w;}
+\DoxyCodeLine{00150\ \ \ \ \ \mbox{\hyperlink{classint4}{int4}}()\{\};}
+\DoxyCodeLine{00151\ \ \ \ \ \mbox{\hyperlink{classint4}{int4}}(\textcolor{keywordtype}{int}\ \_x,\ \textcolor{keywordtype}{int}\ \_y,\ \textcolor{keywordtype}{int}\ \_z,\ \textcolor{keywordtype}{int}\ \_w)}
+\DoxyCodeLine{00152\ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ x\ =\ \_x;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ y\ =\ \_y;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ z\ =\ \_z;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ w\ =\ \_w;}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&\ operator[](\textcolor{keywordtype}{int}\ i)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (\&x)[i];\ \}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{int}\&\ operator[](\textcolor{keywordtype}{int}\ i)\ \{\ \textcolor{keywordflow}{return}\ (\&x)[i];\ \}}
+\DoxyCodeLine{00160\ \};}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_p_hull_result}{PHullResult}}}
+\DoxyCodeLine{00163\ \{}
+\DoxyCodeLine{00164\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00165\ \ \ \ \ \mbox{\hyperlink{class_p_hull_result}{PHullResult}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00166\ \ \ \ \ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ mVcount\ =\ 0;}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ mIndexCount\ =\ 0;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ mFaceCount\ =\ 0;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ mVertices\ =\ 0;}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mVcount;}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mIndexCount;}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mFaceCount;}
+\DoxyCodeLine{00176\ \ \ \ \ btVector3*\ mVertices;}
+\DoxyCodeLine{00177\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TUIntArray}}\ m\_Indices;}
+\DoxyCodeLine{00178\ \};}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00182\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_hull_library}{HullLibrary}}}
+\DoxyCodeLine{00183\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<class\ btHullTriangle*>}}\ m\_tris;}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00187\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ m\_vertexIndexMapping;}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ HullError\ CreateConvexHull(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_hull_desc}{HullDesc}}\&\ desc,\ \ \textcolor{comment}{//\ describes\ the\ input\ request}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_hull_result}{HullResult}}\&\ result);\ \ \ \textcolor{comment}{//\ contains\ the\ resulst}}
+\DoxyCodeLine{00191\ \ \ \ \ HullError\ ReleaseResult(\mbox{\hyperlink{class_hull_result}{HullResult}}\&\ result);\ \ \ \ \ \ \textcolor{comment}{//\ release\ memory\ allocated\ for\ this\ result,\ we\ are\ done\ with\ it.}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{bool}\ ComputeHull(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vcount,\ \textcolor{keyword}{const}\ btVector3*\ vertices,\ \mbox{\hyperlink{class_p_hull_result}{PHullResult}}\&\ result,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vlimit);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ allocateTriangle(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b,\ \textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{void}\ deAllocateTriangle(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*);}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{void}\ b2bfix(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ s,\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ t);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{void}\ removeb2b(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ s,\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ t);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{void}\ checkit(\mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ t);}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ extrudable(btScalar\ epsilon);}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordtype}{int}\ calchull(btVector3*\ verts,\ \textcolor{keywordtype}{int}\ verts\_count,\ \mbox{\hyperlink{classbt_aligned_object_array}{TUIntArray}}\&\ tris\_out,\ \textcolor{keywordtype}{int}\&\ tris\_count,\ \textcolor{keywordtype}{int}\ vlimit);}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{int}\ calchullgen(btVector3*\ verts,\ \textcolor{keywordtype}{int}\ verts\_count,\ \textcolor{keywordtype}{int}\ vlimit);}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \mbox{\hyperlink{classint4}{int4}}\ FindSimplex(btVector3*\ verts,\ \textcolor{keywordtype}{int}\ verts\_count,\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ allow);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_convex_h}{ConvexH}}*\ ConvexHCrop(\mbox{\hyperlink{class_convex_h}{ConvexH}}\&\ convex,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_plane}{btPlane}}\&\ slice);}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{void}\ extrude(\textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_hull_triangle}{btHullTriangle}}*\ t0,\ \textcolor{keywordtype}{int}\ v);}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \mbox{\hyperlink{class_convex_h}{ConvexH}}*\ test\_cube();}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{comment}{//BringOutYourDead\ (John\ Ratcliff):\ When\ you\ create\ a\ convex\ hull\ you\ hand\ it\ a\ large\ input\ set\ of\ vertices\ forming\ a\ 'point\ cloud'.}}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{comment}{//After\ the\ hull\ is\ generated\ it\ give\ you\ back\ a\ set\ of\ polygon\ faces\ which\ index\ the\ *original*\ point\ cloud.}}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{comment}{//The\ thing\ is,\ often\ times,\ there\ are\ many\ 'dead\ vertices'\ in\ the\ point\ cloud\ that\ are\ on\ longer\ referenced\ by\ the\ hull.}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{comment}{//The\ routine\ 'BringOutYourDead'\ find\ only\ the\ referenced\ vertices,\ copies\ them\ to\ an\ new\ buffer,\ and\ re-\/indexes\ the\ hull\ so\ that\ it\ is\ a\ minimal\ representation.}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{void}\ BringOutYourDead(\textcolor{keyword}{const}\ btVector3*\ verts,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ vcount,\ btVector3*\ overts,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ ocount,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*\ indices,\ \textcolor{keywordtype}{unsigned}\ indexcount);}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{bool}\ CleanupVertices(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ svcount,}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ svertices,}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ stride,}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ vcount,\ \ \textcolor{comment}{//\ output\ number\ of\ vertices}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3*\ vertices,\ \ \ \textcolor{comment}{//\ location\ to\ store\ the\ results.}}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ normalepsilon,}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\&\ scale);}
+\DoxyCodeLine{00231\ \};}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_CD\_HULL\_H}}
+
+\end{DoxyCode}

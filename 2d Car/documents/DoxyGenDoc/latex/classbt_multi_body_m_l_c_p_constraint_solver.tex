@@ -1,0 +1,189 @@
+\doxysection{bt\+Multi\+Body\+MLCPConstraint\+Solver Class Reference}
+\hypertarget{classbt_multi_body_m_l_c_p_constraint_solver}{}\label{classbt_multi_body_m_l_c_p_constraint_solver}\index{btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}}
+Inheritance diagram for bt\+Multi\+Body\+MLCPConstraint\+Solver\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classbt_multi_body_m_l_c_p_constraint_solver}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classbt_multi_body_m_l_c_p_constraint_solver_a54615e8e7e9d9d7d7cc705307413fe4f}{bt\+Multi\+Body\+MLCPConstraint\+Solver}} (\mbox{\hyperlink{classbt_m_l_c_p_solver_interface}{bt\+MLCPSolver\+Interface}} \texorpdfstring{$\ast$}{*}solver)
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a45d71964c50024083727adfb2c83361c}\label{classbt_multi_body_m_l_c_p_constraint_solver_a45d71964c50024083727adfb2c83361c} 
+virtual {\bfseries \texorpdfstring{$\sim$}{\string~}bt\+Multi\+Body\+MLCPConstraint\+Solver} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a835bd464933613052f8640ca6f1e1eac}\label{classbt_multi_body_m_l_c_p_constraint_solver_a835bd464933613052f8640ca6f1e1eac} 
+void {\bfseries set\+MLCPSolver} (\mbox{\hyperlink{classbt_m_l_c_p_solver_interface}{bt\+MLCPSolver\+Interface}} \texorpdfstring{$\ast$}{*}solver)
+\begin{DoxyCompactList}\small\item\em Sets MLCP solver. Assumed it\textquotesingle{}s not null. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classbt_multi_body_m_l_c_p_constraint_solver_a39b2d23d3558211add10ebc278c0ff0f}{get\+Num\+Fallbacks}} () const
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a3befe457c971b67b73c5e60c373bf40f}\label{classbt_multi_body_m_l_c_p_constraint_solver_a3befe457c971b67b73c5e60c373bf40f} 
+void {\bfseries set\+Num\+Fallbacks} (int num)
+\begin{DoxyCompactList}\small\item\em Sets the number of fallbacks. This function may be used to reset the number to zero. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ae9ff47e98a64eb7731aff680f4421949}\label{classbt_multi_body_m_l_c_p_constraint_solver_ae9ff47e98a64eb7731aff680f4421949} 
+virtual bt\+Constraint\+Solver\+Type {\bfseries get\+Solver\+Type} () const
+\begin{DoxyCompactList}\small\item\em Returns the constraint solver type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ac58ea3934310d23feed757dec171657a}\label{classbt_multi_body_m_l_c_p_constraint_solver_ac58ea3934310d23feed757dec171657a} 
+virtual void {\bfseries create\+MLCPFast} (const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&info\+Global)
+\begin{DoxyCompactList}\small\item\em Constructs MLCP terms, which are {\ttfamily m\+\_\+A}, {\ttfamily m\+\_\+b}, {\ttfamily m\+\_\+lo}, and {\ttfamily m\+\_\+hi}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classbt_multi_body_m_l_c_p_constraint_solver_a93a91a92dfd86bd36739030fe94d8dca}{create\+MLCPFast\+Rigid\+Body}} (const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&info\+Global)
+\begin{DoxyCompactList}\small\item\em Constructs MLCP terms for constraints of two rigid bodies. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ad9896867ae3e5467100854d84e3b5df7}\label{classbt_multi_body_m_l_c_p_constraint_solver_ad9896867ae3e5467100854d84e3b5df7} 
+void {\bfseries create\+MLCPFast\+Multi\+Body} (const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&info\+Global)
+\begin{DoxyCompactList}\small\item\em Constructs MLCP terms for constraints of two multi-\/bodies or one rigid body and one multibody. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_aad39f8b40275574acb3a498fc3ec4ef9}\label{classbt_multi_body_m_l_c_p_constraint_solver_aad39f8b40275574acb3a498fc3ec4ef9} 
+virtual bool {\bfseries solve\+MLCP} (const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&info\+Global)
+\begin{DoxyCompactList}\small\item\em Solves MLCP and returns the success. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a13477c70d6e5fe9a0034e2fdb5cb6b6d}\label{classbt_multi_body_m_l_c_p_constraint_solver_a13477c70d6e5fe9a0034e2fdb5cb6b6d} 
+bt\+Scalar {\bfseries solve\+Group\+Cache\+Friendly\+Setup} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}bodies, int num\+Bodies, bt\+Persistent\+Manifold \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}manifold\+Ptr, int num\+Manifolds, bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}constraints, int num\+Constraints, const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&info\+Global, \mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*}debug\+Drawer) BT\+\_\+\+OVERRIDE
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a3cbfb9ee4029401590385bb4b763ee86}\label{classbt_multi_body_m_l_c_p_constraint_solver_a3cbfb9ee4029401590385bb4b763ee86} 
+bt\+Scalar {\bfseries solve\+Group\+Cache\+Friendly\+Iterations} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}bodies, int num\+Bodies, bt\+Persistent\+Manifold \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}manifold\+Ptr, int num\+Manifolds, bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}constraints, int num\+Constraints, const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&info\+Global, \mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*}debug\+Drawer)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ int $>$ \mbox{\hyperlink{classbt_multi_body_m_l_c_p_constraint_solver_a754e48c896a0910e944a0e1a5fcd6651}{m\+\_\+limit\+Dependencies}}
+\item 
+\mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ int $>$ \mbox{\hyperlink{classbt_multi_body_m_l_c_p_constraint_solver_a11ee9e0f51d1b26c50b3d074acde3a6d}{m\+\_\+multi\+Body\+Limit\+Dependencies}}
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ac614ba94b1a2e1407927c8be38162cca}\label{classbt_multi_body_m_l_c_p_constraint_solver_ac614ba94b1a2e1407927c8be38162cca} 
+\mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ bt\+Solver\+Constraint \texorpdfstring{$\ast$}{*} $>$ {\bfseries m\+\_\+all\+Constraint\+Ptr\+Array}
+\begin{DoxyCompactList}\small\item\em Array of all the rigid body constraints. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a26ca7cefae72382879a8c9cccb728e20}\label{classbt_multi_body_m_l_c_p_constraint_solver_a26ca7cefae72382879a8c9cccb728e20} 
+\mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ bt\+Multi\+Body\+Solver\+Constraint \texorpdfstring{$\ast$}{*} $>$ {\bfseries m\+\_\+multi\+Body\+All\+Constraint\+Ptr\+Array}
+\begin{DoxyCompactList}\small\item\em Array of all the multibody constraints. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a2c97b6e8621c7daead7a1667b9c5245e}\label{classbt_multi_body_m_l_c_p_constraint_solver_a2c97b6e8621c7daead7a1667b9c5245e} 
+\mbox{\hyperlink{classbt_m_l_c_p_solver_interface}{bt\+MLCPSolver\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+solver}
+\begin{DoxyCompactList}\small\item\em MLCP solver. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a58c9ed1bb02522e5281a062eb1658a52}\label{classbt_multi_body_m_l_c_p_constraint_solver_a58c9ed1bb02522e5281a062eb1658a52} 
+int {\bfseries m\+\_\+fallback}
+\begin{DoxyCompactList}\small\item\em Count of fallbacks of using bt\+Sequential\+Impulse\+Constraint\+Solver, which happens when the MLCP solver fails. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{Indent}\textbf{ MLCP Formulation for Rigid Bodies}\par
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a50f32aaf9b7d714c6a6828ea9969b2f0}\label{classbt_multi_body_m_l_c_p_constraint_solver_a50f32aaf9b7d714c6a6828ea9969b2f0} 
+bt\+Matrix\+Xu {\bfseries m\+\_\+A}
+\begin{DoxyCompactList}\small\item\em A matrix in the MLCP formulation. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a2013ed0cdfc1603af1d8bcb300635c08}\label{classbt_multi_body_m_l_c_p_constraint_solver_a2013ed0cdfc1603af1d8bcb300635c08} 
+bt\+Vector\+Xu {\bfseries m\+\_\+b}
+\begin{DoxyCompactList}\small\item\em b vector in the MLCP formulation. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_aafc50b8b65ad298f0aab658ebe739f66}\label{classbt_multi_body_m_l_c_p_constraint_solver_aafc50b8b65ad298f0aab658ebe739f66} 
+bt\+Vector\+Xu {\bfseries m\+\_\+x}
+\begin{DoxyCompactList}\small\item\em Constraint impulse, which is an output of MLCP solving. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a45bbbe3705b2f9d1e5caf5108ef06abd}\label{classbt_multi_body_m_l_c_p_constraint_solver_a45bbbe3705b2f9d1e5caf5108ef06abd} 
+bt\+Vector\+Xu {\bfseries m\+\_\+lo}
+\begin{DoxyCompactList}\small\item\em Lower bound of constraint impulse, {\ttfamily m\+\_\+x}. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a9b8b5c4e0a2d10d8e51256392a653448}\label{classbt_multi_body_m_l_c_p_constraint_solver_a9b8b5c4e0a2d10d8e51256392a653448} 
+bt\+Vector\+Xu {\bfseries m\+\_\+hi}
+\begin{DoxyCompactList}\small\item\em Upper bound of constraint impulse, {\ttfamily m\+\_\+x}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ Cache Variables for Split Impulse for Rigid Bodies}\par
+{\em When using \textquotesingle{}split impulse\textquotesingle{} we solve two separate (M)LCPs }\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a75f0b2c04757fdf6ed7bffe2e1dab889}\label{classbt_multi_body_m_l_c_p_constraint_solver_a75f0b2c04757fdf6ed7bffe2e1dab889} 
+bt\+Vector\+Xu {\bfseries m\+\_\+b\+Split}
+\begin{DoxyCompactList}\small\item\em Split impulse Cache vector corresponding to {\ttfamily m\+\_\+b}. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a16c73ac31df38049a8f4e8753bf6435d}\label{classbt_multi_body_m_l_c_p_constraint_solver_a16c73ac31df38049a8f4e8753bf6435d} 
+bt\+Vector\+Xu {\bfseries m\+\_\+x\+Split}
+\begin{DoxyCompactList}\small\item\em Split impulse cache vector corresponding to {\ttfamily m\+\_\+x}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ MLCP Formulation for Multibodies}\par
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a6e1ff2c446e2562332000cf55592751c}\label{classbt_multi_body_m_l_c_p_constraint_solver_a6e1ff2c446e2562332000cf55592751c} 
+bt\+Matrix\+Xu {\bfseries m\+\_\+multi\+BodyA}
+\begin{DoxyCompactList}\small\item\em A matrix in the MLCP formulation. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_af4abea2153910065e4f913a6d9d7ab62}\label{classbt_multi_body_m_l_c_p_constraint_solver_af4abea2153910065e4f913a6d9d7ab62} 
+bt\+Vector\+Xu {\bfseries m\+\_\+multi\+BodyB}
+\begin{DoxyCompactList}\small\item\em b vector in the MLCP formulation. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ad967b11d1fc3e2d7daa8e27ae3c6e19e}\label{classbt_multi_body_m_l_c_p_constraint_solver_ad967b11d1fc3e2d7daa8e27ae3c6e19e} 
+bt\+Vector\+Xu {\bfseries m\+\_\+multi\+BodyX}
+\begin{DoxyCompactList}\small\item\em Constraint impulse, which is an output of MLCP solving. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ab50140f43c6f71bb72522b10fbaa4ab9}\label{classbt_multi_body_m_l_c_p_constraint_solver_ab50140f43c6f71bb72522b10fbaa4ab9} 
+bt\+Vector\+Xu {\bfseries m\+\_\+multi\+Body\+Lo}
+\begin{DoxyCompactList}\small\item\em Lower bound of constraint impulse, {\ttfamily m\+\_\+x}. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ae411eb0f29a5bd85277304090c3ffb21}\label{classbt_multi_body_m_l_c_p_constraint_solver_ae411eb0f29a5bd85277304090c3ffb21} 
+bt\+Vector\+Xu {\bfseries m\+\_\+multi\+Body\+Hi}
+\begin{DoxyCompactList}\small\item\em Upper bound of constraint impulse, {\ttfamily m\+\_\+x}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ MLCP Scratch Variables}\par
+{\em The following scratch variables are not stateful -- contents are cleared prior to each use. They are only cached here to avoid extra memory allocations and deallocations and to ensure that multiple instances of the solver can be run in parallel. }\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a0c7540d6816aa61af4d76f4c90950caa}\label{classbt_multi_body_m_l_c_p_constraint_solver_a0c7540d6816aa61af4d76f4c90950caa} 
+bt\+Matrix\+Xu {\bfseries m\+\_\+scratch\+J3}
+\begin{DoxyCompactList}\small\item\em Cache variable for constraint Jacobian matrix. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_ad774e215008ba7b4da5b55eb8d4a5c83}\label{classbt_multi_body_m_l_c_p_constraint_solver_ad774e215008ba7b4da5b55eb8d4a5c83} 
+bt\+Matrix\+Xu {\bfseries m\+\_\+scratch\+JInv\+M3}
+\begin{DoxyCompactList}\small\item\em Cache variable for constraint Jacobian times inverse mass matrix. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a83c9b261a74241232e4d703f8f2bdbaa}\label{classbt_multi_body_m_l_c_p_constraint_solver_a83c9b261a74241232e4d703f8f2bdbaa} 
+\mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ int $>$ {\bfseries m\+\_\+scratch\+Ofs}
+\begin{DoxyCompactList}\small\item\em Cache variable for offsets. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a54615e8e7e9d9d7d7cc705307413fe4f}\label{classbt_multi_body_m_l_c_p_constraint_solver_a54615e8e7e9d9d7d7cc705307413fe4f} 
+\index{btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}!btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}}
+\index{btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}!btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}}
+\doxysubsubsection{\texorpdfstring{btMultiBodyMLCPConstraintSolver()}{btMultiBodyMLCPConstraintSolver()}}
+{\footnotesize\ttfamily bt\+Multi\+Body\+MLCPConstraint\+Solver\+::bt\+Multi\+Body\+MLCPConstraint\+Solver (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classbt_m_l_c_p_solver_interface}{bt\+MLCPSolver\+Interface}} \texorpdfstring{$\ast$}{*}}]{solver }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+Constructor
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em solver} & MLCP solver. Assumed it\textquotesingle{}s not null. \\
+\hline
+\mbox{\texttt{ in}}  & {\em max\+LCPSize} & Maximum size of LCP to solve using MLCP solver. If the MLCP size exceeds this number, sequaltial impulse method will be used. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a93a91a92dfd86bd36739030fe94d8dca}\label{classbt_multi_body_m_l_c_p_constraint_solver_a93a91a92dfd86bd36739030fe94d8dca} 
+\index{btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}!createMLCPFastRigidBody@{createMLCPFastRigidBody}}
+\index{createMLCPFastRigidBody@{createMLCPFastRigidBody}!btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}}
+\doxysubsubsection{\texorpdfstring{createMLCPFastRigidBody()}{createMLCPFastRigidBody()}}
+{\footnotesize\ttfamily void bt\+Multi\+Body\+MLCPConstraint\+Solver\+::create\+MLCPFast\+Rigid\+Body (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&}]{info\+Global }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Constructs MLCP terms for constraints of two rigid bodies. 
+
+fill the upper triangle of the matrix, to make it symmetric\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a39b2d23d3558211add10ebc278c0ff0f}\label{classbt_multi_body_m_l_c_p_constraint_solver_a39b2d23d3558211add10ebc278c0ff0f} 
+\index{btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}!getNumFallbacks@{getNumFallbacks}}
+\index{getNumFallbacks@{getNumFallbacks}!btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}}
+\doxysubsubsection{\texorpdfstring{getNumFallbacks()}{getNumFallbacks()}}
+{\footnotesize\ttfamily int bt\+Multi\+Body\+MLCPConstraint\+Solver\+::get\+Num\+Fallbacks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the number of fallbacks of using bt\+Sequential\+Impulse\+Constraint\+Solver, which happens when the MLCP solver fails. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a754e48c896a0910e944a0e1a5fcd6651}\label{classbt_multi_body_m_l_c_p_constraint_solver_a754e48c896a0910e944a0e1a5fcd6651} 
+\index{btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}!m\_limitDependencies@{m\_limitDependencies}}
+\index{m\_limitDependencies@{m\_limitDependencies}!btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}}
+\doxysubsubsection{\texorpdfstring{m\_limitDependencies}{m\_limitDependencies}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$int$>$ bt\+Multi\+Body\+MLCPConstraint\+Solver\+::m\+\_\+limit\+Dependencies\hspace{0.3cm}{\ttfamily [protected]}}
+
+Indices of normal contact constraint associated with frictional contact constraint for rigid bodies.
+
+This is used by the MLCP solver to update the upper bounds of frictional contact impulse given intermediate normal contact impulse. For example, i-\/th element represents the index of a normal constraint that is accosiated with i-\/th frictional contact constraint if i-\/th constraint is a frictional contact constraint. Otherwise, -\/1. \Hypertarget{classbt_multi_body_m_l_c_p_constraint_solver_a11ee9e0f51d1b26c50b3d074acde3a6d}\label{classbt_multi_body_m_l_c_p_constraint_solver_a11ee9e0f51d1b26c50b3d074acde3a6d} 
+\index{btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}!m\_multiBodyLimitDependencies@{m\_multiBodyLimitDependencies}}
+\index{m\_multiBodyLimitDependencies@{m\_multiBodyLimitDependencies}!btMultiBodyMLCPConstraintSolver@{btMultiBodyMLCPConstraintSolver}}
+\doxysubsubsection{\texorpdfstring{m\_multiBodyLimitDependencies}{m\_multiBodyLimitDependencies}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$int$>$ bt\+Multi\+Body\+MLCPConstraint\+Solver\+::m\+\_\+multi\+Body\+Limit\+Dependencies\hspace{0.3cm}{\ttfamily [protected]}}
+
+Indices of normal contact constraint associated with frictional contact constraint for multibodies.
+
+This is used by the MLCP solver to update the upper bounds of frictional contact impulse given intermediate normal contact impulse. For example, i-\/th element represents the index of a normal constraint that is accosiated with i-\/th frictional contact constraint if i-\/th constraint is a frictional contact constraint. Otherwise, -\/1. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Dynamics/\+Featherstone/bt\+Multi\+Body\+MLCPConstraint\+Solver.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Dynamics/\+Featherstone/bt\+Multi\+Body\+MLCPConstraint\+Solver.\+cpp\end{DoxyCompactItemize}

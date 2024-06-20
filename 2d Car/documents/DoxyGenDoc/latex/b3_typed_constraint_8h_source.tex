@@ -1,0 +1,440 @@
+\doxysection{b3\+Typed\+Constraint.\+h}
+\hypertarget{b3_typed_constraint_8h_source}{}\label{b3_typed_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Dynamics/ConstraintSolver/b3TypedConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Dynamics/ConstraintSolver/b3TypedConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2010\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ B3\_TYPED\_CONSTRAINT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ B3\_TYPED\_CONSTRAINT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Scalar.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}b3SolverConstraint.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_serializer}{b3Serializer}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//Don't\ change\ any\ of\ the\ existing\ enum\ values,\ so\ add\ enum\ types\ at\ the\ end\ for\ serialization\ compatibility}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{enum}\ b3TypedConstraintType}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ B3\_POINT2POINT\_CONSTRAINT\_TYPE\ =\ 3,}
+\DoxyCodeLine{00028\ \ \ \ \ B3\_HINGE\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00029\ \ \ \ \ B3\_CONETWIST\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00030\ \ \ \ \ B3\_D6\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00031\ \ \ \ \ B3\_SLIDER\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00032\ \ \ \ \ B3\_CONTACT\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00033\ \ \ \ \ B3\_D6\_SPRING\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00034\ \ \ \ \ B3\_GEAR\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00035\ \ \ \ \ B3\_FIXED\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00036\ \ \ \ \ B3\_MAX\_CONSTRAINT\_TYPE}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{enum}\ b3ConstraintParams}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ B3\_CONSTRAINT\_ERP\ =\ 1,}
+\DoxyCodeLine{00042\ \ \ \ \ B3\_CONSTRAINT\_STOP\_ERP,}
+\DoxyCodeLine{00043\ \ \ \ \ B3\_CONSTRAINT\_CFM,}
+\DoxyCodeLine{00044\ \ \ \ \ B3\_CONSTRAINT\_STOP\_CFM}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#if\ 1}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ b3AssertConstrParams(\_par)\ b3Assert(\_par)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ b3AssertConstrParams(\_par)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ B3\_ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00054\ b3JointFeedback}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ b3Vector3\ m\_appliedForceBodyA;}
+\DoxyCodeLine{00057\ \ \ \ \ b3Vector3\ m\_appliedTorqueBodyA;}
+\DoxyCodeLine{00058\ \ \ \ \ b3Vector3\ m\_appliedForceBodyB;}
+\DoxyCodeLine{00059\ \ \ \ \ b3Vector3\ m\_appliedTorqueBodyB;}
+\DoxyCodeLine{00060\ \};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00065\ B3\_ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00066\ b3TypedConstraint\ :\ public\ \mbox{\hyperlink{structb3_typed_object}{b3TypedObject}}}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_userConstraintType;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_userConstraintId;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_userConstraintPtr;}
+\DoxyCodeLine{00073\ \ \ \ \ \};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ b3Scalar\ m\_breakingImpulseThreshold;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_isEnabled;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_needsFeedback;}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_overrideNumSolverIterations;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ b3TypedConstraint\&\ operator=(b3TypedConstraint\&\ other)}
+\DoxyCodeLine{00081\ \ \ \ \ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ b3Assert(0);}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ (void)other;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_rbA;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_rbB;}
+\DoxyCodeLine{00090\ \ \ \ \ b3Scalar\ m\_appliedImpulse;}
+\DoxyCodeLine{00091\ \ \ \ \ b3Scalar\ m\_dbgDrawSize;}
+\DoxyCodeLine{00092\ \ \ \ \ b3JointFeedback*\ m\_jointFeedback;}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00095\ \ \ \ \ b3Scalar\ getMotorFactor(b3Scalar\ pos,\ b3Scalar\ lowLim,\ b3Scalar\ uppLim,\ b3Scalar\ vel,\ b3Scalar\ timeFact);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00098\ \ \ \ \ B3\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~b3TypedConstraint()\{\};}
+\DoxyCodeLine{00101\ \ \ \ \ b3TypedConstraint(b3TypedConstraintType\ type,\ \textcolor{keywordtype}{int}\ bodyA,\ \textcolor{keywordtype}{int}\ bodyB);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_constraint_info1}{b3ConstraintInfo1}}}
+\DoxyCodeLine{00104\ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numConstraintRows,\ nub;}
+\DoxyCodeLine{00106\ \ \ \ \ \};}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_constraint_info2}{b3ConstraintInfo2}}}
+\DoxyCodeLine{00109\ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ integrator\ parameters:\ frames\ per\ second\ (1/stepsize),\ default\ error}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ reduction\ parameter\ (0..1).}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ b3Scalar\ fps,\ erp;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ for\ the\ first\ and\ second\ body,\ pointers\ to\ two\ (linear\ and\ angular)}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ n*3\ jacobian\ sub\ matrices,\ stored\ by\ rows.\ these\ matrices\ will\ have}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ been\ initialized\ to\ 0\ on\ entry.\ if\ the\ second\ body\ is\ zero\ then\ the}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ J2xx\ pointers\ may\ be\ 0.}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ b3Scalar\ *m\_J1linearAxis,\ *m\_J1angularAxis,\ *m\_J2linearAxis,\ *m\_J2angularAxis;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ elements\ to\ jump\ from\ one\ row\ to\ the\ next\ in\ J's}}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rowskip;}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ right\ hand\ sides\ of\ the\ equation\ J*v\ =\ c\ +\ cfm\ *\ lambda.\ cfm\ is\ the}}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ "{}constraint\ force\ mixing"{}\ vector.\ c\ is\ set\ to\ zero\ on\ entry,\ cfm\ is}}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\ to\ a\ constant\ value\ (typically\ very\ small\ or\ zero)\ value\ on\ entry.}}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ b3Scalar\ *m\_constraintError,\ *cfm;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ lo\ and\ hi\ limits\ for\ variables\ (set\ to\ -\//+\ infinity\ on\ entry).}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ b3Scalar\ *m\_lowerLimit,\ *m\_upperLimit;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ findex\ vector\ for\ variables.\ see\ the\ LCP\ solver\ interface\ for\ a}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ description\ of\ what\ this\ does.\ this\ is\ set\ to\ -\/1\ on\ entry.}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ note\ that\ the\ returned\ indexes\ are\ relative\ to\ the\ first\ index\ of}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ constraint.}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ findex;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ number\ of\ solver\ iterations}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numIterations;}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{comment}{//damping\ of\ the\ velocity}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ b3Scalar\ m\_damping;}
+\DoxyCodeLine{00141\ \ \ \ \ \};}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{int}\ getOverrideNumSolverIterations()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00144\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overrideNumSolverIterations;}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{void}\ setOverrideNumSolverIterations(\textcolor{keywordtype}{int}\ overideNumIterations)}
+\DoxyCodeLine{00151\ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ m\_overrideNumSolverIterations\ =\ overideNumIterations;}
+\DoxyCodeLine{00153\ \ \ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setupSolverConstraint(\mbox{\hyperlink{classb3_aligned_object_array}{b3ConstraintArray}}\ \&\ ca,\ \textcolor{keywordtype}{int}\ solverBodyA,\ \textcolor{keywordtype}{int}\ solverBodyB,\ b3Scalar\ timeStep)}
+\DoxyCodeLine{00157\ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ (void)ca;}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ (void)solverBodyA;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ (void)solverBodyB;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ (void)timeStep;}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo1(\mbox{\hyperlink{structb3_constraint_info1}{b3ConstraintInfo1}}\ *\ info,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ bodies)\ =\ 0;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo2(\mbox{\hyperlink{structb3_constraint_info2}{b3ConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ bodies)\ =\ 0;}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{void}\ internalSetAppliedImpulse(b3Scalar\ appliedImpulse)}
+\DoxyCodeLine{00172\ \ \ \ \ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ m\_appliedImpulse\ =\ appliedImpulse;}
+\DoxyCodeLine{00174\ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \ \ b3Scalar\ internalGetAppliedImpulse()}
+\DoxyCodeLine{00177\ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_appliedImpulse;}
+\DoxyCodeLine{00179\ \ \ \ \ \}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ b3Scalar\ getBreakingImpulseThreshold()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00182\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_breakingImpulseThreshold;}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordtype}{void}\ setBreakingImpulseThreshold(b3Scalar\ threshold)}
+\DoxyCodeLine{00187\ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ m\_breakingImpulseThreshold\ =\ threshold;}
+\DoxyCodeLine{00189\ \ \ \ \ \}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{bool}\ isEnabled()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00192\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_isEnabled;}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{void}\ setEnabled(\textcolor{keywordtype}{bool}\ enabled)}
+\DoxyCodeLine{00197\ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ m\_isEnabled\ =\ enabled;}
+\DoxyCodeLine{00199\ \ \ \ \ \}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveConstraintObsolete(b3SolverBody\&\ \textcolor{comment}{/*bodyA*/},\ b3SolverBody\&\ \textcolor{comment}{/*bodyB*/},\ b3Scalar\ \textcolor{comment}{/*timeStep*/})\{\};}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{int}\ getRigidBodyA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00205\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbA;}
+\DoxyCodeLine{00207\ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{int}\ getRigidBodyB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00209\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbB;}
+\DoxyCodeLine{00211\ \ \ \ \ \}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordtype}{int}\ getRigidBodyA()}
+\DoxyCodeLine{00214\ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbA;}
+\DoxyCodeLine{00216\ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordtype}{int}\ getRigidBodyB()}
+\DoxyCodeLine{00218\ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbB;}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{int}\ getUserConstraintType()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00223\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userConstraintType;}
+\DoxyCodeLine{00225\ \ \ \ \ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordtype}{void}\ setUserConstraintType(\textcolor{keywordtype}{int}\ userConstraintType)}
+\DoxyCodeLine{00228\ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ m\_userConstraintType\ =\ userConstraintType;}
+\DoxyCodeLine{00230\ \ \ \ \ \};}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{void}\ setUserConstraintId(\textcolor{keywordtype}{int}\ uid)}
+\DoxyCodeLine{00233\ \ \ \ \ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ m\_userConstraintId\ =\ uid;}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordtype}{int}\ getUserConstraintId()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00238\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userConstraintId;}
+\DoxyCodeLine{00240\ \ \ \ \ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keywordtype}{void}\ setUserConstraintPtr(\textcolor{keywordtype}{void}*\ ptr)}
+\DoxyCodeLine{00243\ \ \ \ \ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ m\_userConstraintPtr\ =\ ptr;}
+\DoxyCodeLine{00245\ \ \ \ \ \}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{keywordtype}{void}*\ getUserConstraintPtr()}
+\DoxyCodeLine{00248\ \ \ \ \ \{}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userConstraintPtr;}
+\DoxyCodeLine{00250\ \ \ \ \ \}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordtype}{void}\ setJointFeedback(b3JointFeedback\ *\ jointFeedback)}
+\DoxyCodeLine{00253\ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ m\_jointFeedback\ =\ jointFeedback;}
+\DoxyCodeLine{00255\ \ \ \ \ \}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keyword}{const}\ b3JointFeedback*\ getJointFeedback()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00258\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_jointFeedback;}
+\DoxyCodeLine{00260\ \ \ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ b3JointFeedback*\ getJointFeedback()}
+\DoxyCodeLine{00263\ \ \ \ \ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_jointFeedback;}
+\DoxyCodeLine{00265\ \ \ \ \ \}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keywordtype}{int}\ getUid()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00268\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userConstraintId;}
+\DoxyCodeLine{00270\ \ \ \ \ \}}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keywordtype}{bool}\ needsFeedback()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00273\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_needsFeedback;}
+\DoxyCodeLine{00275\ \ \ \ \ \}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keywordtype}{void}\ enableFeedback(\textcolor{keywordtype}{bool}\ needsFeedback)}
+\DoxyCodeLine{00280\ \ \ \ \ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ m\_needsFeedback\ =\ needsFeedback;}
+\DoxyCodeLine{00282\ \ \ \ \ \}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00286\ \ \ \ \ b3Scalar\ getAppliedImpulse()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00287\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ b3Assert(m\_needsFeedback);}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_appliedImpulse;}
+\DoxyCodeLine{00290\ \ \ \ \ \}}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \ \ \ \ b3TypedConstraintType\ getConstraintType()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00293\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ b3TypedConstraintType(m\_objectType);}
+\DoxyCodeLine{00295\ \ \ \ \ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordtype}{void}\ setDbgDrawSize(b3Scalar\ dbgDrawSize)}
+\DoxyCodeLine{00298\ \ \ \ \ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ m\_dbgDrawSize\ =\ dbgDrawSize;}
+\DoxyCodeLine{00300\ \ \ \ \ \}}
+\DoxyCodeLine{00301\ \ \ \ \ b3Scalar\ getDbgDrawSize()}
+\DoxyCodeLine{00302\ \ \ \ \ \{}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_dbgDrawSize;}
+\DoxyCodeLine{00304\ \ \ \ \ \}}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setParam(\textcolor{keywordtype}{int}\ num,\ b3Scalar\ value,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)\ =\ 0;}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keyword}{virtual}\ b3Scalar\ getParam(\textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{comment}{//\ \ virtual\ int\ calculateSerializeBufferSize()\ const;}}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{comment}{//virtual\ \ \ const\ char*\ serialize(void*\ dataBuffer,\ b3Serializer*\ serializer)\ const;}}
+\DoxyCodeLine{00317\ \};}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{comment}{//\ returns\ angle\ in\ range\ [-\/B3\_2\_PI,\ B3\_2\_PI],\ closest\ to\ one\ of\ the\ limits}}
+\DoxyCodeLine{00320\ \textcolor{comment}{//\ all\ arguments\ should\ be\ normalized\ angles\ (i.e.\ in\ range\ [-\/B3\_PI,\ B3\_PI])}}
+\DoxyCodeLine{00321\ B3\_FORCE\_INLINE\ b3Scalar\ b3AdjustAngleToLimits(b3Scalar\ angleInRadians,\ b3Scalar\ angleLowerLimitInRadians,\ b3Scalar\ angleUpperLimitInRadians)}
+\DoxyCodeLine{00322\ \{}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordflow}{if}\ (angleLowerLimitInRadians\ >=\ angleUpperLimitInRadians)}
+\DoxyCodeLine{00324\ \ \ \ \ \{}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ angleInRadians;}
+\DoxyCodeLine{00326\ \ \ \ \ \}}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (angleInRadians\ <\ angleLowerLimitInRadians)}
+\DoxyCodeLine{00328\ \ \ \ \ \{}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ b3Scalar\ diffLo\ =\ b3Fabs(b3NormalizeAngle(angleLowerLimitInRadians\ -\/\ angleInRadians));}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ b3Scalar\ diffHi\ =\ b3Fabs(b3NormalizeAngle(angleUpperLimitInRadians\ -\/\ angleInRadians));}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (diffLo\ <\ diffHi)\ ?\ angleInRadians\ :\ (angleInRadians\ +\ B3\_2\_PI);}
+\DoxyCodeLine{00332\ \ \ \ \ \}}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (angleInRadians\ >\ angleUpperLimitInRadians)}
+\DoxyCodeLine{00334\ \ \ \ \ \{}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ b3Scalar\ diffHi\ =\ b3Fabs(b3NormalizeAngle(angleInRadians\ -\/\ angleUpperLimitInRadians));}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ b3Scalar\ diffLo\ =\ b3Fabs(b3NormalizeAngle(angleInRadians\ -\/\ angleLowerLimitInRadians));}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (diffLo\ <\ diffHi)\ ?\ (angleInRadians\ -\/\ B3\_2\_PI)\ :\ angleInRadians;}
+\DoxyCodeLine{00338\ \ \ \ \ \}}
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00340\ \ \ \ \ \{}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ angleInRadians;}
+\DoxyCodeLine{00342\ \ \ \ \ \}}
+\DoxyCodeLine{00343\ \}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00347\ \textcolor{keyword}{struct\ \ }\mbox{\hyperlink{structb3_typed_constraint_data}{b3TypedConstraintData}}}
+\DoxyCodeLine{00348\ \{}
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ m\_bodyA;}
+\DoxyCodeLine{00350\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ m\_bodyB;}
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ *m\_name;}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_objectType;}
+\DoxyCodeLine{00354\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_userConstraintType;}
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_userConstraintId;}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_needsFeedback;}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_appliedImpulse;}
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_dbgDrawSize;}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_disableCollisionsBetweenLinkedBodies;}
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_overrideNumSolverIterations;}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_breakingImpulseThreshold;}
+\DoxyCodeLine{00365\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ m\_isEnabled;}
+\DoxyCodeLine{00366\ \ \ \ \ }
+\DoxyCodeLine{00367\ \};}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \textcolor{comment}{/*B3\_FORCE\_INLINE\ \ \ int\ b3TypedConstraint::calculateSerializeBufferSize()\ const}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\{}}
+\DoxyCodeLine{00373\ \textcolor{comment}{\ \ \ \ return\ sizeof(b3TypedConstraintData);}}
+\DoxyCodeLine{00374\ \textcolor{comment}{\}}}
+\DoxyCodeLine{00375\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_angular_limit}{b3AngularLimit}}}
+\DoxyCodeLine{00378\ \{}
+\DoxyCodeLine{00379\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00380\ \ \ \ \ b3Scalar}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ m\_center,}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ m\_halfRange,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ m\_softness,}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ m\_biasFactor,}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ m\_relaxationFactor,}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ m\_correction,}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ m\_sign;}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ \textcolor{keywordtype}{bool}}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ m\_solveLimit;}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00394\ \ \ \ \ \mbox{\hyperlink{classb3_angular_limit_a54310d521a5ec51820c75dbd1d3bc743}{b3AngularLimit}}()}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ :\ m\_center(0.0f),}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ m\_halfRange(-\/1.0f),}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ m\_softness(0.9f),}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ m\_biasFactor(0.3f),}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ m\_relaxationFactor(1.0f),}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ m\_correction(0.0f),}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ m\_sign(0.0f),}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ m\_solveLimit(false)}
+\DoxyCodeLine{00403\ \ \ \ \ \{}
+\DoxyCodeLine{00404\ \ \ \ \ \}}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_angular_limit_aed6bb6f232a5cf92ec462d615c0d927b}{set}}(b3Scalar\ low,\ b3Scalar\ high,\ b3Scalar\ \_softness\ =\ 0.9f,\ b3Scalar\ \_biasFactor\ =\ 0.3f,\ b3Scalar\ \_relaxationFactor\ =\ 1.0f);}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00413\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_angular_limit_a29903b664feb83d7d52cc1bef84b7e5e}{test}}(\textcolor{keyword}{const}\ b3Scalar\ angle);}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00416\ \ \ \ \ \textcolor{keyword}{inline}\ b3Scalar\ \mbox{\hyperlink{classb3_angular_limit_a46db1ec1bf0931eda774bfe7de3a8c20}{getSoftness}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00417\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_softness;}
+\DoxyCodeLine{00419\ \ \ \ \ \}}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00422\ \ \ \ \ \textcolor{keyword}{inline}\ b3Scalar\ \mbox{\hyperlink{classb3_angular_limit_a32c07032f2878699807c4e2005fd832a}{getBiasFactor}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00423\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_biasFactor;}
+\DoxyCodeLine{00425\ \ \ \ \ \}}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00428\ \ \ \ \ \textcolor{keyword}{inline}\ b3Scalar\ \mbox{\hyperlink{classb3_angular_limit_a46cd6bf69d03d15a1f4e6b065106a673}{getRelaxationFactor}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00429\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_relaxationFactor;}
+\DoxyCodeLine{00431\ \ \ \ \ \}}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00434\ \ \ \ \ \textcolor{keyword}{inline}\ b3Scalar\ \mbox{\hyperlink{classb3_angular_limit_a77baaf7df1e8f8671aee276604ec0d72}{getCorrection}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00435\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_correction;}
+\DoxyCodeLine{00437\ \ \ \ \ \}}
+\DoxyCodeLine{00438\ }
+\DoxyCodeLine{00440\ \ \ \ \ \textcolor{keyword}{inline}\ b3Scalar\ \mbox{\hyperlink{classb3_angular_limit_a3e1880e505127cae0c6b9beaa1fab756}{getSign}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00441\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_sign;}
+\DoxyCodeLine{00443\ \ \ \ \ \}}
+\DoxyCodeLine{00444\ }
+\DoxyCodeLine{00446\ \ \ \ \ \textcolor{keyword}{inline}\ b3Scalar\ \mbox{\hyperlink{classb3_angular_limit_ad74b071d8784f5eeb91d66a6ede80739}{getHalfRange}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00447\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_halfRange;}
+\DoxyCodeLine{00449\ \ \ \ \ \}}
+\DoxyCodeLine{00450\ }
+\DoxyCodeLine{00452\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb3_angular_limit_aa34eafda75240d58f2d9f75d05116dce}{isLimit}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00453\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_solveLimit;}
+\DoxyCodeLine{00455\ \ \ \ \ \}}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_angular_limit_afbac472e84ab018f38040ff1f3e0bf7b}{fit}}(b3Scalar\&\ angle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00462\ \ \ \ \ b3Scalar\ \mbox{\hyperlink{classb3_angular_limit_ad067f6b9853fb662a9a23086d198fdd1}{getError}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ \ \ \ \ b3Scalar\ getLow()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \ \ \ \ b3Scalar\ getHigh()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00467\ \};}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_TYPED\_CONSTRAINT\_H}}
+
+\end{DoxyCode}

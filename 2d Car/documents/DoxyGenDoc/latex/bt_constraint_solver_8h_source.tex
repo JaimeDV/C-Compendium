@@ -1,0 +1,62 @@
+\doxysection{bt\+Constraint\+Solver.\+h}
+\hypertarget{bt_constraint_solver_8h_source}{}\label{bt_constraint_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btConstraintSolver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btConstraintSolver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }btPersistentManifold;}
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }btCollisionObject;}
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }btTypedConstraint;}
+\DoxyCodeLine{00025\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}};}
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }btBroadphaseProxy;}
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}};}
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_stack_alloc}{btStackAlloc}};}
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{enum}\ btConstraintSolverType}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ BT\_SEQUENTIAL\_IMPULSE\_SOLVER\ =\ 1,}
+\DoxyCodeLine{00035\ \ \ \ \ BT\_MLCP\_SOLVER\ =\ 2,}
+\DoxyCodeLine{00036\ \ \ \ \ BT\_NNCG\_SOLVER\ =\ 4,}
+\DoxyCodeLine{00037\ \ \ \ \ BT\_MULTIBODY\_SOLVER\ =\ 8,}
+\DoxyCodeLine{00038\ \ \ \ \ BT\_BLOCK\_SOLVER\ =\ 16,}
+\DoxyCodeLine{00039\ \};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_constraint_solver}{\string~btConstraintSolver}}()\ \{\}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ prepareSolve(\textcolor{keywordtype}{int}\ \textcolor{comment}{/*\ numBodies\ */},\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*\ numManifolds\ */})\ \{\ ;\ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ \mbox{\hyperlink{classbt_constraint_solver_a923b7573a8d62805714abd5157dd0963}{solveGroup}}(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifold,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ info,\ \textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ allSolved(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ \textcolor{comment}{/*\ info\ */},\ \textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ \textcolor{comment}{/*\ debugDrawer\ */})\ \{\ ;\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_constraint_solver_aefecf97d956c5f1ad16a8b00b2f36aa9}{reset}}()\ =\ 0;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{virtual}\ btConstraintSolverType\ getSolverType()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00057\ \};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_CONSTRAINT\_SOLVER\_H}}
+
+\end{DoxyCode}

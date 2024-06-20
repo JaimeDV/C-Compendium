@@ -1,0 +1,269 @@
+\doxysection{bt\+Aligned\+Allocator.\+cpp}
+\hypertarget{bt_aligned_allocator_8cpp_source}{}\label{bt_aligned_allocator_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btAlignedAllocator.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btAlignedAllocator.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btAlignedAllocator.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifdef\ BT\_DEBUG\_MEMORY\_ALLOCATIONS}}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{int}\ gNumAlignedAllocs\ =\ 0;}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{int}\ gNumAlignedFree\ =\ 0;}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{int}\ gTotalBytesAlignedAllocs\ =\ 0;\ \ \textcolor{comment}{//detect\ memory\ leaks}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//BT\_DEBUG\_MEMORY\_ALLOCATIONST\_DEBUG\_ALLOCATIONS}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *btAllocDefault(\textcolor{keywordtype}{size\_t}\ size)}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordflow}{return}\ malloc(size);}
+\DoxyCodeLine{00027\ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ btFreeDefault(\textcolor{keywordtype}{void}\ *ptr)}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ free(ptr);}
+\DoxyCodeLine{00032\ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{static}\ btAllocFunc\ *sAllocFunc\ =\ btAllocDefault;}
+\DoxyCodeLine{00035\ \textcolor{keyword}{static}\ btFreeFunc\ *sFreeFunc\ =\ btFreeDefault;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#if\ defined(BT\_HAS\_ALIGNED\_ALLOCATOR)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <malloc.h>}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *btAlignedAllocDefault(\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{int}\ alignment)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{return}\ \_aligned\_malloc(size,\ (\textcolor{keywordtype}{size\_t})alignment);}
+\DoxyCodeLine{00042\ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ btAlignedFreeDefault(\textcolor{keywordtype}{void}\ *ptr)}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \_aligned\_free(ptr);}
+\DoxyCodeLine{00047\ \}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#elif\ defined(\_\_CELLOS\_LV2\_\_)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ *btAlignedAllocDefault(\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{int}\ alignment)}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{return}\ memalign(alignment,\ size);}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btAlignedFreeDefault(\textcolor{keywordtype}{void}\ *ptr)}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ free(ptr);}
+\DoxyCodeLine{00059\ \}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ *btAlignedAllocDefault(\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{int}\ alignment)}
+\DoxyCodeLine{00063\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ *ret;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{char}\ *real;}
+\DoxyCodeLine{00066\ \ \ \ \ real\ =\ (\textcolor{keywordtype}{char}\ *)sAllocFunc(size\ +\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *)\ +\ (alignment\ -\/\ 1));}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{if}\ (real)}
+\DoxyCodeLine{00068\ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ ret\ =\ btAlignPointer(real\ +\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *),\ alignment);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ *((\textcolor{keywordtype}{void}\ **)(ret)-\/1)\ =\ (\textcolor{keywordtype}{void}\ *)(real);}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ ret\ =\ (\textcolor{keywordtype}{void}\ *)(real);}
+\DoxyCodeLine{00075\ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{return}\ (ret);}
+\DoxyCodeLine{00077\ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btAlignedFreeDefault(\textcolor{keywordtype}{void}\ *ptr)}
+\DoxyCodeLine{00080\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ *real;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr)}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ real\ =\ *((\textcolor{keywordtype}{void}\ **)(ptr)-\/1);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ sFreeFunc(real);}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{static}\ btAlignedAllocFunc\ *sAlignedAllocFunc\ =\ btAlignedAllocDefault;}
+\DoxyCodeLine{00092\ \textcolor{keyword}{static}\ btAlignedFreeFunc\ *sAlignedFreeFunc\ =\ btAlignedFreeDefault;}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{void}\ btAlignedAllocSetCustomAligned(btAlignedAllocFunc\ *allocFunc,\ btAlignedFreeFunc\ *freeFunc)}
+\DoxyCodeLine{00095\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ sAlignedAllocFunc\ =\ allocFunc\ ?\ allocFunc\ :\ btAlignedAllocDefault;}
+\DoxyCodeLine{00097\ \ \ \ \ sAlignedFreeFunc\ =\ freeFunc\ ?\ freeFunc\ :\ btAlignedFreeDefault;}
+\DoxyCodeLine{00098\ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{void}\ btAlignedAllocSetCustom(btAllocFunc\ *allocFunc,\ btFreeFunc\ *freeFunc)}
+\DoxyCodeLine{00101\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ sAllocFunc\ =\ allocFunc\ ?\ allocFunc\ :\ btAllocDefault;}
+\DoxyCodeLine{00103\ \ \ \ \ sFreeFunc\ =\ freeFunc\ ?\ freeFunc\ :\ btFreeDefault;}
+\DoxyCodeLine{00104\ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#ifdef\ BT\_DEBUG\_MEMORY\_ALLOCATIONS}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ allocations\_id[10241024];}
+\DoxyCodeLine{00109\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ allocations\_bytes[10241024];}
+\DoxyCodeLine{00110\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ mynumallocs\ =\ 0;}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{int}\ btDumpMemoryLeaks()}
+\DoxyCodeLine{00114\ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{int}\ totalLeak\ =\ 0;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ mynumallocs;\ i++)}
+\DoxyCodeLine{00118\ \ \ \ \ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ leaked\ memory\ of\ allocation\ \#\%d\ (\%d\ bytes)\(\backslash\)n"{}},\ allocations\_id[i],\ allocations\_bytes[i]);}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ totalLeak\ +=\ allocations\_bytes[i];}
+\DoxyCodeLine{00121\ \ \ \ \ \}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordflow}{if}\ (totalLeak)}
+\DoxyCodeLine{00123\ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ memory\ leaks:\ \%d\ allocations\ were\ not\ freed\ and\ leaked\ together\ \%d\ bytes\(\backslash\)n"{}},\ mynumallocs,\ totalLeak);}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{return}\ totalLeak;}
+\DoxyCodeLine{00127\ \}}
+\DoxyCodeLine{00128\ \textcolor{comment}{//this\ generic\ allocator\ provides\ the\ total\ allocated\ number\ of\ bytes}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{keyword}{struct\ }btDebugPtrMagic}
+\DoxyCodeLine{00132\ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ **vptrptr;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *vptr;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *iptr;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *cptr;}
+\DoxyCodeLine{00138\ \ \ \ \ \};}
+\DoxyCodeLine{00139\ \};}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{void}\ *btAlignedAllocInternal(\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{int}\ alignment,\ \textcolor{keywordtype}{int}\ line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename)}
+\DoxyCodeLine{00142\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordflow}{if}\ (size\ ==\ 0)}
+\DoxyCodeLine{00144\ \ \ \ \ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Whaat?\ size==0"{}});}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00147\ \ \ \ \ \}}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ allocId\ =\ 0;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{void}\ *ret;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{char}\ *real;}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{//\ to\ find\ some\ particular\ memory\ leak,\ you\ could\ do\ something\ like\ this:}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{comment}{//\ \ if\ (allocId==172)}}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{comment}{//\ \ \{}}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ printf("{}catch\ me!\(\backslash\)n"{});}}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{comment}{//\ \ \}}}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//\ \ if\ (size>1024*1024)}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{comment}{//\ \ \{}}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ printf("{}big\ alloc!\%d\(\backslash\)n"{},\ size);}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//\ \ \}}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ gTotalBytesAlignedAllocs\ +=\ size;}
+\DoxyCodeLine{00164\ \ \ \ \ gNumAlignedAllocs++;}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{int}\ sz4prt\ =\ 4\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ real\ =\ (\textcolor{keywordtype}{char}\ *)sAllocFunc(size\ +\ sz4prt\ +\ (alignment\ -\/\ 1));}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{if}\ (real)}
+\DoxyCodeLine{00170\ \ \ \ \ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ ret\ =\ (\textcolor{keywordtype}{void}\ *)btAlignPointer(real\ +\ sz4prt,\ alignment);}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ btDebugPtrMagic\ p;}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ p.vptr\ =\ ret;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ p.cptr\ -\/=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ *p.vptrptr\ =\ (\textcolor{keywordtype}{void}\ *)real;}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ p.cptr\ -\/=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ *p.iptr\ =\ size;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ p.cptr\ -\/=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ *p.iptr\ =\ allocId;}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ allocations\_id[mynumallocs]\ =\ allocId;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ allocations\_bytes[mynumallocs]\ =\ size;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ mynumallocs++;}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00186\ \ \ \ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ ret\ =\ (\textcolor{keywordtype}{void}\ *)(real);\ \ \textcolor{comment}{//??}}
+\DoxyCodeLine{00188\ \ \ \ \ \}}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ printf(\textcolor{stringliteral}{"{}allocation\ \%d\ at\ address\ \%x,\ from\ \%s,line\ \%d,\ size\ \%d\ (total\ allocated\ =\ \%d)\(\backslash\)n"{}},\ allocId,\ real,\ filename,\ line,\ size,\ gTotalBytesAlignedAllocs);}
+\DoxyCodeLine{00191\ \ \ \ \ allocId++;}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{int}\ *ptr\ =\ (\textcolor{keywordtype}{int}\ *)ret;}
+\DoxyCodeLine{00194\ \ \ \ \ *ptr\ =\ 12;}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordflow}{return}\ (ret);}
+\DoxyCodeLine{00196\ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{keywordtype}{void}\ btAlignedFreeInternal(\textcolor{keywordtype}{void}\ *ptr,\ \textcolor{keywordtype}{int}\ line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename)}
+\DoxyCodeLine{00199\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{void}\ *real;}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr)}
+\DoxyCodeLine{00203\ \ \ \ \ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ gNumAlignedFree++;}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ btDebugPtrMagic\ p;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ p.vptr\ =\ ptr;}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ p.cptr\ -\/=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ real\ =\ *p.vptrptr;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ p.cptr\ -\/=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ size\ =\ *p.iptr;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ p.cptr\ -\/=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ allocId\ =\ *p.iptr;}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ found\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ mynumallocs;\ i++)}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (allocations\_id[i]\ ==\ allocId)}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocations\_id[i]\ =\ allocations\_id[mynumallocs\ -\/\ 1];}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocations\_bytes[i]\ =\ allocations\_bytes[mynumallocs\ -\/\ 1];}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mynumallocs-\/-\/;}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ found\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ gTotalBytesAlignedAllocs\ -\/=\ size;}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ diff\ =\ gNumAlignedAllocs\ -\/\ gNumAlignedFree;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}free\ \%d\ at\ address\ \%x,\ from\ \%s,line\ \%d,\ size\ \%d\ (total\ remain\ =\ \%d\ in\ \%d\ non-\/freed\ allocations)\(\backslash\)n"{}},\ allocId,\ real,\ filename,\ line,\ size,\ gTotalBytesAlignedAllocs,\ diff);}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ sFreeFunc(real);}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00237\ \ \ \ \ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}deleting\ a\ NULL\ ptr,\ no\ effect\(\backslash\)n"{});}}
+\DoxyCodeLine{00239\ \ \ \ \ \}}
+\DoxyCodeLine{00240\ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#else\ \ }\textcolor{comment}{//BT\_DEBUG\_MEMORY\_ALLOCATIONS}}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \textcolor{keywordtype}{void}\ *btAlignedAllocInternal(\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{int}\ alignment)}
+\DoxyCodeLine{00245\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keywordtype}{void}\ *ptr;}
+\DoxyCodeLine{00247\ \ \ \ \ ptr\ =\ sAlignedAllocFunc(size,\ alignment);}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{comment}{//\ \ printf("{}btAlignedAllocInternal\ \%d,\ \%x\(\backslash\)n"{},size,ptr);}}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00250\ \}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \textcolor{keywordtype}{void}\ btAlignedFreeInternal(\textcolor{keywordtype}{void}\ *ptr)}
+\DoxyCodeLine{00253\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ptr)}
+\DoxyCodeLine{00255\ \ \ \ \ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00257\ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{comment}{//\ \ printf("{}btAlignedFreeInternal\ \%x\(\backslash\)n"{},ptr);}}
+\DoxyCodeLine{00260\ \ \ \ \ sAlignedFreeFunc(ptr);}
+\DoxyCodeLine{00261\ \}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DEBUG\_MEMORY\_ALLOCATIONS}}
+
+\end{DoxyCode}

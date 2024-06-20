@@ -1,0 +1,86 @@
+\doxysection{bt\+Constraint\+Solver\+Pool\+Mt Class Reference}
+\hypertarget{classbt_constraint_solver_pool_mt}{}\label{classbt_constraint_solver_pool_mt}\index{btConstraintSolverPoolMt@{btConstraintSolverPoolMt}}
+
+
+{\ttfamily \#include $<$bt\+Discrete\+Dynamics\+World\+Mt.\+h$>$}
+
+Inheritance diagram for bt\+Constraint\+Solver\+Pool\+Mt\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classbt_constraint_solver_pool_mt}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_constraint_solver_pool_mt_acf4b3dbafe7f08c728250a1524afe975}\label{classbt_constraint_solver_pool_mt_acf4b3dbafe7f08c728250a1524afe975} 
+{\bfseries bt\+Constraint\+Solver\+Pool\+Mt} (int num\+Solvers)
+\item 
+\Hypertarget{classbt_constraint_solver_pool_mt_af40f5ecdae1d1a701efae932afb9826d}\label{classbt_constraint_solver_pool_mt_af40f5ecdae1d1a701efae932afb9826d} 
+{\bfseries bt\+Constraint\+Solver\+Pool\+Mt} (\mbox{\hyperlink{classbt_constraint_solver}{bt\+Constraint\+Solver}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}solvers, int num\+Solvers)
+\item 
+virtual bt\+Scalar \mbox{\hyperlink{classbt_constraint_solver_pool_mt_a9ec644111717d8455042b606181f7883}{solve\+Group}} (bt\+Collision\+Object \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}bodies, int num\+Bodies, bt\+Persistent\+Manifold \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}manifolds, int num\+Manifolds, bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}constraints, int num\+Constraints, const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&info, \mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*}debug\+Drawer, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher) BT\+\_\+\+OVERRIDE
+\begin{DoxyCompactList}\small\item\em solve a group of constraints \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classbt_constraint_solver_pool_mt_a46ca8c7ce700b4960cd3c5a8ca86517e}{reset}} () BT\+\_\+\+OVERRIDE
+\begin{DoxyCompactList}\small\item\em clear internal cached data and reset random seed \end{DoxyCompactList}\item 
+virtual bt\+Constraint\+Solver\+Type \mbox{\hyperlink{classbt_constraint_solver_pool_mt_a9cc6aa0a5aa26a516886ef91f3053a42}{get\+Solver\+Type}} () const BT\+\_\+\+OVERRIDE
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classbt_constraint_solver}{bt\+Constraint\+Solver}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries prepare\+Solve} (int, int)
+\item 
+virtual void {\bfseries all\+Solved} (const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&, class \mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{classbt_constraint_solver_pool_mt}{bt\+Constraint\+Solver\+Pool\+Mt} -\/ masquerades as a constraint solver, but really it is a threadsafe pool of them.
+
+Each solver in the pool is protected by a mutex. When solve\+Group is called from a thread, the pool looks for a solver that isn\textquotesingle{}t being used by another thread, locks it, and dispatches the call to the solver. So long as there are at least as many solvers as there are hardware threads, it should never need to spin wait. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_constraint_solver_pool_mt_a9cc6aa0a5aa26a516886ef91f3053a42}\label{classbt_constraint_solver_pool_mt_a9cc6aa0a5aa26a516886ef91f3053a42} 
+\index{btConstraintSolverPoolMt@{btConstraintSolverPoolMt}!getSolverType@{getSolverType}}
+\index{getSolverType@{getSolverType}!btConstraintSolverPoolMt@{btConstraintSolverPoolMt}}
+\doxysubsubsection{\texorpdfstring{getSolverType()}{getSolverType()}}
+{\footnotesize\ttfamily virtual bt\+Constraint\+Solver\+Type bt\+Constraint\+Solver\+Pool\+Mt\+::get\+Solver\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classbt_constraint_solver}{bt\+Constraint\+Solver}}.
+
+\Hypertarget{classbt_constraint_solver_pool_mt_a46ca8c7ce700b4960cd3c5a8ca86517e}\label{classbt_constraint_solver_pool_mt_a46ca8c7ce700b4960cd3c5a8ca86517e} 
+\index{btConstraintSolverPoolMt@{btConstraintSolverPoolMt}!reset@{reset}}
+\index{reset@{reset}!btConstraintSolverPoolMt@{btConstraintSolverPoolMt}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily void bt\+Constraint\+Solver\+Pool\+Mt\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+clear internal cached data and reset random seed 
+
+
+
+Implements \mbox{\hyperlink{classbt_constraint_solver_aefecf97d956c5f1ad16a8b00b2f36aa9}{bt\+Constraint\+Solver}}.
+
+\Hypertarget{classbt_constraint_solver_pool_mt_a9ec644111717d8455042b606181f7883}\label{classbt_constraint_solver_pool_mt_a9ec644111717d8455042b606181f7883} 
+\index{btConstraintSolverPoolMt@{btConstraintSolverPoolMt}!solveGroup@{solveGroup}}
+\index{solveGroup@{solveGroup}!btConstraintSolverPoolMt@{btConstraintSolverPoolMt}}
+\doxysubsubsection{\texorpdfstring{solveGroup()}{solveGroup()}}
+{\footnotesize\ttfamily bt\+Scalar bt\+Constraint\+Solver\+Pool\+Mt\+::solve\+Group (\begin{DoxyParamCaption}\item[{bt\+Collision\+Object \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{bodies,  }\item[{int}]{num\+Bodies,  }\item[{bt\+Persistent\+Manifold \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{manifolds,  }\item[{int}]{num\+Manifolds,  }\item[{bt\+Typed\+Constraint \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{constraints,  }\item[{int}]{num\+Constraints,  }\item[{const \mbox{\hyperlink{structbt_contact_solver_info}{bt\+Contact\+Solver\+Info}} \&}]{info,  }\item[{\mbox{\hyperlink{classbt_i_debug_draw}{bt\+IDebug\+Draw}} \texorpdfstring{$\ast$}{*}}]{debug\+Drawer,  }\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+solve a group of constraints 
+
+
+
+Implements \mbox{\hyperlink{classbt_constraint_solver_a923b7573a8d62805714abd5157dd0963}{bt\+Constraint\+Solver}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Dynamics/\+Dynamics/bt\+Discrete\+Dynamics\+World\+Mt.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Dynamics/\+Dynamics/bt\+Discrete\+Dynamics\+World\+Mt.\+cpp\end{DoxyCompactItemize}

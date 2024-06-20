@@ -1,0 +1,162 @@
+\doxysection{bt\+IDebug\+Draw Class Reference}
+\hypertarget{classbt_i_debug_draw}{}\label{classbt_i_debug_draw}\index{btIDebugDraw@{btIDebugDraw}}
+
+
+{\ttfamily \#include $<$bt\+IDebug\+Draw.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_i_debug_draw_ab4bb43fbfefb526c552c0943fac5832a}\label{classbt_i_debug_draw_ab4bb43fbfefb526c552c0943fac5832a} 
+enum {\bfseries Debug\+Draw\+Modes} \{ \newline
+{\bfseries DBG\+\_\+\+No\+Debug} = 0
+, {\bfseries DBG\+\_\+\+Draw\+Wireframe} = 1
+, {\bfseries DBG\+\_\+\+Draw\+Aabb} = 2
+, {\bfseries DBG\+\_\+\+Draw\+Features\+Text} = 4
+, \newline
+{\bfseries DBG\+\_\+\+Draw\+Contact\+Points} = 8
+, {\bfseries DBG\+\_\+\+No\+Deactivation} = 16
+, {\bfseries DBG\+\_\+\+No\+Help\+Text} = 32
+, {\bfseries DBG\+\_\+\+Draw\+Text} = 64
+, \newline
+{\bfseries DBG\+\_\+\+Profile\+Timings} = 128
+, {\bfseries DBG\+\_\+\+Enable\+Sat\+Comparison} = 256
+, {\bfseries DBG\+\_\+\+Disable\+Bullet\+LCP} = 512
+, {\bfseries DBG\+\_\+\+Enable\+CCD} = 1024
+, \newline
+{\bfseries DBG\+\_\+\+Draw\+Constraints} = (1 \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 11)
+, {\bfseries DBG\+\_\+\+Draw\+Constraint\+Limits} = (1 \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 12)
+, {\bfseries DBG\+\_\+\+Fast\+Wireframe} = (1 \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 13)
+, {\bfseries DBG\+\_\+\+Draw\+Normals} = (1 \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 14)
+, \newline
+{\bfseries DBG\+\_\+\+Draw\+Frames} = (1 \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 15)
+, {\bfseries DBG\+\_\+\+MAX\+\_\+\+DEBUG\+\_\+\+DRAW\+\_\+\+MODE}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_i_debug_draw_a6ac6dce3ba4f29c53a2b95e53f937e0e}\label{classbt_i_debug_draw_a6ac6dce3ba4f29c53a2b95e53f937e0e} 
+{\bfseries Default\+Colors} ()
+\item 
+\Hypertarget{classbt_i_debug_draw_ab66aa236eec6b3794642abdefb21293d}\label{classbt_i_debug_draw_ab66aa236eec6b3794642abdefb21293d} 
+virtual Default\+Colors {\bfseries get\+Default\+Colors} () const
+\item 
+\Hypertarget{classbt_i_debug_draw_aec5aa09aa69cc324c98788a979b094ce}\label{classbt_i_debug_draw_aec5aa09aa69cc324c98788a979b094ce} 
+virtual void {\bfseries set\+Default\+Colors} (const Default\+Colors \&)
+\begin{DoxyCompactList}\small\item\em the default implementation for set\+Default\+Colors has no effect. A derived class can implement it and store the colors. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_i_debug_draw_a07b08e255ab4607ab5aeb24399332aff}\label{classbt_i_debug_draw_a07b08e255ab4607ab5aeb24399332aff} 
+virtual void {\bfseries draw\+Line} (const bt\+Vector3 \&from, const bt\+Vector3 \&to, const bt\+Vector3 \&color)=0
+\item 
+\Hypertarget{classbt_i_debug_draw_a0e9e92ccb0b2eec9c2fc8792a286af9a}\label{classbt_i_debug_draw_a0e9e92ccb0b2eec9c2fc8792a286af9a} 
+virtual void {\bfseries draw\+Line} (const bt\+Vector3 \&from, const bt\+Vector3 \&to, const bt\+Vector3 \&from\+Color, const bt\+Vector3 \&to\+Color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a29033d7c4f7d8c1745301bc4b5253f3b}\label{classbt_i_debug_draw_a29033d7c4f7d8c1745301bc4b5253f3b} 
+virtual void {\bfseries draw\+Sphere} (bt\+Scalar radius, const bt\+Transform \&transform, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a49e2bf7b122f241b7b29913888d6825b}\label{classbt_i_debug_draw_a49e2bf7b122f241b7b29913888d6825b} 
+virtual void {\bfseries draw\+Sphere} (const bt\+Vector3 \&p, bt\+Scalar radius, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a3f0eec1b40109254182f0fe35f6308d0}\label{classbt_i_debug_draw_a3f0eec1b40109254182f0fe35f6308d0} 
+virtual void {\bfseries draw\+Triangle} (const bt\+Vector3 \&v0, const bt\+Vector3 \&v1, const bt\+Vector3 \&v2, const bt\+Vector3 \&, const bt\+Vector3 \&, const bt\+Vector3 \&, const bt\+Vector3 \&color, bt\+Scalar alpha)
+\item 
+\Hypertarget{classbt_i_debug_draw_ae537cc49a9061703ec1f1be33cf24ea3}\label{classbt_i_debug_draw_ae537cc49a9061703ec1f1be33cf24ea3} 
+virtual void {\bfseries draw\+Triangle} (const bt\+Vector3 \&v0, const bt\+Vector3 \&v1, const bt\+Vector3 \&v2, const bt\+Vector3 \&color, bt\+Scalar)
+\item 
+\Hypertarget{classbt_i_debug_draw_a791eba72577f83519499bd646bb4a3f1}\label{classbt_i_debug_draw_a791eba72577f83519499bd646bb4a3f1} 
+virtual void {\bfseries draw\+Contact\+Point} (const bt\+Vector3 \&Point\+OnB, const bt\+Vector3 \&normal\+OnB, bt\+Scalar distance, int life\+Time, const bt\+Vector3 \&color)=0
+\item 
+\Hypertarget{classbt_i_debug_draw_a4114a426d9d922d7b834673bb4044757}\label{classbt_i_debug_draw_a4114a426d9d922d7b834673bb4044757} 
+virtual void {\bfseries report\+Error\+Warning} (const char \texorpdfstring{$\ast$}{*}warning\+String)=0
+\item 
+\Hypertarget{classbt_i_debug_draw_a287102dad359ae7c0685ec527c54ea48}\label{classbt_i_debug_draw_a287102dad359ae7c0685ec527c54ea48} 
+virtual void {\bfseries draw3d\+Text} (const bt\+Vector3 \&location, const char \texorpdfstring{$\ast$}{*}text\+String)=0
+\item 
+\Hypertarget{classbt_i_debug_draw_a682fb01e96403d1da04207b7a9b46639}\label{classbt_i_debug_draw_a682fb01e96403d1da04207b7a9b46639} 
+virtual void {\bfseries set\+Debug\+Mode} (int debug\+Mode)=0
+\item 
+\Hypertarget{classbt_i_debug_draw_a8b0e36c47552ec81ea61a16f6239f92d}\label{classbt_i_debug_draw_a8b0e36c47552ec81ea61a16f6239f92d} 
+virtual int {\bfseries get\+Debug\+Mode} () const =0
+\item 
+\Hypertarget{classbt_i_debug_draw_ae60d3fc7f75c75712261d970dbd87fb9}\label{classbt_i_debug_draw_ae60d3fc7f75c75712261d970dbd87fb9} 
+virtual void {\bfseries draw\+Aabb} (const bt\+Vector3 \&from, const bt\+Vector3 \&to, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a6faa8214eebc450104325b6833448b1e}\label{classbt_i_debug_draw_a6faa8214eebc450104325b6833448b1e} 
+virtual void {\bfseries draw\+Transform} (const bt\+Transform \&transform, bt\+Scalar ortho\+Len)
+\item 
+\Hypertarget{classbt_i_debug_draw_a19cd036ce23c673c4ac13cc3f2a5ac33}\label{classbt_i_debug_draw_a19cd036ce23c673c4ac13cc3f2a5ac33} 
+virtual void {\bfseries draw\+Arc} (const bt\+Vector3 \&center, const bt\+Vector3 \&normal, const bt\+Vector3 \&axis, bt\+Scalar radiusA, bt\+Scalar radiusB, bt\+Scalar min\+Angle, bt\+Scalar max\+Angle, const bt\+Vector3 \&color, bool draw\+Sect, bt\+Scalar step\+Degrees=bt\+Scalar(10.f))
+\item 
+\Hypertarget{classbt_i_debug_draw_aaa3510d1efce41e4a98915ef542c4288}\label{classbt_i_debug_draw_aaa3510d1efce41e4a98915ef542c4288} 
+virtual void {\bfseries draw\+Sphere\+Patch} (const bt\+Vector3 \&center, const bt\+Vector3 \&up, const bt\+Vector3 \&axis, bt\+Scalar radius, bt\+Scalar min\+Th, bt\+Scalar max\+Th, bt\+Scalar min\+Ps, bt\+Scalar max\+Ps, const bt\+Vector3 \&color, bt\+Scalar step\+Degrees=bt\+Scalar(10.f), bool draw\+Center=true)
+\item 
+\Hypertarget{classbt_i_debug_draw_a9c9e46fa03d6296f8b3f57538db6be7f}\label{classbt_i_debug_draw_a9c9e46fa03d6296f8b3f57538db6be7f} 
+virtual void {\bfseries draw\+Box} (const bt\+Vector3 \&bb\+Min, const bt\+Vector3 \&bb\+Max, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a1895c36d90017439329ad2b375c92285}\label{classbt_i_debug_draw_a1895c36d90017439329ad2b375c92285} 
+virtual void {\bfseries draw\+Box} (const bt\+Vector3 \&bb\+Min, const bt\+Vector3 \&bb\+Max, const bt\+Transform \&trans, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_aec2ac4fe5ee1073a2eeb7f459a22dd87}\label{classbt_i_debug_draw_aec2ac4fe5ee1073a2eeb7f459a22dd87} 
+virtual void {\bfseries draw\+Capsule} (bt\+Scalar radius, bt\+Scalar half\+Height, int up\+Axis, const bt\+Transform \&transform, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_aa0f2076c26f158ba5579a07a931fabd6}\label{classbt_i_debug_draw_aa0f2076c26f158ba5579a07a931fabd6} 
+virtual void {\bfseries draw\+Cylinder} (bt\+Scalar radius, bt\+Scalar half\+Height, int up\+Axis, const bt\+Transform \&transform, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a0059af5b0a43dd6b2d464f94938d4d14}\label{classbt_i_debug_draw_a0059af5b0a43dd6b2d464f94938d4d14} 
+virtual void {\bfseries draw\+Cone} (bt\+Scalar radius, bt\+Scalar height, int up\+Axis, const bt\+Transform \&transform, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a012926f8d101863d8d9d1af6f2fca0a0}\label{classbt_i_debug_draw_a012926f8d101863d8d9d1af6f2fca0a0} 
+virtual void {\bfseries draw\+Plane} (const bt\+Vector3 \&plane\+Normal, bt\+Scalar plane\+Const, const bt\+Transform \&transform, const bt\+Vector3 \&color)
+\item 
+\Hypertarget{classbt_i_debug_draw_a49615902462af91e6465b498f19fead2}\label{classbt_i_debug_draw_a49615902462af91e6465b498f19fead2} 
+virtual void {\bfseries clear\+Lines} ()
+\item 
+\Hypertarget{classbt_i_debug_draw_a3f3eb06b7de1fa2b265e18fca13f66c2}\label{classbt_i_debug_draw_a3f3eb06b7de1fa2b265e18fca13f66c2} 
+virtual void {\bfseries flush\+Lines} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classbt_i_debug_draw_acdb0cc5853f229e8cb22a138880f2bbc}{Default\+Colors}}
+\item 
+\Hypertarget{classbt_i_debug_draw_a007afc27eceafbe95b38f0a66795d67a}\label{classbt_i_debug_draw_a007afc27eceafbe95b38f0a66795d67a} 
+bt\+Vector3 {\bfseries m\+\_\+deactivated\+Object}
+\item 
+\Hypertarget{classbt_i_debug_draw_a398f0dc3728e1c2b07968cf3dae6218c}\label{classbt_i_debug_draw_a398f0dc3728e1c2b07968cf3dae6218c} 
+bt\+Vector3 {\bfseries m\+\_\+wants\+Deactivation\+Object}
+\item 
+\Hypertarget{classbt_i_debug_draw_a1e3f8c9f2cf305b1cfa634654e47f0fa}\label{classbt_i_debug_draw_a1e3f8c9f2cf305b1cfa634654e47f0fa} 
+bt\+Vector3 {\bfseries m\+\_\+disabled\+Deactivation\+Object}
+\item 
+\Hypertarget{classbt_i_debug_draw_aa8fa4e4954d4851fd6f10fa3011994d0}\label{classbt_i_debug_draw_aa8fa4e4954d4851fd6f10fa3011994d0} 
+bt\+Vector3 {\bfseries m\+\_\+disabled\+Simulation\+Object}
+\item 
+\Hypertarget{classbt_i_debug_draw_acb2971eecc3dc905be029373779783a9}\label{classbt_i_debug_draw_acb2971eecc3dc905be029373779783a9} 
+bt\+Vector3 {\bfseries m\+\_\+aabb}
+\item 
+\Hypertarget{classbt_i_debug_draw_a82df5a5bc0a61faf904a1955334b43a4}\label{classbt_i_debug_draw_a82df5a5bc0a61faf904a1955334b43a4} 
+bt\+Vector3 {\bfseries m\+\_\+contact\+Point}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxylink{classbt_i_debug_draw}{bt\+IDebug\+Draw} interface class allows hooking up a debug renderer to visually debug simulations. Typical use case\+: create a debug drawer object, and assign it to a \doxylink{classbt_collision_world}{bt\+Collision\+World} or \doxylink{classbt_dynamics_world}{bt\+Dynamics\+World} using set\+Debug\+Drawer and call debug\+Draw\+World. A class that implements the \doxylink{classbt_i_debug_draw}{bt\+IDebug\+Draw} interface will need to provide non-\/empty implementations of the the draw\+Line and get\+Debug\+Mode methods at a minimum. For color arguments the X,Y,Z components refer to Red, Green and Blue each in the range \mbox{[}0..1\mbox{]} 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classbt_i_debug_draw_acdb0cc5853f229e8cb22a138880f2bbc}\label{classbt_i_debug_draw_acdb0cc5853f229e8cb22a138880f2bbc} 
+\index{btIDebugDraw@{btIDebugDraw}!DefaultColors@{DefaultColors}}
+\index{DefaultColors@{DefaultColors}!btIDebugDraw@{btIDebugDraw}}
+\doxysubsubsection{\texorpdfstring{DefaultColors}{DefaultColors}}
+{\footnotesize\ttfamily bt\+IDebug\+Draw\+::\+Default\+Colors}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ btVector3\ m\_activeObject}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Linear\+Math/bt\+IDebug\+Draw.\+h\end{DoxyCompactItemize}

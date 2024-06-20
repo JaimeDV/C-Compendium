@@ -1,0 +1,116 @@
+\doxysection{b3\+Solver.\+h}
+\hypertarget{b3_solver_8h_source}{}\label{b3_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/RigidBody/b3Solver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/RigidBody/b3Solver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Copyright\ (c)\ 2012\ Advanced\ Micro\ Devices,\ Inc.\ \ }}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00007\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00009\ \textcolor{comment}{}}
+\DoxyCodeLine{00010\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//Originally\ written\ by\ Takahiro\ Harada}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ \_\_ADL\_SOLVER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ \_\_ADL\_SOLVER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}b3GpuConstraint4.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/b3Contact4.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3PrefixScanCL.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3BoundSearchCL.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/Initialize/b3OpenCLUtils.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ B3NEXTMULTIPLEOF(num,\ alignment)\ (((num)\ /\ (alignment)\ +\ (((num)\ \%\ (alignment)\ ==\ 0)\ ?\ 0\ :\ 1))\ *\ (alignment))}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ B3\_SOLVER\_N\_SPLIT\_X\ =\ 8,\ \ \textcolor{comment}{//16,//4,}}
+\DoxyCodeLine{00036\ \ \ \ \ B3\_SOLVER\_N\_SPLIT\_Y\ =\ 4,\ \ \textcolor{comment}{//16,//4,}}
+\DoxyCodeLine{00037\ \ \ \ \ B3\_SOLVER\_N\_SPLIT\_Z\ =\ 8,\ \ \textcolor{comment}{//,}}
+\DoxyCodeLine{00038\ \ \ \ \ B3\_SOLVER\_N\_CELLS\ =\ B3\_SOLVER\_N\_SPLIT\_X\ *\ B3\_SOLVER\_N\_SPLIT\_Y\ *\ B3\_SOLVER\_N\_SPLIT\_Z,}
+\DoxyCodeLine{00039\ \ \ \ \ B3\_SOLVER\_N\_BATCHES\ =\ 8,\ \ \textcolor{comment}{//4,//8,//4,}}
+\DoxyCodeLine{00040\ \ \ \ \ B3\_MAX\_NUM\_BATCHES\ =\ 128,}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_solver_base}{b3SolverBase}}}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_solver_base_1_1_constraint_cfg}{ConstraintCfg}}}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb3_solver_base_1_1_constraint_cfg}{ConstraintCfg}}(\textcolor{keywordtype}{float}\ dt\ =\ 0.f)\ :\ m\_positionDrift(0.005f),\ m\_positionConstraintCoeff(0.2f),\ m\_dt(dt),\ m\_staticIdx(-\/1)\ \{\}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_positionDrift;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_positionConstraintCoeff;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_dt;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableParallelSolve;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_batchCellSize;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_staticIdx;}
+\DoxyCodeLine{00056\ \ \ \ \ \};}
+\DoxyCodeLine{00057\ \};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_solver}{b3Solver}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb3_solver_base}{b3SolverBase}}}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00062\ \ \ \ \ cl\_context\ m\_context;}
+\DoxyCodeLine{00063\ \ \ \ \ cl\_device\_id\ m\_device;}
+\DoxyCodeLine{00064\ \ \ \ \ cl\_command\_queue\ m\_queue;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<unsigned\ int>}}*\ m\_numConstraints;}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<unsigned\ int>}}*\ m\_offsets;}
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_batchSizes;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_nIterations;}
+\DoxyCodeLine{00071\ \ \ \ \ cl\_kernel\ m\_batchingKernel;}
+\DoxyCodeLine{00072\ \ \ \ \ cl\_kernel\ m\_batchingKernelNew;}
+\DoxyCodeLine{00073\ \ \ \ \ cl\_kernel\ m\_solveContactKernel;}
+\DoxyCodeLine{00074\ \ \ \ \ cl\_kernel\ m\_solveFrictionKernel;}
+\DoxyCodeLine{00075\ \ \ \ \ cl\_kernel\ m\_contactToConstraintKernel;}
+\DoxyCodeLine{00076\ \ \ \ \ cl\_kernel\ m\_setSortDataKernel;}
+\DoxyCodeLine{00077\ \ \ \ \ cl\_kernel\ m\_reorderContactKernel;}
+\DoxyCodeLine{00078\ \ \ \ \ cl\_kernel\ m\_copyConstraintKernel;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_radix_sort32_c_l}{b3RadixSort32CL}}*\ m\_sort32;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_bound_search_c_l}{b3BoundSearchCL}}*\ m\_search;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_prefix_scan_c_l}{b3PrefixScanCL}}*\ m\_scan;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}*\ m\_sortDataBuffer;}
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Contact4>}}*\ m\_contactBuffer2;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ DYNAMIC\_CONTACT\_ALLOCATION\_THRESHOLD\ =\ 2000000,}
+\DoxyCodeLine{00090\ \ \ \ \ \};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{classb3_solver}{b3Solver}}(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ queue,\ \textcolor{keywordtype}{int}\ pairCapacity);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_solver}{\string~b3Solver}}();}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{void}\ solveContactConstraint(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3RigidBodyData>}}*\ bodyBuf,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3InertiaData>}}*\ inertiaBuf,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3GpuConstraint4>}}*\ constraint,\ \textcolor{keywordtype}{void}*\ additionalData,\ \textcolor{keywordtype}{int}\ n,\ \textcolor{keywordtype}{int}\ maxNumBatches);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ solveContactConstraintHost(\mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3RigidBodyData>}}*\ bodyBuf,\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3InertiaData>}}*\ shapeBuf,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3GpuConstraint4>}}*\ constraint,\ \textcolor{keywordtype}{void}*\ additionalData,\ \textcolor{keywordtype}{int}\ n,\ \textcolor{keywordtype}{int}\ maxNumBatches,\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}*\ batchSizes);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ convertToConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3RigidBodyData>}}*\ bodyBuf,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3InertiaData>}}*\ shapeBuf,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Contact4>}}*\ contactsIn,\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3GpuConstraint4>}}*\ contactCOut,\ \textcolor{keywordtype}{void}*\ additionalData,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nContacts,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_solver_base_1_1_constraint_cfg}{ConstraintCfg}}\&\ cfg);}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ batchContacts(\mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Contact4>}}*\ contacts,\ \textcolor{keywordtype}{int}\ nContacts,\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<unsigned\ int>}}*\ n,\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<unsigned\ int>}}*\ offsets,\ \textcolor{keywordtype}{int}\ staticIdx);}
+\DoxyCodeLine{00108\ \};}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\_\_ADL\_SOLVER\_H}}
+
+\end{DoxyCode}

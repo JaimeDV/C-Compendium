@@ -1,0 +1,426 @@
+\doxysection{bt\+Deformable\+Neo\+Hookean\+Force.\+h}
+\hypertarget{bt_deformable_neo_hookean_force_8h_source}{}\label{bt_deformable_neo_hookean_force_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableNeoHookeanForce.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableNeoHookeanForce.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_NEOHOOKEAN\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_NEOHOOKEAN\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btDeformableLagrangianForce.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuickprof.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btImplicitQRSVD.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ This\ energy\ is\ as\ described\ in\ https://graphics.pixar.com/library/StableElasticity/paper.pdf}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_neo_hookean_force}{btDeformableNeoHookeanForce}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_lagrangian_force}{btDeformableLagrangianForce}}}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00027\ \ \ \ \ btScalar\ m\_mu,\ m\_lambda;\ \ \textcolor{comment}{//\ Lame\ Parameters}}
+\DoxyCodeLine{00028\ \ \ \ \ btScalar\ m\_E,\ m\_nu;\ \ \ \ \ \ \ \textcolor{comment}{//\ Young's\ modulus\ and\ Poisson\ ratio}}
+\DoxyCodeLine{00029\ \ \ \ \ btScalar\ m\_mu\_damp,\ m\_lambda\_damp;}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_neo_hookean_force}{btDeformableNeoHookeanForce}}()\ :\ m\_mu(1),\ m\_lambda(1)}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ btScalar\ damping\ =\ 0.05;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ m\_mu\_damp\ =\ damping\ *\ m\_mu;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ m\_lambda\_damp\ =\ damping\ *\ m\_lambda;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ updateYoungsModulusAndPoissonRatio();}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_neo_hookean_force}{btDeformableNeoHookeanForce}}(btScalar\ mu,\ btScalar\ lambda,\ btScalar\ damping\ =\ 0.05)\ :\ m\_mu(mu),\ m\_lambda(lambda)}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ m\_mu\_damp\ =\ damping\ *\ m\_mu;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ m\_lambda\_damp\ =\ damping\ *\ m\_lambda;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ updateYoungsModulusAndPoissonRatio();}
+\DoxyCodeLine{00043\ \ \ \ \ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ updateYoungsModulusAndPoissonRatio()}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ conversion\ from\ Lame\ Parameters\ to\ Young's\ modulus\ and\ Poisson\ ratio}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ https://en.wikipedia.org/wiki/Lam\%C3\%A9\_parameters}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ m\_E\ =\ m\_mu\ *\ (3\ *\ m\_lambda\ +\ 2\ *\ m\_mu)\ /\ (m\_lambda\ +\ m\_mu);}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ m\_nu\ =\ m\_lambda\ *\ 0.5\ /\ (m\_mu\ +\ m\_lambda);}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ updateLameParameters()}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ conversion\ from\ Young's\ modulus\ and\ Poisson\ ratio\ to\ Lame\ Parameters}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ https://en.wikipedia.org/wiki/Lam\%C3\%A9\_parameters}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ m\_mu\ =\ m\_E\ *\ 0.5\ /\ (1\ +\ m\_nu);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ m\_lambda\ =\ m\_E\ *\ m\_nu\ /\ ((1\ +\ m\_nu)\ *\ (1\ -\/\ 2\ *\ m\_nu));}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ setYoungsModulus(btScalar\ E)}
+\DoxyCodeLine{00062\ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ m\_E\ =\ E;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ updateLameParameters();}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ setPoissonRatio(btScalar\ nu)}
+\DoxyCodeLine{00068\ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ m\_nu\ =\ nu;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ updateLameParameters();}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ setDamping(btScalar\ damping)}
+\DoxyCodeLine{00074\ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ m\_mu\_damp\ =\ damping\ *\ m\_mu;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ m\_lambda\_damp\ =\ damping\ *\ m\_lambda;}
+\DoxyCodeLine{00077\ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{void}\ setLameParameters(btScalar\ mu,\ btScalar\ lambda)}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ m\_mu\ =\ mu;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ m\_lambda\ =\ lambda;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ updateYoungsModulusAndPoissonRatio();}
+\DoxyCodeLine{00084\ \ \ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledForces(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ addScaledDampingForce(scale,\ force);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ addScaledElasticForce(scale,\ force);}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledExplicitForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00093\ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ addScaledElasticForce(scale,\ force);}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{//\ The\ damping\ matrix\ is\ calculated\ using\ the\ time\ n\ state\ as\ described\ in\ https://www.math.ucla.edu/\string~jteran/papers/GSSJT15.pdf\ to\ allow\ line\ search}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledDampingForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00099\ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_mu\_damp\ ==\ 0\ \&\&\ m\_lambda\_damp\ ==\ 0)}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numNodes\ =\ getNumNodes();}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ btAssert(numNodes\ <=\ force.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ btVector3\ grad\_N\_hat\_1st\_col\ =\ btVector3(-\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!psb-\/>isActive())}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_tetras.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_tetra}{btSoftBody::Tetra}}\&\ tetra\ =\ psb-\/>m\_tetras[j];}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node0\ =\ tetra.m\_n[0];}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node1\ =\ tetra.m\_n[1];}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node2\ =\ tetra.m\_n[2];}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node3\ =\ tetra.m\_n[3];}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id0\ =\ node0-\/>index;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id1\ =\ node1-\/>index;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id2\ =\ node2-\/>index;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id3\ =\ node3-\/>index;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ dF\ =\ DsFromVelocity(node0,\ node1,\ node2,\ node3)\ *\ tetra.m\_Dm\_inverse;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ I;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ I.setIdentity();}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ dP\ =\ (dF\ +\ dF.transpose())\ *\ m\_mu\_damp\ +\ I\ *\ (dF[0][0]\ +\ dF[1][1]\ +\ dF[2][2])\ *\ m\_lambda\_damp;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ firstPiolaDampingDifferential(psb-\/>m\_tetraScratchesTn[j],\ dF,\ dP);}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ df\_on\_node0\ =\ dP\ *\ (tetra.m\_Dm\_inverse.transpose()\ *\ grad\_N\_hat\_1st\_col);}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ df\_on\_node123\ =\ dP\ *\ tetra.m\_Dm\_inverse.transpose();}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ damping\ force\ differential}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ scale1\ =\ scale\ *\ tetra.m\_element\_measure;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id0]\ -\/=\ scale1\ *\ df\_on\_node0;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id1]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(0);}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id2]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(1);}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id3]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(2);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{double}\ totalElasticEnergy(btScalar\ dt)}
+\DoxyCodeLine{00142\ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ energy\ =\ 0;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!psb-\/>isActive())}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_tetraScratches.size();\ ++j)}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_tetra}{btSoftBody::Tetra}}\&\ tetra\ =\ psb-\/>m\_tetras[j];}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_tetra_scratch}{btSoftBody::TetraScratch}}\&\ s\ =\ psb-\/>m\_tetraScratches[j];}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ energy\ +=\ tetra.m\_element\_measure\ *\ elasticEnergyDensity(s);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ energy;}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//\ The\ damping\ energy\ is\ formulated\ as\ in\ https://www.math.ucla.edu/\string~jteran/papers/GSSJT15.pdf\ to\ allow\ line\ search}}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{double}\ totalDampingEnergy(btScalar\ dt)}
+\DoxyCodeLine{00163\ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ energy\ =\ 0;}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ 0;}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!psb-\/>isActive())}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_nodes.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sz\ =\ btMax(sz,\ psb-\/>m\_nodes[j].index);}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\ dampingForce;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ dampingForce.resize(sz\ +\ 1);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ dampingForce.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ dampingForce[i].setZero();}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ addScaledDampingForce(0.5,\ dampingForce);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_nodes.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}\&\ node\ =\ psb-\/>m\_nodes[j];}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ energy\ -\/=\ dampingForce[node.index].dot(node.m\_v)\ /\ dt;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ energy;}
+\DoxyCodeLine{00193\ \ \ \ \ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{double}\ elasticEnergyDensity(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_tetra_scratch}{btSoftBody::TetraScratch}}\&\ s)}
+\DoxyCodeLine{00196\ \ \ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ density\ =\ 0;}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ density\ +=\ m\_mu\ *\ 0.5\ *\ (s.m\_trace\ -\/\ 3.);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ density\ +=\ m\_lambda\ *\ 0.5\ *\ (s.m\_J\ -\/\ 1.\ -\/\ 0.75\ *\ m\_mu\ /\ m\_lambda)\ *\ (s.m\_J\ -\/\ 1.\ -\/\ 0.75\ *\ m\_mu\ /\ m\_lambda);}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ density\ -\/=\ m\_mu\ *\ 0.5\ *\ log(s.m\_trace\ +\ 1);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ density;}
+\DoxyCodeLine{00202\ \ \ \ \ \}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledElasticForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00205\ \ \ \ \ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numNodes\ =\ getNumNodes();}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ btAssert(numNodes\ <=\ force.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ btVector3\ grad\_N\_hat\_1st\_col\ =\ btVector3(-\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!psb-\/>isActive())}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ max\_p\ =\ psb-\/>m\_cfg.m\_maxStress;}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_tetras.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_tetra}{btSoftBody::Tetra}}\&\ tetra\ =\ psb-\/>m\_tetras[j];}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ P;}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ firstPiola(psb-\/>m\_tetraScratches[j],\ P);}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\#ifdef\ USE\_SVD}}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (max\_p\ >\ 0)}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ since\ we\ want\ to\ clamp\ the\ principal\ stress\ to\ max\_p,\ we\ only\ need\ to}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ calculate\ SVD\ when\ sigma\_0\string^2\ +\ sigma\_1\string^2\ +\ sigma\_2\string^2\ >\ max\_p\ *\ max\_p}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ trPTP\ =\ (P[0].length2()\ +\ P[1].length2()\ +\ P[2].length2());}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (trPTP\ >\ max\_p\ *\ max\_p)}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ U,\ V;}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ sigma;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ singularValueDecomposition(P,\ U,\ sigma,\ V);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sigma[0]\ =\ btMin(sigma[0],\ max\_p);}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sigma[1]\ =\ btMin(sigma[1],\ max\_p);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sigma[2]\ =\ btMin(sigma[2],\ max\_p);}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sigma[0]\ =\ btMax(sigma[0],\ -\/max\_p);}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sigma[1]\ =\ btMax(sigma[1],\ -\/max\_p);}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sigma[2]\ =\ btMax(sigma[2],\ -\/max\_p);}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ Sigma;}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Sigma.setIdentity();}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Sigma[0][0]\ =\ sigma[0];}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Sigma[1][1]\ =\ sigma[1];}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Sigma[2][2]\ =\ sigma[2];}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ P\ =\ U\ *\ Sigma\ *\ V.transpose();}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ force\_on\_node0\ =\ P\ *\ (tetra.m\_Dm\_inverse.transpose()*grad\_N\_hat\_1st\_col);}}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ force\_on\_node123\ =\ P\ *\ tetra.m\_Dm\_inverse.transpose();}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ force\_on\_node0\ =\ force\_on\_node123\ *\ grad\_N\_hat\_1st\_col;}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node0\ =\ tetra.m\_n[0];}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node1\ =\ tetra.m\_n[1];}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node2\ =\ tetra.m\_n[2];}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node3\ =\ tetra.m\_n[3];}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id0\ =\ node0-\/>index;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id1\ =\ node1-\/>index;}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id2\ =\ node2-\/>index;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id3\ =\ node3-\/>index;}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ elastic\ force}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ scale1\ =\ scale\ *\ tetra.m\_element\_measure;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id0]\ -\/=\ scale1\ *\ force\_on\_node0;}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id1]\ -\/=\ scale1\ *\ force\_on\_node123.getColumn(0);}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id2]\ -\/=\ scale1\ *\ force\_on\_node123.getColumn(1);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force[id3]\ -\/=\ scale1\ *\ force\_on\_node123.getColumn(2);}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00269\ \ \ \ \ \}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{comment}{//\ The\ damping\ matrix\ is\ calculated\ using\ the\ time\ n\ state\ as\ described\ in\ https://www.math.ucla.edu/\string~jteran/papers/GSSJT15.pdf\ to\ allow\ line\ search}}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledDampingForceDifferential(btScalar\ scale,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dv,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ df)}
+\DoxyCodeLine{00273\ \ \ \ \ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_mu\_damp\ ==\ 0\ \&\&\ m\_lambda\_damp\ ==\ 0)}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numNodes\ =\ getNumNodes();}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ btAssert(numNodes\ <=\ df.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ btVector3\ grad\_N\_hat\_1st\_col\ =\ btVector3(-\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!psb-\/>isActive())}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_tetras.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_tetra}{btSoftBody::Tetra}}\&\ tetra\ =\ psb-\/>m\_tetras[j];}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node0\ =\ tetra.m\_n[0];}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node1\ =\ tetra.m\_n[1];}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node2\ =\ tetra.m\_n[2];}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node3\ =\ tetra.m\_n[3];}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id0\ =\ node0-\/>index;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id1\ =\ node1-\/>index;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id2\ =\ node2-\/>index;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id3\ =\ node3-\/>index;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ dF\ =\ Ds(id0,\ id1,\ id2,\ id3,\ dv)\ *\ tetra.m\_Dm\_inverse;}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ I;}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ I.setIdentity();}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ dP\ =\ (dF\ +\ dF.transpose())\ *\ m\_mu\_damp\ +\ I\ *\ (dF[0][0]\ +\ dF[1][1]\ +\ dF[2][2])\ *\ m\_lambda\_damp;}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ firstPiolaDampingDifferential(psb-\/>m\_tetraScratchesTn[j],\ dF,\ dP);}}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ df\_on\_node0\ =\ dP\ *\ (tetra.m\_Dm\_inverse.transpose()*grad\_N\_hat\_1st\_col);}}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ df\_on\_node123\ =\ dP\ *\ tetra.m\_Dm\_inverse.transpose();}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ df\_on\_node0\ =\ df\_on\_node123\ *\ grad\_N\_hat\_1st\_col;}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ damping\ force\ differential}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ scale1\ =\ scale\ *\ tetra.m\_element\_measure;}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id0]\ -\/=\ scale1\ *\ df\_on\_node0;}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id1]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(0);}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id2]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(1);}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id3]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(2);}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00314\ \ \ \ \ \}}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ buildDampingForceDifferentialDiagonal(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ diagA)\ \{\}}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledElasticForceDifferential(btScalar\ scale,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dx,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ df)}
+\DoxyCodeLine{00319\ \ \ \ \ \{}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numNodes\ =\ getNumNodes();}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ btAssert(numNodes\ <=\ df.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ btVector3\ grad\_N\_hat\_1st\_col\ =\ btVector3(-\/1,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!psb-\/>isActive())}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_tetras.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_tetra}{btSoftBody::Tetra}}\&\ tetra\ =\ psb-\/>m\_tetras[j];}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node0\ =\ tetra.m\_n[0];}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node1\ =\ tetra.m\_n[1];}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node2\ =\ tetra.m\_n[2];}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node3\ =\ tetra.m\_n[3];}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id0\ =\ node0-\/>index;}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id1\ =\ node1-\/>index;}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id2\ =\ node2-\/>index;}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ id3\ =\ node3-\/>index;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ dF\ =\ Ds(id0,\ id1,\ id2,\ id3,\ dx)\ *\ tetra.m\_Dm\_inverse;}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ dP;}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ firstPiolaDifferential(psb-\/>m\_tetraScratches[j],\ dF,\ dP);}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ df\_on\_node0\ =\ dP\ *\ (tetra.m\_Dm\_inverse.transpose()*grad\_N\_hat\_1st\_col);}}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ df\_on\_node123\ =\ dP\ *\ tetra.m\_Dm\_inverse.transpose();}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ df\_on\_node0\ =\ df\_on\_node123\ *\ grad\_N\_hat\_1st\_col;}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ elastic\ force\ differential}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ scale1\ =\ scale\ *\ tetra.m\_element\_measure;}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id0]\ -\/=\ scale1\ *\ df\_on\_node0;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id1]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(0);}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id2]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(1);}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ df[id3]\ -\/=\ scale1\ *\ df\_on\_node123.getColumn(2);}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00356\ \ \ \ \ \}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordtype}{void}\ firstPiola(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_tetra_scratch}{btSoftBody::TetraScratch}}\&\ s,\ btMatrix3x3\&\ P)}
+\DoxyCodeLine{00359\ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ btScalar\ c1\ =\ (m\_mu\ *\ (1.\ -\/\ 1.\ /\ (s.m\_trace\ +\ 1.)));}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ btScalar\ c2\ =\ (m\_lambda\ *\ (s.m\_J\ -\/\ 1.)\ -\/\ 0.75\ *\ m\_mu);}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ P\ =\ s.m\_F\ *\ c1\ +\ s.m\_cofF\ *\ c2;}
+\DoxyCodeLine{00363\ \ \ \ \ \}}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ \ \ \textcolor{comment}{//\ Let\ P\ be\ the\ first\ piola\ stress.}}
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{comment}{//\ This\ function\ calculates\ the\ dP\ =\ dP/dF\ *\ dF}}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordtype}{void}\ firstPiolaDifferential(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_tetra_scratch}{btSoftBody::TetraScratch}}\&\ s,\ \textcolor{keyword}{const}\ btMatrix3x3\&\ dF,\ btMatrix3x3\&\ dP)}
+\DoxyCodeLine{00368\ \ \ \ \ \{}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ btScalar\ c1\ =\ m\_mu\ *\ (1.\ -\/\ 1.\ /\ (s.m\_trace\ +\ 1.));}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ btScalar\ c2\ =\ (2.\ *\ m\_mu)\ *\ DotProduct(s.m\_F,\ dF)\ *\ (1.\ /\ ((1.\ +\ s.m\_trace)\ *\ (1.\ +\ s.m\_trace)));}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ btScalar\ c3\ =\ (m\_lambda\ *\ DotProduct(s.m\_cofF,\ dF));}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ dP\ =\ dF\ *\ c1\ +\ s.m\_F\ *\ c2;}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ addScaledCofactorMatrixDifferential(s.m\_F,\ dF,\ m\_lambda\ *\ (s.m\_J\ -\/\ 1.)\ -\/\ 0.75\ *\ m\_mu,\ dP);}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ dP\ +=\ s.m\_cofF\ *\ c3;}
+\DoxyCodeLine{00375\ \ \ \ \ \}}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \ \ \ \ \textcolor{comment}{//\ Let\ Q\ be\ the\ damping\ stress.}}
+\DoxyCodeLine{00378\ \ \ \ \ \textcolor{comment}{//\ This\ function\ calculates\ the\ dP\ =\ dQ/dF\ *\ dF}}
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordtype}{void}\ firstPiolaDampingDifferential(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_tetra_scratch}{btSoftBody::TetraScratch}}\&\ s,\ \textcolor{keyword}{const}\ btMatrix3x3\&\ dF,\ btMatrix3x3\&\ dP)}
+\DoxyCodeLine{00380\ \ \ \ \ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ btScalar\ c1\ =\ (m\_mu\_damp\ *\ (1.\ -\/\ 1.\ /\ (s.m\_trace\ +\ 1.)));}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ btScalar\ c2\ =\ ((2.\ *\ m\_mu\_damp)\ *\ DotProduct(s.m\_F,\ dF)\ *\ (1.\ /\ ((1.\ +\ s.m\_trace)\ *\ (1.\ +\ s.m\_trace))));}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ btScalar\ c3\ =\ (m\_lambda\_damp\ *\ DotProduct(s.m\_cofF,\ dF));}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ dP\ =\ dF\ *\ c1\ +\ s.m\_F\ *\ c2;}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ addScaledCofactorMatrixDifferential(s.m\_F,\ dF,\ m\_lambda\_damp\ *\ (s.m\_J\ -\/\ 1.)\ -\/\ 0.75\ *\ m\_mu\_damp,\ dP);}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ dP\ +=\ s.m\_cofF\ *\ c3;}
+\DoxyCodeLine{00387\ \ \ \ \ \}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ btScalar\ DotProduct(\textcolor{keyword}{const}\ btMatrix3x3\&\ A,\ \textcolor{keyword}{const}\ btMatrix3x3\&\ B)}
+\DoxyCodeLine{00390\ \ \ \ \ \{}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ btScalar\ ans\ =\ 0;}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ ans\ +=\ A[i].dot(B[i]);}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ans;}
+\DoxyCodeLine{00397\ \ \ \ \ \}}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \ \ \textcolor{comment}{//\ Let\ C(A)\ be\ the\ cofactor\ of\ the\ matrix\ A}}
+\DoxyCodeLine{00400\ \ \ \ \ \textcolor{comment}{//\ Let\ H\ =\ the\ derivative\ of\ C(A)\ with\ respect\ to\ A\ evaluated\ at\ F\ =\ A}}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{comment}{//\ This\ function\ calculates\ H*dF}}
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordtype}{void}\ addScaledCofactorMatrixDifferential(\textcolor{keyword}{const}\ btMatrix3x3\&\ F,\ \textcolor{keyword}{const}\ btMatrix3x3\&\ dF,\ btScalar\ scale,\ btMatrix3x3\&\ M)}
+\DoxyCodeLine{00403\ \ \ \ \ \{}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ M[0][0]\ +=\ scale\ *\ (dF[1][1]\ *\ F[2][2]\ +\ F[1][1]\ *\ dF[2][2]\ -\/\ dF[2][1]\ *\ F[1][2]\ -\/\ F[2][1]\ *\ dF[1][2]);}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ M[1][0]\ +=\ scale\ *\ (dF[2][1]\ *\ F[0][2]\ +\ F[2][1]\ *\ dF[0][2]\ -\/\ dF[0][1]\ *\ F[2][2]\ -\/\ F[0][1]\ *\ dF[2][2]);}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ M[2][0]\ +=\ scale\ *\ (dF[0][1]\ *\ F[1][2]\ +\ F[0][1]\ *\ dF[1][2]\ -\/\ dF[1][1]\ *\ F[0][2]\ -\/\ F[1][1]\ *\ dF[0][2]);}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ M[0][1]\ +=\ scale\ *\ (dF[2][0]\ *\ F[1][2]\ +\ F[2][0]\ *\ dF[1][2]\ -\/\ dF[1][0]\ *\ F[2][2]\ -\/\ F[1][0]\ *\ dF[2][2]);}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ M[1][1]\ +=\ scale\ *\ (dF[0][0]\ *\ F[2][2]\ +\ F[0][0]\ *\ dF[2][2]\ -\/\ dF[2][0]\ *\ F[0][2]\ -\/\ F[2][0]\ *\ dF[0][2]);}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ M[2][1]\ +=\ scale\ *\ (dF[1][0]\ *\ F[0][2]\ +\ F[1][0]\ *\ dF[0][2]\ -\/\ dF[0][0]\ *\ F[1][2]\ -\/\ F[0][0]\ *\ dF[1][2]);}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ M[0][2]\ +=\ scale\ *\ (dF[1][0]\ *\ F[2][1]\ +\ F[1][0]\ *\ dF[2][1]\ -\/\ dF[2][0]\ *\ F[1][1]\ -\/\ F[2][0]\ *\ dF[1][1]);}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ M[1][2]\ +=\ scale\ *\ (dF[2][0]\ *\ F[0][1]\ +\ F[2][0]\ *\ dF[0][1]\ -\/\ dF[0][0]\ *\ F[2][1]\ -\/\ F[0][0]\ *\ dF[2][1]);}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ M[2][2]\ +=\ scale\ *\ (dF[0][0]\ *\ F[1][1]\ +\ F[0][0]\ *\ dF[1][1]\ -\/\ dF[1][0]\ *\ F[0][1]\ -\/\ F[1][0]\ *\ dF[0][1]);}
+\DoxyCodeLine{00413\ \ \ \ \ \}}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \ \ \textcolor{keyword}{virtual}\ btDeformableLagrangianForceType\ getForceType()}
+\DoxyCodeLine{00416\ \ \ \ \ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_NEOHOOKEAN\_FORCE;}
+\DoxyCodeLine{00418\ \ \ \ \ \}}
+\DoxyCodeLine{00419\ \};}
+\DoxyCodeLine{00420\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ BT\_NEOHOOKEAN\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

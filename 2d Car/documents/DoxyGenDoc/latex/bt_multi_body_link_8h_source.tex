@@ -1,0 +1,309 @@
+\doxysection{bt\+Multi\+Body\+Link.\+h}
+\hypertarget{bt_multi_body_link_8h_source}{}\label{bt_multi_body_link_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyLink.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyLink.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_MULTIBODY\_LINK\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_MULTIBODY\_LINK\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuaternion.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{enum}\ btMultiBodyLinkFlags}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ BT\_MULTIBODYLINKFLAGS\_DISABLE\_PARENT\_COLLISION\ =\ 1,}
+\DoxyCodeLine{00026\ \ \ \ \ BT\_MULTIBODYLINKFLAGS\_DISABLE\_ALL\_PARENT\_COLLISION\ =\ 2,}
+\DoxyCodeLine{00027\ \};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{//both\ defines\ are\ now\ permanently\ enabled}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ BT\_MULTIBODYLINK\_INCLUDE\_PLANAR\_JOINTS}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ TEST\_SPATIAL\_ALGEBRA\_LAYER}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//}}
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ Various\ spatial\ helper\ functions}}
+\DoxyCodeLine{00035\ \textcolor{comment}{//}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{comment}{//namespace\ \{}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSpatialAlgebra.h"{}}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{//}}
+\DoxyCodeLine{00044\ \textcolor{comment}{//\ Link\ struct}}
+\DoxyCodeLine{00045\ \textcolor{comment}{//}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_multibody_link}{btMultibodyLink}}}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ btScalar\ m\_mass;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mass\ of\ link}}
+\DoxyCodeLine{00052\ \ \ \ \ btVector3\ m\_inertiaLocal;\ \ \textcolor{comment}{//\ inertia\ of\ link\ (local\ frame;\ diagonal)}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_parent;\ \ \textcolor{comment}{//\ index\ of\ the\ parent\ link\ (assumed\ to\ be\ <\ index\ of\ this\ link),\ or\ -\/1\ if\ parent\ is\ the\ base\ link.}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ m\_zeroRotParentToThis;\ \ \textcolor{comment}{//\ rotates\ vectors\ in\ parent-\/frame\ to\ vectors\ in\ local-\/frame\ (when\ q=0).\ constant.}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ btVector3\ m\_dVector;\ \ \textcolor{comment}{//\ vector\ from\ the\ inboard\ joint\ pos\ to\ this\ link's\ COM.\ (local\ frame.)\ constant.}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//this\ is\ set\ to\ zero\ for\ planar\ joint\ (see\ also\ m\_eVector\ comment)}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ m\_eVector\ is\ constant,\ but\ depends\ on\ the\ joint\ type:}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//\ revolute,\ fixed,\ prismatic,\ spherical:\ vector\ from\ parent's\ COM\ to\ the\ pivot\ point,\ in\ PARENT's\ frame.}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ planar:\ vector\ from\ COM\ of\ parent\ to\ COM\ of\ this\ link,\ WHEN\ Q\ =\ 0.\ (local\ frame.)}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//\ todo:\ fix\ the\ planar\ so\ it\ is\ consistent\ with\ the\ other\ joints}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ btVector3\ m\_eVector;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ m\_absFrameTotVelocity,\ m\_absFrameLocVelocity;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{enum}\ eFeatherstoneJointType}
+\DoxyCodeLine{00071\ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ eRevolute\ =\ 0,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ ePrismatic\ =\ 1,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ eSpherical\ =\ 2,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ ePlanar\ =\ 3,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ eFixed\ =\ 4,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ eInvalid}
+\DoxyCodeLine{00078\ \ \ \ \ \};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{//\ "{}axis"{}\ =\ spatial\ joint\ axis\ (Mirtich\ Defn\ 9\ p104).\ (expressed\ in\ local\ frame.)\ constant.}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ for\ prismatic:\ m\_axesTop[0]\ =\ zero;}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_axesBottom[0]\ =\ unit\ vector\ along\ the\ joint\ axis.}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ for\ revolute:\ m\_axesTop[0]\ =\ unit\ vector\ along\ the\ rotation\ axis\ (u);}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_axesBottom[0]\ =\ u\ cross\ m\_dVector\ (i.e.\ COM\ linear\ motion\ due\ to\ the\ rotation\ at\ the\ joint)}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//\ for\ spherical:\ m\_axesTop[0][1][2]\ (u1,u2,u3)\ form\ a\ 3x3\ identity\ matrix\ (3\ rotation\ axes)}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_axesBottom[0][1][2]\ cross\ u1,u2,u3\ (i.e.\ COM\ linear\ motion\ due\ to\ the\ rotation\ at\ the\ joint)}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{comment}{//\ for\ planar:\ m\_axesTop[0]\ =\ unit\ vector\ along\ the\ rotation\ axis\ (u);\ defines\ the\ plane\ of\ motion}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ m\_axesTop[1][2]\ =\ zero}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ m\_axesBottom[0]\ =\ zero}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ m\_axesBottom[1][2]\ =\ unit\ vectors\ along\ the\ translational\ axes\ on\ that\ plane}}
+\DoxyCodeLine{00093\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ m\_axes[6];}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxisTop(\textcolor{keywordtype}{int}\ dof,\ \textcolor{keyword}{const}\ btVector3\ \&axis)\ \{\ m\_axes[dof].m\_topVec\ =\ axis;\ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxisBottom(\textcolor{keywordtype}{int}\ dof,\ \textcolor{keyword}{const}\ btVector3\ \&axis)}
+\DoxyCodeLine{00096\ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ m\_axes[dof].m\_bottomVec\ =\ axis;}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxisTop(\textcolor{keywordtype}{int}\ dof,\ \textcolor{keyword}{const}\ btScalar\ \&x,\ \textcolor{keyword}{const}\ btScalar\ \&y,\ \textcolor{keyword}{const}\ btScalar\ \&z)}
+\DoxyCodeLine{00100\ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ m\_axes[dof].m\_topVec.setValue(x,\ y,\ z);}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxisBottom(\textcolor{keywordtype}{int}\ dof,\ \textcolor{keyword}{const}\ btScalar\ \&x,\ \textcolor{keyword}{const}\ btScalar\ \&y,\ \textcolor{keyword}{const}\ btScalar\ \&z)}
+\DoxyCodeLine{00104\ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ m\_axes[dof].m\_bottomVec.setValue(x,\ y,\ z);}
+\DoxyCodeLine{00106\ \ \ \ \ \}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&getAxisTop(\textcolor{keywordtype}{int}\ dof)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_axes[dof].m\_topVec;\ \}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&getAxisBottom(\textcolor{keywordtype}{int}\ dof)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_axes[dof].m\_bottomVec;\ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_dofOffset,\ m\_cfgOffset;}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ m\_cachedRotParentToThis;\ \ \textcolor{comment}{//\ rotates\ vectors\ in\ parent\ frame\ to\ vectors\ in\ local\ frame}}
+\DoxyCodeLine{00113\ \ \ \ \ btVector3\ m\_cachedRVector;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ vector\ from\ COM\ of\ parent\ to\ COM\ of\ this\ link,\ in\ local\ frame.}}
+\DoxyCodeLine{00114\ \ \ \ \ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{//\ predicted\ verstion}}
+\DoxyCodeLine{00116\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ m\_cachedRotParentToThis\_interpolate;\ \ \textcolor{comment}{//\ rotates\ vectors\ in\ parent\ frame\ to\ vectors\ in\ local\ frame}}
+\DoxyCodeLine{00117\ \ \ \ \ btVector3\ m\_cachedRVector\_interpolate;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ vector\ from\ COM\ of\ parent\ to\ COM\ of\ this\ link,\ in\ local\ frame.}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ btVector3\ m\_appliedForce;\ \ \ \textcolor{comment}{//\ In\ WORLD\ frame}}
+\DoxyCodeLine{00120\ \ \ \ \ btVector3\ m\_appliedTorque;\ \ \textcolor{comment}{//\ In\ WORLD\ frame}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ btVector3\ m\_appliedConstraintForce;\ \ \ \textcolor{comment}{//\ In\ WORLD\ frame}}
+\DoxyCodeLine{00123\ \ \ \ \ btVector3\ m\_appliedConstraintTorque;\ \ \textcolor{comment}{//\ In\ WORLD\ frame}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ btScalar\ m\_jointPos[7];}
+\DoxyCodeLine{00126\ \ \ \ \ btScalar\ m\_jointPos\_interpolate[7];}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{comment}{//m\_jointTorque\ is\ the\ joint\ torque\ applied\ by\ the\ user\ using\ 'addJointTorque'.}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{comment}{//It\ gets\ set\ to\ zero\ after\ each\ internal\ stepSimulation\ call}}
+\DoxyCodeLine{00130\ \ \ \ \ btScalar\ m\_jointTorque[6];}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_multi_body_link_collider}{btMultiBodyLinkCollider}}\ *m\_collider;}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_flags;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_dofCount,\ m\_posVarCount;\ \ \textcolor{comment}{//redundant\ but\ handy}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ eFeatherstoneJointType\ m\_jointType;}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_multi_body_joint_feedback}{btMultiBodyJointFeedback}}\ *m\_jointFeedback;}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ btTransform\ m\_cachedWorldTransform;\ \ \textcolor{comment}{//this\ cache\ is\ updated\ when\ calling\ btMultiBody::forwardKinematics}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *m\_linkName;\ \ \ \textcolor{comment}{//m\_linkName\ memory\ needs\ to\ be\ managed\ by\ the\ developer/user!}}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *m\_jointName;\ \ \textcolor{comment}{//m\_jointName\ memory\ needs\ to\ be\ managed\ by\ the\ developer/user!}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *m\_userPtr;\ \ \ \ \textcolor{comment}{//m\_userPtr\ ptr\ needs\ to\ be\ managed\ by\ the\ developer/user!}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ btScalar\ m\_jointDamping;\ \ \ \ \ \ \textcolor{comment}{//todo:\ implement\ this\ internally.\ It\ is\ unused\ for\ now,\ it\ is\ set\ by\ a\ URDF\ loader.\ User\ can\ apply\ manual\ damping.}}
+\DoxyCodeLine{00148\ \ \ \ \ btScalar\ m\_jointFriction;\ \ \ \ \ \textcolor{comment}{//todo:\ implement\ this\ internally.\ It\ is\ unused\ for\ now,\ it\ is\ set\ by\ a\ URDF\ loader.\ User\ can\ apply\ manual\ friction\ using\ a\ velocity\ motor.}}
+\DoxyCodeLine{00149\ \ \ \ \ btScalar\ m\_jointLowerLimit;\ \ \ \textcolor{comment}{//todo:\ implement\ this\ internally.\ It\ is\ unused\ for\ now,\ it\ is\ set\ by\ a\ URDF\ loader.}}
+\DoxyCodeLine{00150\ \ \ \ \ btScalar\ m\_jointUpperLimit;\ \ \ \textcolor{comment}{//todo:\ implement\ this\ internally.\ It\ is\ unused\ for\ now,\ it\ is\ set\ by\ a\ URDF\ loader.}}
+\DoxyCodeLine{00151\ \ \ \ \ btScalar\ m\_jointMaxForce;\ \ \ \ \ \textcolor{comment}{//todo:\ implement\ this\ internally.\ It\ is\ unused\ for\ now,\ it\ is\ set\ by\ a\ URDF\ loader.}}
+\DoxyCodeLine{00152\ \ \ \ \ btScalar\ m\_jointMaxVelocity;\ \ \textcolor{comment}{//todo:\ implement\ this\ internally.\ It\ is\ unused\ for\ now,\ it\ is\ set\ by\ a\ URDF\ loader.}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{comment}{//\ ctor:\ set\ some\ sensible\ defaults}}
+\DoxyCodeLine{00155\ \ \ \ \ \mbox{\hyperlink{structbt_multibody_link}{btMultibodyLink}}()}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ :\ m\_mass(1),}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ m\_parent(-\/1),}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ m\_zeroRotParentToThis(0,\ 0,\ 0,\ 1),}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ m\_cachedRotParentToThis(0,\ 0,\ 0,\ 1),}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ m\_cachedRotParentToThis\_interpolate(0,\ 0,\ 0,\ 1),}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ m\_collider(0),}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ m\_flags(0),}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ m\_dofCount(0),}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ m\_posVarCount(0),}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ m\_jointType(btMultibodyLink::eInvalid),}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ m\_jointFeedback(0),}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ m\_linkName(0),}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ m\_jointName(0),}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ m\_userPtr(0),}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ m\_jointDamping(0),}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ m\_jointFriction(0),}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ m\_jointLowerLimit(0),}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ m\_jointUpperLimit(0),}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ m\_jointMaxForce(0),}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ m\_jointMaxVelocity(0)}
+\DoxyCodeLine{00176\ \ \ \ \ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ m\_inertiaLocal.setValue(1,\ 1,\ 1);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ setAxisTop(0,\ 0.,\ 0.,\ 0.);}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ setAxisBottom(0,\ 1.,\ 0.,\ 0.);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ m\_dVector.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ m\_eVector.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ m\_cachedRVector.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ m\_cachedRVector\_interpolate.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ m\_appliedForce.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ m\_appliedTorque.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ m\_appliedConstraintForce.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ m\_appliedConstraintTorque.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ m\_jointPos[0]\ =\ m\_jointPos[1]\ =\ m\_jointPos[2]\ =\ m\_jointPos[4]\ =\ m\_jointPos[5]\ =\ m\_jointPos[6]\ =\ 0.f;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ m\_jointPos[3]\ =\ 1.f;\ \ \textcolor{comment}{//"{}quat.w"{}}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ m\_jointTorque[0]\ =\ m\_jointTorque[1]\ =\ m\_jointTorque[2]\ =\ m\_jointTorque[3]\ =\ m\_jointTorque[4]\ =\ m\_jointTorque[5]\ =\ 0.f;}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ m\_cachedWorldTransform.setIdentity();}
+\DoxyCodeLine{00193\ \ \ \ \ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{comment}{//\ routine\ to\ update\ m\_cachedRotParentToThis\ and\ m\_cachedRVector}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{void}\ updateCacheMultiDof(btScalar\ *pq\ =\ 0)}
+\DoxyCodeLine{00197\ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ btScalar\ *pJointPos\ =\ (pq\ ?\ pq\ :\ \&m\_jointPos[0]);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\&\ cachedRot\ =\ m\_cachedRotParentToThis;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ btVector3\&\ cachedVector\ =\ m\_cachedRVector;}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_jointType)}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ eRevolute:}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(getAxisTop(0),\ -\/pJointPos[0])\ *\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(m\_cachedRotParentToThis,\ m\_eVector);}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ ePrismatic:}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m\_cachedRotParentToThis\ never\ changes,\ so\ no\ need\ to\ update}}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(m\_cachedRotParentToThis,\ m\_eVector)\ +\ pJointPos[0]\ *\ getAxisBottom(0);}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ eSpherical:}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(pJointPos[0],\ pJointPos[1],\ pJointPos[2],\ -\/pJointPos[3])\ *\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(cachedRot,\ m\_eVector);}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ ePlanar:}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(getAxisTop(0),\ -\/pJointPos[0])\ *\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ quatRotate(\mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(getAxisTop(0),\ -\/pJointPos[0]),\ pJointPos[1]\ *\ getAxisBottom(1)\ +\ pJointPos[2]\ *\ getAxisBottom(2))\ +\ quatRotate(cachedRot,\ m\_eVector);}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ eFixed:}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(cachedRot,\ m\_eVector);}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//invalid\ type}}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ m\_cachedRotParentToThis\_interpolate\ =\ m\_cachedRotParentToThis;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ m\_cachedRVector\_interpolate\ =\ m\_cachedRVector;}
+\DoxyCodeLine{00246\ \ \ \ \ \}}
+\DoxyCodeLine{00247\ \ \ \ \ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keywordtype}{void}\ updateInterpolationCacheMultiDof()}
+\DoxyCodeLine{00249\ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ btScalar\ *pJointPos\ =\ \&m\_jointPos\_interpolate[0];}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\&\ cachedRot\ =\ m\_cachedRotParentToThis\_interpolate;}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ btVector3\&\ cachedVector\ =\ m\_cachedRVector\_interpolate;}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_jointType)}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ eRevolute:}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(getAxisTop(0),\ -\/pJointPos[0])\ *\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(m\_cachedRotParentToThis,\ m\_eVector);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ ePrismatic:}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m\_cachedRotParentToThis\ never\ changes,\ so\ no\ need\ to\ update}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(m\_cachedRotParentToThis,\ m\_eVector)\ +\ pJointPos[0]\ *\ getAxisBottom(0);}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ eSpherical:}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(pJointPos[0],\ pJointPos[1],\ pJointPos[2],\ -\/pJointPos[3])\ *\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(cachedRot,\ m\_eVector);}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ ePlanar:}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(getAxisTop(0),\ -\/pJointPos[0])\ *\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ quatRotate(\mbox{\hyperlink{classbt_quaternion}{btQuaternion}}(getAxisTop(0),\ -\/pJointPos[0]),\ pJointPos[1]\ *\ getAxisBottom(1)\ +\ pJointPos[2]\ *\ getAxisBottom(2))\ +\ quatRotate(cachedRot,\ m\_eVector);}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ eFixed:}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedRot\ =\ m\_zeroRotParentToThis;}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cachedVector\ =\ m\_dVector\ +\ quatRotate(cachedRot,\ m\_eVector);}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//invalid\ type}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00297\ \ \ \ \ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ }
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \};}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MULTIBODY\_LINK\_H}}
+
+\end{DoxyCode}

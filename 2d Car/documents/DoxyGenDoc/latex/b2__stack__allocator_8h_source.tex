@@ -1,0 +1,71 @@
+\doxysection{b2\+\_\+stack\+\_\+allocator.\+h}
+\hypertarget{b2__stack__allocator_8h_source}{}\label{b2__stack__allocator_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_stack\_allocator.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_stack\_allocator.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_STACK\_ALLOCATOR\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_STACK\_ALLOCATOR\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{b2__settings_8h}{b2\_settings.h}}"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{const}\ int32\ b2\_stackSize\ =\ 100\ *\ 1024;\ \ \textcolor{comment}{//\ 100k}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{const}\ int32\ b2\_maxStackEntries\ =\ 32;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_stack_entry}{b2StackEntry}}}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{char}*\ data;}
+\DoxyCodeLine{00035\ \ \ \ \ int32\ size;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{bool}\ usedMalloc;}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ This\ is\ a\ stack\ allocator\ used\ for\ fast\ per\ step\ allocations.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ You\ must\ nest\ allocate/free\ pairs.\ The\ code\ will\ assert}}
+\DoxyCodeLine{00041\ \textcolor{comment}{//\ if\ you\ try\ to\ interleave\ multiple\ allocate/free\ pairs.}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_stack_allocator}{b2StackAllocator}}}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{classb2_stack_allocator}{b2StackAllocator}}();}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{classb2_stack_allocator}{\string~b2StackAllocator}}();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}*\ Allocate(int32\ size);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{void}\ Free(\textcolor{keywordtype}{void}*\ p);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ int32\ GetMaxAllocation()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_data[b2\_stackSize];}
+\DoxyCodeLine{00056\ \ \ \ \ int32\ m\_index;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ int32\ m\_allocation;}
+\DoxyCodeLine{00059\ \ \ \ \ int32\ m\_maxAllocation;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{structb2_stack_entry}{b2StackEntry}}\ m\_entries[b2\_maxStackEntries];}
+\DoxyCodeLine{00062\ \ \ \ \ int32\ m\_entryCount;}
+\DoxyCodeLine{00063\ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

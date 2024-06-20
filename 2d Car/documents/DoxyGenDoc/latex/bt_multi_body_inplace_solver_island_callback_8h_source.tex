@@ -1,0 +1,252 @@
+\doxysection{bt\+Multi\+Body\+Inplace\+Solver\+Island\+Callback.\+h}
+\hypertarget{bt_multi_body_inplace_solver_island_callback_8h_source}{}\label{bt_multi_body_inplace_solver_island_callback_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyInplaceSolverIslandCallback.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyInplaceSolverIslandCallback.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#ifndef\ BT\_MULTIBODY\_INPLACE\_SOLVER\_ISLAND\_CALLBACK\_H}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ BT\_MULTIBODY\_INPLACE\_SOLVER\_ISLAND\_CALLBACK\_H}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btSimulationIslandManager.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btMultiBodyConstraintSolver.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btGetConstraintIslandId2(\textcolor{keyword}{const}\ btTypedConstraint*\ lhs)}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{int}\ islandId;}
+\DoxyCodeLine{00025\ \ \ \ \ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject\&\ rcolObj0\ =\ lhs-\/>getRigidBodyA();}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject\&\ rcolObj1\ =\ lhs-\/>getRigidBodyB();}
+\DoxyCodeLine{00028\ \ \ \ \ islandId\ =\ rcolObj0.getIslandTag()\ >=\ 0\ ?\ rcolObj0.getIslandTag()\ :\ rcolObj1.getIslandTag();}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{return}\ islandId;}
+\DoxyCodeLine{00030\ \}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_sort_constraint_on_island_predicate2}{btSortConstraintOnIslandPredicate2}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{bool}\ operator()(\textcolor{keyword}{const}\ btTypedConstraint*\ lhs,\ \textcolor{keyword}{const}\ btTypedConstraint*\ rhs)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rIslandId0,\ lIslandId0;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ rIslandId0\ =\ btGetConstraintIslandId2(rhs);}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ lIslandId0\ =\ btGetConstraintIslandId2(lhs);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ lIslandId0\ <\ rIslandId0;}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btGetMultiBodyConstraintIslandId(\textcolor{keyword}{const}\ btMultiBodyConstraint*\ lhs)}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ islandId;}
+\DoxyCodeLine{00046\ \ \ \ \ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ islandTagA\ =\ lhs-\/>getIslandIdA();}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{int}\ islandTagB\ =\ lhs-\/>getIslandIdB();}
+\DoxyCodeLine{00049\ \ \ \ \ islandId\ =\ islandTagA\ >=\ 0\ ?\ islandTagA\ :\ islandTagB;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{return}\ islandId;}
+\DoxyCodeLine{00051\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_sort_multi_body_constraint_on_island_predicate}{btSortMultiBodyConstraintOnIslandPredicate}}}
+\DoxyCodeLine{00054\ \{}
+\DoxyCodeLine{00055\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{bool}\ operator()(\textcolor{keyword}{const}\ btMultiBodyConstraint*\ lhs,\ \textcolor{keyword}{const}\ btMultiBodyConstraint*\ rhs)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00057\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rIslandId0,\ lIslandId0;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ rIslandId0\ =\ btGetMultiBodyConstraintIslandId(rhs);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ lIslandId0\ =\ btGetMultiBodyConstraintIslandId(lhs);}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ lIslandId0\ <\ rIslandId0;}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback}{MultiBodyInplaceSolverIslandCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_simulation_island_manager_1_1_island_callback}{btSimulationIslandManager::IslandCallback}}}
+\DoxyCodeLine{00066\ \{}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_solverInfo;}
+\DoxyCodeLine{00069\ \ \ \ \ btMultiBodyConstraintSolver*\ m\_solver;}
+\DoxyCodeLine{00070\ \ \ \ \ btMultiBodyConstraint**\ m\_multiBodySortedConstraints;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numMultiBodyConstraints;}
+\DoxyCodeLine{00072\ \ \ \ \ }
+\DoxyCodeLine{00073\ \ \ \ \ btTypedConstraint**\ m\_sortedConstraints;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numConstraints;}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ m\_debugDrawer;}
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ m\_dispatcher;}
+\DoxyCodeLine{00077\ \ \ \ \ }
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\ m\_bodies;}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\ m\_softBodies;}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btPersistentManifold*>}}\ m\_manifolds;}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTypedConstraint*>}}\ m\_constraints;}
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btMultiBodyConstraint*>}}\ m\_multiBodyConstraints;}
+\DoxyCodeLine{00083\ \ \ \ \ }
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSolverAnalyticsData>}}\ m\_islandAnalyticsData;}
+\DoxyCodeLine{00085\ \ \ \ \ }
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback}{MultiBodyInplaceSolverIslandCallback}}(btMultiBodyConstraintSolver*\ solver,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)}
+\DoxyCodeLine{00088\ \ \ \ \ :\ m\_solverInfo(NULL),}
+\DoxyCodeLine{00089\ \ \ \ \ m\_solver(solver),}
+\DoxyCodeLine{00090\ \ \ \ \ m\_multiBodySortedConstraints(NULL),}
+\DoxyCodeLine{00091\ \ \ \ \ m\_numConstraints(0),}
+\DoxyCodeLine{00092\ \ \ \ \ m\_debugDrawer(NULL),}
+\DoxyCodeLine{00093\ \ \ \ \ m\_dispatcher(dispatcher)}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ }
+\DoxyCodeLine{00097\ \ \ \ \ \mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback}{MultiBodyInplaceSolverIslandCallback}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback}{MultiBodyInplaceSolverIslandCallback}}\&\ other)}
+\DoxyCodeLine{00098\ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ (void)other;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ }
+\DoxyCodeLine{00104\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setup(\mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ solverInfo,\ btTypedConstraint**\ sortedConstraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ btMultiBodyConstraint**\ sortedMultiBodyConstraints,\ \textcolor{keywordtype}{int}\ numMultiBodyConstraints,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00105\ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ m\_islandAnalyticsData.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ btAssert(solverInfo);}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ m\_solverInfo\ =\ solverInfo;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ m\_multiBodySortedConstraints\ =\ sortedMultiBodyConstraints;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ m\_numMultiBodyConstraints\ =\ numMultiBodyConstraints;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ m\_sortedConstraints\ =\ sortedConstraints;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ m\_numConstraints\ =\ numConstraints;}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ m\_debugDrawer\ =\ debugDrawer;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ m\_bodies.resize(0);}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ m\_manifolds.resize(0);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ m\_constraints.resize(0);}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ m\_multiBodyConstraints.resize(0);}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ \ \ \ \ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{void}\ setMultiBodyConstraintSolver(btMultiBodyConstraintSolver*\ solver)}
+\DoxyCodeLine{00123\ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ m\_solver\ =\ solver;}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \ \ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback_a4de885af1dc5369ee882827e010afd4b}{processIsland}}(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifolds,\ \textcolor{keywordtype}{int}\ numManifolds,\ \textcolor{keywordtype}{int}\ islandId)}
+\DoxyCodeLine{00128\ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (islandId\ <\ 0)}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ m\_solver-\/>solveMultiBodyGroup(bodies,\ numBodies,\ manifolds,\ numManifolds,\ m\_sortedConstraints,\ m\_numConstraints,\ \&m\_multiBodySortedConstraints[0],\ m\_numConstraints,\ *m\_solverInfo,\ m\_debugDrawer,\ m\_dispatcher);}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_solverInfo-\/>m\_reportSolverAnalytics\&1)}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_solver-\/>m\_analyticsData.m\_islandId\ =\ islandId;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_islandAnalyticsData.push\_back(m\_solver-\/>m\_analyticsData);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//also\ add\ all\ non-\/contact\ constraints/joints\ for\ this\ island}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ btTypedConstraint**\ startConstraint\ =\ 0;}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ btMultiBodyConstraint**\ startMultiBodyConstraint\ =\ 0;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numCurConstraints\ =\ 0;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numCurMultiBodyConstraints\ =\ 0;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//find\ the\ first\ constraint\ for\ this\ island}}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_numConstraints;\ i++)}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGetConstraintIslandId2(m\_sortedConstraints[i])\ ==\ islandId)}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startConstraint\ =\ \&m\_sortedConstraints[i];}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//count\ the\ number\ of\ constraints\ in\ this\ island}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ i\ <\ m\_numConstraints;\ i++)}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGetConstraintIslandId2(m\_sortedConstraints[i])\ ==\ islandId)}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numCurConstraints++;}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_numMultiBodyConstraints;\ i++)}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGetMultiBodyConstraintIslandId(m\_multiBodySortedConstraints[i])\ ==\ islandId)}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startMultiBodyConstraint\ =\ \&m\_multiBodySortedConstraints[i];}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//count\ the\ number\ of\ multi\ body\ constraints\ in\ this\ island}}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ i\ <\ m\_numMultiBodyConstraints;\ i++)}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGetMultiBodyConstraintIslandId(m\_multiBodySortedConstraints[i])\ ==\ islandId)}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numCurMultiBodyConstraints++;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ (m\_solverInfo-\/>m\_minimumSolverBatchSize<=1)}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ m\_solver-\/>solveGroup(\ bodies,numBodies,manifolds,\ numManifolds,startConstraint,numCurConstraints,*m\_solverInfo,m\_debugDrawer,m\_dispatcher);}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\}\ else}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numBodies;\ i++)}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isSoftBodyType\ =\ (bodies[i]-\/>getInternalType()\ \&\ btCollisionObject::CO\_SOFT\_BODY);}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!isSoftBodyType)}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_bodies.push\_back(bodies[i]);}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_softBodies.push\_back(bodies[i]);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numManifolds;\ i++)}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_manifolds.push\_back(manifolds[i]);}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numCurConstraints;\ i++)}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_constraints.push\_back(startConstraint[i]);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numCurMultiBodyConstraints;\ i++)}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_multiBodyConstraints.push\_back(startMultiBodyConstraint[i]);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_multiBodyConstraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_constraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_manifolds.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())\ >\ m\_solverInfo-\/>m\_minimumSolverBatchSize)}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ processConstraints(islandId);}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}deferred\(\backslash\)n"{});}}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \ \ \ \ \}}
+\DoxyCodeLine{00222\ \ \ \ \ }
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processConstraints(\textcolor{keywordtype}{int}\ islandId=-\/1)}
+\DoxyCodeLine{00224\ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ btCollisionObject**\ bodies\ =\ m\_bodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_bodies[0]\ :\ 0;}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ btPersistentManifold**\ manifold\ =\ m\_manifolds.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_manifolds[0]\ :\ 0;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ btTypedConstraint**\ constraints\ =\ m\_constraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_constraints[0]\ :\ 0;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ btMultiBodyConstraint**\ multiBodyConstraints\ =\ m\_multiBodyConstraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_multiBodyConstraints[0]\ :\ 0;}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}mb\ contacts\ =\ \%d,\ mb\ constraints\ =\ \%d\(\backslash\)n"{},\ mbContacts,\ m\_multiBodyConstraints.size());}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ m\_solver-\/>solveMultiBodyGroup(bodies,\ m\_bodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ manifold,\ m\_manifolds.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ constraints,\ m\_constraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ multiBodyConstraints,\ m\_multiBodyConstraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ *m\_solverInfo,\ m\_debugDrawer,\ m\_dispatcher);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_bodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ \&\&\ (m\_solverInfo-\/>m\_reportSolverAnalytics\&1))}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ m\_solver-\/>m\_analyticsData.m\_islandId\ =\ islandId;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ m\_islandAnalyticsData.push\_back(m\_solver-\/>m\_analyticsData);}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ m\_bodies.resize(0);}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ m\_softBodies.resize(0);}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ m\_manifolds.resize(0);}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ m\_constraints.resize(0);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ m\_multiBodyConstraints.resize(0);}
+\DoxyCodeLine{00243\ \ \ \ \ \}}
+\DoxyCodeLine{00244\ \};}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*BT\_MULTIBODY\_INPLACE\_SOLVER\_ISLAND\_CALLBACK\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

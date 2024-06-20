@@ -1,0 +1,211 @@
+\doxysection{extension.\+h}
+\hypertarget{extension_8h_source}{}\label{extension_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/extension.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/extension.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Implementation\ notes:}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ -\/\ An\ OOP\ style\ is\ used\ where\ each\ "{}class"{}\ is\ made\ up\ of\ a\ struct\ and\ a\ number\ of\ functions\ prefixed\ with\ the\ struct\ name.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ -\/\ struct\ fields\ that\ are\ const\ are\ readonly.\ Either\ they\ are\ set\ in\ a\ create\ function\ and\ can\ never\ be\ changed,\ or\ they\ can\ only}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ be\ changed\ by\ calling\ a\ function.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ -\/\ Inheritance\ is\ done\ using\ a\ struct\ field\ named\ "{}super"{}\ as\ the\ first\ field,\ allowing\ the\ struct\ to\ be\ cast\ to\ its\ "{}super\ class"{}.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ This\ works\ because\ a\ pointer\ to\ a\ struct\ is\ guaranteed\ to\ be\ a\ pointer\ to\ the\ first\ struct\ field.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ -\/\ Classes\ intended\ for\ inheritance\ provide\ init/deinit\ functions\ which\ subclasses\ must\ call\ in\ their\ create/dispose\ functions.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ -\/\ Polymorphism\ is\ done\ by\ a\ base\ class\ providing\ function\ pointers\ in\ its\ init\ function.\ The\ public\ API\ delegates\ to\ this}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ function.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ -\/\ Subclasses\ do\ not\ provide\ a\ dispose\ function,\ instead\ the\ base\ class'\ dispose\ function\ should\ be\ used,\ which\ will\ delegate\ to}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ a\ dispose\ function\ pointer.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ -\/\ Classes\ not\ designed\ for\ inheritance\ cannot\ be\ extended\ because\ they\ may\ use\ an\ internal\ subclass\ to\ hide\ private\ data\ and\ don't}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ expose\ function\ pointers.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ -\/\ The\ public\ API\ hides\ implementation\ details,\ such\ as\ init/deinit\ functions.\ An\ internal\ API\ is\ exposed\ by\ extension.h\ to\ allow}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ classes\ to\ be\ extended.\ Internal\ functions\ begin\ with\ underscore\ (\_).}}
+\DoxyCodeLine{00025\ \textcolor{comment}{}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ -\/\ OOP\ in\ C\ tends\ to\ lose\ type\ safety.\ Macros\ for\ casting\ are\ provided\ in\ extension.h\ to\ give\ context\ for\ why\ a\ cast\ is\ being\ done.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ -\/\ If\ SPINE\_SHORT\_NAMES\ is\ defined,\ the\ "{}sp"{}\ prefix\ for\ all\ class\ names\ is\ optional.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#ifndef\ SPINE\_EXTENSION\_H\_}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ SPINE\_EXTENSION\_H\_}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ All\ allocation\ uses\ these.\ */}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ MALLOC(TYPE,COUNT)\ ((TYPE*)\_malloc(sizeof(TYPE)\ *\ (COUNT),\ \_\_FILE\_\_,\ \_\_LINE\_\_))}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ CALLOC(TYPE,COUNT)\ ((TYPE*)\_calloc(COUNT,\ sizeof(TYPE),\ \_\_FILE\_\_,\ \_\_LINE\_\_))}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ NEW(TYPE)\ CALLOC(TYPE,1)}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ Gets\ the\ direct\ super\ class.\ Type\ safe.\ */}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ SUPER(VALUE)\ (\&VALUE-\/>super)}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{/*\ Cast\ to\ a\ super\ class.\ Not\ type\ safe,\ use\ with\ care.\ Prefer\ SUPER()\ where\ possible.\ */}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ SUPER\_CAST(TYPE,VALUE)\ ((TYPE*)VALUE)}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{comment}{/*\ Cast\ to\ a\ sub\ class.\ Not\ type\ safe,\ use\ with\ care.\ */}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ SUB\_CAST(TYPE,VALUE)\ ((TYPE*)VALUE)}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*\ Casts\ away\ const.\ Can\ be\ used\ as\ an\ lvalue.\ Not\ type\ safe,\ use\ with\ care.\ */}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ CONST\_CAST(TYPE,VALUE)\ (*(TYPE*)\&VALUE)}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{/*\ Gets\ the\ vtable\ for\ the\ specified\ type.\ Not\ type\ safe,\ use\ with\ care.\ */}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ VTABLE(TYPE,VALUE)\ ((\_\#\#TYPE\#\#Vtable*)((TYPE*)VALUE)-\/>vtable)}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*\ Frees\ memory.\ Can\ be\ used\ on\ const\ types.\ */}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ FREE(VALUE)\ \_free((void*)VALUE)}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{/*\ Allocates\ a\ new\ char[],\ assigns\ it\ to\ TO,\ and\ copies\ FROM\ to\ it.\ Can\ be\ used\ on\ const\ types.\ */}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ MALLOC\_STR(TO,FROM)\ strcpy(CONST\_CAST(char*,\ TO)\ =\ (char*)MALLOC(char,\ strlen(FROM)\ +\ 1),\ FROM)}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ PI\ 3.1415926535897932385f}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ DEG\_RAD\ (PI\ /\ 180)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ RAD\_DEG\ (180\ /\ PI)}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#ifdef\ \_\_STDC\_VERSION\_\_}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ FMOD(A,B)\ fmodf(A,\ B)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ ATAN2(A,B)\ atan2f(A,\ B)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ SIN(A)\ sinf(A)}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#define\ COS(A)\ cosf(A)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#define\ SQRT(A)\ sqrtf(A)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#define\ ACOS(A)\ acosf(A)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#define\ FMOD(A,B)\ (float)fmod(A,\ B)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#define\ ATAN2(A,B)\ (float)atan2(A,\ B)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#define\ COS(A)\ (float)cos(A)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#define\ SIN(A)\ (float)sin(A)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#define\ SQRT(A)\ (float)sqrt(A)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#define\ ACOS(A)\ (float)acos(A)}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#include\ <spine/Skeleton.h>}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#include\ <spine/Animation.h>}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#include\ <spine/Atlas.h>}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#include\ <spine/AttachmentLoader.h>}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#include\ <spine/RegionAttachment.h>}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#include\ <spine/MeshAttachment.h>}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#include\ <spine/SkinnedMeshAttachment.h>}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#include\ <spine/BoundingBoxAttachment.h>}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#include\ <spine/AnimationState.h>}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00094\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ Functions\ that\ must\ be\ implemented:}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{void}\ \_spAtlasPage\_createTexture\ (\mbox{\hyperlink{structsp_atlas_page}{spAtlasPage}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ path);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{void}\ \_spAtlasPage\_disposeTexture\ (\mbox{\hyperlink{structsp_atlas_page}{spAtlasPage}}*\ self);}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{char}*\ \_spUtil\_readFile\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ path,\ \textcolor{keywordtype}{int}*\ length);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#define\ \_AtlasPage\_createTexture(...)\ \_spAtlasPage\_createTexture(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#define\ \_AtlasPage\_disposeTexture(...)\ \_spAtlasPage\_disposeTexture(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#define\ \_Util\_readFile(...)\ \_spUtil\_readFile(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ Internal\ API\ available\ for\ extension:}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{void}*\ \_malloc\ (\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ file,\ \textcolor{keywordtype}{int}\ line);}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}*\ \_calloc\ (\textcolor{keywordtype}{size\_t}\ num,\ \textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ file,\ \textcolor{keywordtype}{int}\ line);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ \_free\ (\textcolor{keywordtype}{void}*\ ptr);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{void}\ \_setMalloc\ (\textcolor{keywordtype}{void}*\ (*\_malloc)\ (\textcolor{keywordtype}{size\_t}\ size));}
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ \_setDebugMalloc\ (\textcolor{keywordtype}{void}*\ (*\_malloc)\ (\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ file,\ \textcolor{keywordtype}{int}\ line));}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ \_setFree\ (\textcolor{keywordtype}{void}\ (*\_free)\ (\textcolor{keywordtype}{void}*\ ptr));}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{char}*\ \_readFile\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ path,\ \textcolor{keywordtype}{int}*\ length);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct__sp_animation_state}{\_spAnimationState}}\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \mbox{\hyperlink{structsp_animation_state}{spAnimationState}}\ super;}
+\DoxyCodeLine{00129\ \ \ \ \ \mbox{\hyperlink{structsp_event}{spEvent}}**\ events;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \mbox{\hyperlink{structsp_track_entry}{spTrackEntry}}*\ (*createTrackEntry)\ (\mbox{\hyperlink{structsp_animation_state}{spAnimationState}}*\ self);}
+\DoxyCodeLine{00132\ \ \ \ \ void\ (*disposeTrackEntry)\ (\mbox{\hyperlink{structsp_track_entry}{spTrackEntry}}*\ entry);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{struct__sp_animation_state}{\_spAnimationState}}()\ :}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ events(0),}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ createTrackEntry(0),}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ disposeTrackEntry(0)\ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00142\ \}\ \mbox{\hyperlink{struct__sp_animation_state}{\_spAnimationState}};}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \mbox{\hyperlink{structsp_track_entry}{spTrackEntry}}*\ \_spTrackEntry\_create\ (\mbox{\hyperlink{structsp_animation_state}{spAnimationState}}*\ self);}
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ \_spTrackEntry\_dispose\ (\mbox{\hyperlink{structsp_track_entry}{spTrackEntry}}*\ self);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{void}\ \_spAttachmentLoader\_init\ (\mbox{\hyperlink{structsp_attachment_loader}{spAttachmentLoader}}*\ self,\ }
+\DoxyCodeLine{00150\ \textcolor{keywordtype}{void}\ (*dispose)\ (\mbox{\hyperlink{structsp_attachment_loader}{spAttachmentLoader}}*\ self),\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structsp_attachment}{spAttachment}}*\ (*newAttachment)\ (\mbox{\hyperlink{structsp_attachment_loader}{spAttachmentLoader}}*\ self,\ \mbox{\hyperlink{structsp_skin}{spSkin}}*\ skin,\ spAttachmentType\ type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ path));}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{void}\ \_spAttachmentLoader\_deinit\ (\mbox{\hyperlink{structsp_attachment_loader}{spAttachmentLoader}}*\ self);}
+\DoxyCodeLine{00154\ \textcolor{keywordtype}{void}\ \_spAttachmentLoader\_setError\ (\mbox{\hyperlink{structsp_attachment_loader}{spAttachmentLoader}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ error1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ error2);}
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{void}\ \_spAttachmentLoader\_setUnknownTypeError\ (\mbox{\hyperlink{structsp_attachment_loader}{spAttachmentLoader}}*\ self,\ spAttachmentType\ type);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#define\ \_AttachmentLoader\_init(...)\ \_spAttachmentLoader\_init(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#define\ \_AttachmentLoader\_deinit(...)\ \_spAttachmentLoader\_deinit(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#define\ \_AttachmentLoader\_setError(...)\ \_spAttachmentLoader\_setError(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#define\ \_AttachmentLoader\_setUnknownTypeError(...)\ \_spAttachmentLoader\_setUnknownTypeError(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{void}\ \_spAttachment\_init\ (\mbox{\hyperlink{structsp_attachment}{spAttachment}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ spAttachmentType\ type,\ }
+\DoxyCodeLine{00167\ \textcolor{keywordtype}{void}\ (*dispose)\ (\mbox{\hyperlink{structsp_attachment}{spAttachment}}*\ self));}
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{void}\ \_spAttachment\_deinit\ (\mbox{\hyperlink{structsp_attachment}{spAttachment}}*\ self);}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#define\ \_Attachment\_init(...)\ \_spAttachment\_init(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#define\ \_Attachment\_deinit(...)\ \_spAttachment\_deinit(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{void}\ \_spTimeline\_init\ (\mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self,\ spTimelineType\ type,\ }
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ (*dispose)\ (\mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self),\ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*apply)\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self,\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ skeleton,\ \textcolor{keywordtype}{float}\ lastTime,\ \textcolor{keywordtype}{float}\ time,\ \mbox{\hyperlink{structsp_event}{spEvent}}**\ firedEvents,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ eventsCount,\ \textcolor{keywordtype}{float}\ alpha));}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{void}\ \_spTimeline\_deinit\ (\mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self);}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#define\ \_Timeline\_init(...)\ \_spTimeline\_init(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#define\ \_Timeline\_deinit(...)\ \_spTimeline\_deinit(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{keywordtype}{void}\ \_spCurveTimeline\_init\ (\mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}*\ self,\ spTimelineType\ type,\ \textcolor{keywordtype}{int}\ framesCount,\ }
+\DoxyCodeLine{00191\ \textcolor{keywordtype}{void}\ (*dispose)\ (\mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self),\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*apply)\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self,\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ skeleton,\ \textcolor{keywordtype}{float}\ lastTime,\ \textcolor{keywordtype}{float}\ time,\ \mbox{\hyperlink{structsp_event}{spEvent}}**\ firedEvents,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ eventsCount,\ \textcolor{keywordtype}{float}\ alpha));}
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{void}\ \_spCurveTimeline\_deinit\ (\mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}*\ self);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#define\ \_CurveTimeline\_init(...)\ \_spCurveTimeline\_init(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#define\ \_CurveTimeline\_deinit(...)\ \_spCurveTimeline\_deinit(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00202\ \}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ SPINE\_EXTENSION\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

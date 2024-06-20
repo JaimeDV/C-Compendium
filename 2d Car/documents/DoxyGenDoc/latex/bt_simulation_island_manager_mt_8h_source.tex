@@ -1,0 +1,109 @@
+\doxysection{bt\+Simulation\+Island\+Manager\+Mt.\+h}
+\hypertarget{bt_simulation_island_manager_mt_8h_source}{}\label{bt_simulation_island_manager_mt_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Dynamics/btSimulationIslandManagerMt.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Dynamics/btSimulationIslandManagerMt.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_SIMULATION\_ISLAND\_MANAGER\_MT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_SIMULATION\_ISLAND\_MANAGER\_MT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btSimulationIslandManager.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }btTypedConstraint;}
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}};}
+\DoxyCodeLine{00023\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}};}
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_simulation_island_manager_mt}{btSimulationIslandManagerMt}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_simulation_island_manager}{btSimulationIslandManager}}}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_island}{Island}}}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ a\ simulation\ island\ consisting\ of\ bodies,\ manifolds\ and\ constraints,}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ be\ passed\ into\ a\ constraint\ solver.}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\ bodyArray;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btPersistentManifold*>}}\ manifoldArray;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTypedConstraint*>}}\ constraintArray;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ id;\ \ \textcolor{comment}{//\ island\ id}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isSleeping;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ append(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_island}{Island}}\&\ other);\ \ \textcolor{comment}{//\ add\ bodies,\ manifolds,\ constraints\ to\ my\ own}}
+\DoxyCodeLine{00049\ \ \ \ \ \};}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_solver_params}{SolverParams}}}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}*\ m\_solverPool;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}*\ m\_solverMt;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_solverInfo;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ m\_debugDrawer;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ m\_dispatcher;}
+\DoxyCodeLine{00057\ \ \ \ \ \};}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ solveIsland(\mbox{\hyperlink{classbt_constraint_solver}{btConstraintSolver}}*\ solver,\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_island}{Island}}\&\ island,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_solver_params}{SolverParams}}\&\ solverParams);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{typedef}\ void\ (*IslandDispatchFunc)(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Island*>}}*\ islands,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_solver_params}{SolverParams}}\&\ solverParams);}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ serialIslandDispatch(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Island*>}}*\ islandsPtr,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_solver_params}{SolverParams}}\&\ solverParams);}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ parallelIslandDispatch(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Island*>}}*\ islandsPtr,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_solver_params}{SolverParams}}\&\ solverParams);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00065\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Island*>}}\ m\_allocatedIslands;\ \ \ \ \textcolor{comment}{//\ owner\ of\ all\ Islands}}
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Island*>}}\ m\_activeIslands;\ \ \ \ \ \ \ \textcolor{comment}{//\ islands\ actively\ in\ use}}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Island*>}}\ m\_freeIslands;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ islands\ ready\ to\ be\ reused}}
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Island*>}}\ m\_lookupIslandFromId;\ \ \textcolor{comment}{//\ big\ lookup\ table\ to\ map\ islandId\ to\ Island\ pointer}}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_island}{Island}}*\ m\_batchIsland;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_minimumSolverBatchSize;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_batchIslandMinBodyCount;}
+\DoxyCodeLine{00072\ \ \ \ \ IslandDispatchFunc\ m\_islandDispatch;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_island}{Island}}*\ getIsland(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_island}{Island}}*\ allocateIsland(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},\ \textcolor{keywordtype}{int}\ numBodies);}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ initIslandPools();}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addBodiesToIslands(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ collisionWorld);}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_simulation_island_manager_mt_a77eadf262f5a0e63053e3efcc9ccfec9}{addManifoldsToIslands}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addConstraintsToIslands(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTypedConstraint*>}}\&\ constraints);}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ mergeIslands();}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{classbt_simulation_island_manager_mt}{btSimulationIslandManagerMt}}();}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_simulation_island_manager_mt}{\string~btSimulationIslandManagerMt}}();}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_simulation_island_manager_mt_a23e63a23d42c4a0b180510d925823db0}{buildAndProcessIslands}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ collisionWorld,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTypedConstraint*>}}\&\ constraints,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simulation_island_manager_mt_1_1_solver_params}{SolverParams}}\&\ solverParams);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ buildIslands(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ colWorld);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{int}\ getMinimumSolverBatchSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00094\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_minimumSolverBatchSize;}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{void}\ setMinimumSolverBatchSize(\textcolor{keywordtype}{int}\ sz)}
+\DoxyCodeLine{00098\ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ m\_minimumSolverBatchSize\ =\ sz;}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \ \ \ \ IslandDispatchFunc\ getIslandDispatchFunction()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00102\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_islandDispatch;}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{//\ allow\ users\ to\ set\ their\ own\ dispatch\ function\ for\ multithreaded\ dispatch}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ setIslandDispatchFunction(IslandDispatchFunc\ func)}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ m\_islandDispatch\ =\ func;}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \};}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SIMULATION\_ISLAND\_MANAGER\_H}}
+
+\end{DoxyCode}

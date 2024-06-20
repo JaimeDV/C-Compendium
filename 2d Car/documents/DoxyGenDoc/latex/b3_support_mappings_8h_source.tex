@@ -1,0 +1,40 @@
+\doxysection{b3\+Support\+Mappings.\+h}
+\hypertarget{b3_support_mappings_8h_source}{}\label{b3_support_mappings_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/NarrowphaseCollision/b3SupportMappings.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/NarrowphaseCollision/b3SupportMappings.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_SUPPORT\_MAPPINGS\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_SUPPORT\_MAPPINGS\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Transform.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3AlignedObjectArray.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}b3VectorFloat4.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{struct\ }b3GjkPairDetector;}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{inline}\ b3Vector3\ localGetSupportVertexWithMargin(\textcolor{keyword}{const}\ float4\&\ supportVec,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_convex_polyhedron_data}{b3ConvexPolyhedronData}}*\ hull,}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3Vector3>}}\&\ verticesA,\ b3Scalar\ margin)}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ b3Vector3\ supVec\ =\ b3MakeVector3(b3Scalar(0.),\ b3Scalar(0.),\ b3Scalar(0.));}
+\DoxyCodeLine{00015\ \ \ \ \ b3Scalar\ maxDot\ =\ b3Scalar(-\/B3\_LARGE\_FLOAT);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{//\ Here\ we\ take\ advantage\ of\ dot(a,\ b*c)\ =\ dot(a*b,\ c).\ \ Note:\ This\ is\ true\ mathematically,\ but\ not\ numerically.}}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordflow}{if}\ (0\ <\ hull-\/>m\_numVertices)}
+\DoxyCodeLine{00019\ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ b3Vector3\ scaled\ =\ supportVec;}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ (int)scaled.maxDot(\&verticesA[hull-\/>m\_vertexOffset],\ hull-\/>m\_numVertices,\ maxDot);}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ verticesA[hull-\/>m\_vertexOffset\ +\ index];}
+\DoxyCodeLine{00023\ \ \ \ \ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordflow}{return}\ supVec;}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{inline}\ b3Vector3\ localGetSupportVertexWithoutMargin(\textcolor{keyword}{const}\ float4\&\ supportVec,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_convex_polyhedron_data}{b3ConvexPolyhedronData}}*\ hull,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3Vector3>}}\&\ verticesA)}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordflow}{return}\ localGetSupportVertexWithMargin(supportVec,\ hull,\ verticesA,\ 0.f);}
+\DoxyCodeLine{00032\ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_SUPPORT\_MAPPINGS\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,87 @@
+\doxysection{bt\+Gjk\+Epa\+Penetration\+Depth\+Solver.\+cpp}
+\hypertarget{bt_gjk_epa_penetration_depth_solver_8cpp_source}{}\label{bt_gjk_epa_penetration_depth_solver_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btGjkEpaPenetrationDepthSolver.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btGjkEpaPenetrationDepthSolver.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{EPA\ Copyright\ (c)\ Ricardo\ Padrela\ 2006}}
+\DoxyCodeLine{00006\ \textcolor{comment}{}}
+\DoxyCodeLine{00007\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00010\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00011\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00012\ \textcolor{comment}{}}
+\DoxyCodeLine{00013\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexShape.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btGjkEpaPenetrationDepthSolver.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkEpa2.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{bool}\ btGjkEpaPenetrationDepthSolver::calcPenDepth(btSimplexSolverInterface\&\ simplexSolver,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ pConvexA,\ \textcolor{keyword}{const}\ btConvexShape*\ pConvexB,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ transformA,\ \textcolor{keyword}{const}\ btTransform\&\ transformB,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\&\ v,\ btVector3\&\ wWitnessOnA,\ btVector3\&\ wWitnessOnB,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDraw)}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ (void)debugDraw;}
+\DoxyCodeLine{00030\ \ \ \ \ (void)v;}
+\DoxyCodeLine{00031\ \ \ \ \ (void)simplexSolver;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ btVector3\ guessVectors[]\ =\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ btVector3(transformB.getOrigin()\ -\/\ transformA.getOrigin()).safeNormalize(),}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ btVector3(transformA.getOrigin()\ -\/\ transformB.getOrigin()).safeNormalize(),}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ btVector3(0,\ 0,\ 1),}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ btVector3(0,\ 1,\ 0),}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ btVector3(1,\ 0,\ 0),}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ btVector3(1,\ 1,\ 0),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ btVector3(1,\ 1,\ 1),}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ btVector3(0,\ 1,\ 1),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ btVector3(1,\ 0,\ 1),}
+\DoxyCodeLine{00043\ \ \ \ \ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ numVectors\ =\ \textcolor{keyword}{sizeof}(guessVectors)\ /\ \textcolor{keyword}{sizeof}(btVector3);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numVectors;\ i++)}
+\DoxyCodeLine{00048\ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ simplexSolver.reset();}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ btVector3\ guessVector\ =\ guessVectors[i];}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_gjk_epa_solver2_1_1s_results}{btGjkEpaSolver2::sResults}}\ results;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGjkEpaSolver2::Penetration(pConvexA,\ transformA,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pConvexB,\ transformB,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ guessVector,\ results))}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ wWitnessOnA\ =\ results.witnesses[0];}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ wWitnessOnB\ =\ results.witnesses[1];}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ v\ =\ results.normal;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGjkEpaSolver2::Distance(pConvexA,\ transformA,\ pConvexB,\ transformB,\ guessVector,\ results))}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wWitnessOnA\ =\ results.witnesses[0];}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wWitnessOnB\ =\ results.witnesses[1];}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v\ =\ results.normal;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//failed\ to\ find\ a\ distance/penetration}}
+\DoxyCodeLine{00077\ \ \ \ \ wWitnessOnA.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00078\ \ \ \ \ wWitnessOnB.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00079\ \ \ \ \ v.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00081\ \}}
+
+\end{DoxyCode}

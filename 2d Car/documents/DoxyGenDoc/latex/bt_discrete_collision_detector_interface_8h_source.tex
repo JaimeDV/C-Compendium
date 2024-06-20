@@ -1,0 +1,85 @@
+\doxysection{bt\+Discrete\+Collision\+Detector\+Interface.\+h}
+\hypertarget{bt_discrete_collision_detector_interface_8h_source}{}\label{bt_discrete_collision_detector_interface_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DISCRETE\_COLLISION\_DETECTOR1\_INTERFACE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DISCRETE\_COLLISION\_DETECTOR1\_INTERFACE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_discrete_collision_detector_interface}{btDiscreteCollisionDetectorInterface}}}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_result}{Result}}}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_result}{\string~Result}}()\ \{\}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_result_a09a94d4714f153a138cd3a9c12b33588}{setShapeIdentifiersA}}(\textcolor{keywordtype}{int}\ partId0,\ \textcolor{keywordtype}{int}\ index0)\ =\ 0;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setShapeIdentifiersB(\textcolor{keywordtype}{int}\ partId1,\ \textcolor{keywordtype}{int}\ index1)\ =\ 0;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addContactPoint(\textcolor{keyword}{const}\ btVector3\&\ normalOnBInWorld,\ \textcolor{keyword}{const}\ btVector3\&\ pointInWorld,\ btScalar\ depth)\ =\ 0;}
+\DoxyCodeLine{00037\ \ \ \ \ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_closest_point_input}{ClosestPointInput}}}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_closest_point_input}{ClosestPointInput}}()}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_maximumDistanceSquared(btScalar(BT\_LARGE\_FLOAT))}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ btTransform\ m\_transformA;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ btTransform\ m\_transformB;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ btScalar\ m\_maximumDistanceSquared;}
+\DoxyCodeLine{00049\ \ \ \ \ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_discrete_collision_detector_interface}{\string~btDiscreteCollisionDetectorInterface}}()\{\};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ give\ either\ closest\ points\ (distance\ >\ 0)\ or\ penetration\ (distance)}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{//\ the\ normal\ always\ points\ from\ B\ towards\ A}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getClosestPoints(\textcolor{keyword}{const}\ ClosestPointInput\&\ input,\ Result\&\ output,\ \textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDraw,\ \textcolor{keywordtype}{bool}\ swapResults\ =\ \textcolor{keyword}{false})\ =\ 0;}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_storage_result}{btStorageResult}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_result}{btDiscreteCollisionDetectorInterface::Result}}}
+\DoxyCodeLine{00061\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ btVector3\ m\_normalOnSurfaceB;}
+\DoxyCodeLine{00063\ \ \ \ \ btVector3\ m\_closestPointInB;}
+\DoxyCodeLine{00064\ \ \ \ \ btScalar\ m\_distance;\ \ \textcolor{comment}{//negative\ means\ penetration\ !}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{structbt_storage_result}{btStorageResult}}()\ :\ m\_distance(btScalar(BT\_LARGE\_FLOAT))}
+\DoxyCodeLine{00068\ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_storage_result}{\string~btStorageResult}}()\{\};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addContactPoint(\textcolor{keyword}{const}\ btVector3\&\ normalOnBInWorld,\ \textcolor{keyword}{const}\ btVector3\&\ pointInWorld,\ btScalar\ depth)}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ <\ m\_distance)}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ m\_normalOnSurfaceB\ =\ normalOnBInWorld;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ m\_closestPointInB\ =\ pointInWorld;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ m\_distance\ =\ depth;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ \};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DISCRETE\_COLLISION\_DETECTOR1\_INTERFACE\_H}}
+
+\end{DoxyCode}

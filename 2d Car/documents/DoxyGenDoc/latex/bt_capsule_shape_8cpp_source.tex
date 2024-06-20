@@ -1,0 +1,154 @@
+\doxysection{bt\+Capsule\+Shape.\+cpp}
+\hypertarget{bt_capsule_shape_8cpp_source}{}\label{bt_capsule_shape_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btCapsuleShape.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btCapsuleShape.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btCapsuleShape.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuaternion.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ btCapsuleShape::btCapsuleShape(btScalar\ radius,\ btScalar\ height)\ :\ btConvexInternalShape()}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ m\_collisionMargin\ =\ radius;}
+\DoxyCodeLine{00023\ \ \ \ \ m\_shapeType\ =\ CAPSULE\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00024\ \ \ \ \ m\_upAxis\ =\ 1;}
+\DoxyCodeLine{00025\ \ \ \ \ m\_implicitShapeDimensions.setValue(radius,\ 0.5f\ *\ height,\ radius);}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ btVector3\ btCapsuleShape::localGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3\&\ vec0)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00029\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00030\ \ \ \ \ btVector3\ supVec(0,\ 0,\ 0);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ btScalar\ maxDot(btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ btVector3\ vec\ =\ vec0;}
+\DoxyCodeLine{00035\ \ \ \ \ btScalar\ lenSqr\ =\ vec.length2();}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{if}\ (lenSqr\ <\ btScalar(0.0001))}
+\DoxyCodeLine{00037\ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ vec.setValue(1,\ 0,\ 0);}
+\DoxyCodeLine{00039\ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ btScalar\ rlen\ =\ btScalar(1.)\ /\ btSqrt(lenSqr);}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ vec\ *=\ rlen;}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ btVector3\ vtx;}
+\DoxyCodeLine{00047\ \ \ \ \ btScalar\ newDot;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ btVector3\ pos(0,\ 0,\ 0);}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ pos[getUpAxis()]\ =\ getHalfHeight();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ vtx\ =\ pos;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ newDot\ =\ vec.dot(vtx);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newDot\ >\ maxDot)}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ maxDot\ =\ newDot;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ supVec\ =\ vtx;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00060\ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ btVector3\ pos(0,\ 0,\ 0);}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ pos[getUpAxis()]\ =\ -\/getHalfHeight();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ vtx\ =\ pos;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ newDot\ =\ vec.dot(vtx);}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newDot\ >\ maxDot)}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ maxDot\ =\ newDot;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ supVec\ =\ vtx;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{return}\ supVec;}
+\DoxyCodeLine{00075\ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{void}\ btCapsuleShape::batchedUnitVectorGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3*\ vectors,\ btVector3*\ supportVerticesOut,\ \textcolor{keywordtype}{int}\ numVectors)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00078\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ numVectors;\ j++)}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ btScalar\ maxDot(btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vec\ =\ vectors[j];}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ btVector3\ vtx;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ btScalar\ newDot;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ pos(0,\ 0,\ 0);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ pos[getUpAxis()]\ =\ getHalfHeight();}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ vtx\ =\ pos;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ newDot\ =\ vec.dot(vtx);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newDot\ >\ maxDot)}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxDot\ =\ newDot;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ supportVerticesOut[j]\ =\ vtx;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ pos(0,\ 0,\ 0);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ pos[getUpAxis()]\ =\ -\/getHalfHeight();}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ vtx\ =\ pos;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ newDot\ =\ vec.dot(vtx);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newDot\ >\ maxDot)}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxDot\ =\ newDot;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ supportVerticesOut[j]\ =\ vtx;}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ btCapsuleShape::calculateLocalInertia(btScalar\ mass,\ btVector3\&\ inertia)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00112\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{//as\ an\ approximation,\ take\ the\ inertia\ of\ the\ box\ that\ bounds\ the\ spheres}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ btTransform\ ident;}
+\DoxyCodeLine{00116\ \ \ \ \ ident.setIdentity();}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ btScalar\ radius\ =\ getRadius();}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ btVector3\ halfExtents(radius,\ radius,\ radius);}
+\DoxyCodeLine{00121\ \ \ \ \ halfExtents[getUpAxis()]\ +=\ getHalfHeight();}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ btScalar\ lx\ =\ btScalar(2.)\ *\ (halfExtents[0]);}
+\DoxyCodeLine{00124\ \ \ \ \ btScalar\ ly\ =\ btScalar(2.)\ *\ (halfExtents[1]);}
+\DoxyCodeLine{00125\ \ \ \ \ btScalar\ lz\ =\ btScalar(2.)\ *\ (halfExtents[2]);}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ x2\ =\ lx\ *\ lx;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ y2\ =\ ly\ *\ ly;}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ z2\ =\ lz\ *\ lz;}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ scaledmass\ =\ mass\ *\ btScalar(.08333333);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ inertia[0]\ =\ scaledmass\ *\ (y2\ +\ z2);}
+\DoxyCodeLine{00132\ \ \ \ \ inertia[1]\ =\ scaledmass\ *\ (x2\ +\ z2);}
+\DoxyCodeLine{00133\ \ \ \ \ inertia[2]\ =\ scaledmass\ *\ (x2\ +\ y2);}
+\DoxyCodeLine{00134\ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ btCapsuleShapeX::btCapsuleShapeX(btScalar\ radius,\ btScalar\ height)}
+\DoxyCodeLine{00137\ \{}
+\DoxyCodeLine{00138\ \ \ \ \ m\_collisionMargin\ =\ radius;}
+\DoxyCodeLine{00139\ \ \ \ \ m\_upAxis\ =\ 0;}
+\DoxyCodeLine{00140\ \ \ \ \ m\_implicitShapeDimensions.setValue(0.5f\ *\ height,\ radius,\ radius);}
+\DoxyCodeLine{00141\ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ btCapsuleShapeZ::btCapsuleShapeZ(btScalar\ radius,\ btScalar\ height)}
+\DoxyCodeLine{00144\ \{}
+\DoxyCodeLine{00145\ \ \ \ \ m\_collisionMargin\ =\ radius;}
+\DoxyCodeLine{00146\ \ \ \ \ m\_upAxis\ =\ 2;}
+\DoxyCodeLine{00147\ \ \ \ \ m\_implicitShapeDimensions.setValue(radius,\ radius,\ 0.5f\ *\ height);}
+\DoxyCodeLine{00148\ \}}
+
+\end{DoxyCode}

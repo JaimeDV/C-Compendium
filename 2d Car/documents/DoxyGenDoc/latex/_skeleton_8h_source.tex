@@ -1,0 +1,160 @@
+\doxysection{Skeleton.\+h}
+\hypertarget{_skeleton_8h_source}{}\label{_skeleton_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/Skeleton.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/Skeleton.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/******************************************************************************}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Spine\ Runtimes\ Software\ License}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Version\ 2.3}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2013-\/2015,\ Esoteric\ Software}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ All\ rights\ reserved.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ You\ are\ granted\ a\ perpetual,\ non-\/exclusive,\ non-\/sublicensable\ and}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ non-\/transferable\ license\ to\ use,\ install,\ execute\ and\ perform\ the\ Spine}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Runtimes\ Software\ (the\ "{}Software"{})\ and\ derivative\ works\ solely\ for\ personal}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ or\ internal\ use.\ Without\ the\ written\ permission\ of\ Esoteric\ Software\ (see}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ Section\ 2\ of\ the\ Spine\ Software\ License\ Agreement),\ you\ may\ not\ (a)\ modify,}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ translate,\ adapt\ or\ otherwise\ create\ derivative\ works,\ improvements\ of\ the}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Software\ or\ develop\ new\ applications\ using\ the\ Software\ or\ (b)\ remove,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ delete,\ alter\ or\ obscure\ any\ trademarks\ or\ any\ copyright,\ trademark,\ patent}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ or\ other\ intellectual\ property\ or\ proprietary\ rights\ notices\ on\ or\ in\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ Software,\ including\ any\ copy\ thereof.\ Redistributions\ in\ binary\ or\ source}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ form\ must\ include\ this\ license\ and\ terms.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ ESOTERIC\ SOFTWARE\ "{}AS\ IS"{}\ AND\ ANY\ EXPRESS\ OR}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ MERCHANTABILITY\ AND\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ EVENT\ SHALL\ ESOTERIC\ SOFTWARE\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,\ DATA,\ OR\ PROFITS;}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY\ THEORY\ OF\ LIABILITY,}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT\ (INCLUDING\ NEGLIGENCE\ OR}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE\ OF\ THIS\ SOFTWARE,\ EVEN\ IF}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifndef\ SPINE\_SKELETON\_H\_}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ SPINE\_SKELETON\_H\_}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <spine/SkeletonData.h>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <spine/Slot.h>}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <spine/Skin.h>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <spine/IkConstraint.h>}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00041\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_skeleton}{spSkeleton}}\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{structsp_skeleton_data}{spSkeletonData}}*\ \textcolor{keyword}{const}\ data;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ bonesCount;}
+\DoxyCodeLine{00048\ \ \ \ \ \mbox{\hyperlink{structsp_bone}{spBone}}**\ bones;}
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{structsp_bone}{spBone}}*\ \textcolor{keyword}{const}\ root;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ slotsCount;}
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{structsp_slot}{spSlot}}**\ slots;}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{structsp_slot}{spSlot}}**\ drawOrder;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ ikConstraintsCount;}
+\DoxyCodeLine{00056\ \ \ \ \ \mbox{\hyperlink{structsp_ik_constraint}{spIkConstraint}}**\ ikConstraints;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{structsp_skin}{spSkin}}*\ \textcolor{keyword}{const}\ skin;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{float}\ r,\ g,\ b,\ a;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{float}\ time;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}flipX,\ flipY;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{float}\ x,\ y;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00065\ \ \ \ \ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}()\ :}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ data(0),}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ bonesCount(0),}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ bones(0),}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ root(0),}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ slotsCount(0),}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ slots(0),}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ drawOrder(0),}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ ikConstraintsCount(0),}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ ikConstraints(0),}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ skin(0),}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ r(0),\ g(0),\ b(0),\ a(0),}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ time(0),}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ flipX(0),}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ flipY(0),}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ x(0),\ y(0)\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00085\ \}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ spSkeleton\_create\ (\mbox{\hyperlink{structsp_skeleton_data}{spSkeletonData}}*\ data);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{void}\ spSkeleton\_dispose\ (\mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self);}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{comment}{/*\ Caches\ information\ about\ bones\ and\ IK\ constraints.\ Must\ be\ called\ if\ bones\ or\ IK\ constraints\ are\ added\ or\ removed.\ */}}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{void}\ spSkeleton\_updateCache\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self);}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{void}\ spSkeleton\_updateWorldTransform\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{void}\ spSkeleton\_setToSetupPose\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{void}\ spSkeleton\_setBonesToSetupPose\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self);}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{void}\ spSkeleton\_setSlotsToSetupPose\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{/*\ Returns\ 0\ if\ the\ bone\ was\ not\ found.\ */}}
+\DoxyCodeLine{00099\ \mbox{\hyperlink{structsp_bone}{spBone}}*\ spSkeleton\_findBone\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ boneName);}
+\DoxyCodeLine{00100\ \textcolor{comment}{/*\ Returns\ -\/1\ if\ the\ bone\ was\ not\ found.\ */}}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{int}\ spSkeleton\_findBoneIndex\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ boneName);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{comment}{/*\ Returns\ 0\ if\ the\ slot\ was\ not\ found.\ */}}
+\DoxyCodeLine{00104\ \mbox{\hyperlink{structsp_slot}{spSlot}}*\ spSkeleton\_findSlot\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ slotName);}
+\DoxyCodeLine{00105\ \textcolor{comment}{/*\ Returns\ -\/1\ if\ the\ slot\ was\ not\ found.\ */}}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{int}\ spSkeleton\_findSlotIndex\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ slotName);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{comment}{/*\ Sets\ the\ skin\ used\ to\ look\ up\ attachments\ before\ looking\ in\ the\ SkeletonData\ defaultSkin.\ Attachments\ from\ the\ new\ skin\ are}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ attached\ if\ the\ corresponding\ attachment\ from\ the\ old\ skin\ was\ attached.\ If\ there\ was\ no\ old\ skin,\ each\ slot's\ setup\ mode}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ attachment\ is\ attached\ from\ the\ new\ skin.}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ @param\ skin\ May\ be\ 0.*/}}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ spSkeleton\_setSkin\ (\mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \mbox{\hyperlink{structsp_skin}{spSkin}}*\ skin);}
+\DoxyCodeLine{00113\ \textcolor{comment}{/*\ Returns\ 0\ if\ the\ skin\ was\ not\ found.\ See\ spSkeleton\_setSkin.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ @param\ skinName\ May\ be\ 0.\ */}}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{int}\ spSkeleton\_setSkinByName\ (\mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ skinName);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{comment}{/*\ Returns\ 0\ if\ the\ slot\ or\ attachment\ was\ not\ found.\ */}}
+\DoxyCodeLine{00118\ \mbox{\hyperlink{structsp_attachment}{spAttachment}}*\ spSkeleton\_getAttachmentForSlotName\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ slotName,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ attachmentName);}
+\DoxyCodeLine{00119\ \textcolor{comment}{/*\ Returns\ 0\ if\ the\ slot\ or\ attachment\ was\ not\ found.\ */}}
+\DoxyCodeLine{00120\ \mbox{\hyperlink{structsp_attachment}{spAttachment}}*\ spSkeleton\_getAttachmentForSlotIndex\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keywordtype}{int}\ slotIndex,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ attachmentName);}
+\DoxyCodeLine{00121\ \textcolor{comment}{/*\ Returns\ 0\ if\ the\ slot\ or\ attachment\ was\ not\ found.}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ @param\ attachmentName\ May\ be\ 0.\ */}}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ spSkeleton\_setAttachment\ (\mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ slotName,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ attachmentName);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{/*\ Returns\ 0\ if\ the\ IK\ constraint\ was\ not\ found.\ */}}
+\DoxyCodeLine{00126\ \mbox{\hyperlink{structsp_ik_constraint}{spIkConstraint}}*\ spSkeleton\_findIkConstraint\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ ikConstraintName);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{void}\ spSkeleton\_update\ (\mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ self,\ \textcolor{keywordtype}{float}\ deltaTime);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00131\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}\ Skeleton;}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#define\ Skeleton\_create(...)\ spSkeleton\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#define\ Skeleton\_dispose(...)\ spSkeleton\_dispose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#define\ Skeleton\_updateWorldTransform(...)\ spSkeleton\_updateWorldTransform(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#define\ Skeleton\_setToSetupPose(...)\ spSkeleton\_setToSetupPose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#define\ Skeleton\_setBonesToSetupPose(...)\ spSkeleton\_setBonesToSetupPose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#define\ Skeleton\_setSlotsToSetupPose(...)\ spSkeleton\_setSlotsToSetupPose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#define\ Skeleton\_findBone(...)\ spSkeleton\_findBone(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#define\ Skeleton\_findBoneIndex(...)\ spSkeleton\_findBoneIndex(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#define\ Skeleton\_findSlot(...)\ spSkeleton\_findSlot(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#define\ Skeleton\_findSlotIndex(...)\ spSkeleton\_findSlotIndex(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#define\ Skeleton\_setSkin(...)\ spSkeleton\_setSkin(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#define\ Skeleton\_setSkinByName(...)\ spSkeleton\_setSkinByName(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#define\ Skeleton\_getAttachmentForSlotName(...)\ spSkeleton\_getAttachmentForSlotName(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#define\ Skeleton\_getAttachmentForSlotIndex(...)\ spSkeleton\_getAttachmentForSlotIndex(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#define\ Skeleton\_setAttachment(...)\ spSkeleton\_setAttachment(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#define\ Skeleton\_update(...)\ spSkeleton\_update(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00151\ \}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ SPINE\_SKELETON\_H\_*/}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

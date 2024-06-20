@@ -1,0 +1,78 @@
+\doxysection{Particle.\+hpp}
+\hypertarget{_particle_8hpp_source}{}\label{_particle_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Particle.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Particle.hpp}}
+\mbox{\hyperlink{_particle_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_sphere_8hpp}{Sphere.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{class\ }Scene;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_particle}{Particle}}}
+\DoxyCodeLine{00015\ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ btVector3\ particleSize;\ \textcolor{comment}{//\ Size\ of\ the\ particle}}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ btVector3\ Maxvelocity;\ \textcolor{comment}{//\ Maximum\ velocity\ of\ the\ particle}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ btVector3\ velocity;\ \textcolor{comment}{//\ Current\ velocity\ of\ the\ particle}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ lifeSpam;\ \textcolor{comment}{//\ Lifespan\ of\ the\ particle}}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ maxSpam;\ \textcolor{comment}{//\ Maximum\ lifespan\ of\ the\ particle}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id}\ =\ 0;\ \textcolor{comment}{//\ Identifier\ of\ the\ particle}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ shared\_ptr<PhysicSphere>\ \mbox{\hyperlink{classmisi_1_1_particle_aec089f6cb5b82a092b78a7d8f6a7662e}{body}};\ \textcolor{comment}{//\ Pointer\ to\ the\ physics\ body\ of\ the\ particle}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ shared\_ptr<Scene>\ \mbox{\hyperlink{classmisi_1_1_particle_ac98ff479361ec959a24471b8fc09ba44}{worldReference}};\ \textcolor{comment}{//\ Pointer\ to\ the\ scene\ where\ the\ particle\ exists}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_particle_ac51d2e5d76cfc820c7a2c655734ec466}{Particle}}(btVector3\ given\_rotation,\ \textcolor{keywordtype}{float}\ given\_mass,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ given\_inertia,\ \textcolor{keywordtype}{float}\ restitution,\ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4e}{ObjectType}}\ given\_type,\ btVector3\ given\_origin,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ given\_size,\ btVector3\ given\_velocity,\ \textcolor{keywordtype}{float}\ given\_lifeSpam,\ shared\_ptr<Scene>\ given\_world,\ \textcolor{keywordtype}{int}\ gId);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_a7d282676d22615406eb6cd5fe3492182}{MoveParticle}}(btVector3\ velocity);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_a973e65d6c90d95beddb7a3e0b81a5907}{Reset}}();}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_ae51464ff8cbb226f38df32f7b05fc626}{Deactivate}}();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_a872f7dde71491f0f77c58a9dbf8e2193}{Reactivate}}();}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_a8137c87ed009a98e9449438e5eaea03a}{SetId}}(\textcolor{keywordtype}{int}\ gId)}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{id}\ =\ gId;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ \mbox{\hyperlink{classmisi_1_1_particle_aae618328ae76d7c1a1c989a67c90d268}{GetId}}()}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::to\_string(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_a4e5b6d8925b2c55ce5efe641407811cf}{SetLifeSpam}}(\textcolor{keywordtype}{float}\ new\_value)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ lifeSpam\ =\ new\_value;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classmisi_1_1_particle_a218d47b83a522237986dbcb8242c6a1f}{GetLifeSpam}}()}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ lifeSpam;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{classmisi_1_1_particle_a62cf20471a7b89084e9e64415ecaf62f}{Getvelocity}}()}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ velocity;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ shared\_ptr<PhysicSphere>\ \mbox{\hyperlink{classmisi_1_1_particle_a3e5757d9083f91efd49bdd031ffea199}{GetBody}}()}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_particle_aec089f6cb5b82a092b78a7d8f6a7662e}{body}};}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ shared\_ptr<Scene>\ \mbox{\hyperlink{classmisi_1_1_particle_af4983ae0dc0c17a5ebda5a976d8a0fc3}{GetWorld}}()}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_particle_ac98ff479361ec959a24471b8fc09ba44}{worldReference}};}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classmisi_1_1_particle_aa44e9933fa225747b728455b4658dc4e}{\string~Particle}}()\ \{\}}
+\DoxyCodeLine{00107\ \ \ \ \ \};}
+\DoxyCodeLine{00108\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,305 @@
+\doxysection{b3\+Open\+CLArray.\+h}
+\hypertarget{b3_open_c_l_array_8h_source}{}\label{b3_open_c_l_array_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ B3\_OPENCL\_ARRAY\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ B3\_OPENCL\_ARRAY\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3AlignedObjectArray.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/Initialize/b3OpenCLInclude.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_size;}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_capacity;}
+\DoxyCodeLine{00012\ \ \ \ \ cl\_mem\ m\_clBuffer;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ cl\_context\ m\_clContext;}
+\DoxyCodeLine{00015\ \ \ \ \ cl\_command\_queue\ m\_commandQueue;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ownsMemory;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_allowGrowingCapacity;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ deallocate()}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_clBuffer\ \&\&\ m\_ownsMemory)}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ clReleaseMemObject(m\_clBuffer);}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ m\_clBuffer\ =\ 0;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ m\_capacity\ =\ 0;}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<T>}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<T>}}\&\ src);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{size\_t}\ allocSize(\textcolor{keywordtype}{size\_t}\ size)}
+\DoxyCodeLine{00034\ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (size\ ?\ size\ *\ 2\ :\ 1);}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray}}(cl\_context\ ctx,\ cl\_command\_queue\ queue,\ \textcolor{keywordtype}{size\_t}\ initialCapacity\ =\ 0,\ \textcolor{keywordtype}{bool}\ allowGrowingCapacity\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ :\ m\_size(0),\ m\_capacity(0),\ m\_clBuffer(0),\ m\_clContext(ctx),\ m\_commandQueue(queue),\ m\_ownsMemory(\textcolor{keyword}{true}),\ m\_allowGrowingCapacity(\textcolor{keyword}{true})}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (initialCapacity)}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ reserve(initialCapacity);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ m\_allowGrowingCapacity\ =\ allowGrowingCapacity;}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb3_open_c_l_array_ab7141803f0123f00879cc1ed95499680}{setFromOpenCLBuffer}}(cl\_mem\ buffer,\ \textcolor{keywordtype}{size\_t}\ sizeInElements)}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ deallocate();}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ m\_ownsMemory\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ m\_allowGrowingCapacity\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ m\_clBuffer\ =\ buffer;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ m\_size\ =\ sizeInElements;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ m\_capacity\ =\ sizeInElements;}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//\ we\ could\ enable\ this\ assignment,\ but\ need\ to\ make\ sure\ to\ avoid\ accidental\ deep\ copies}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ \ b3OpenCLArray<T>\&\ operator=(const\ b3AlignedObjectArray<T>\&\ src)}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//\ \ \{}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ copyFromArray(src);}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ return\ *this;}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\ \ \}}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ cl\_mem\ getBufferCL()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_clBuffer;}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{\string~b3OpenCLArray}}()}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ deallocate();}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ m\_size\ =\ 0;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ m\_capacity\ =\ 0;}
+\DoxyCodeLine{00077\ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ push\_back(\textcolor{keyword}{const}\ T\&\ \_Val,\ \textcolor{keywordtype}{bool}\ waitForCompletion\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ result\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sz\ =\ size();}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sz\ ==\ capacity())}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ reserve(allocSize(size()));}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ copyFromHostPointer(\&\_Val,\ 1,\ sz,\ waitForCompletion);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ m\_size++;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ B3\_FORCE\_INLINE\ T\ forcedAt(\textcolor{keywordtype}{size\_t}\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ b3Assert(n\ >=\ 0);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ b3Assert(n\ <\ capacity());}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ T\ elem;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ copyToHostPointer(\&elem,\ 1,\ n,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ elem;}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ B3\_FORCE\_INLINE\ T\ at(\textcolor{keywordtype}{size\_t}\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00102\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ b3Assert(n\ >=\ 0);}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ b3Assert(n\ <\ size());}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ T\ elem;}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ copyToHostPointer(\&elem,\ 1,\ n,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ elem;}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ resize(\textcolor{keywordtype}{size\_t}\ newsize,\ \textcolor{keywordtype}{bool}\ copyOldContents\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ result\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ curSize\ =\ size();}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newsize\ <\ curSize)}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//leave\ the\ OpenCL\ memory\ for\ now}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newsize\ >\ size())}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ reserve(newsize,\ copyOldContents);}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//leave\ new\ data\ uninitialized\ (init\ in\ debug\ mode?)}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//for\ (size\_t\ i=curSize;i<newsize;i++)\ ...}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (result)}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ m\_size\ =\ newsize;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ m\_size\ =\ 0;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{size\_t}\ size()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00142\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_size;}
+\DoxyCodeLine{00144\ \ \ \ \ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{size\_t}\ capacity()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00147\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_capacity;}
+\DoxyCodeLine{00149\ \ \ \ \ \}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ reserve(\textcolor{keywordtype}{size\_t}\ \_Count,\ \textcolor{keywordtype}{bool}\ copyOldContents\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00152\ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ result\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ determine\ new\ minimum\ length\ of\ allocated\ storage}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (capacity()\ <\ \_Count)}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \{\ \ \textcolor{comment}{//\ not\ enough\ room,\ reallocate}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_allowGrowingCapacity)}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cl\_int\ ciErrNum;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//create\ a\ new\ OpenCL\ buffer}}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ memSizeInBytes\ =\ \textcolor{keyword}{sizeof}(T)\ *\ \_Count;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cl\_mem\ buf\ =\ clCreateBuffer(m\_clContext,\ CL\_MEM\_READ\_WRITE,\ memSizeInBytes,\ NULL,\ \&ciErrNum);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ciErrNum\ !=\ CL\_SUCCESS)}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Error(\textcolor{stringliteral}{"{}OpenCL\ out-\/of-\/memory\(\backslash\)n"{}});}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Count\ =\ 0;}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00170\ \textcolor{comment}{//\#define\ B3\_ALWAYS\_INITIALIZE\_OPENCL\_BUFFERS}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#ifdef\ B3\_ALWAYS\_INITIALIZE\_OPENCL\_BUFFERS}}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ src\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)malloc(memSizeInBytes);}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ memSizeInBytes;\ i++)}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ src[i]\ =\ 0xbb;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ciErrNum\ =\ clEnqueueWriteBuffer(m\_commandQueue,\ buf,\ CL\_TRUE,\ 0,\ memSizeInBytes,\ src,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(ciErrNum\ ==\ CL\_SUCCESS);}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ clFinish(m\_commandQueue);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ free(src);}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_ALWAYS\_INITIALIZE\_OPENCL\_BUFFERS}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (result)}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (copyOldContents)}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ copyToCL(buf,\ size());}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//deallocate\ the\ old\ buffer}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ deallocate();}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_clBuffer\ =\ buf;}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_capacity\ =\ \_Count;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fail:\ assert\ and}}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(0);}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ deallocate();}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordtype}{void}\ copyToCL(cl\_mem\ destination,\ \textcolor{keywordtype}{size\_t}\ numElements,\ \textcolor{keywordtype}{size\_t}\ firstElem\ =\ 0,\ \textcolor{keywordtype}{size\_t}\ dstOffsetInElems\ =\ 0)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00206\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numElements\ <=\ 0)}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ b3Assert(m\_clBuffer);}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ b3Assert(destination);}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{comment}{//likely\ some\ error,\ destination\ is\ same\ as\ source}}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ b3Assert(m\_clBuffer\ !=\ destination);}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ b3Assert((firstElem\ +\ numElements)\ <=\ m\_size);}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ cl\_int\ status\ =\ 0;}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ b3Assert(numElements\ >\ 0);}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ b3Assert(numElements\ <=\ m\_size);}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ srcOffsetBytes\ =\ \textcolor{keyword}{sizeof}(T)\ *\ firstElem;}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dstOffsetInBytes\ =\ \textcolor{keyword}{sizeof}(T)\ *\ dstOffsetInElems;}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ status\ =\ clEnqueueCopyBuffer(m\_commandQueue,\ m\_clBuffer,\ destination,}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ srcOffsetBytes,\ dstOffsetInBytes,\ \textcolor{keyword}{sizeof}(T)\ *\ numElements,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ b3Assert(status\ ==\ CL\_SUCCESS);}
+\DoxyCodeLine{00230\ \ \ \ \ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{void}\ copyFromHost(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<T>}}\&\ srcArray,\ \textcolor{keywordtype}{bool}\ waitForCompletion\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00233\ \ \ \ \ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ newSize\ =\ srcArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ copyOldContents\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ resize(newSize,\ copyOldContents);}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newSize)}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ copyFromHostPointer(\&srcArray[0],\ newSize,\ 0,\ waitForCompletion);}
+\DoxyCodeLine{00240\ \ \ \ \ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keywordtype}{void}\ copyFromHostPointer(\textcolor{keyword}{const}\ T*\ src,\ \textcolor{keywordtype}{size\_t}\ numElems,\ \textcolor{keywordtype}{size\_t}\ destFirstElem\ =\ 0,\ \textcolor{keywordtype}{bool}\ waitForCompletion\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00243\ \ \ \ \ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ b3Assert(numElems\ +\ destFirstElem\ <=\ capacity());}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numElems\ +\ destFirstElem)}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ cl\_int\ status\ =\ 0;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sizeInBytes\ =\ \textcolor{keyword}{sizeof}(T)\ *\ numElems;}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ status\ =\ clEnqueueWriteBuffer(m\_commandQueue,\ m\_clBuffer,\ 0,\ \textcolor{keyword}{sizeof}(T)\ *\ destFirstElem,\ sizeInBytes,}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ src,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(status\ ==\ CL\_SUCCESS);}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (waitForCompletion)}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ clFinish(m\_commandQueue);}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ b3Error(\textcolor{stringliteral}{"{}copyFromHostPointer\ invalid\ range\(\backslash\)n"{}});}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00260\ \ \ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordtype}{void}\ copyToHost(\mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<T>}}\&\ destArray,\ \textcolor{keywordtype}{bool}\ waitForCompletion\ =\ \textcolor{keyword}{true})\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00263\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ destArray.resize(this-\/>size());}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (size())}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ copyToHostPointer(\&destArray[0],\ size(),\ 0,\ waitForCompletion);}
+\DoxyCodeLine{00267\ \ \ \ \ \}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keywordtype}{void}\ copyToHostPointer(T*\ destPtr,\ \textcolor{keywordtype}{size\_t}\ numElem,\ \textcolor{keywordtype}{size\_t}\ srcFirstElem\ =\ 0,\ \textcolor{keywordtype}{bool}\ waitForCompletion\ =\ \textcolor{keyword}{true})\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00270\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ b3Assert(numElem\ +\ srcFirstElem\ <=\ capacity());}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numElem\ +\ srcFirstElem\ <=\ capacity())}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ cl\_int\ status\ =\ 0;}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ status\ =\ clEnqueueReadBuffer(m\_commandQueue,\ m\_clBuffer,\ 0,\ \textcolor{keyword}{sizeof}(T)\ *\ srcFirstElem,\ \textcolor{keyword}{sizeof}(T)\ *\ numElem,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ destPtr,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(status\ ==\ CL\_SUCCESS);}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (waitForCompletion)}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ clFinish(m\_commandQueue);}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ b3Error(\textcolor{stringliteral}{"{}copyToHostPointer\ invalid\ range\(\backslash\)n"{}});}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00287\ \ \ \ \ \}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keywordtype}{void}\ copyFromOpenCLArray(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray}}\&\ src)}
+\DoxyCodeLine{00290\ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ newSize\ =\ src.size();}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ resize(newSize);}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (size())}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ src.copyToCL(m\_clBuffer,\ size());}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00297\ \ \ \ \ \}}
+\DoxyCodeLine{00298\ \};}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_OPENCL\_ARRAY\_H}}
+
+\end{DoxyCode}

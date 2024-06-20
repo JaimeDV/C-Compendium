@@ -1,0 +1,123 @@
+\doxysection{bt\+GImpact\+Quantized\+Bvh Class Reference}
+\hypertarget{classbt_g_impact_quantized_bvh}{}\label{classbt_g_impact_quantized_bvh}\index{btGImpactQuantizedBvh@{btGImpactQuantizedBvh}}
+
+
+Structure for containing Boxes.  
+
+
+
+
+{\ttfamily \#include $<$bt\+GImpact\+Quantized\+Bvh.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a3adf6c64b003214564e045326e4fabb7}\label{classbt_g_impact_quantized_bvh_a3adf6c64b003214564e045326e4fabb7} 
+{\bfseries bt\+GImpact\+Quantized\+Bvh} ()
+\begin{DoxyCompactList}\small\item\em this constructor doesn\textquotesingle{}t build the tree. you must call build\+Set \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a567d06bf430c21fe4887f1b996bb6ba4}\label{classbt_g_impact_quantized_bvh_a567d06bf430c21fe4887f1b996bb6ba4} 
+{\bfseries bt\+GImpact\+Quantized\+Bvh} (\mbox{\hyperlink{classbt_primitive_manager_base}{bt\+Primitive\+Manager\+Base}} \texorpdfstring{$\ast$}{*}primitive\+\_\+manager)
+\begin{DoxyCompactList}\small\item\em this constructor doesn\textquotesingle{}t build the tree. you must call build\+Set \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_ae6f71b24b0b7f76ab0807e760da9f448}\label{classbt_g_impact_quantized_bvh_ae6f71b24b0b7f76ab0807e760da9f448} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE bt\+AABB {\bfseries get\+Global\+Box} () const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_ab4e8e255305f61908ca119fb751bf22c}\label{classbt_g_impact_quantized_bvh_ab4e8e255305f61908ca119fb751bf22c} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries set\+Primitive\+Manager} (\mbox{\hyperlink{classbt_primitive_manager_base}{bt\+Primitive\+Manager\+Base}} \texorpdfstring{$\ast$}{*}primitive\+\_\+manager)
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_aaabdf6c4d0869ee2bfb8c170c60cadbc}\label{classbt_g_impact_quantized_bvh_aaabdf6c4d0869ee2bfb8c170c60cadbc} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE \mbox{\hyperlink{classbt_primitive_manager_base}{bt\+Primitive\+Manager\+Base}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Primitive\+Manager} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a7aa23f402fe08b65576b3a5a24a6efb6}\label{classbt_g_impact_quantized_bvh_a7aa23f402fe08b65576b3a5a24a6efb6} 
+void {\bfseries refit} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a617f9be0d5faddadabd3b304ab596d96}\label{classbt_g_impact_quantized_bvh_a617f9be0d5faddadabd3b304ab596d96} 
+\mbox{\hyperlink{classbt_quantized_bvh_tree}{bt\+Quantized\+Bvh\+Tree}} {\bfseries m\+\_\+box\+\_\+tree}
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a1669691bf1cbf77d517dca41c03f0d59}\label{classbt_g_impact_quantized_bvh_a1669691bf1cbf77d517dca41c03f0d59} 
+\mbox{\hyperlink{classbt_primitive_manager_base}{bt\+Primitive\+Manager\+Base}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+primitive\+\_\+manager}
+\end{DoxyCompactItemize}
+\begin{DoxyCompactItemize}
+\item 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a71665f5245b8f7de1c54f107ef262cd0}{update}} ()
+\begin{DoxyCompactList}\small\item\em this attemps to refit the box set. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a2f061fbf0c6d8a81438861be4add7968}\label{classbt_g_impact_quantized_bvh_a2f061fbf0c6d8a81438861be4add7968} 
+void {\bfseries build\+Set} ()
+\begin{DoxyCompactList}\small\item\em this rebuild the entire set \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a4d2e0f3b36bf101f99b413632d6409a5}\label{classbt_g_impact_quantized_bvh_a4d2e0f3b36bf101f99b413632d6409a5} 
+bool {\bfseries box\+Query} (const bt\+AABB \&box, \mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ int $>$ \&collided\+\_\+results) const
+\begin{DoxyCompactList}\small\item\em returns the indices of the primitives in the m\+\_\+primitive\+\_\+manager \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a9f3bfa448f70606b8afd81a53b889111}\label{classbt_g_impact_quantized_bvh_a9f3bfa448f70606b8afd81a53b889111} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE bool {\bfseries box\+Query\+Trans} (const bt\+AABB \&box, const bt\+Transform \&transform, \mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ int $>$ \&collided\+\_\+results) const
+\begin{DoxyCompactList}\small\item\em returns the indices of the primitives in the m\+\_\+primitive\+\_\+manager \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a0a97a57a30a5f014154e417f16390460}\label{classbt_g_impact_quantized_bvh_a0a97a57a30a5f014154e417f16390460} 
+bool {\bfseries ray\+Query} (const bt\+Vector3 \&ray\+\_\+dir, const bt\+Vector3 \&ray\+\_\+origin, \mbox{\hyperlink{classbt_aligned_object_array}{bt\+Aligned\+Object\+Array}}$<$ int $>$ \&collided\+\_\+results) const
+\begin{DoxyCompactList}\small\item\em returns the indices of the primitives in the m\+\_\+primitive\+\_\+manager \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a8468aba36949815e4d1e81f0fa51d5bb}\label{classbt_g_impact_quantized_bvh_a8468aba36949815e4d1e81f0fa51d5bb} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE bool {\bfseries has\+Hierarchy} () const
+\begin{DoxyCompactList}\small\item\em tells if this set has hierarcht \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a7cafcae1aff83ec6bcfe066f85956dda}\label{classbt_g_impact_quantized_bvh_a7cafcae1aff83ec6bcfe066f85956dda} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE bool {\bfseries is\+Trimesh} () const
+\begin{DoxyCompactList}\small\item\em tells if this set is a trimesh \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a7d64ae990f07eab20cc43f87712db935}\label{classbt_g_impact_quantized_bvh_a7d64ae990f07eab20cc43f87712db935} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Node\+Count} () const
+\begin{DoxyCompactList}\small\item\em node count \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a71171abb6f0c3b674ee885fc39aed215}\label{classbt_g_impact_quantized_bvh_a71171abb6f0c3b674ee885fc39aed215} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE bool {\bfseries is\+Leaf\+Node} (int nodeindex) const
+\begin{DoxyCompactList}\small\item\em tells if the node is a leaf \end{DoxyCompactList}\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a12132949eefa86c915a05fe096971bb7}\label{classbt_g_impact_quantized_bvh_a12132949eefa86c915a05fe096971bb7} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Node\+Data} (int nodeindex) const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_af2580802ef1615c666dc16591bde980e}\label{classbt_g_impact_quantized_bvh_af2580802ef1615c666dc16591bde980e} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries get\+Node\+Bound} (int nodeindex, bt\+AABB \&bound) const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_ad5ce839e5417a84899a177197dac9bca}\label{classbt_g_impact_quantized_bvh_ad5ce839e5417a84899a177197dac9bca} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries set\+Node\+Bound} (int nodeindex, const bt\+AABB \&bound)
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_ac23d86ca78e016ea10d998c0a86c9202}\label{classbt_g_impact_quantized_bvh_ac23d86ca78e016ea10d998c0a86c9202} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Left\+Node} (int nodeindex) const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a49400a16e5652be1e69009733ad9acc3}\label{classbt_g_impact_quantized_bvh_a49400a16e5652be1e69009733ad9acc3} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Right\+Node} (int nodeindex) const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_ade06323022f1de1d12f19de1f1ef190d}\label{classbt_g_impact_quantized_bvh_ade06323022f1de1d12f19de1f1ef190d} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Escape\+Node\+Index} (int nodeindex) const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a0b01e04d70aeec6ce570958c8fb2ce68}\label{classbt_g_impact_quantized_bvh_a0b01e04d70aeec6ce570958c8fb2ce68} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries get\+Node\+Triangle} (int nodeindex, \mbox{\hyperlink{classbt_primitive_triangle}{bt\+Primitive\+Triangle}} \&triangle) const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_a48cf92171ae2a436a9fe2762c70d2217}\label{classbt_g_impact_quantized_bvh_a48cf92171ae2a436a9fe2762c70d2217} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE const BT\+\_\+\+QUANTIZED\+\_\+\+BVH\+\_\+\+NODE \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+node\+\_\+pointer} (int index=0) const
+\item 
+\Hypertarget{classbt_g_impact_quantized_bvh_af935ccd4fb414c6d5ae1f15209395193}\label{classbt_g_impact_quantized_bvh_af935ccd4fb414c6d5ae1f15209395193} 
+static void {\bfseries find\+\_\+collision} (const \mbox{\hyperlink{classbt_g_impact_quantized_bvh}{bt\+GImpact\+Quantized\+Bvh}} \texorpdfstring{$\ast$}{*}boxset1, const bt\+Transform \&trans1, const \mbox{\hyperlink{classbt_g_impact_quantized_bvh}{bt\+GImpact\+Quantized\+Bvh}} \texorpdfstring{$\ast$}{*}boxset2, const bt\+Transform \&trans2, \mbox{\hyperlink{classbt_pair_set}{bt\+Pair\+Set}} \&collision\+\_\+pairs)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure for containing Boxes. 
+
+This class offers an structure for managing a box tree of primitives. Requires a Primitive prototype (like \doxylink{classbt_primitive_manager_base}{bt\+Primitive\+Manager\+Base} ) 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_g_impact_quantized_bvh_a71665f5245b8f7de1c54f107ef262cd0}\label{classbt_g_impact_quantized_bvh_a71665f5245b8f7de1c54f107ef262cd0} 
+\index{btGImpactQuantizedBvh@{btGImpactQuantizedBvh}!update@{update}}
+\index{update@{update}!btGImpactQuantizedBvh@{btGImpactQuantizedBvh}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily SIMD\+\_\+\+FORCE\+\_\+\+INLINE void bt\+GImpact\+Quantized\+Bvh\+::update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+this attemps to refit the box set. 
+
+node manager prototype functions 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Gimpact/\mbox{\hyperlink{bt_g_impact_quantized_bvh_8h}{bt\+GImpact\+Quantized\+Bvh.\+h}}\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Gimpact/bt\+GImpact\+Quantized\+Bvh.\+cpp\end{DoxyCompactItemize}

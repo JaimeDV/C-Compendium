@@ -1,0 +1,80 @@
+\doxysection{color\+\_\+space.\+inl}
+\hypertarget{libraries_2opengl-toolkit_2headers_2glm_2gtc_2color__space_8inl_source}{}\label{libraries_2opengl-toolkit_2headers_2glm_2gtc_2color__space_8inl_source}\index{libraries/opengl-\/toolkit/headers/glm/gtc/color\_space.inl@{libraries/opengl-\/toolkit/headers/glm/gtc/color\_space.inl}}
+\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2gtc_2color__space_8inl}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglm}{glm}}\{}
+\DoxyCodeLine{00005\ \textcolor{keyword}{namespace\ }detail}
+\DoxyCodeLine{00006\ \{}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keyword}{struct\ }compute\_rgbToSrgb}
+\DoxyCodeLine{00009\ \ \ \ \ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<T,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rgb_to_srgb_a1d2224a9c9eadcf639b1d5e7475af707}{call}}(vecType<T,\ P>\ \textcolor{keyword}{const}\&\ ColorRGB,\ T\ GammaCorrection)}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ vecType<T,\ P>\ \textcolor{keyword}{const}\ ClampedColor(\mbox{\hyperlink{glad_8h_abd92661d757c8e8c0e50c1b9c3ce496e}{clamp}}(ColorRGB,\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0),\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)));}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__core__func__common_ga8e93f374aae27d1a88b921860351f8d4}{mix}}(}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__exponential_ga717a43207fffc8b5e8e66cf56ded5ace}{pow}}(ClampedColor,\ vecType<T,\ P>(GammaCorrection))\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1.055)\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.055),}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ClampedColor\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(12.92),}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__vector__relational_gaedc3a837f960109afe22ea3f267b9a19}{lessThan}}(ClampedColor,\ vecType<T,\ P>(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.0031308))));}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00019\ \ \ \ \ \};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__rgb_to_srgb}{compute\_rgbToSrgb}}<T,\ P,\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4}}>}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rgb_to_srgb_3_01_t_00_01_p_00_01tvec4_01_4_a7308e77069910b5977fe56279aaf505d}{call}}(\mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}\ \textcolor{keyword}{const}\&\ ColorRGB,\ T\ GammaCorrection)}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}(\mbox{\hyperlink{structglm_1_1detail_1_1compute__rgb_to_srgb}{compute\_rgbToSrgb<T,\ P,\ tvec3>::call}}(\mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}(ColorRGB),\ GammaCorrection),\ ColorRGB.\mbox{\hyperlink{structglm_1_1tvec4_a2a6f7d33e64cf0b38ec82403be5073e4}{w}});}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00028\ \ \ \ \ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{struct\ }compute\_srgbToRgb}
+\DoxyCodeLine{00032\ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ vecType<T,\ P>\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__srgb_to_rgb_a84f3e2d0c3b699486fcd7b427adb3ed3}{call}}(vecType<T,\ P>\ \textcolor{keyword}{const}\&\ ColorSRGB,\ T\ Gamma)}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__core__func__common_ga8e93f374aae27d1a88b921860351f8d4}{mix}}(}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__exponential_ga717a43207fffc8b5e8e66cf56ded5ace}{pow}}((ColorSRGB\ +\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.055))\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.94786729857819905213270142180095),\ vecType<T,\ P>(Gamma)),}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ColorSRGB\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.07739938080495356037151702786378),}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__vector__relational_gae4adee3ccfca4f66ff5b0ce3686399c2}{lessThanEqual}}(ColorSRGB,\ vecType<T,\ P>(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.04045))));}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ \};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structglm_1_1detail_1_1compute__srgb_to_rgb}{compute\_srgbToRgb}}<T,\ P,\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4}}>}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__srgb_to_rgb_3_01_t_00_01_p_00_01tvec4_01_4_aa8d2bc2b67b2502897dad49e6958b473}{call}}(\mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}\ \textcolor{keyword}{const}\&\ ColorSRGB,\ T\ Gamma)}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}(\mbox{\hyperlink{structglm_1_1detail_1_1compute__srgb_to_rgb}{compute\_srgbToRgb<T,\ P,\ tvec3>::call}}(\mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}(ColorSRGB),\ Gamma),\ ColorSRGB.\mbox{\hyperlink{structglm_1_1tvec4_a2a6f7d33e64cf0b38ec82403be5073e4}{w}});}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00049\ \ \ \ \ \};}
+\DoxyCodeLine{00050\ \}\textcolor{comment}{//namespace\ detail}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__gtc__color__space_ga12a34c560bb2db262bd02605d99aa512}{convertLinearToSRGB}}(vecType<T,\ P>\ \textcolor{keyword}{const}\&\ ColorLinear)}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rgb_to_srgb_afdd0ede6e9033fbb7bea07bd2291c0d5}{detail::compute\_rgbToSrgb<T,\ P,\ vecType>::call}}(ColorLinear,\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.41666));}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__gtc__color__space_ga12a34c560bb2db262bd02605d99aa512}{convertLinearToSRGB}}(vecType<T,\ P>\ \textcolor{keyword}{const}\&\ ColorLinear,\ T\ Gamma)}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__rgb_to_srgb_afdd0ede6e9033fbb7bea07bd2291c0d5}{detail::compute\_rgbToSrgb<T,\ P,\ vecType>::call}}(ColorLinear,\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ Gamma);}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00065\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__gtc__color__space_ga9deb7729e709faeb1b89d65541f0dab0}{convertSRGBToLinear}}(vecType<T,\ P>\ \textcolor{keyword}{const}\&\ ColorSRGB)}
+\DoxyCodeLine{00066\ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__srgb_to_rgb_a7806d3941d9426b2d708522265206243}{detail::compute\_srgbToRgb<T,\ P,\ vecType>::call}}(ColorSRGB,\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2.4));}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ \ \ \ \ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename},\ precision>\ \textcolor{keyword}{class\ }vecType>}
+\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ vecType<T,\ P>\ \mbox{\hyperlink{group__gtc__color__space_ga9deb7729e709faeb1b89d65541f0dab0}{convertSRGBToLinear}}(vecType<T,\ P>\ \textcolor{keyword}{const}\&\ ColorSRGB,\ T\ Gamma)}
+\DoxyCodeLine{00072\ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1detail_1_1compute__srgb_to_rgb_a7806d3941d9426b2d708522265206243}{detail::compute\_srgbToRgb<T,\ P,\ vecType>::call}}(ColorSRGB,\ Gamma);}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \}\textcolor{comment}{//namespace\ glm}}
+
+\end{DoxyCode}

@@ -1,0 +1,317 @@
+\doxysection{type\+\_\+vec.\+hpp}
+\hypertarget{type__vec_8hpp_source}{}\label{type__vec_8hpp_source}\index{libraries/opengl-\/toolkit/headers/glm/detail/type\_vec.hpp@{libraries/opengl-\/toolkit/headers/glm/detail/type\_vec.hpp}}
+\mbox{\hyperlink{type__vec_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{precision_8hpp}{precision.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{type__int_8hpp}{type\_int.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglm}{glm}}\{}
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }detail}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ std::\textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{bool}\ aligned>}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{struct\ }storage}
+\DoxyCodeLine{00014\ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{glad_8h_ad5ddf6fca7b585646515660e810e0188}{type}}\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_1_1detail_aef2588f97d090cc19fbbe0c74fe17c8f}{uint8}}\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}}[\mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}}];}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \}\ \mbox{\hyperlink{structglm_1_1detail_1_1storage_a5216a19f9cf2c43192a0758c2ce114ac}{type}};}
+\DoxyCodeLine{00018\ \ \ \ \ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\ \ \ \ \#define\ GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT(x)\ \(\backslash\)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ template\ <typename\ T>\ \(\backslash\)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ struct\ storage<T,\ x,\ true>\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ GLM\_ALIGNED\_STRUCT(x)\ type\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\ data[x];\ \(\backslash\)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \};\ \(\backslash\)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \};}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{type__vec_8hpp_a542cd432b9c9d77fbec2163c83b8abe7}{GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT}}(1)}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{type__vec_8hpp_a542cd432b9c9d77fbec2163c83b8abe7}{GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT}}(2)}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{type__vec_8hpp_a542cd432b9c9d77fbec2163c83b8abe7}{GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT}}(4)}
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{type__vec_8hpp_a542cd432b9c9d77fbec2163c83b8abe7}{GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT}}(8)}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{type__vec_8hpp_a542cd432b9c9d77fbec2163c83b8abe7}{GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT}}(16)}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{type__vec_8hpp_a542cd432b9c9d77fbec2163c83b8abe7}{GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT}}(32)}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{type__vec_8hpp_a542cd432b9c9d77fbec2163c83b8abe7}{GLM\_ALIGNED\_STORAGE\_TYPE\_STRUCT}}(64)}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ \ \ if\ GLM\_ARCH\ \&\ GLM\_ARCH\_SSE2\_BIT}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <>}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }storage<float,\ 16,\ true>}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ glm\_vec4\ \mbox{\hyperlink{structglm_1_1detail_1_1storage_a5216a19f9cf2c43192a0758c2ce114ac}{type}};}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <>}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }storage<int,\ 16,\ true>}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ glm\_ivec4\ \mbox{\hyperlink{structglm_1_1detail_1_1storage_a5216a19f9cf2c43192a0758c2ce114ac}{type}};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <>}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }storage<unsigned\ int,\ 16,\ true>}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ glm\_uvec4\ \mbox{\hyperlink{structglm_1_1detail_1_1storage_a5216a19f9cf2c43192a0758c2ce114ac}{type}};}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00054\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\#\ \ \ else}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ \ \ \ typedef\ union\ \_\_declspec(align(16))\ glm\_128}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ unsigned\ \_\_int8\ data[16];}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}\ glm\_128;}}
+\DoxyCodeLine{00060\ \textcolor{comment}{}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ \ \ \ \ \ template\ <>}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ \ \ \ \ struct\ storage<float,\ 16,\ true>}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ typedef\ glm\_128\ type;}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ \ \ \ \ \ \};}}
+\DoxyCodeLine{00066\ \textcolor{comment}{}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ \ \ \ template\ <>}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ \ \ \ \ \ struct\ storage<int,\ 16,\ true>}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ typedef\ glm\_128\ type;}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ \ \ \ \};}}
+\DoxyCodeLine{00072\ \textcolor{comment}{}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ \ \ \ template\ <>}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ \ \ \ \ \ struct\ storage<unsigned\ int,\ 16,\ true>}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ typedef\ glm\_128\ type;}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ \ \ \ \ \ \};}}
+\DoxyCodeLine{00078\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ \ \ if\ (GLM\_ARCH\ \&\ GLM\_ARCH\_AVX\_BIT)}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <>}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }storage<double,\ 32,\ true>}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ glm\_dvec4\ \mbox{\hyperlink{structglm_1_1detail_1_1storage_a5216a19f9cf2c43192a0758c2ce114ac}{type}};}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ \ \ if\ (GLM\_ARCH\ \&\ GLM\_ARCH\_AVX2\_BIT)}}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <>}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }storage<\mbox{\hyperlink{namespaceglm_1_1detail_a5b1c3227ec636c24a0676746381adfc8}{int64}},\ 32,\ true>}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ glm\_i64vec4\ \mbox{\hyperlink{structglm_1_1detail_1_1storage_a5216a19f9cf2c43192a0758c2ce114ac}{type}};}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <>}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }storage<\mbox{\hyperlink{namespaceglm_1_1detail_adec4b19bf4982125e122db2fe03c5810}{uint64}},\ 32,\ true>}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ glm\_u64vec4\ \mbox{\hyperlink{structglm_1_1detail_1_1storage_a5216a19f9cf2c43192a0758c2ce114ac}{type}};}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00102\ \}\textcolor{comment}{//namespace\ detail}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>\ \textcolor{keyword}{struct\ }tvec1;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>\ \textcolor{keyword}{struct\ }tvec2;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>\ \textcolor{keyword}{struct\ }tvec3;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>\ \textcolor{keyword}{struct\ }tvec4;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<float,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a05d56f4bdde8c100f64f991564d77d8c}{highp\_vec1\_t}};}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<float,\ mediump>}}\ \ \mbox{\hyperlink{namespaceglm_a0ead66dc988f91d8f8057e61062e521a}{mediump\_vec1\_t}};}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<float,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a98a2f40e3e0653e1890bbd174bc68399}{lowp\_vec1\_t}};}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<double,\ highp>}}\ \ \ \ \mbox{\hyperlink{namespaceglm_a942b986a4b5d2eac9b9765dd6dd0bf7d}{highp\_dvec1\_t}};}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<double,\ mediump>}}\ \ \ \ \mbox{\hyperlink{namespaceglm_a051258b65e45affb80059216109c1177}{mediump\_dvec1\_t}};}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<double,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a8b7277d77a9561982b3a18ce6e865acb}{lowp\_dvec1\_t}};}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<int,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_abdccb4394b5cea632cf9b3f9425411ae}{highp\_ivec1\_t}};}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<int,\ mediump>}}\ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a050cae72c6f021247daf3050c3de51fc}{mediump\_ivec1\_t}};}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<int,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_ad89a91317e744efb32035e7f455da908}{lowp\_ivec1\_t}};}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<uint,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a7fb6b6b0be6715b8c74677050c080765}{highp\_uvec1\_t}};}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<uint,\ mediump>}}\ \ \ \ \mbox{\hyperlink{namespaceglm_af37631ca9a86f227d6f7d1f9c3955369}{mediump\_uvec1\_t}};}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<uint,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a41c11cca5377f7a41a2132e695ba3aa3}{lowp\_uvec1\_t}};}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<bool,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a378d97923316385137b1156679fba2b5}{highp\_bvec1\_t}};}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<bool,\ mediump>}}\ \ \ \ \mbox{\hyperlink{namespaceglm_a5c37e819cdc6b53aee7c90261531e3f8}{mediump\_bvec1\_t}};}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec1}{tvec1<bool,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{namespaceglm_a721c64bd692952fef4901d9aa604ba81}{lowp\_bvec1\_t}};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<float,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga84532f0e0c7e2af99edd65dc182aba51}{highp\_vec2}};}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<float,\ mediump>}}\ \ \mbox{\hyperlink{group__core__vector__precision_ga949639029259b8bf5c4bc96bd2cc5a59}{mediump\_vec2}};}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<float,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga1b46182364e2054858f9e7a70f8c52bc}{lowp\_vec2}};}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<double,\ highp>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga2f4f0d5a4ab016e51551e267e08fddd8}{highp\_dvec2}};}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<double,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga9aa92f7c13dd8f309630b1165ccd0e66}{mediump\_dvec2}};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<double,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga2782dfa77dd77f212f735b0208cc1e6d}{lowp\_dvec2}};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<int,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga53f32d3c2f6aa6d0f2ec18e694e60066}{highp\_ivec2}};}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<int,\ mediump>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga61049d528caec18df33ab092ad7d452b}{mediump\_ivec2}};}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<int,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga5df59fd783ae6a521bf4abe86f6da1ae}{lowp\_ivec2}};}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<uint,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga07e48885a16e66ebc67b988bf8db6d5e}{highp\_uvec2}};}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<uint,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga59d1c6689812f5545af01bcf5862b417}{mediump\_uvec2}};}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<uint,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga6e7dfb1573e95e7ccdbf91bc339b881d}{lowp\_uvec2}};}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<bool,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga127d7b49736ea4e8871f39cd2646e725}{highp\_bvec2}};}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<bool,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_gaa54b11d336ddb224d4588bcd54598ecf}{mediump\_bvec2}};}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<bool,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_gabc507aac6978e36342b6df349ba6ef9f}{lowp\_bvec2}};}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<float,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga1ef07d2502ea09b1e63998813a3d4330}{highp\_vec3}};}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<float,\ mediump>}}\ \ \mbox{\hyperlink{group__core__vector__precision_gac76bf24aca62ca13269d262121d04ceb}{mediump\_vec3}};}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<float,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga0229a1c4abd7c51f15eeb7a0fec3846b}{lowp\_vec3}};}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<double,\ highp>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga8b676e1c1f8ecd62700cac05cffd7326}{highp\_dvec3}};}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<double,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga3fc882219a772b10bf692c22d18d5159}{mediump\_dvec3}};}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<double,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga75718db0b56d7318d4b4635b93688361}{lowp\_dvec3}};}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<int,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga96b56229c038b7b0ec5810ca670da939}{highp\_ivec3}};}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<int,\ mediump>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_gaea44032eff93a8cc1b99985d69a1fe8c}{mediump\_ivec3}};}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<int,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga7ee91ef125722ef22b417b829e0f9405}{lowp\_ivec3}};}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<uint,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_gaa9d1b29e599adb7c4adea0bd90c7235d}{highp\_uvec3}};}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<uint,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_gaf50a133754cab16b283316ab6a492672}{mediump\_uvec3}};}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<uint,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga2a6179d09b9dc5a464d1d6f847a8060b}{lowp\_uvec3}};}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<bool,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga71eb37a0358b0e630a3a874d1bb3c104}{highp\_bvec3}};}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<bool,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga8b893d0553d2b7565eea4af72be28d92}{mediump\_bvec3}};}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<bool,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga7a0a8c211426d1caf4dfbece4a1aec7a}{lowp\_bvec3}};}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<float,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga5f573b0132805b54cb9205eea1c86483}{highp\_vec4}};}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<float,\ mediump>}}\ \ \mbox{\hyperlink{group__core__vector__precision_ga3e0bdf70b43f0c2863ad9f0fe7da9476}{mediump\_vec4}};}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<float,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_gabb82786cbefa101e9eb0cff63cecb1f2}{lowp\_vec4}};}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<double,\ highp>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_gadd4f33eb80422480bc20daf191c58faf}{highp\_dvec4}};}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<double,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga0816aecabdebada674376eaa19ecf5ec}{mediump\_dvec4}};}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<double,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga9efd0de33776e3d1e8c3e01e5b65f9a4}{lowp\_dvec4}};}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<int,\ highp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga4dedb5742c6a03cf7982599ca9bed2f6}{highp\_ivec4}};}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<int,\ mediump>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_gaf1720ef1b8ad331956bdd28a698df59c}{mediump\_ivec4}};}
+\DoxyCodeLine{00392\ }
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<int,\ lowp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga37120e88081e00494fc37bb45dbc4426}{lowp\_ivec4}};}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<uint,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_ga30e3234ad36e5149723986bb94986985}{highp\_uvec4}};}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<uint,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_gac3c614286d770b49ea58ed165dc0081a}{mediump\_uvec4}};}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00415\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<uint,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__gtc__type__precision_gabb527ef534830b62cf0ff737dc71292d}{lowp\_uvec4}};}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00421\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<bool,\ highp>}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga41883817b2b3de063c5a7978698db23c}{highp\_bvec4}};}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00427\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<bool,\ mediump>}}\ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga6f37fd9f9108761fe8fd95f1b919202a}{mediump\_bvec4}};}
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00433\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<bool,\ lowp>}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector__precision_ga77f759e9d834b99ee3cd0a338be4253e}{lowp\_bvec4}};}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00439\ }
+\DoxyCodeLine{00440\ \ \ \ \ \textcolor{comment}{//\ -\/-\/\ Default\ float\ definition\ -\/-\/}}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \textcolor{preprocessor}{\#if(defined(GLM\_PRECISION\_LOWP\_FLOAT))}}
+\DoxyCodeLine{00443\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_vec2}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga6ebf1ff1f152ff34c800b6997d5f311f}{vec2}};}
+\DoxyCodeLine{00444\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_vec3}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga4320b87e41013b7e875f845f439fc498}{vec3}};}
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_vec4}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga233f0e8f1aecf686e67c5c39316c4da8}{vec4}};}
+\DoxyCodeLine{00446\ \textcolor{preprocessor}{\#elif(defined(GLM\_PRECISION\_MEDIUMP\_FLOAT))}}
+\DoxyCodeLine{00447\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_vec2}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga6ebf1ff1f152ff34c800b6997d5f311f}{vec2}};}
+\DoxyCodeLine{00448\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_vec3}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga4320b87e41013b7e875f845f439fc498}{vec3}};}
+\DoxyCodeLine{00449\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_vec4}}\ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga233f0e8f1aecf686e67c5c39316c4da8}{vec4}};}
+\DoxyCodeLine{00450\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//defined(GLM\_PRECISION\_HIGHP\_FLOAT)}}
+\DoxyCodeLine{00454\ \ \ \ \ typedef\ highp\_vec2\ \ \ \ \ \ \ \ \ \ vec2;}
+\DoxyCodeLine{00455\ }
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_vec3}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga4320b87e41013b7e875f845f439fc498}{vec3}};}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_vec4}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga233f0e8f1aecf686e67c5c39316c4da8}{vec4}};}
+\DoxyCodeLine{00465\ \textcolor{preprocessor}{\#endif}\textcolor{comment}{//GLM\_PRECISION}}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \textcolor{comment}{//\ -\/-\/\ Default\ double\ definition\ -\/-\/}}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \textcolor{preprocessor}{\#if(defined(GLM\_PRECISION\_LOWP\_DOUBLE))}}
+\DoxyCodeLine{00470\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_dvec2}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gadbce3146665fd37a7c49becf5866e3ad}{dvec2}};}
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_dvec3}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga9052c24a5cf69c32e389db34de7e96c7}{dvec3}};}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_dvec4}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gaa62a8043ef218aaf8df6e2d101950a5d}{dvec4}};}
+\DoxyCodeLine{00473\ \textcolor{preprocessor}{\#elif(defined(GLM\_PRECISION\_MEDIUMP\_DOUBLE))}}
+\DoxyCodeLine{00474\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_dvec2}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gadbce3146665fd37a7c49becf5866e3ad}{dvec2}};}
+\DoxyCodeLine{00475\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_dvec3}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga9052c24a5cf69c32e389db34de7e96c7}{dvec3}};}
+\DoxyCodeLine{00476\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_dvec4}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gaa62a8043ef218aaf8df6e2d101950a5d}{dvec4}};}
+\DoxyCodeLine{00477\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//defined(GLM\_PRECISION\_HIGHP\_DOUBLE)}}
+\DoxyCodeLine{00481\ \ \ \ \ typedef\ highp\_dvec2\ \ \ \ \ \ \ \ \ dvec2;}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00486\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_dvec3}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga9052c24a5cf69c32e389db34de7e96c7}{dvec3}};}
+\DoxyCodeLine{00487\ }
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_dvec4}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gaa62a8043ef218aaf8df6e2d101950a5d}{dvec4}};}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{\#endif}\textcolor{comment}{//GLM\_PRECISION}}
+\DoxyCodeLine{00493\ }
+\DoxyCodeLine{00494\ \ \ \ \ \textcolor{comment}{//\ -\/-\/\ Signed\ integer\ definition\ -\/-\/}}
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \textcolor{preprocessor}{\#if(defined(GLM\_PRECISION\_LOWP\_INT))}}
+\DoxyCodeLine{00497\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_ivec2}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga29b6216590129c7ac33f477dca55af32}{ivec2}};}
+\DoxyCodeLine{00498\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_ivec3}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga15bb0b24ff169b249d84c956650b7cfd}{ivec3}};}
+\DoxyCodeLine{00499\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_ivec4}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga2ba9198ee02a3947883e934a222548e0}{ivec4}};}
+\DoxyCodeLine{00500\ \textcolor{preprocessor}{\#elif(defined(GLM\_PRECISION\_MEDIUMP\_INT))}}
+\DoxyCodeLine{00501\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_ivec2}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga29b6216590129c7ac33f477dca55af32}{ivec2}};}
+\DoxyCodeLine{00502\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_ivec3}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga15bb0b24ff169b249d84c956650b7cfd}{ivec3}};}
+\DoxyCodeLine{00503\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_ivec4}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga2ba9198ee02a3947883e934a222548e0}{ivec4}};}
+\DoxyCodeLine{00504\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//defined(GLM\_PRECISION\_HIGHP\_INT)}}
+\DoxyCodeLine{00508\ \ \ \ \ typedef\ highp\_ivec2\ \ \ \ \ \ \ \ \ ivec2;}
+\DoxyCodeLine{00509\ }
+\DoxyCodeLine{00513\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_ivec3}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga15bb0b24ff169b249d84c956650b7cfd}{ivec3}};}
+\DoxyCodeLine{00514\ }
+\DoxyCodeLine{00518\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_ivec4}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga2ba9198ee02a3947883e934a222548e0}{ivec4}};}
+\DoxyCodeLine{00519\ \textcolor{preprocessor}{\#endif}\textcolor{comment}{//GLM\_PRECISION}}
+\DoxyCodeLine{00520\ }
+\DoxyCodeLine{00521\ \ \ \ \ \textcolor{comment}{//\ -\/-\/\ Unsigned\ integer\ definition\ -\/-\/}}
+\DoxyCodeLine{00522\ }
+\DoxyCodeLine{00523\ \textcolor{preprocessor}{\#if(defined(GLM\_PRECISION\_LOWP\_UINT))}}
+\DoxyCodeLine{00524\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_uvec2}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga1a8c36c37516ed6f9c13ee66186112ae}{uvec2}};}
+\DoxyCodeLine{00525\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_uvec3}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gad822584ecec49200b2757f2a2ea16e53}{uvec3}};}
+\DoxyCodeLine{00526\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_uvec4}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga1f435aa3882ae117565222321adeb3f1}{uvec4}};}
+\DoxyCodeLine{00527\ \textcolor{preprocessor}{\#elif(defined(GLM\_PRECISION\_MEDIUMP\_UINT))}}
+\DoxyCodeLine{00528\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_uvec2}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga1a8c36c37516ed6f9c13ee66186112ae}{uvec2}};}
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_uvec3}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gad822584ecec49200b2757f2a2ea16e53}{uvec3}};}
+\DoxyCodeLine{00530\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_uvec4}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga1f435aa3882ae117565222321adeb3f1}{uvec4}};}
+\DoxyCodeLine{00531\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//defined(GLM\_PRECISION\_HIGHP\_UINT)}}
+\DoxyCodeLine{00535\ \ \ \ \ typedef\ highp\_uvec2\ \ \ \ \ \ \ \ \ uvec2;}
+\DoxyCodeLine{00536\ }
+\DoxyCodeLine{00540\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_uvec3}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gad822584ecec49200b2757f2a2ea16e53}{uvec3}};}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00545\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_uvec4}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga1f435aa3882ae117565222321adeb3f1}{uvec4}};}
+\DoxyCodeLine{00546\ \textcolor{preprocessor}{\#endif}\textcolor{comment}{//GLM\_PRECISION}}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{comment}{//\ -\/-\/\ Boolean\ definition\ -\/-\/}}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00550\ \textcolor{preprocessor}{\#if(defined(GLM\_PRECISION\_LOWP\_BOOL))}}
+\DoxyCodeLine{00551\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_bvec2}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga793fc72ce84de16a59dd34b17914c377}{bvec2}};}
+\DoxyCodeLine{00552\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_bvec3}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gacf91c3621670f0db3a63e26b923c8918}{bvec3}};}
+\DoxyCodeLine{00553\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{lowp\_bvec4}}\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gad171174a82b8b8ae953dde006a2ae060}{bvec4}};}
+\DoxyCodeLine{00554\ \textcolor{preprocessor}{\#elif(defined(GLM\_PRECISION\_MEDIUMP\_BOOL))}}
+\DoxyCodeLine{00555\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_bvec2}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_ga793fc72ce84de16a59dd34b17914c377}{bvec2}};}
+\DoxyCodeLine{00556\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_bvec3}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gacf91c3621670f0db3a63e26b923c8918}{bvec3}};}
+\DoxyCodeLine{00557\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{mediump\_bvec4}}\ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gad171174a82b8b8ae953dde006a2ae060}{bvec4}};}
+\DoxyCodeLine{00558\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//defined(GLM\_PRECISION\_HIGHP\_BOOL)}}
+\DoxyCodeLine{00562\ \ \ \ \ typedef\ highp\_bvec2\ \ \ \ \ \ \ \ \ bvec2;}
+\DoxyCodeLine{00563\ }
+\DoxyCodeLine{00567\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_bvec3}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gacf91c3621670f0db3a63e26b923c8918}{bvec3}};}
+\DoxyCodeLine{00568\ }
+\DoxyCodeLine{00572\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structglm_1_1vec}{highp\_bvec4}}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__vector_gad171174a82b8b8ae953dde006a2ae060}{bvec4}};}
+\DoxyCodeLine{00573\ \textcolor{preprocessor}{\#endif}\textcolor{comment}{//GLM\_PRECISION}}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00576\ \}\textcolor{comment}{//namespace\ glm}}
+
+\end{DoxyCode}

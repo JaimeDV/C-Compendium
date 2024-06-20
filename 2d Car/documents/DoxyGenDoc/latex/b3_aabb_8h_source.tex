@@ -1,0 +1,61 @@
+\doxysection{b3\+Aabb.\+h}
+\hypertarget{b3_aabb_8h_source}{}\label{b3_aabb_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_AABB\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_AABB\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Float4.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Mat3x3.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_aabb}{b3Aabb}}\ \mbox{\hyperlink{structb3_aabb}{b3Aabb\_t}};}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_aabb}{b3Aabb}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_min[4];}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ b3Float4\ m\_minVec;}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_minIndices[4];}
+\DoxyCodeLine{00016\ \ \ \ \ \};}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_max[4];}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ b3Float4\ m\_maxVec;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_signedMaxIndices[4];}
+\DoxyCodeLine{00021\ \ \ \ \ \};}
+\DoxyCodeLine{00022\ \};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ b3TransformAabb2(b3Float4ConstArg\ localAabbMin,\ b3Float4ConstArg\ localAabbMax,\ \textcolor{keywordtype}{float}\ margin,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Float4ConstArg\ pos,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3QuatConstArg\ orn,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Float4*\ aabbMinOut,\ b3Float4*\ aabbMaxOut)}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ b3Float4\ localHalfExtents\ =\ 0.5f\ *\ (localAabbMax\ -\/\ localAabbMin);}
+\DoxyCodeLine{00030\ \ \ \ \ localHalfExtents\ +=\ b3MakeFloat4(margin,\ margin,\ margin,\ 0.f);}
+\DoxyCodeLine{00031\ \ \ \ \ b3Float4\ localCenter\ =\ 0.5f\ *\ (localAabbMax\ +\ localAabbMin);}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{structb3_mat3x3}{b3Mat3x3}}\ m;}
+\DoxyCodeLine{00033\ \ \ \ \ m\ =\ b3QuatGetRotationMatrix(orn);}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structb3_mat3x3}{b3Mat3x3}}\ abs\_b\ =\ b3AbsoluteMat3x3(m);}
+\DoxyCodeLine{00035\ \ \ \ \ b3Float4\ center\ =\ b3TransformPoint(localCenter,\ pos,\ orn);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ b3Float4\ extent\ =\ b3MakeFloat4(b3Dot3F4(localHalfExtents,\ b3GetRow(abs\_b,\ 0)),}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Dot3F4(localHalfExtents,\ b3GetRow(abs\_b,\ 1)),}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Dot3F4(localHalfExtents,\ b3GetRow(abs\_b,\ 2)),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.f);}
+\DoxyCodeLine{00041\ \ \ \ \ *aabbMinOut\ =\ center\ -\/\ extent;}
+\DoxyCodeLine{00042\ \ \ \ \ *aabbMaxOut\ =\ center\ +\ extent;}
+\DoxyCodeLine{00043\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ b3TestAabbAgainstAabb(b3Float4ConstArg\ aabbMin1,\ b3Float4ConstArg\ aabbMax1,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Float4ConstArg\ aabbMin2,\ b3Float4ConstArg\ aabbMax2)}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ overlap\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00050\ \ \ \ \ overlap\ =\ (aabbMin1.x\ >\ aabbMax2.x\ ||\ aabbMax1.x\ <\ aabbMin2.x)\ ?\ \textcolor{keyword}{false}\ :\ overlap;}
+\DoxyCodeLine{00051\ \ \ \ \ overlap\ =\ (aabbMin1.z\ >\ aabbMax2.z\ ||\ aabbMax1.z\ <\ aabbMin2.z)\ ?\ \textcolor{keyword}{false}\ :\ overlap;}
+\DoxyCodeLine{00052\ \ \ \ \ overlap\ =\ (aabbMin1.y\ >\ aabbMax2.y\ ||\ aabbMax1.y\ <\ aabbMin2.y)\ ?\ \textcolor{keyword}{false}\ :\ overlap;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{return}\ overlap;}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_AABB\_H}}
+
+\end{DoxyCode}

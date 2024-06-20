@@ -1,0 +1,269 @@
+\doxysection{b3\+Gpu\+Sap\+Broadphase Class Reference}
+\hypertarget{classb3_gpu_sap_broadphase}{}\label{classb3_gpu_sap_broadphase}\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+Inheritance diagram for b3\+Gpu\+Sap\+Broadphase\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classb3_gpu_sap_broadphase}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a006a0eaa4c9a43b146f48dd54a0c502d}\label{classb3_gpu_sap_broadphase_a006a0eaa4c9a43b146f48dd54a0c502d} 
+enum {\bfseries b3\+Gpu\+Sap\+Kernel\+Type} \{ \newline
+{\bfseries B3\+\_\+\+GPU\+\_\+\+SAP\+\_\+\+KERNEL\+\_\+\+BRUTE\+\_\+\+FORCE\+\_\+\+CPU} = 1
+, {\bfseries B3\+\_\+\+GPU\+\_\+\+SAP\+\_\+\+KERNEL\+\_\+\+BRUTE\+\_\+\+FORCE\+\_\+\+GPU}
+, {\bfseries B3\+\_\+\+GPU\+\_\+\+SAP\+\_\+\+KERNEL\+\_\+\+ORIGINAL}
+, {\bfseries B3\+\_\+\+GPU\+\_\+\+SAP\+\_\+\+KERNEL\+\_\+\+BARRIER}
+, \newline
+{\bfseries B3\+\_\+\+GPU\+\_\+\+SAP\+\_\+\+KERNEL\+\_\+\+LOCAL\+\_\+\+SHARED\+\_\+\+MEMORY}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}}
+\begin{DoxyCompactItemize}
+\item 
+typedef class \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries Create\+Func}(cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Sap\+Aabb $>$ \& \mbox{\hyperlink{classb3_gpu_sap_broadphase_a0f4c12dcca353c3359b5885840bb3c1e}{get\+All\+Aabbs\+GPU}} ()
+\item 
+virtual \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ b3\+Sap\+Aabb $>$ \& \mbox{\hyperlink{classb3_gpu_sap_broadphase_a30714aefd95aa8e0b4d415eda72c96eb}{get\+All\+Aabbs\+CPU}} ()
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a7ce4324d14ee2ed7805374e60abbc9bc}\label{classb3_gpu_sap_broadphase_a7ce4324d14ee2ed7805374e60abbc9bc} 
+{\bfseries b3\+Gpu\+Sap\+Broadphase} (cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q, b3\+Gpu\+Sap\+Kernel\+Type kernel\+Type=B3\+\_\+\+GPU\+\_\+\+SAP\+\_\+\+KERNEL\+\_\+\+LOCAL\+\_\+\+SHARED\+\_\+\+MEMORY)
+\item 
+virtual void \mbox{\hyperlink{classb3_gpu_sap_broadphase_afeffc655cd5fa70e587d63574c67b25a}{calculate\+Overlapping\+Pairs}} (int max\+Pairs)
+\item 
+virtual void \mbox{\hyperlink{classb3_gpu_sap_broadphase_a66b424cd38afca80f6d562e75a34b4d3}{calculate\+Overlapping\+Pairs\+Host}} (int max\+Pairs)
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_afa9847fc0af4c32507485a8a5409cc25}\label{classb3_gpu_sap_broadphase_afa9847fc0af4c32507485a8a5409cc25} 
+void {\bfseries reset} ()
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a4736a2bec0682fa13ce90683b5de9adb}\label{classb3_gpu_sap_broadphase_a4736a2bec0682fa13ce90683b5de9adb} 
+void {\bfseries init3d\+Sap} ()
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_ad1b9f91475d9a97cff059ad9e5af9071}\label{classb3_gpu_sap_broadphase_ad1b9f91475d9a97cff059ad9e5af9071} 
+virtual void {\bfseries calculate\+Overlapping\+Pairs\+Host\+Incremental3\+Sap} ()
+\item 
+virtual void \mbox{\hyperlink{classb3_gpu_sap_broadphase_a69ac40828462a499b7a01fa2e035f36d}{create\+Proxy}} (const b3\+Vector3 \&aabb\+Min, const b3\+Vector3 \&aabb\+Max, int user\+Ptr, int collision\+Filter\+Group, int collision\+Filter\+Mask)
+\item 
+virtual void \mbox{\hyperlink{classb3_gpu_sap_broadphase_a76589ed2aab85f4becdbdb6ec6b16695}{create\+Large\+Proxy}} (const b3\+Vector3 \&aabb\+Min, const b3\+Vector3 \&aabb\+Max, int user\+Ptr, int collision\+Filter\+Group, int collision\+Filter\+Mask)
+\item 
+virtual void \mbox{\hyperlink{classb3_gpu_sap_broadphase_a515575554b6507ea5a1343a7ac46e913}{write\+Aabbs\+To\+Gpu}} ()
+\item 
+virtual cl\+\_\+mem \mbox{\hyperlink{classb3_gpu_sap_broadphase_a7fa2fe3d5f6f1ee55d8f809922c730ed}{get\+Aabb\+Buffer\+WS}} ()
+\item 
+virtual int \mbox{\hyperlink{classb3_gpu_sap_broadphase_a807d12dee811348f0282a99f232714b6}{get\+Num\+Overlap}} ()
+\item 
+virtual cl\+\_\+mem \mbox{\hyperlink{classb3_gpu_sap_broadphase_a5e2856faf40a76ce5fa3c33d88069a94}{get\+Overlapping\+Pair\+Buffer}} ()
+\item 
+virtual \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Int4 $>$ \& \mbox{\hyperlink{classb3_gpu_sap_broadphase_ab3a68e27d9c3cdfc2e423a36052c919d}{get\+Overlapping\+Pairs\+GPU}} ()
+\item 
+virtual \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ int $>$ \& \mbox{\hyperlink{classb3_gpu_sap_broadphase_aeaa46ba5a7ac2012b657b1907b5e9444}{get\+Small\+Aabb\+Indices\+GPU}} ()
+\item 
+virtual \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ int $>$ \& \mbox{\hyperlink{classb3_gpu_sap_broadphase_af8a4a52ce08078e070219cc7e5d55425}{get\+Large\+Aabb\+Indices\+GPU}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a9cde8266c0d67d399f3a0308d08220ed}\label{classb3_gpu_sap_broadphase_a9cde8266c0d67d399f3a0308d08220ed} 
+static \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries Create\+Func\+Brute\+Force\+Cpu} (cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q)
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_aeaa95328628fefe8a85076920a435e53}\label{classb3_gpu_sap_broadphase_aeaa95328628fefe8a85076920a435e53} 
+static \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries Create\+Func\+Brute\+Force\+Gpu} (cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q)
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_ad9136e0901bb2c99841715220c0282fb}\label{classb3_gpu_sap_broadphase_ad9136e0901bb2c99841715220c0282fb} 
+static \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries Create\+Func\+Original} (cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q)
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a8b5858acae10e748c13179361b6ce1f8}\label{classb3_gpu_sap_broadphase_a8b5858acae10e748c13179361b6ce1f8} 
+static \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries Create\+Func\+Barrier} (cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q)
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_acd4297bc2510f81df1e8de788b38fb6a}\label{classb3_gpu_sap_broadphase_acd4297bc2510f81df1e8de788b38fb6a} 
+static \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}} \texorpdfstring{$\ast$}{*} {\bfseries Create\+Func\+Local\+Memory} (cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a2dbe034c369a99b0f5509b3875127bbc}\label{classb3_gpu_sap_broadphase_a2dbe034c369a99b0f5509b3875127bbc} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ int $>$ {\bfseries m\+\_\+pair\+Count}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a5e85da9af1be208c260d32e4c87e0afa}\label{classb3_gpu_sap_broadphase_a5e85da9af1be208c260d32e4c87e0afa} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Sap\+Aabb $>$ {\bfseries m\+\_\+all\+Aabbs\+GPU}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a657a66d0ca76432b1c15d8a84987646f}\label{classb3_gpu_sap_broadphase_a657a66d0ca76432b1c15d8a84987646f} 
+\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ b3\+Sap\+Aabb $>$ {\bfseries m\+\_\+all\+Aabbs\+CPU}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_aac936dfeae27b28930d9a1d75629c42a}\label{classb3_gpu_sap_broadphase_aac936dfeae27b28930d9a1d75629c42a} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Vector3 $>$ {\bfseries m\+\_\+sum}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a1b5016eb65830ac9ace4a09d86debae9}\label{classb3_gpu_sap_broadphase_a1b5016eb65830ac9ace4a09d86debae9} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Vector3 $>$ {\bfseries m\+\_\+sum2}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_ae829ccbbc178e9452d9a31757e01e1d9}\label{classb3_gpu_sap_broadphase_ae829ccbbc178e9452d9a31757e01e1d9} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Vector3 $>$ {\bfseries m\+\_\+dst}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a3fa344c2c4c2e61cec106ca77defba71}\label{classb3_gpu_sap_broadphase_a3fa344c2c4c2e61cec106ca77defba71} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ int $>$ {\bfseries m\+\_\+small\+Aabbs\+Mapping\+GPU}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_ab04186279d004bb6479727acc7f7037e}\label{classb3_gpu_sap_broadphase_ab04186279d004bb6479727acc7f7037e} 
+\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ int $>$ {\bfseries m\+\_\+small\+Aabbs\+Mapping\+CPU}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a9af15764e71f2314203f4b0cb86d3fac}\label{classb3_gpu_sap_broadphase_a9af15764e71f2314203f4b0cb86d3fac} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ int $>$ {\bfseries m\+\_\+large\+Aabbs\+Mapping\+GPU}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a742563eaf46e291bf4fc77c2145c71fa}\label{classb3_gpu_sap_broadphase_a742563eaf46e291bf4fc77c2145c71fa} 
+\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ int $>$ {\bfseries m\+\_\+large\+Aabbs\+Mapping\+CPU}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_ae63c7b78487df4fe83fbf15f0ac66cef}\label{classb3_gpu_sap_broadphase_ae63c7b78487df4fe83fbf15f0ac66cef} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Int4 $>$ {\bfseries m\+\_\+overlapping\+Pairs}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a94acdfff18e86be7326683399511b365}\label{classb3_gpu_sap_broadphase_a94acdfff18e86be7326683399511b365} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ \mbox{\hyperlink{structb3_sort_data}{b3\+Sort\+Data}} $>$ {\bfseries m\+\_\+gpu\+Small\+Sort\+Data}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a8dee95913c371d238a4255f7551b4c3e}\label{classb3_gpu_sap_broadphase_a8dee95913c371d238a4255f7551b4c3e} 
+\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Sap\+Aabb $>$ {\bfseries m\+\_\+gpu\+Small\+Sorted\+Aabbs}
+\item 
+\Hypertarget{classb3_gpu_sap_broadphase_a5b387d2d743336527c1750cbf49f1355}\label{classb3_gpu_sap_broadphase_a5b387d2d743336527c1750cbf49f1355} 
+class \mbox{\hyperlink{classb3_prefix_scan_float4_c_l}{b3\+Prefix\+Scan\+Float4\+CL}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+prefix\+Scan\+Float4}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classb3_gpu_sap_broadphase_afeffc655cd5fa70e587d63574c67b25a}\label{classb3_gpu_sap_broadphase_afeffc655cd5fa70e587d63574c67b25a} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!calculateOverlappingPairs@{calculateOverlappingPairs}}
+\index{calculateOverlappingPairs@{calculateOverlappingPairs}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{calculateOverlappingPairs()}{calculateOverlappingPairs()}}
+{\footnotesize\ttfamily void b3\+Gpu\+Sap\+Broadphase\+::calculate\+Overlapping\+Pairs (\begin{DoxyParamCaption}\item[{int}]{max\+Pairs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a66b424cd38afca80f6d562e75a34b4d3}\label{classb3_gpu_sap_broadphase_a66b424cd38afca80f6d562e75a34b4d3} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!calculateOverlappingPairsHost@{calculateOverlappingPairsHost}}
+\index{calculateOverlappingPairsHost@{calculateOverlappingPairsHost}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{calculateOverlappingPairsHost()}{calculateOverlappingPairsHost()}}
+{\footnotesize\ttfamily void b3\+Gpu\+Sap\+Broadphase\+::calculate\+Overlapping\+Pairs\+Host (\begin{DoxyParamCaption}\item[{int}]{max\+Pairs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a76589ed2aab85f4becdbdb6ec6b16695}\label{classb3_gpu_sap_broadphase_a76589ed2aab85f4becdbdb6ec6b16695} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!createLargeProxy@{createLargeProxy}}
+\index{createLargeProxy@{createLargeProxy}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{createLargeProxy()}{createLargeProxy()}}
+{\footnotesize\ttfamily void b3\+Gpu\+Sap\+Broadphase\+::create\+Large\+Proxy (\begin{DoxyParamCaption}\item[{const b3\+Vector3 \&}]{aabb\+Min,  }\item[{const b3\+Vector3 \&}]{aabb\+Max,  }\item[{int}]{user\+Ptr,  }\item[{int}]{collision\+Filter\+Group,  }\item[{int}]{collision\+Filter\+Mask }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a69ac40828462a499b7a01fa2e035f36d}\label{classb3_gpu_sap_broadphase_a69ac40828462a499b7a01fa2e035f36d} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!createProxy@{createProxy}}
+\index{createProxy@{createProxy}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{createProxy()}{createProxy()}}
+{\footnotesize\ttfamily void b3\+Gpu\+Sap\+Broadphase\+::create\+Proxy (\begin{DoxyParamCaption}\item[{const b3\+Vector3 \&}]{aabb\+Min,  }\item[{const b3\+Vector3 \&}]{aabb\+Max,  }\item[{int}]{user\+Ptr,  }\item[{int}]{collision\+Filter\+Group,  }\item[{int}]{collision\+Filter\+Mask }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a7fa2fe3d5f6f1ee55d8f809922c730ed}\label{classb3_gpu_sap_broadphase_a7fa2fe3d5f6f1ee55d8f809922c730ed} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getAabbBufferWS@{getAabbBufferWS}}
+\index{getAabbBufferWS@{getAabbBufferWS}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getAabbBufferWS()}{getAabbBufferWS()}}
+{\footnotesize\ttfamily cl\+\_\+mem b3\+Gpu\+Sap\+Broadphase\+::get\+Aabb\+Buffer\+WS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a30714aefd95aa8e0b4d415eda72c96eb}\label{classb3_gpu_sap_broadphase_a30714aefd95aa8e0b4d415eda72c96eb} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getAllAabbsCPU@{getAllAabbsCPU}}
+\index{getAllAabbsCPU@{getAllAabbsCPU}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getAllAabbsCPU()}{getAllAabbsCPU()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ b3\+Sap\+Aabb $>$ \& b3\+Gpu\+Sap\+Broadphase\+::get\+All\+Aabbs\+CPU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a0f4c12dcca353c3359b5885840bb3c1e}\label{classb3_gpu_sap_broadphase_a0f4c12dcca353c3359b5885840bb3c1e} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getAllAabbsGPU@{getAllAabbsGPU}}
+\index{getAllAabbsGPU@{getAllAabbsGPU}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getAllAabbsGPU()}{getAllAabbsGPU()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Sap\+Aabb $>$ \& b3\+Gpu\+Sap\+Broadphase\+::get\+All\+Aabbs\+GPU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_af8a4a52ce08078e070219cc7e5d55425}\label{classb3_gpu_sap_broadphase_af8a4a52ce08078e070219cc7e5d55425} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getLargeAabbIndicesGPU@{getLargeAabbIndicesGPU}}
+\index{getLargeAabbIndicesGPU@{getLargeAabbIndicesGPU}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getLargeAabbIndicesGPU()}{getLargeAabbIndicesGPU()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ int $>$ \& b3\+Gpu\+Sap\+Broadphase\+::get\+Large\+Aabb\+Indices\+GPU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a807d12dee811348f0282a99f232714b6}\label{classb3_gpu_sap_broadphase_a807d12dee811348f0282a99f232714b6} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getNumOverlap@{getNumOverlap}}
+\index{getNumOverlap@{getNumOverlap}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getNumOverlap()}{getNumOverlap()}}
+{\footnotesize\ttfamily int b3\+Gpu\+Sap\+Broadphase\+::get\+Num\+Overlap (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a5e2856faf40a76ce5fa3c33d88069a94}\label{classb3_gpu_sap_broadphase_a5e2856faf40a76ce5fa3c33d88069a94} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getOverlappingPairBuffer@{getOverlappingPairBuffer}}
+\index{getOverlappingPairBuffer@{getOverlappingPairBuffer}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getOverlappingPairBuffer()}{getOverlappingPairBuffer()}}
+{\footnotesize\ttfamily cl\+\_\+mem b3\+Gpu\+Sap\+Broadphase\+::get\+Overlapping\+Pair\+Buffer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_ab3a68e27d9c3cdfc2e423a36052c919d}\label{classb3_gpu_sap_broadphase_ab3a68e27d9c3cdfc2e423a36052c919d} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getOverlappingPairsGPU@{getOverlappingPairsGPU}}
+\index{getOverlappingPairsGPU@{getOverlappingPairsGPU}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getOverlappingPairsGPU()}{getOverlappingPairsGPU()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Int4 $>$ \& b3\+Gpu\+Sap\+Broadphase\+::get\+Overlapping\+Pairs\+GPU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_aeaa46ba5a7ac2012b657b1907b5e9444}\label{classb3_gpu_sap_broadphase_aeaa46ba5a7ac2012b657b1907b5e9444} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!getSmallAabbIndicesGPU@{getSmallAabbIndicesGPU}}
+\index{getSmallAabbIndicesGPU@{getSmallAabbIndicesGPU}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{getSmallAabbIndicesGPU()}{getSmallAabbIndicesGPU()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ int $>$ \& b3\+Gpu\+Sap\+Broadphase\+::get\+Small\+Aabb\+Indices\+GPU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+\Hypertarget{classb3_gpu_sap_broadphase_a515575554b6507ea5a1343a7ac46e913}\label{classb3_gpu_sap_broadphase_a515575554b6507ea5a1343a7ac46e913} 
+\index{b3GpuSapBroadphase@{b3GpuSapBroadphase}!writeAabbsToGpu@{writeAabbsToGpu}}
+\index{writeAabbsToGpu@{writeAabbsToGpu}!b3GpuSapBroadphase@{b3GpuSapBroadphase}}
+\doxysubsubsection{\texorpdfstring{writeAabbsToGpu()}{writeAabbsToGpu()}}
+{\footnotesize\ttfamily void b3\+Gpu\+Sap\+Broadphase\+::write\+Aabbs\+To\+Gpu (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3\+Gpu\+Broadphase\+Interface}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Open\+CL/\+Broadphase\+Collision/b3\+Gpu\+Sap\+Broadphase.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Open\+CL/\+Broadphase\+Collision/b3\+Gpu\+Sap\+Broadphase.\+cpp\end{DoxyCompactItemize}

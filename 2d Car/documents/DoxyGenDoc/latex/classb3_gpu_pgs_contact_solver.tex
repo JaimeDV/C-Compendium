@@ -1,0 +1,47 @@
+\doxysection{b3\+Gpu\+Pgs\+Contact\+Solver Class Reference}
+\hypertarget{classb3_gpu_pgs_contact_solver}{}\label{classb3_gpu_pgs_contact_solver}\index{b3GpuPgsContactSolver@{b3GpuPgsContactSolver}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_a8560cb1ca81ecf18ff69242c0443a5a7}\label{classb3_gpu_pgs_contact_solver_a8560cb1ca81ecf18ff69242c0443a5a7} 
+{\bfseries b3\+Gpu\+Pgs\+Contact\+Solver} (cl\+\_\+context ctx, cl\+\_\+device\+\_\+id device, cl\+\_\+command\+\_\+queue q, int pair\+Capacity)
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_a6f5ce5d5975bf61eb53071a6321a993a}\label{classb3_gpu_pgs_contact_solver_a6f5ce5d5975bf61eb53071a6321a993a} 
+void {\bfseries solve\+Contacts} (int num\+Bodies, cl\+\_\+mem body\+Buf, cl\+\_\+mem inertia\+Buf, int num\+Contacts, cl\+\_\+mem contact\+Buf, const struct \mbox{\hyperlink{structb3_config}{b3\+Config}} \&config, int static0\+Index)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_aa155d08e18d8486a044fb8a2b37665b9}\label{classb3_gpu_pgs_contact_solver_aa155d08e18d8486a044fb8a2b37665b9} 
+void {\bfseries batch\+Contacts} (\mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Contact4 $>$ \texorpdfstring{$\ast$}{*}contacts, int n\+Contacts, \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ unsigned int $>$ \texorpdfstring{$\ast$}{*}n, \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ unsigned int $>$ \texorpdfstring{$\ast$}{*}offsets, int static\+Idx)
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_a905bc9b0afd65c3c11a0fdd1ecf3df53}\label{classb3_gpu_pgs_contact_solver_a905bc9b0afd65c3c11a0fdd1ecf3df53} 
+int {\bfseries sort\+Constraint\+By\+Batch} (b3\+Contact4 \texorpdfstring{$\ast$}{*}cs, int n, int simd\+Width, int static\+Idx, int num\+Bodies)
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_ab248d4d0f7d56e80b54b78b6ba44d242}\label{classb3_gpu_pgs_contact_solver_ab248d4d0f7d56e80b54b78b6ba44d242} 
+int {\bfseries sort\+Constraint\+By\+Batch2} (b3\+Contact4 \texorpdfstring{$\ast$}{*}cs, int n, int simd\+Width, int static\+Idx, int num\+Bodies)
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_addcd0be3147341ea6393a3cd6dec9e0a}\label{classb3_gpu_pgs_contact_solver_addcd0be3147341ea6393a3cd6dec9e0a} 
+int {\bfseries sort\+Constraint\+By\+Batch3} (b3\+Contact4 \texorpdfstring{$\ast$}{*}cs, int n, int simd\+Width, int static\+Idx, int num\+Bodies, int \texorpdfstring{$\ast$}{*}batch\+Sizes)
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_a328c239de3d9c597a781b1e80f880eae}\label{classb3_gpu_pgs_contact_solver_a328c239de3d9c597a781b1e80f880eae} 
+void {\bfseries solve\+Contact\+Constraint\+Batch\+Sizes} (const \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ \mbox{\hyperlink{structb3_rigid_body_data}{b3\+Rigid\+Body\+Data}} $>$ \texorpdfstring{$\ast$}{*}body\+Buf, const \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ \mbox{\hyperlink{structb3_inertia_data}{b3\+Inertia\+Data}} $>$ \texorpdfstring{$\ast$}{*}shape\+Buf, \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Gpu\+Constraint4 $>$ \texorpdfstring{$\ast$}{*}constraint, void \texorpdfstring{$\ast$}{*}additional\+Data, int n, int max\+Num\+Batches, int num\+Iterations, const \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ int $>$ \texorpdfstring{$\ast$}{*}batch\+Sizes)
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_a111a08f8ead09b563aeb021739843271}\label{classb3_gpu_pgs_contact_solver_a111a08f8ead09b563aeb021739843271} 
+void {\bfseries solve\+Contact\+Constraint} (const \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ \mbox{\hyperlink{structb3_rigid_body_data}{b3\+Rigid\+Body\+Data}} $>$ \texorpdfstring{$\ast$}{*}body\+Buf, const \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ \mbox{\hyperlink{structb3_inertia_data}{b3\+Inertia\+Data}} $>$ \texorpdfstring{$\ast$}{*}shape\+Buf, \mbox{\hyperlink{classb3_open_c_l_array}{b3\+Open\+CLArray}}$<$ b3\+Gpu\+Constraint4 $>$ \texorpdfstring{$\ast$}{*}constraint, void \texorpdfstring{$\ast$}{*}additional\+Data, int n, int max\+Num\+Batches, int num\+Iterations, const \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ int $>$ \texorpdfstring{$\ast$}{*}batch\+Sizes)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_a8d254594faed748965cfcc5c3f35835e}\label{classb3_gpu_pgs_contact_solver_a8d254594faed748965cfcc5c3f35835e} 
+int {\bfseries m\+\_\+debug\+Output}
+\item 
+\Hypertarget{classb3_gpu_pgs_contact_solver_a636d0e21fdaec1214fd67c431157165a}\label{classb3_gpu_pgs_contact_solver_a636d0e21fdaec1214fd67c431157165a} 
+struct \mbox{\hyperlink{structb3_gpu_batching_pgs_solver_internal_data}{b3\+Gpu\+Batching\+Pgs\+Solver\+Internal\+Data}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+data}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Open\+CL/\+Rigid\+Body/b3\+Gpu\+Pgs\+Contact\+Solver.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Open\+CL/\+Rigid\+Body/b3\+Gpu\+Pgs\+Contact\+Solver.\+cpp\end{DoxyCompactItemize}

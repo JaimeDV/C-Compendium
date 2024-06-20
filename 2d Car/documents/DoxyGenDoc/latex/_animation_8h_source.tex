@@ -1,0 +1,436 @@
+\doxysection{Animation.\+h}
+\hypertarget{_animation_8h_source}{}\label{_animation_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/Animation.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/Animation.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/******************************************************************************}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Spine\ Runtimes\ Software\ License}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Version\ 2.3}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2013-\/2015,\ Esoteric\ Software}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ All\ rights\ reserved.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ You\ are\ granted\ a\ perpetual,\ non-\/exclusive,\ non-\/sublicensable\ and}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ non-\/transferable\ license\ to\ use,\ install,\ execute\ and\ perform\ the\ Spine}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Runtimes\ Software\ (the\ "{}Software"{})\ and\ derivative\ works\ solely\ for\ personal}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ or\ internal\ use.\ Without\ the\ written\ permission\ of\ Esoteric\ Software\ (see}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ Section\ 2\ of\ the\ Spine\ Software\ License\ Agreement),\ you\ may\ not\ (a)\ modify,}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ translate,\ adapt\ or\ otherwise\ create\ derivative\ works,\ improvements\ of\ the}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Software\ or\ develop\ new\ applications\ using\ the\ Software\ or\ (b)\ remove,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ delete,\ alter\ or\ obscure\ any\ trademarks\ or\ any\ copyright,\ trademark,\ patent}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ or\ other\ intellectual\ property\ or\ proprietary\ rights\ notices\ on\ or\ in\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ Software,\ including\ any\ copy\ thereof.\ Redistributions\ in\ binary\ or\ source}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ form\ must\ include\ this\ license\ and\ terms.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ ESOTERIC\ SOFTWARE\ "{}AS\ IS"{}\ AND\ ANY\ EXPRESS\ OR}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ MERCHANTABILITY\ AND\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ EVENT\ SHALL\ ESOTERIC\ SOFTWARE\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,\ DATA,\ OR\ PROFITS;}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY\ THEORY\ OF\ LIABILITY,}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT\ (INCLUDING\ NEGLIGENCE\ OR}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE\ OF\ THIS\ SOFTWARE,\ EVEN\ IF}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifndef\ SPINE\_ANIMATION\_H\_}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ SPINE\_ANIMATION\_H\_}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <spine/Event.h>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <spine/Attachment.h>}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_timeline}{spTimeline}}\ \mbox{\hyperlink{structsp_timeline}{spTimeline}};}
+\DoxyCodeLine{00043\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_skeleton}{spSkeleton}};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_animation}{spAnimation}}\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ name;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{float}\ duration;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ timelinesCount;}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{structsp_timeline}{spTimeline}}**\ timelines;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{structsp_animation}{spAnimation}}()\ :}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ name(0),}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ duration(0),}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ timelinesCount(0),}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ timelines(0)\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00060\ \}\ \mbox{\hyperlink{structsp_animation}{spAnimation}};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \mbox{\hyperlink{structsp_animation}{spAnimation}}*\ spAnimation\_create\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keywordtype}{int}\ timelinesCount);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ spAnimation\_dispose\ (\mbox{\hyperlink{structsp_animation}{spAnimation}}*\ self);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ spAnimation\_apply\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_animation}{spAnimation}}*\ self,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ skeleton,\ \textcolor{keywordtype}{float}\ lastTime,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{int}\ loop,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structsp_event}{spEvent}}**\ events,\ \textcolor{keywordtype}{int}*\ eventsCount);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ spAnimation\_mix\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_animation}{spAnimation}}*\ self,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ skeleton,\ \textcolor{keywordtype}{float}\ lastTime,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{int}\ loop,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structsp_event}{spEvent}}**\ events,\ \textcolor{keywordtype}{int}*\ eventsCount,\ \textcolor{keywordtype}{float}\ alpha);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00079\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_animation}{spAnimation}}\ Animation;}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ Animation\_create(...)\ spAnimation\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#define\ Animation\_dispose(...)\ spAnimation\_dispose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#define\ Animation\_apply(...)\ spAnimation\_apply(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ Animation\_mix(...)\ spAnimation\_mix(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ SP\_TIMELINE\_SCALE,}
+\DoxyCodeLine{00090\ \ \ \ \ SP\_TIMELINE\_ROTATE,}
+\DoxyCodeLine{00091\ \ \ \ \ SP\_TIMELINE\_TRANSLATE,}
+\DoxyCodeLine{00092\ \ \ \ \ SP\_TIMELINE\_COLOR,}
+\DoxyCodeLine{00093\ \ \ \ \ SP\_TIMELINE\_ATTACHMENT,}
+\DoxyCodeLine{00094\ \ \ \ \ SP\_TIMELINE\_EVENT,}
+\DoxyCodeLine{00095\ \ \ \ \ SP\_TIMELINE\_DRAWORDER,}
+\DoxyCodeLine{00096\ \ \ \ \ SP\_TIMELINE\_FFD,}
+\DoxyCodeLine{00097\ \ \ \ \ SP\_TIMELINE\_IKCONSTRAINT,}
+\DoxyCodeLine{00098\ \ \ \ \ SP\_TIMELINE\_FLIPX,}
+\DoxyCodeLine{00099\ \ \ \ \ SP\_TIMELINE\_FLIPY}
+\DoxyCodeLine{00100\ \}\ spTimelineType;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_timeline}{spTimeline}}\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{const}\ spTimelineType\ type;}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ \textcolor{keyword}{const}\ vtable;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00107\ \ \ \ \ \mbox{\hyperlink{structsp_timeline}{spTimeline}}()\ :}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ type(SP\_TIMELINE\_SCALE),}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ vtable(0)\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00112\ \};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{void}\ spTimeline\_dispose\ (\mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self);}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{void}\ spTimeline\_apply\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_timeline}{spTimeline}}*\ self,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ skeleton,\ \textcolor{keywordtype}{float}\ lastTime,\ \textcolor{keywordtype}{float}\ time,\ \mbox{\hyperlink{structsp_event}{spEvent}}**\ firedEvents,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ eventsCount,\ \textcolor{keywordtype}{float}\ alpha);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00119\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_timeline}{spTimeline}}\ Timeline;}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#define\ TIMELINE\_SCALE\ SP\_TIMELINE\_SCALE}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#define\ TIMELINE\_ROTATE\ SP\_TIMELINE\_ROTATE}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#define\ TIMELINE\_TRANSLATE\ SP\_TIMELINE\_TRANSLATE}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#define\ TIMELINE\_COLOR\ SP\_TIMELINE\_COLOR}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#define\ TIMELINE\_ATTACHMENT\ SP\_TIMELINE\_ATTACHMENT}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#define\ TIMELINE\_EVENT\ SP\_TIMELINE\_EVENT}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#define\ TIMELINE\_DRAWORDER\ SP\_TIMELINE\_DRAWORDER}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#define\ Timeline\_dispose(...)\ spTimeline\_dispose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#define\ Timeline\_apply(...)\ spTimeline\_apply(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}\ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{structsp_timeline}{spTimeline}}\ super;}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{float}*\ curves;\ \textcolor{comment}{/*\ type,\ x,\ y,\ ...\ */}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}()\ :}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ curves(0)\ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00143\ \}\ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ spCurveTimeline\_setLinear\ (\mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex);}
+\DoxyCodeLine{00146\ \textcolor{keywordtype}{void}\ spCurveTimeline\_setStepped\ (\mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{comment}{/*\ Sets\ the\ control\ handle\ positions\ for\ an\ interpolation\ bezier\ curve\ used\ to\ transition\ from\ this\ keyframe\ to\ the\ next.}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ cx1\ and\ cx2\ are\ from\ 0\ to\ 1,\ representing\ the\ percent\ of\ time\ between\ the\ two\ keyframes.\ cy1\ and\ cy2\ are\ the\ percent\ of}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ the\ difference\ between\ the\ keyframe's\ values.\ */}}
+\DoxyCodeLine{00151\ \textcolor{keywordtype}{void}\ spCurveTimeline\_setCurve\ (\mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ cx1,\ \textcolor{keywordtype}{float}\ cy1,\ \textcolor{keywordtype}{float}\ cx2,\ \textcolor{keywordtype}{float}\ cy2);}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{float}\ spCurveTimeline\_getCurvePercent\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ percent);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00155\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}\ CurveTimeline;}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#define\ CurveTimeline\_setLinear(...)\ spCurveTimeline\_setLinear(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#define\ CurveTimeline\_setStepped(...)\ spCurveTimeline\_setStepped(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#define\ CurveTimeline\_setCurve(...)\ spCurveTimeline\_setCurve(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#define\ CurveTimeline\_getCurvePercent(...)\ spCurveTimeline\_getCurvePercent(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_base_timeline}{spBaseTimeline}}\ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}\ super;}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ angle,\ ...\ for\ rotate.\ time,\ x,\ y,\ ...\ for\ translate\ and\ scale.\ */}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{int}\ boneIndex;}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00171\ \ \ \ \ \mbox{\hyperlink{structsp_base_timeline}{spBaseTimeline}}()\ :}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ boneIndex(0)\ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00178\ \}\ \mbox{\hyperlink{structsp_base_timeline}{spBaseTimeline}};}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_base_timeline}{spBaseTimeline}}\ \mbox{\hyperlink{structsp_base_timeline}{spRotateTimeline}};}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \mbox{\hyperlink{structsp_base_timeline}{spRotateTimeline}}*\ spRotateTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{void}\ spRotateTimeline\_setFrame\ (\mbox{\hyperlink{structsp_base_timeline}{spRotateTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00189\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_base_timeline}{spRotateTimeline}}\ RotateTimeline;}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#define\ RotateTimeline\_create(...)\ spRotateTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#define\ RotateTimeline\_setFrame(...)\ spRotateTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_base_timeline}{spBaseTimeline}}\ \mbox{\hyperlink{structsp_base_timeline}{spTranslateTimeline}};}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \mbox{\hyperlink{structsp_base_timeline}{spTranslateTimeline}}*\ spTranslateTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{void}\ spTranslateTimeline\_setFrame\ (\mbox{\hyperlink{structsp_base_timeline}{spTranslateTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00203\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_base_timeline}{spTranslateTimeline}}\ TranslateTimeline;}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#define\ TranslateTimeline\_create(...)\ spTranslateTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#define\ TranslateTimeline\_setFrame(...)\ spTranslateTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_base_timeline}{spBaseTimeline}}\ \mbox{\hyperlink{structsp_base_timeline}{spScaleTimeline}};}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \mbox{\hyperlink{structsp_base_timeline}{spScaleTimeline}}*\ spScaleTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount);}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \textcolor{keywordtype}{void}\ spScaleTimeline\_setFrame\ (\mbox{\hyperlink{structsp_base_timeline}{spScaleTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y);}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00217\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_base_timeline}{spScaleTimeline}}\ ScaleTimeline;}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#define\ ScaleTimeline\_create(...)\ spScaleTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\#define\ ScaleTimeline\_setFrame(...)\ spScaleTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_color_timeline}{spColorTimeline}}\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}\ super;}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ r,\ g,\ b,\ a,\ ...\ */}}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordtype}{int}\ slotIndex;}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00231\ \ \ \ \ \mbox{\hyperlink{structsp_color_timeline}{spColorTimeline}}()\ :}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ slotIndex(0)\ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00238\ \}\ \mbox{\hyperlink{structsp_color_timeline}{spColorTimeline}};}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \mbox{\hyperlink{structsp_color_timeline}{spColorTimeline}}*\ spColorTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount);}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \textcolor{keywordtype}{void}\ spColorTimeline\_setFrame\ (\mbox{\hyperlink{structsp_color_timeline}{spColorTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{float}\ r,\ \textcolor{keywordtype}{float}\ g,\ \textcolor{keywordtype}{float}\ b,\ \textcolor{keywordtype}{float}\ a);}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00245\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_color_timeline}{spColorTimeline}}\ ColorTimeline;}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#define\ ColorTimeline\_create(...)\ spColorTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\#define\ ColorTimeline\_setFrame(...)\ spColorTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_attachment_timeline}{spAttachmentTimeline}}\ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \mbox{\hyperlink{structsp_timeline}{spTimeline}}\ super;}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ ...\ */}}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{keywordtype}{int}\ slotIndex;}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}**\ \textcolor{keyword}{const}\ attachmentNames;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00260\ \ \ \ \ \mbox{\hyperlink{structsp_attachment_timeline}{spAttachmentTimeline}}()\ :}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ slotIndex(0),}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ attachmentNames(0)\ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \}}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00268\ \}\ \mbox{\hyperlink{structsp_attachment_timeline}{spAttachmentTimeline}};}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \mbox{\hyperlink{structsp_attachment_timeline}{spAttachmentTimeline}}*\ spAttachmentTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount);}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \textcolor{comment}{/*\ @param\ attachmentName\ May\ be\ 0.\ */}}
+\DoxyCodeLine{00273\ \textcolor{keywordtype}{void}\ spAttachmentTimeline\_setFrame\ (\mbox{\hyperlink{structsp_attachment_timeline}{spAttachmentTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ attachmentName);}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00276\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_attachment_timeline}{spAttachmentTimeline}}\ AttachmentTimeline;}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#define\ AttachmentTimeline\_create(...)\ spAttachmentTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#define\ AttachmentTimeline\_setFrame(...)\ spAttachmentTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_event_timeline}{spEventTimeline}}\ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \mbox{\hyperlink{structsp_timeline}{spTimeline}}\ super;}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ ...\ */}}
+\DoxyCodeLine{00287\ \ \ \ \ \mbox{\hyperlink{structsp_event}{spEvent}}**\ \textcolor{keyword}{const}\ events;}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00290\ \ \ \ \ \mbox{\hyperlink{structsp_event_timeline}{spEventTimeline}}()\ :}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ events(0)\ \{}
+\DoxyCodeLine{00295\ \ \ \ \ \}}
+\DoxyCodeLine{00296\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00297\ \}\ \mbox{\hyperlink{structsp_event_timeline}{spEventTimeline}};}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \mbox{\hyperlink{structsp_event_timeline}{spEventTimeline}}*\ spEventTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount);}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \textcolor{keywordtype}{void}\ spEventTimeline\_setFrame\ (\mbox{\hyperlink{structsp_event_timeline}{spEventTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \mbox{\hyperlink{structsp_event}{spEvent}}*\ event);}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00304\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_event_timeline}{spEventTimeline}}\ EventTimeline;}
+\DoxyCodeLine{00305\ \textcolor{preprocessor}{\#define\ EventTimeline\_create(...)\ spEventTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00306\ \textcolor{preprocessor}{\#define\ EventTimeline\_setFrame(...)\ spEventTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00307\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_draw_order_timeline}{spDrawOrderTimeline}}\ \{}
+\DoxyCodeLine{00312\ \ \ \ \ \mbox{\hyperlink{structsp_timeline}{spTimeline}}\ super;}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ ...\ */}}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}**\ \textcolor{keyword}{const}\ drawOrders;}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ slotsCount;}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00319\ \ \ \ \ \mbox{\hyperlink{structsp_draw_order_timeline}{spDrawOrderTimeline}}()\ :}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ drawOrders(0),}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ slotsCount(0)\ \{}
+\DoxyCodeLine{00325\ \ \ \ \ \}}
+\DoxyCodeLine{00326\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00327\ \}\ \mbox{\hyperlink{structsp_draw_order_timeline}{spDrawOrderTimeline}};}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \mbox{\hyperlink{structsp_draw_order_timeline}{spDrawOrderTimeline}}*\ spDrawOrderTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount,\ \textcolor{keywordtype}{int}\ slotsCount);}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{keywordtype}{void}\ spDrawOrderTimeline\_setFrame\ (\mbox{\hyperlink{structsp_draw_order_timeline}{spDrawOrderTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*\ drawOrder);}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00334\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_draw_order_timeline}{spDrawOrderTimeline}}\ DrawOrderTimeline;}
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\#define\ DrawOrderTimeline\_create(...)\ spDrawOrderTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#define\ DrawOrderTimeline\_setFrame(...)\ spDrawOrderTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00337\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_f_f_d_timeline}{spFFDTimeline}}\ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}\ super;}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ ...\ */}}
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ frameVerticesCount;}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}**\ \textcolor{keyword}{const}\ frameVertices;}
+\DoxyCodeLine{00347\ \ \ \ \ \textcolor{keywordtype}{int}\ slotIndex;}
+\DoxyCodeLine{00348\ \ \ \ \ \mbox{\hyperlink{structsp_attachment}{spAttachment}}*\ attachment;}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00351\ \ \ \ \ \mbox{\hyperlink{structsp_f_f_d_timeline}{spFFDTimeline}}()\ :}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ frameVerticesCount(0),}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ frameVertices(0),}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ slotIndex(0)\ \{}
+\DoxyCodeLine{00358\ \ \ \ \ \}}
+\DoxyCodeLine{00359\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00360\ \}\ \mbox{\hyperlink{structsp_f_f_d_timeline}{spFFDTimeline}};}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \mbox{\hyperlink{structsp_f_f_d_timeline}{spFFDTimeline}}*\ spFFDTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount,\ \textcolor{keywordtype}{int}\ frameVerticesCount);}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \textcolor{keywordtype}{void}\ spFFDTimeline\_setFrame\ (\mbox{\hyperlink{structsp_f_f_d_timeline}{spFFDTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{float}*\ vertices);}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00367\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_f_f_d_timeline}{spFFDTimeline}}\ FFDTimeline;}
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\#define\ FFDTimeline\_create(...)\ spFFDTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00369\ \textcolor{preprocessor}{\#define\ FFDTimeline\_setFrame(...)\ spFFDTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00370\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_ik_constraint_timeline}{spIkConstraintTimeline}}\ \{}
+\DoxyCodeLine{00375\ \ \ \ \ \mbox{\hyperlink{structsp_curve_timeline}{spCurveTimeline}}\ super;}
+\DoxyCodeLine{00376\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00377\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ mix,\ bendDirection,\ ...\ */}}
+\DoxyCodeLine{00378\ \ \ \ \ \textcolor{keywordtype}{int}\ ikConstraintIndex;}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00381\ \ \ \ \ \mbox{\hyperlink{structsp_ik_constraint_timeline}{spIkConstraintTimeline}}()\ :}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ ikConstraintIndex(0)\ \{}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00388\ \}\ \mbox{\hyperlink{structsp_ik_constraint_timeline}{spIkConstraintTimeline}};}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \mbox{\hyperlink{structsp_ik_constraint_timeline}{spIkConstraintTimeline}}*\ spIkConstraintTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount);}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \textcolor{comment}{/*\ @param\ attachmentName\ May\ be\ 0.\ */}}
+\DoxyCodeLine{00393\ \textcolor{keywordtype}{void}\ spIkConstraintTimeline\_setFrame\ (\mbox{\hyperlink{structsp_ik_constraint_timeline}{spIkConstraintTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{float}\ mix,\ \textcolor{keywordtype}{int}\ bendDirection);}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00396\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_ik_constraint_timeline}{spIkConstraintTimeline}}\ IkConstraintTimeline;}
+\DoxyCodeLine{00397\ \textcolor{preprocessor}{\#define\ IkConstraintTimeline\_create(...)\ spIkConstraintTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00398\ \textcolor{preprocessor}{\#define\ IkConstraintTimeline\_setFrame(...)\ spIkConstraintTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00399\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_flip_timeline}{spFlipTimeline}}\ \{}
+\DoxyCodeLine{00404\ \ \ \ \ \mbox{\hyperlink{structsp_timeline}{spTimeline}}\ super;}
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ x;}
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keyword}{const}\ framesCount;}
+\DoxyCodeLine{00407\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ frames;\ \textcolor{comment}{/*\ time,\ flip,\ ...\ */}}
+\DoxyCodeLine{00408\ \ \ \ \ \textcolor{keywordtype}{int}\ boneIndex;}
+\DoxyCodeLine{00409\ }
+\DoxyCodeLine{00410\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00411\ \ \ \ \ \mbox{\hyperlink{structsp_flip_timeline}{spFlipTimeline}}()\ :}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ super(),}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ x(0),}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ framesCount(0),}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ frames(0),}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ boneIndex(0)\ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \}}
+\DoxyCodeLine{00418\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00419\ \}\ \mbox{\hyperlink{structsp_flip_timeline}{spFlipTimeline}};}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00421\ \mbox{\hyperlink{structsp_flip_timeline}{spFlipTimeline}}*\ spFlipTimeline\_create\ (\textcolor{keywordtype}{int}\ framesCount,\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}x);}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00423\ \textcolor{keywordtype}{void}\ spFlipTimeline\_setFrame\ (\mbox{\hyperlink{structsp_flip_timeline}{spFlipTimeline}}*\ self,\ \textcolor{keywordtype}{int}\ frameIndex,\ \textcolor{keywordtype}{float}\ time,\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}flip);}
+\DoxyCodeLine{00424\ }
+\DoxyCodeLine{00425\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00426\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_flip_timeline}{spFlipTimeline}}\ FlipTimeline;}
+\DoxyCodeLine{00427\ \textcolor{preprocessor}{\#define\ FlipTimeline\_create(...)\ spFlipTimeline\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00428\ \textcolor{preprocessor}{\#define\ FlipTimeline\_setFrame(...)\ spFlipTimeline\_setFrame(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00429\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00430\ }
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00434\ \}}
+\DoxyCodeLine{00435\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00437\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ SPINE\_ANIMATION\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,81 @@
+\doxysection{bt\+Quantization.\+h}
+\hypertarget{bt_quantization_8h_source}{}\label{bt_quantization_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btQuantization.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btQuantization.h}}
+\mbox{\hyperlink{bt_quantization_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ BT\_GIMPACT\_QUANTIZATION\_H\_INCLUDED}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ BT\_GIMPACT\_QUANTIZATION\_H\_INCLUDED}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00009\ \textcolor{comment}{This\ source\ file\ is\ part\ of\ GIMPACT\ Library.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{For\ the\ latest\ info,\ see\ http://gimpact.sourceforge.net/}}
+\DoxyCodeLine{00012\ \textcolor{comment}{}}
+\DoxyCodeLine{00013\ \textcolor{comment}{Copyright\ (c)\ 2007\ Francisco\ Leon\ Najera.\ C.C.\ 80087371.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{email:\ projectileman@yahoo.com}}
+\DoxyCodeLine{00015\ \textcolor{comment}{}}
+\DoxyCodeLine{00016\ \textcolor{comment}{}}
+\DoxyCodeLine{00017\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00021\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00022\ \textcolor{comment}{}}
+\DoxyCodeLine{00023\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00026\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ bt\_calc\_quantization\_parameters(}
+\DoxyCodeLine{00031\ \ \ \ \ btVector3\&\ outMinBound,}
+\DoxyCodeLine{00032\ \ \ \ \ btVector3\&\ outMaxBound,}
+\DoxyCodeLine{00033\ \ \ \ \ btVector3\&\ bvhQuantization,}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ srcMinBound,\ \textcolor{keyword}{const}\ btVector3\&\ srcMaxBound,}
+\DoxyCodeLine{00035\ \ \ \ \ btScalar\ quantizationMargin)}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//enlarge\ the\ AABB\ to\ avoid\ division\ by\ zero\ when\ initializing\ the\ quantization\ values}}
+\DoxyCodeLine{00038\ \ \ \ \ btVector3\ clampValue(quantizationMargin,\ quantizationMargin,\ quantizationMargin);}
+\DoxyCodeLine{00039\ \ \ \ \ outMinBound\ =\ srcMinBound\ -\/\ clampValue;}
+\DoxyCodeLine{00040\ \ \ \ \ outMaxBound\ =\ srcMaxBound\ +\ clampValue;}
+\DoxyCodeLine{00041\ \ \ \ \ btVector3\ aabbSize\ =\ outMaxBound\ -\/\ outMinBound;}
+\DoxyCodeLine{00042\ \ \ \ \ bvhQuantization\ =\ btVector3(btScalar(65535.0),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar(65535.0),}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar(65535.0))\ /}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ aabbSize;}
+\DoxyCodeLine{00046\ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ bt\_quantize\_clamp(}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ out,}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ point,}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ min\_bound,}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ max\_bound,}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ bvhQuantization)}
+\DoxyCodeLine{00054\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ btVector3\ clampedPoint(point);}
+\DoxyCodeLine{00056\ \ \ \ \ clampedPoint.setMax(min\_bound);}
+\DoxyCodeLine{00057\ \ \ \ \ clampedPoint.setMin(max\_bound);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ btVector3\ v\ =\ (clampedPoint\ -\/\ min\_bound)\ *\ bvhQuantization;}
+\DoxyCodeLine{00060\ \ \ \ \ out[0]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(v.getX()\ +\ 0.5f);}
+\DoxyCodeLine{00061\ \ \ \ \ out[1]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(v.getY()\ +\ 0.5f);}
+\DoxyCodeLine{00062\ \ \ \ \ out[2]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(v.getZ()\ +\ 0.5f);}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ SIMD\_FORCE\_INLINE\ btVector3\ bt\_unquantize(}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ vecIn,}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ offset,}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ bvhQuantization)}
+\DoxyCodeLine{00069\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ btVector3\ vecOut;}
+\DoxyCodeLine{00071\ \ \ \ \ vecOut.setValue(}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ (btScalar)(vecIn[0])\ /\ (bvhQuantization.getX()),}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ (btScalar)(vecIn[1])\ /\ (bvhQuantization.getY()),}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ (btScalar)(vecIn[2])\ /\ (bvhQuantization.getZ()));}
+\DoxyCodeLine{00075\ \ \ \ \ vecOut\ +=\ offset;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{return}\ vecOut;}
+\DoxyCodeLine{00077\ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ BT\_GIMPACT\_QUANTIZATION\_H\_INCLUDED}}
+
+\end{DoxyCode}

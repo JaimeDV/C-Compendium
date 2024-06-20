@@ -1,0 +1,156 @@
+\doxysection{color\+Buffer.\+hpp}
+\hypertarget{color_buffer_8hpp_source}{}\label{color_buffer_8hpp_source}\index{pruebas-\/c/Practica Graficos/Code/Headers/colorBuffer.hpp@{pruebas-\/c/Practica Graficos/Code/Headers/colorBuffer.hpp}}
+\mbox{\hyperlink{color_buffer_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Código\ bajo\ licencia\ Boost\ Software\ License,\ version\ 1.0}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Ver\ www.boost.org/LICENSE\_1\_0.txt}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ angel.rodriguez@esne.edu}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ 2020.12}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifndef\ ARGB\_COLOR\_BUFFER\_HEADER}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ ARGB\_COLOR\_BUFFER\_HEADER}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{color_8hpp}{Color.hpp}}"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <SFML/OpenGL.hpp>}\ \ \ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceargb}{argb}}}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{template}<\ \textcolor{keyword}{class}\ COLOR\ >}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classargb_1_1_color___buffer}{Color\_Buffer}}}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classargb_1_1_color___buffer_a5227eea6f7692f7e0191cab049f5ff28}{Color\_Format}}\ =\ COLOR;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classargb_1_1_color___buffer_af6f74daf697a0b18f773e83aa7d0cb97}{Color}}\ =\ \mbox{\hyperlink{classargb_1_1_color___buffer_a5227eea6f7692f7e0191cab049f5ff28}{Color\_Format}};}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classargb_1_1_color___buffer_af0de815d1d0155ecdcbc48b3505717e9}{Iterator}}\ =\ \mbox{\hyperlink{classargb_1_1_color___buffer_af6f74daf697a0b18f773e83aa7d0cb97}{Color}}*;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }Buffer\ =\ std::vector<\ Color\_Format\ >;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{classargb_1_1_color___buffer_ad9385c5e01c9ebdacab29961feab73bc}{bits\_per\_color}}()}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Color\_Format::bits;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ width;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ height;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ size;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ Buffer\ \ \ buffer;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_af0de815d1d0155ecdcbc48b3505717e9}{Iterator}}\ start;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_af0de815d1d0155ecdcbc48b3505717e9}{Iterator}}\ ending;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_a69c7ce607171c0aa56ead7bcadf6b55a}{Color\_Buffer}}(\textcolor{keywordtype}{unsigned}\ width,\ \textcolor{keywordtype}{unsigned}\ height)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ :}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ width(width),}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ height(height),}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ size(width*\ height),}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ buffer(size),}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ start(buffer.data()),}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ ending(start\ +\ size)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_a5227eea6f7692f7e0191cab049f5ff28}{Color\_Format}}*\ \mbox{\hyperlink{classargb_1_1_color___buffer_af0abd7a14872ca5942553f2809e441b9}{pixels}}()\ \{\ \textcolor{keywordflow}{return}\ buffer.data();\ \}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a5227eea6f7692f7e0191cab049f5ff28}{Color\_Format}}*\ \mbox{\hyperlink{classargb_1_1_color___buffer_a10e538e417502a448ea03c201e0e87f8}{pixels}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ buffer.data();\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_af0de815d1d0155ecdcbc48b3505717e9}{Iterator}}\ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_a349450fc9607041d063d6545765c53a2}{begin}}()\ \{\ \textcolor{keywordflow}{return}\ start;\ \}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classargb_1_1_color___buffer_af0de815d1d0155ecdcbc48b3505717e9}{Iterator}}\ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_a60bcbfa0a083d78b1ba7770f8b0ecdda}{begin}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ start;\ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_af0de815d1d0155ecdcbc48b3505717e9}{Iterator}}\ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_a9b13d2efd124e85f78cb6419c6a6b10a}{end}}()\ \{\ \textcolor{keywordflow}{return}\ ending;\ \}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classargb_1_1_color___buffer_af0de815d1d0155ecdcbc48b3505717e9}{Iterator}}\ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer_af806a20cfd4e8beb37f22965a842801e}{end}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ending;\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{classargb_1_1_color___buffer_afba4d5de6a5ef61ad197c9c558ad8ebb}{get\_width}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00075\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ width;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a5e38ba9a280ce89fd13ed51b32961a0a}{get\_height}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00080\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ height;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a88f0eb4f4798ba6ec3261882454f6644}{get\_size}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00085\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ size;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a0c1a265b1fd2f6c872e8030c77e72ae3}{clear}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classargb_1_1_color___buffer_af6f74daf697a0b18f773e83aa7d0cb97}{Color}}\&\ color)}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ std::fill\_n(buffer.data(),\ size,\ color);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a05c9e04b5e6951de879150bfed58014b}{set\_pixel}}(\textcolor{keywordtype}{unsigned}\ x,\ \textcolor{keywordtype}{unsigned}\ y,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classargb_1_1_color___buffer_af6f74daf697a0b18f773e83aa7d0cb97}{Color}}\&\ color)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ assert(x\ <\ width\ \&\&\ y\ <\ height);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ buffer[y\ *\ width\ +\ x]\ =\ color;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classargb_1_1_color___buffer_ace85e4c1374f5404e294156a19feaf6d}{set\_pixel}}(\textcolor{keywordtype}{unsigned}\ offset,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classargb_1_1_color___buffer_af6f74daf697a0b18f773e83aa7d0cb97}{Color}}\&\ color)}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ assert(offset\ <\ buffer.size());}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ buffer[offset]\ =\ color;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \textcolor{keyword}{operator}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a5227eea6f7692f7e0191cab049f5ff28}{Color\_Format}}*\ ()}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classargb_1_1_color___buffer_af0abd7a14872ca5942553f2809e441b9}{pixels}}();}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \textcolor{keyword}{operator}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a5227eea6f7692f7e0191cab049f5ff28}{Color\_Format}}*\ ()\ \textcolor{keyword}{const}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classargb_1_1_color___buffer_af0abd7a14872ca5942553f2809e441b9}{pixels}}();}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a2c39031109ae21a754fd907f17e7c69d}{blit\_to\_window}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{template}<\ >}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a2c39031109ae21a754fd907f17e7c69d}{Color\_Buffer<\ Rgb332\ >::blit\_to\_window}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00126\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ glRasterPos2f(-\/1.f,\ +1.f);}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ glPixelZoom(+1.f,\ -\/1.f);}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ glDrawPixels(\textcolor{keywordtype}{int}(width),\ \textcolor{keywordtype}{int}(height),\ GL\_RGB,\ \textcolor{comment}{/*GL\_UNSIGNED\_BYTE\_3\_3\_2*/}0x8032,\ buffer.data());}
+\DoxyCodeLine{00130\ \ \ \ \ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{template}<\ >}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a2c39031109ae21a754fd907f17e7c69d}{Color\_Buffer<\ Rgb565\ >::blit\_to\_window}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00134\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ glRasterPos2f(-\/1.f,\ +1.f);}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ glPixelZoom(+1.f,\ -\/1.f);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ glDrawPixels(\textcolor{keywordtype}{int}(width),\ \textcolor{keywordtype}{int}(height),\ GL\_RGB,\ \textcolor{comment}{/*GL\_UNSIGNED\_SHORT\_5\_6\_5*/}0x8363,\ buffer.data());}
+\DoxyCodeLine{00138\ \ \ \ \ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{template}<\ >}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classargb_1_1_color___buffer_a2c39031109ae21a754fd907f17e7c69d}{Color\_Buffer<\ Rgb24\ >::blit\_to\_window}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00142\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ glRasterPos2f(-\/1.f,\ +1.f);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ glPixelZoom(+1.f,\ -\/1.f);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ glDrawPixels(\textcolor{keywordtype}{int}(width),\ \textcolor{keywordtype}{int}(height),\ GL\_RGB,\ GL\_UNSIGNED\_BYTE,\ buffer.data());}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

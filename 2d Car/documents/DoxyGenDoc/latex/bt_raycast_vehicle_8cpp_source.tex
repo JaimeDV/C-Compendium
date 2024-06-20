@@ -1,0 +1,714 @@
+\doxysection{bt\+Raycast\+Vehicle.\+cpp}
+\hypertarget{bt_raycast_vehicle_8cpp_source}{}\label{bt_raycast_vehicle_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Vehicle/btRaycastVehicle.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Vehicle/btRaycastVehicle.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2005\ Erwin\ Coumans\ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Permission\ to\ use,\ copy,\ modify,\ distribute\ and\ sell\ this\ software}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ and\ its\ documentation\ for\ any\ purpose\ is\ hereby\ granted\ without\ fee,}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ provided\ that\ the\ above\ copyright\ notice\ appear\ in\ all\ copies.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Erwin\ Coumans\ makes\ no\ representations\ about\ the\ suitability\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ of\ this\ software\ for\ any\ purpose.\ \ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ It\ is\ provided\ "{}as\ is"{}\ without\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}btRaycastVehicle.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btJacobianEntry.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuaternion.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btDynamicsWorld.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btVehicleRaycaster.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btWheelInfo.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btMinMax.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btIDebugDraw.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btContactConstraint.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ ROLLING\_INFLUENCE\_FIX}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ btActionInterface::getFixedBody()}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ s\_fixed(0,\ 0,\ 0);}
+\DoxyCodeLine{00030\ \ \ \ \ s\_fixed.setMassProps(btScalar(0.),\ btVector3(btScalar(0.),\ btScalar(0.),\ btScalar(0.)));}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordflow}{return}\ s\_fixed;}
+\DoxyCodeLine{00032\ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ btRaycastVehicle::btRaycastVehicle(\textcolor{keyword}{const}\ btVehicleTuning\&\ tuning,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ chassis,\ \mbox{\hyperlink{structbt_vehicle_raycaster}{btVehicleRaycaster}}*\ raycaster)}
+\DoxyCodeLine{00035\ \ \ \ \ :\ m\_vehicleRaycaster(raycaster),}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ m\_pitchControl(btScalar(0.))}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ m\_chassisBody\ =\ chassis;}
+\DoxyCodeLine{00039\ \ \ \ \ m\_indexRightAxis\ =\ 0;}
+\DoxyCodeLine{00040\ \ \ \ \ m\_indexUpAxis\ =\ 2;}
+\DoxyCodeLine{00041\ \ \ \ \ m\_indexForwardAxis\ =\ 1;}
+\DoxyCodeLine{00042\ \ \ \ \ defaultInit(tuning);}
+\DoxyCodeLine{00043\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ btRaycastVehicle::defaultInit(\textcolor{keyword}{const}\ btVehicleTuning\&\ tuning)}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ (void)tuning;}
+\DoxyCodeLine{00048\ \ \ \ \ m\_currentVehicleSpeedKmHour\ =\ btScalar(0.);}
+\DoxyCodeLine{00049\ \ \ \ \ m\_steeringValue\ =\ btScalar(0.);}
+\DoxyCodeLine{00050\ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ btRaycastVehicle::\string~btRaycastVehicle()}
+\DoxyCodeLine{00053\ \{}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{//}}
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ basically\ most\ of\ the\ code\ is\ general\ for\ 2\ or\ 4\ wheel\ vehicles,\ but\ some\ of\ it\ needs\ to\ be\ reviewed}}
+\DoxyCodeLine{00058\ \textcolor{comment}{//}}
+\DoxyCodeLine{00059\ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ btRaycastVehicle::addWheel(\textcolor{keyword}{const}\ btVector3\&\ connectionPointCS,\ \textcolor{keyword}{const}\ btVector3\&\ wheelDirectionCS0,\ \textcolor{keyword}{const}\ btVector3\&\ wheelAxleCS,\ btScalar\ suspensionRestLength,\ btScalar\ wheelRadius,\ \textcolor{keyword}{const}\ btVehicleTuning\&\ tuning,\ \textcolor{keywordtype}{bool}\ isFrontWheel)}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info_construction_info}{btWheelInfoConstructionInfo}}\ ci;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ ci.m\_chassisConnectionCS\ =\ connectionPointCS;}
+\DoxyCodeLine{00064\ \ \ \ \ ci.m\_wheelDirectionCS\ =\ wheelDirectionCS0;}
+\DoxyCodeLine{00065\ \ \ \ \ ci.m\_wheelAxleCS\ =\ wheelAxleCS;}
+\DoxyCodeLine{00066\ \ \ \ \ ci.m\_suspensionRestLength\ =\ suspensionRestLength;}
+\DoxyCodeLine{00067\ \ \ \ \ ci.m\_wheelRadius\ =\ wheelRadius;}
+\DoxyCodeLine{00068\ \ \ \ \ ci.m\_suspensionStiffness\ =\ tuning.m\_suspensionStiffness;}
+\DoxyCodeLine{00069\ \ \ \ \ ci.m\_wheelsDampingCompression\ =\ tuning.m\_suspensionCompression;}
+\DoxyCodeLine{00070\ \ \ \ \ ci.m\_wheelsDampingRelaxation\ =\ tuning.m\_suspensionDamping;}
+\DoxyCodeLine{00071\ \ \ \ \ ci.m\_frictionSlip\ =\ tuning.m\_frictionSlip;}
+\DoxyCodeLine{00072\ \ \ \ \ ci.m\_bIsFrontWheel\ =\ isFrontWheel;}
+\DoxyCodeLine{00073\ \ \ \ \ ci.m\_maxSuspensionTravelCm\ =\ tuning.m\_maxSuspensionTravelCm;}
+\DoxyCodeLine{00074\ \ \ \ \ ci.m\_maxSuspensionForce\ =\ tuning.m\_maxSuspensionForce;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ m\_wheelInfo.push\_back(\mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}(ci));}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel\ =\ m\_wheelInfo[getNumWheels()\ -\/\ 1];}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ updateWheelTransformsWS(wheel,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00081\ \ \ \ \ updateWheelTransform(getNumWheels()\ -\/\ 1,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{return}\ wheel;}
+\DoxyCodeLine{00083\ \}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{keyword}{const}\ btTransform\&\ btRaycastVehicle::getWheelTransformWS(\textcolor{keywordtype}{int}\ wheelIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00086\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00087\ \ \ \ \ btAssert(wheelIndex\ <\ getNumWheels());}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel\ =\ m\_wheelInfo[wheelIndex];}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordflow}{return}\ wheel.m\_worldTransform;}
+\DoxyCodeLine{00090\ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{void}\ btRaycastVehicle::updateWheelTransform(\textcolor{keywordtype}{int}\ wheelIndex,\ \textcolor{keywordtype}{bool}\ interpolatedTransform)}
+\DoxyCodeLine{00093\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel\ =\ m\_wheelInfo[wheelIndex];}
+\DoxyCodeLine{00095\ \ \ \ \ updateWheelTransformsWS(wheel,\ interpolatedTransform);}
+\DoxyCodeLine{00096\ \ \ \ \ btVector3\ up\ =\ -\/wheel.m\_raycastInfo.m\_wheelDirectionWS;}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ right\ =\ wheel.m\_raycastInfo.m\_wheelAxleWS;}
+\DoxyCodeLine{00098\ \ \ \ \ btVector3\ fwd\ =\ up.cross(right);}
+\DoxyCodeLine{00099\ \ \ \ \ fwd\ =\ fwd.normalize();}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{//\ \ up\ =\ right.cross(fwd);}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{//\ \ up.normalize();}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//rotate\ around\ steering\ over\ de\ wheelAxleWS}}
+\DoxyCodeLine{00104\ \ \ \ \ btScalar\ steering\ =\ wheel.m\_steering;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ steeringOrn(up,\ steering);\ \ \textcolor{comment}{//wheel.m\_steering);}}
+\DoxyCodeLine{00107\ \ \ \ \ btMatrix3x3\ steeringMat(steeringOrn);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ rotatingOrn(right,\ -\/wheel.m\_rotation);}
+\DoxyCodeLine{00110\ \ \ \ \ btMatrix3x3\ rotatingMat(rotatingOrn);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ btMatrix3x3\ basis2;}
+\DoxyCodeLine{00113\ \ \ \ \ basis2[0][m\_indexRightAxis]\ =\ -\/right[0];}
+\DoxyCodeLine{00114\ \ \ \ \ basis2[1][m\_indexRightAxis]\ =\ -\/right[1];}
+\DoxyCodeLine{00115\ \ \ \ \ basis2[2][m\_indexRightAxis]\ =\ -\/right[2];}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ basis2[0][m\_indexUpAxis]\ =\ up[0];}
+\DoxyCodeLine{00118\ \ \ \ \ basis2[1][m\_indexUpAxis]\ =\ up[1];}
+\DoxyCodeLine{00119\ \ \ \ \ basis2[2][m\_indexUpAxis]\ =\ up[2];}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ basis2[0][m\_indexForwardAxis]\ =\ fwd[0];}
+\DoxyCodeLine{00122\ \ \ \ \ basis2[1][m\_indexForwardAxis]\ =\ fwd[1];}
+\DoxyCodeLine{00123\ \ \ \ \ basis2[2][m\_indexForwardAxis]\ =\ fwd[2];}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ wheel.m\_worldTransform.setBasis(steeringMat\ *\ rotatingMat\ *\ basis2);}
+\DoxyCodeLine{00126\ \ \ \ \ wheel.m\_worldTransform.setOrigin(}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_hardPointWS\ +\ wheel.m\_raycastInfo.m\_wheelDirectionWS\ *\ wheel.m\_raycastInfo.m\_suspensionLength);}
+\DoxyCodeLine{00128\ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ btRaycastVehicle::resetSuspension()}
+\DoxyCodeLine{00131\ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_wheelInfo.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00134\ \ \ \ \ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel\ =\ m\_wheelInfo[i];}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_suspensionLength\ =\ wheel.getSuspensionRestLength();}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ wheel.m\_suspensionRelativeVelocity\ =\ btScalar(0.0);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_contactNormalWS\ =\ -\/wheel.m\_raycastInfo.m\_wheelDirectionWS;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{comment}{//wheel\_info.setContactFriction(btScalar(0.0));}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ wheel.m\_clippedInvContactDotSuspension\ =\ btScalar(1.0);}
+\DoxyCodeLine{00142\ \ \ \ \ \}}
+\DoxyCodeLine{00143\ \}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ btRaycastVehicle::updateWheelTransformsWS(\mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel,\ \textcolor{keywordtype}{bool}\ interpolatedTransform)}
+\DoxyCodeLine{00146\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ wheel.m\_raycastInfo.m\_isInContact\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ btTransform\ chassisTrans\ =\ getChassisWorldTransform();}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordflow}{if}\ (interpolatedTransform\ \&\&\ (getRigidBody()-\/>getMotionState()))}
+\DoxyCodeLine{00151\ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ getRigidBody()-\/>getMotionState()-\/>getWorldTransform(chassisTrans);}
+\DoxyCodeLine{00153\ \ \ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ wheel.m\_raycastInfo.m\_hardPointWS\ =\ chassisTrans(wheel.m\_chassisConnectionPointCS);}
+\DoxyCodeLine{00156\ \ \ \ \ wheel.m\_raycastInfo.m\_wheelDirectionWS\ =\ chassisTrans.getBasis()\ *\ wheel.m\_wheelDirectionCS;}
+\DoxyCodeLine{00157\ \ \ \ \ wheel.m\_raycastInfo.m\_wheelAxleWS\ =\ chassisTrans.getBasis()\ *\ wheel.m\_wheelAxleCS;}
+\DoxyCodeLine{00158\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ btScalar\ \mbox{\hyperlink{classbt_raycast_vehicle_a53451c4e3495561f3f078b2041ef04be}{btRaycastVehicle::rayCast}}(\mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel)}
+\DoxyCodeLine{00161\ \{}
+\DoxyCodeLine{00162\ \ \ \ \ updateWheelTransformsWS(wheel,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ btScalar\ depth\ =\ -\/1;}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ btScalar\ raylen\ =\ wheel.getSuspensionRestLength()\ +\ wheel.m\_wheelsRadius;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ btVector3\ rayvector\ =\ wheel.m\_raycastInfo.m\_wheelDirectionWS\ *\ (raylen);}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ source\ =\ wheel.m\_raycastInfo.m\_hardPointWS;}
+\DoxyCodeLine{00170\ \ \ \ \ wheel.m\_raycastInfo.m\_contactPointWS\ =\ source\ +\ rayvector;}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ target\ =\ wheel.m\_raycastInfo.m\_contactPointWS;}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ btScalar\ param\ =\ btScalar(0.);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \mbox{\hyperlink{structbt_vehicle_raycaster_1_1bt_vehicle_raycaster_result}{btVehicleRaycaster::btVehicleRaycasterResult}}\ rayResults;}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ btAssert(m\_vehicleRaycaster);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{void}*\ \textcolor{keywordtype}{object}\ =\ m\_vehicleRaycaster-\/>castRay(source,\ target,\ rayResults);}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ wheel.m\_raycastInfo.m\_groundObject\ =\ 0;}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keywordtype}{object})}
+\DoxyCodeLine{00184\ \ \ \ \ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ param\ =\ rayResults.m\_distFraction;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ depth\ =\ raylen\ *\ rayResults.m\_distFraction;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_contactNormalWS\ =\ rayResults.m\_hitNormalInWorld;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_isInContact\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_groundObject\ =\ \&getFixedBody();\ \ }
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{comment}{//wheel.m\_raycastInfo.m\_groundObject\ =\ object;}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ btScalar\ hitDistance\ =\ param\ *\ raylen;}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_suspensionLength\ =\ hitDistance\ -\/\ wheel.m\_wheelsRadius;}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \textcolor{comment}{//clamp\ on\ max\ suspension\ travel}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ btScalar\ minSuspensionLength\ =\ wheel.getSuspensionRestLength()\ -\/\ wheel.m\_maxSuspensionTravelCm\ *\ btScalar(0.01);}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ btScalar\ maxSuspensionLength\ =\ wheel.getSuspensionRestLength()\ +\ wheel.m\_maxSuspensionTravelCm\ *\ btScalar(0.01);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wheel.m\_raycastInfo.m\_suspensionLength\ <\ minSuspensionLength)}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_suspensionLength\ =\ minSuspensionLength;}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wheel.m\_raycastInfo.m\_suspensionLength\ >\ maxSuspensionLength)}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_suspensionLength\ =\ maxSuspensionLength;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_contactPointWS\ =\ rayResults.m\_hitPointInWorld;}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ btScalar\ denominator\ =\ wheel.m\_raycastInfo.m\_contactNormalWS.dot(wheel.m\_raycastInfo.m\_wheelDirectionWS);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ btVector3\ chassis\_velocity\_at\_contactPoint;}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ btVector3\ relpos\ =\ wheel.m\_raycastInfo.m\_contactPointWS\ -\/\ getRigidBody()-\/>getCenterOfMassPosition();}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ chassis\_velocity\_at\_contactPoint\ =\ getRigidBody()-\/>getVelocityInLocalPoint(relpos);}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ btScalar\ projVel\ =\ wheel.m\_raycastInfo.m\_contactNormalWS.dot(chassis\_velocity\_at\_contactPoint);}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (denominator\ >=\ btScalar(-\/0.1))}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_suspensionRelativeVelocity\ =\ btScalar(0.0);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_clippedInvContactDotSuspension\ =\ btScalar(1.0)\ /\ btScalar(0.1);}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ inv\ =\ btScalar(-\/1.)\ /\ denominator;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_suspensionRelativeVelocity\ =\ projVel\ *\ inv;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_clippedInvContactDotSuspension\ =\ inv;}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00230\ \ \ \ \ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00232\ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{comment}{//put\ wheel\ info\ as\ in\ rest\ position}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_suspensionLength\ =\ wheel.getSuspensionRestLength();}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ wheel.m\_suspensionRelativeVelocity\ =\ btScalar(0.0);}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ wheel.m\_raycastInfo.m\_contactNormalWS\ =\ -\/wheel.m\_raycastInfo.m\_wheelDirectionWS;}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ wheel.m\_clippedInvContactDotSuspension\ =\ btScalar(1.0);}
+\DoxyCodeLine{00238\ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keywordflow}{return}\ depth;}
+\DoxyCodeLine{00241\ \}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \textcolor{keyword}{const}\ btTransform\&\ btRaycastVehicle::getChassisWorldTransform()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00244\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{comment}{/*if\ (getRigidBody()-\/>getMotionState())}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ \ \ \ \ \ \ btTransform\ chassisWorldTrans;}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ \ \ \ \ \ \ \ getRigidBody()-\/>getMotionState()-\/>getWorldTransform(chassisWorldTrans);}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ \ \ \ \ \ \ \ return\ chassisWorldTrans;}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ \ \ \ \}}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ \ \ \ */}}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{keywordflow}{return}\ getRigidBody()-\/>getCenterOfMassTransform();}
+\DoxyCodeLine{00254\ \}}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \textcolor{keywordtype}{void}\ btRaycastVehicle::updateVehicle(btScalar\ step)}
+\DoxyCodeLine{00257\ \{}
+\DoxyCodeLine{00258\ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ getNumWheels();\ i++)}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ updateWheelTransform(i,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00263\ \ \ \ \ \}}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \ \ \ \ m\_currentVehicleSpeedKmHour\ =\ btScalar(3.6)\ *\ getRigidBody()-\/>getLinearVelocity().length();}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ chassisTrans\ =\ getChassisWorldTransform();}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ btVector3\ forwardW(}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ chassisTrans.getBasis()[0][m\_indexForwardAxis],}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ chassisTrans.getBasis()[1][m\_indexForwardAxis],}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ chassisTrans.getBasis()[2][m\_indexForwardAxis]);}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordflow}{if}\ (forwardW.dot(getRigidBody()-\/>getLinearVelocity())\ <\ btScalar(0.))}
+\DoxyCodeLine{00275\ \ \ \ \ \{}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ m\_currentVehicleSpeedKmHour\ *=\ btScalar(-\/1.);}
+\DoxyCodeLine{00277\ \ \ \ \ \}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{comment}{//\ simulate\ suspension}}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ 0;}
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_wheelInfo.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00285\ \ \ \ \ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btScalar\ depth;}}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \textcolor{comment}{//depth\ =}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_raycast_vehicle_a53451c4e3495561f3f078b2041ef04be}{rayCast}}(m\_wheelInfo[i]);}
+\DoxyCodeLine{00289\ \ \ \ \ \}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ updateSuspension(step);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_wheelInfo.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00294\ \ \ \ \ \{}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{comment}{//apply\ suspension\ force}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel\ =\ m\_wheelInfo[i];}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ btScalar\ suspensionForce\ =\ wheel.m\_wheelsSuspensionForce;}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (suspensionForce\ >\ wheel.m\_maxSuspensionForce)}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ suspensionForce\ =\ wheel.m\_maxSuspensionForce;}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ btVector3\ impulse\ =\ wheel.m\_raycastInfo.m\_contactNormalWS\ *\ suspensionForce\ *\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}};}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ btVector3\ relpos\ =\ wheel.m\_raycastInfo.m\_contactPointWS\ -\/\ getRigidBody()-\/>getCenterOfMassPosition();}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ getRigidBody()-\/>applyImpulse(impulse,\ relpos);}
+\DoxyCodeLine{00308\ \ \ \ \ \}}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ updateFriction(step);}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_wheelInfo.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00313\ \ \ \ \ \{}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel\ =\ m\_wheelInfo[i];}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ btVector3\ relpos\ =\ wheel.m\_raycastInfo.m\_hardPointWS\ -\/\ getRigidBody()-\/>getCenterOfMassPosition();}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ btVector3\ vel\ =\ getRigidBody()-\/>getVelocityInLocalPoint(relpos);}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wheel.m\_raycastInfo.m\_isInContact)}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ chassisWorldTransform\ =\ getChassisWorldTransform();}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ fwd(}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ chassisWorldTransform.getBasis()[0][m\_indexForwardAxis],}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ chassisWorldTransform.getBasis()[1][m\_indexForwardAxis],}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ chassisWorldTransform.getBasis()[2][m\_indexForwardAxis]);}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ \mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}}\ =\ fwd.dot(wheel.m\_raycastInfo.m\_contactNormalWS);}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ fwd\ -\/=\ wheel.m\_raycastInfo.m\_contactNormalWS\ *\ \mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}};}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ proj2\ =\ fwd.dot(vel);}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_deltaRotation\ =\ (proj2\ *\ \mbox{\hyperlink{group__core__func__common_ga015a1261ff23e12650211aa872863cce}{step}})\ /\ (wheel.m\_wheelsRadius);}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_rotation\ +=\ wheel.m\_deltaRotation;}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ wheel.m\_rotation\ +=\ wheel.m\_deltaRotation;}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ wheel.m\_deltaRotation\ *=\ btScalar(0.99);\ \ \textcolor{comment}{//damping\ of\ rotation\ when\ not\ in\ contact}}
+\DoxyCodeLine{00341\ \ \ \ \ \}}
+\DoxyCodeLine{00342\ \}}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \textcolor{keywordtype}{void}\ btRaycastVehicle::setSteeringValue(btScalar\ steering,\ \textcolor{keywordtype}{int}\ wheel)}
+\DoxyCodeLine{00345\ \{}
+\DoxyCodeLine{00346\ \ \ \ \ btAssert(wheel\ >=\ 0\ \&\&\ wheel\ <\ getNumWheels());}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheelInfo\ =\ getWheelInfo(wheel);}
+\DoxyCodeLine{00349\ \ \ \ \ wheelInfo.m\_steering\ =\ steering;}
+\DoxyCodeLine{00350\ \}}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ btScalar\ btRaycastVehicle::getSteeringValue(\textcolor{keywordtype}{int}\ wheel)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00353\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00354\ \ \ \ \ \textcolor{keywordflow}{return}\ getWheelInfo(wheel).m\_steering;}
+\DoxyCodeLine{00355\ \}}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \textcolor{keywordtype}{void}\ btRaycastVehicle::applyEngineForce(btScalar\ force,\ \textcolor{keywordtype}{int}\ wheel)}
+\DoxyCodeLine{00358\ \{}
+\DoxyCodeLine{00359\ \ \ \ \ btAssert(wheel\ >=\ 0\ \&\&\ wheel\ <\ getNumWheels());}
+\DoxyCodeLine{00360\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheelInfo\ =\ getWheelInfo(wheel);}
+\DoxyCodeLine{00361\ \ \ \ \ wheelInfo.m\_engineForce\ =\ force;}
+\DoxyCodeLine{00362\ \}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ btRaycastVehicle::getWheelInfo(\textcolor{keywordtype}{int}\ index)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00365\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00366\ \ \ \ \ btAssert((index\ >=\ 0)\ \&\&\ (index\ <\ getNumWheels()));}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_wheelInfo[index];}
+\DoxyCodeLine{00369\ \}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ btRaycastVehicle::getWheelInfo(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00372\ \{}
+\DoxyCodeLine{00373\ \ \ \ \ btAssert((index\ >=\ 0)\ \&\&\ (index\ <\ getNumWheels()));}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_wheelInfo[index];}
+\DoxyCodeLine{00376\ \}}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \textcolor{keywordtype}{void}\ btRaycastVehicle::setBrake(btScalar\ brake,\ \textcolor{keywordtype}{int}\ wheelIndex)}
+\DoxyCodeLine{00379\ \{}
+\DoxyCodeLine{00380\ \ \ \ \ btAssert((wheelIndex\ >=\ 0)\ \&\&\ (wheelIndex\ <\ getNumWheels()));}
+\DoxyCodeLine{00381\ \ \ \ \ getWheelInfo(wheelIndex).m\_brake\ =\ brake;}
+\DoxyCodeLine{00382\ \}}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00384\ \textcolor{keywordtype}{void}\ btRaycastVehicle::updateSuspension(btScalar\ deltaTime)}
+\DoxyCodeLine{00385\ \{}
+\DoxyCodeLine{00386\ \ \ \ \ (void)deltaTime;}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \ \ \ \ btScalar\ chassisMass\ =\ btScalar(1.)\ /\ m\_chassisBody-\/>getInvMass();}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ w\_it\ =\ 0;\ w\_it\ <\ getNumWheels();\ w\_it++)}
+\DoxyCodeLine{00391\ \ \ \ \ \{}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel\_info\ =\ m\_wheelInfo[w\_it];}
+\DoxyCodeLine{00393\ }
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wheel\_info.m\_raycastInfo.m\_isInContact)}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ force;}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ Spring}}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ susp\_length\ =\ wheel\_info.getSuspensionRestLength();}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ current\_length\ =\ wheel\_info.m\_raycastInfo.m\_suspensionLength;}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ length\_diff\ =\ (susp\_length\ -\/\ current\_length);}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force\ =\ wheel\_info.m\_suspensionStiffness\ *\ length\_diff\ *\ wheel\_info.m\_clippedInvContactDotSuspension;}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Damper}}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ projected\_rel\_vel\ =\ wheel\_info.m\_suspensionRelativeVelocity;}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ susp\_damping;}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (projected\_rel\_vel\ <\ btScalar(0.0))}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ susp\_damping\ =\ wheel\_info.m\_wheelsDampingCompression;}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ susp\_damping\ =\ wheel\_info.m\_wheelsDampingRelaxation;}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ force\ -\/=\ susp\_damping\ *\ projected\_rel\_vel;}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00423\ }
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ RESULT}}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ wheel\_info.m\_wheelsSuspensionForce\ =\ force\ *\ chassisMass;}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wheel\_info.m\_wheelsSuspensionForce\ <\ btScalar(0.))}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wheel\_info.m\_wheelsSuspensionForce\ =\ btScalar(0.);}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ wheel\_info.m\_wheelsSuspensionForce\ =\ btScalar(0.0);}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00435\ \ \ \ \ \}}
+\DoxyCodeLine{00436\ \}}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_wheel_contact_point}{btWheelContactPoint}}}
+\DoxyCodeLine{00439\ \{}
+\DoxyCodeLine{00440\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ m\_body0;}
+\DoxyCodeLine{00441\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ m\_body1;}
+\DoxyCodeLine{00442\ \ \ \ \ btVector3\ m\_frictionPositionWorld;}
+\DoxyCodeLine{00443\ \ \ \ \ btVector3\ m\_frictionDirectionWorld;}
+\DoxyCodeLine{00444\ \ \ \ \ btScalar\ m\_jacDiagABInv;}
+\DoxyCodeLine{00445\ \ \ \ \ btScalar\ m\_maxImpulse;}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_contact_point}{btWheelContactPoint}}(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body0,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body1,\ \textcolor{keyword}{const}\ btVector3\&\ frictionPosWorld,\ \textcolor{keyword}{const}\ btVector3\&\ frictionDirectionWorld,\ btScalar\ maxImpulse)}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ :\ m\_body0(body0),}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ m\_body1(body1),}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ m\_frictionPositionWorld(frictionPosWorld),}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ m\_frictionDirectionWorld(frictionDirectionWorld),}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ m\_maxImpulse(maxImpulse)}
+\DoxyCodeLine{00453\ \ \ \ \ \{}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ btScalar\ denom0\ =\ body0-\/>computeImpulseDenominator(frictionPosWorld,\ frictionDirectionWorld);}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ btScalar\ denom1\ =\ body1-\/>computeImpulseDenominator(frictionPosWorld,\ frictionDirectionWorld);}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ btScalar\ relaxation\ =\ 1.f;}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ m\_jacDiagABInv\ =\ relaxation\ /\ (denom0\ +\ denom1);}
+\DoxyCodeLine{00458\ \ \ \ \ \}}
+\DoxyCodeLine{00459\ \};}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00461\ btScalar\ calcRollingFriction(\mbox{\hyperlink{structbt_wheel_contact_point}{btWheelContactPoint}}\&\ contactPoint,\ \textcolor{keywordtype}{int}\ numWheelsOnGround);}
+\DoxyCodeLine{00462\ btScalar\ calcRollingFriction(\mbox{\hyperlink{structbt_wheel_contact_point}{btWheelContactPoint}}\&\ contactPoint,\ \textcolor{keywordtype}{int}\ numWheelsOnGround)}
+\DoxyCodeLine{00463\ \{}
+\DoxyCodeLine{00464\ \ \ \ \ btScalar\ j1\ =\ 0.f;}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ contactPosWorld\ =\ contactPoint.m\_frictionPositionWorld;}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \ \ \ \ btVector3\ rel\_pos1\ =\ contactPosWorld\ -\/\ contactPoint.m\_body0-\/>getCenterOfMassPosition();}
+\DoxyCodeLine{00469\ \ \ \ \ btVector3\ rel\_pos2\ =\ contactPosWorld\ -\/\ contactPoint.m\_body1-\/>getCenterOfMassPosition();}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \ \ \ \ btScalar\ maxImpulse\ =\ contactPoint.m\_maxImpulse;}
+\DoxyCodeLine{00472\ }
+\DoxyCodeLine{00473\ \ \ \ \ btVector3\ vel1\ =\ contactPoint.m\_body0-\/>getVelocityInLocalPoint(rel\_pos1);}
+\DoxyCodeLine{00474\ \ \ \ \ btVector3\ vel2\ =\ contactPoint.m\_body1-\/>getVelocityInLocalPoint(rel\_pos2);}
+\DoxyCodeLine{00475\ \ \ \ \ btVector3\ vel\ =\ vel1\ -\/\ vel2;}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \ \ \ \ btScalar\ vrel\ =\ contactPoint.m\_frictionDirectionWorld.dot(vel);}
+\DoxyCodeLine{00478\ }
+\DoxyCodeLine{00479\ \ \ \ \ \textcolor{comment}{//\ calculate\ j\ that\ moves\ us\ to\ zero\ relative\ velocity}}
+\DoxyCodeLine{00480\ \ \ \ \ j1\ =\ -\/vrel\ *\ contactPoint.m\_jacDiagABInv\ /\ btScalar(numWheelsOnGround);}
+\DoxyCodeLine{00481\ \ \ \ \ btSetMin(j1,\ maxImpulse);}
+\DoxyCodeLine{00482\ \ \ \ \ btSetMax(j1,\ -\/maxImpulse);}
+\DoxyCodeLine{00483\ }
+\DoxyCodeLine{00484\ \ \ \ \ \textcolor{keywordflow}{return}\ j1;}
+\DoxyCodeLine{00485\ \}}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00487\ btScalar\ sideFrictionStiffness2\ =\ btScalar(1.0);}
+\DoxyCodeLine{00488\ \textcolor{keywordtype}{void}\ btRaycastVehicle::updateFriction(btScalar\ timeStep)}
+\DoxyCodeLine{00489\ \{}
+\DoxyCodeLine{00490\ \ \ \ \ \textcolor{comment}{//calculate\ the\ impulse,\ so\ that\ the\ wheels\ don't\ move\ sidewards}}
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keywordtype}{int}\ numWheel\ =\ getNumWheels();}
+\DoxyCodeLine{00492\ \ \ \ \ \textcolor{keywordflow}{if}\ (!numWheel)}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ \ \ \ \ m\_forwardWS.resize(numWheel);}
+\DoxyCodeLine{00496\ \ \ \ \ m\_axle.resize(numWheel);}
+\DoxyCodeLine{00497\ \ \ \ \ m\_forwardImpulse.resize(numWheel);}
+\DoxyCodeLine{00498\ \ \ \ \ m\_sideImpulse.resize(numWheel);}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \ \ \ \ \textcolor{keywordtype}{int}\ numWheelsOnGround\ =\ 0;}
+\DoxyCodeLine{00501\ }
+\DoxyCodeLine{00502\ \ \ \ \ \textcolor{comment}{//collapse\ all\ those\ loops\ into\ one!}}
+\DoxyCodeLine{00503\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ getNumWheels();\ i++)}
+\DoxyCodeLine{00504\ \ \ \ \ \{}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheelInfo\ =\ m\_wheelInfo[i];}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ groundObject\ =\ (\textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*)wheelInfo.m\_raycastInfo.m\_groundObject;}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (groundObject)}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ numWheelsOnGround++;}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ m\_sideImpulse[i]\ =\ btScalar(0.);}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ m\_forwardImpulse[i]\ =\ btScalar(0.);}
+\DoxyCodeLine{00511\ \ \ \ \ \}}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \ \ \ \ \{}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ getNumWheels();\ i++)}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheelInfo\ =\ m\_wheelInfo[i];}
+\DoxyCodeLine{00517\ }
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ groundObject\ =\ (\textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*)wheelInfo.m\_raycastInfo.m\_groundObject;}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (groundObject)}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ wheelTrans\ =\ getWheelTransformWS(i);}
+\DoxyCodeLine{00523\ }
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ wheelBasis0\ =\ wheelTrans.getBasis();}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_axle[i]\ =\ -\/btVector3(}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wheelBasis0[0][m\_indexRightAxis],}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wheelBasis0[1][m\_indexRightAxis],}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wheelBasis0[2][m\_indexRightAxis]);}
+\DoxyCodeLine{00529\ }
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ surfNormalWS\ =\ wheelInfo.m\_raycastInfo.m\_contactNormalWS;}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ \mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}}\ =\ m\_axle[i].dot(surfNormalWS);}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_axle[i]\ -\/=\ surfNormalWS\ *\ \mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}};}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_axle[i]\ =\ m\_axle[i].normalize();}
+\DoxyCodeLine{00534\ }
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_forwardWS[i]\ =\ surfNormalWS.cross(m\_axle[i]);}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_forwardWS[i].normalize();}
+\DoxyCodeLine{00537\ }
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resolveSingleBilateral(*m\_chassisBody,\ wheelInfo.m\_raycastInfo.m\_contactPointWS,}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *groundObject,\ wheelInfo.m\_raycastInfo.m\_contactPointWS,}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar(0.),\ m\_axle[i],\ m\_sideImpulse[i],\ timeStep);}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_sideImpulse[i]\ *=\ sideFrictionStiffness2;}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00545\ \ \ \ \ \}}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \ \ \ \ btScalar\ sideFactor\ =\ btScalar(1.);}
+\DoxyCodeLine{00548\ \ \ \ \ btScalar\ fwdFactor\ =\ 0.5;}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00550\ \ \ \ \ \textcolor{keywordtype}{bool}\ sliding\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00551\ \ \ \ \ \{}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ wheel\ =\ 0;\ wheel\ <\ getNumWheels();\ wheel++)}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheelInfo\ =\ m\_wheelInfo[wheel];}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ groundObject\ =\ (\textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*)wheelInfo.m\_raycastInfo.m\_groundObject;}
+\DoxyCodeLine{00556\ }
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ rollingFriction\ =\ 0.f;}
+\DoxyCodeLine{00558\ }
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (groundObject)}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wheelInfo.m\_engineForce\ !=\ 0.f)}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFriction\ =\ wheelInfo.m\_engineForce\ *\ timeStep;}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ defaultRollingFrictionImpulse\ =\ 0.f;}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maxImpulse\ =\ wheelInfo.m\_brake\ ?\ wheelInfo.m\_brake\ :\ defaultRollingFrictionImpulse;}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_contact_point}{btWheelContactPoint}}\ contactPt(m\_chassisBody,\ groundObject,\ wheelInfo.m\_raycastInfo.m\_contactPointWS,\ m\_forwardWS[wheel],\ maxImpulse);}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(numWheelsOnGround\ >\ 0);}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rollingFriction\ =\ calcRollingFriction(contactPt,\ numWheelsOnGround);}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//switch\ between\ active\ rolling\ (throttle),\ braking\ and\ non-\/active\ rolling\ friction\ (no\ throttle/break)}}
+\DoxyCodeLine{00576\ }
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ m\_forwardImpulse[wheel]\ =\ btScalar(0.);}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ m\_wheelInfo[wheel].m\_skidInfo\ =\ btScalar(1.);}
+\DoxyCodeLine{00579\ }
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (groundObject)}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_wheelInfo[wheel].m\_skidInfo\ =\ btScalar(1.);}
+\DoxyCodeLine{00583\ }
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maximp\ =\ wheelInfo.m\_wheelsSuspensionForce\ *\ timeStep\ *\ wheelInfo.m\_frictionSlip;}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maximpSide\ =\ maximp;}
+\DoxyCodeLine{00586\ }
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ maximpSquared\ =\ maximp\ *\ maximpSide;}
+\DoxyCodeLine{00588\ }
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_forwardImpulse[wheel]\ =\ rollingFriction;\ \ \textcolor{comment}{//wheelInfo.m\_engineForce*\ timeStep;}}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ x\ =\ (m\_forwardImpulse[wheel])\ *\ fwdFactor;}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ y\ =\ (m\_sideImpulse[wheel])\ *\ sideFactor;}
+\DoxyCodeLine{00593\ }
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ impulseSquared\ =\ (x\ *\ x\ +\ y\ *\ y);}
+\DoxyCodeLine{00595\ }
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (impulseSquared\ >\ maximpSquared)}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sliding\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ factor\ =\ maximp\ /\ btSqrt(impulseSquared);}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_wheelInfo[wheel].m\_skidInfo\ *=\ factor;}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00606\ \ \ \ \ \}}
+\DoxyCodeLine{00607\ }
+\DoxyCodeLine{00608\ \ \ \ \ \textcolor{keywordflow}{if}\ (sliding)}
+\DoxyCodeLine{00609\ \ \ \ \ \{}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ wheel\ =\ 0;\ wheel\ <\ getNumWheels();\ wheel++)}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_sideImpulse[wheel]\ !=\ btScalar(0.))}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_wheelInfo[wheel].m\_skidInfo\ <\ btScalar(1.))}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_forwardImpulse[wheel]\ *=\ m\_wheelInfo[wheel].m\_skidInfo;}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_sideImpulse[wheel]\ *=\ m\_wheelInfo[wheel].m\_skidInfo;}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00621\ \ \ \ \ \}}
+\DoxyCodeLine{00622\ }
+\DoxyCodeLine{00623\ \ \ \ \ \textcolor{comment}{//\ apply\ the\ impulses}}
+\DoxyCodeLine{00624\ \ \ \ \ \{}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ wheel\ =\ 0;\ wheel\ <\ getNumWheels();\ wheel++)}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheelInfo\ =\ m\_wheelInfo[wheel];}
+\DoxyCodeLine{00628\ }
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rel\_pos\ =\ wheelInfo.m\_raycastInfo.m\_contactPointWS\ -\/}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_chassisBody-\/>getCenterOfMassPosition();}
+\DoxyCodeLine{00631\ }
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_forwardImpulse[wheel]\ !=\ btScalar(0.))}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_chassisBody-\/>applyImpulse(m\_forwardWS[wheel]\ *\ (m\_forwardImpulse[wheel]),\ rel\_pos);}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_sideImpulse[wheel]\ !=\ btScalar(0.))}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ groundObject\ =\ (\textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*)m\_wheelInfo[wheel].m\_raycastInfo.m\_groundObject;}
+\DoxyCodeLine{00639\ }
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rel\_pos2\ =\ wheelInfo.m\_raycastInfo.m\_contactPointWS\ -\/}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ groundObject-\/>getCenterOfMassPosition();}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ sideImp\ =\ m\_axle[wheel]\ *\ m\_sideImpulse[wheel];}
+\DoxyCodeLine{00644\ }
+\DoxyCodeLine{00645\ \textcolor{preprocessor}{\#if\ defined\ ROLLING\_INFLUENCE\_FIX\ \ }\textcolor{comment}{//\ fix.\ It\ only\ worked\ if\ car's\ up\ was\ along\ Y\ -\/\ VT.}}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ vChassisWorldUp\ =\ getRigidBody()-\/>getCenterOfMassTransform().getBasis().getColumn(m\_indexUpAxis);}
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rel\_pos\ -\/=\ vChassisWorldUp\ *\ (vChassisWorldUp.dot(rel\_pos)\ *\ (1.f\ -\/\ wheelInfo.m\_rollInfluence));}
+\DoxyCodeLine{00648\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rel\_pos[m\_indexUpAxis]\ *=\ wheelInfo.m\_rollInfluence;}
+\DoxyCodeLine{00650\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_chassisBody-\/>applyImpulse(sideImp,\ rel\_pos);}
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//apply\ friction\ impulse\ on\ the\ ground}}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ groundObject-\/>applyImpulse(-\/sideImp,\ rel\_pos2);}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00657\ \ \ \ \ \}}
+\DoxyCodeLine{00658\ \}}
+\DoxyCodeLine{00659\ }
+\DoxyCodeLine{00660\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_raycast_vehicle_ab5dfeb4a57f735f6fb069bfc5654428d}{btRaycastVehicle::debugDraw}}(\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00661\ \{}
+\DoxyCodeLine{00662\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ v\ =\ 0;\ v\ <\ this-\/>getNumWheels();\ v++)}
+\DoxyCodeLine{00663\ \ \ \ \ \{}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ btVector3\ wheelColor(0,\ 1,\ 1);}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getWheelInfo(v).m\_raycastInfo.m\_isInContact)}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ wheelColor.setValue(0,\ 0,\ 1);}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ wheelColor.setValue(1,\ 0,\ 1);}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00673\ }
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ btVector3\ wheelPosWS\ =\ getWheelInfo(v).m\_worldTransform.getOrigin();}
+\DoxyCodeLine{00675\ }
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ btVector3\ axle\ =\ btVector3(}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ getWheelInfo(v).m\_worldTransform.getBasis()[0][getRightAxis()],}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ getWheelInfo(v).m\_worldTransform.getBasis()[1][getRightAxis()],}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \ \ \ \ getWheelInfo(v).m\_worldTransform.getBasis()[2][getRightAxis()]);}
+\DoxyCodeLine{00680\ }
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \textcolor{comment}{//debug\ wheels\ (cylinders)}}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ debugDrawer-\/>drawLine(wheelPosWS,\ wheelPosWS\ +\ axle,\ wheelColor);}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ debugDrawer-\/>drawLine(wheelPosWS,\ getWheelInfo(v).m\_raycastInfo.m\_contactPointWS,\ wheelColor);}
+\DoxyCodeLine{00684\ \ \ \ \ \}}
+\DoxyCodeLine{00685\ \}}
+\DoxyCodeLine{00686\ }
+\DoxyCodeLine{00687\ \textcolor{keywordtype}{void}*\ btDefaultVehicleRaycaster::castRay(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ btVehicleRaycasterResult\&\ result)}
+\DoxyCodeLine{00688\ \{}
+\DoxyCodeLine{00689\ \ \ \ \ \textcolor{comment}{//\ \ RayResultCallback\&\ resultCallback;}}
+\DoxyCodeLine{00690\ }
+\DoxyCodeLine{00691\ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_closest_ray_result_callback}{btCollisionWorld::ClosestRayResultCallback}}\ rayCallback(from,\ to);}
+\DoxyCodeLine{00692\ }
+\DoxyCodeLine{00693\ \ \ \ \ m\_dynamicsWorld-\/>\mbox{\hyperlink{classbt_collision_world_a01fb1f5ff8a93c11f0c6837d225ae4b7}{rayTest}}(from,\ to,\ rayCallback);}
+\DoxyCodeLine{00694\ }
+\DoxyCodeLine{00695\ \ \ \ \ \textcolor{keywordflow}{if}\ (rayCallback.hasHit())}
+\DoxyCodeLine{00696\ \ \ \ \ \{}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body\ =\ \mbox{\hyperlink{classbt_rigid_body_ae4867a6bafb413e3a2e18dd1de125042}{btRigidBody::upcast}}(rayCallback.m\_collisionObject);}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (body\ \&\&\ body-\/>hasContactResponse())}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_hitPointInWorld\ =\ rayCallback.m\_hitPointWorld;}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_hitNormalInWorld\ =\ rayCallback.m\_hitNormalWorld;}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_hitNormalInWorld.normalize();}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \ \ \ \ result.m\_distFraction\ =\ rayCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{void}*)body;}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00706\ \ \ \ \ \}}
+\DoxyCodeLine{00707\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00708\ \}}
+
+\end{DoxyCode}

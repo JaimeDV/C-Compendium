@@ -1,0 +1,173 @@
+\doxysection{b3\+Dynamic\+Bvh Struct Reference}
+\hypertarget{structb3_dynamic_bvh}{}\label{structb3_dynamic_bvh}\index{b3DynamicBvh@{b3DynamicBvh}}
+
+
+{\ttfamily \#include $<$b3\+Dynamic\+Bvh.\+h$>$}
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structb3_dynamic_bvh_1_1_i_clone}{IClone}}
+\item 
+struct \mbox{\hyperlink{structb3_dynamic_bvh_1_1_i_collide}{ICollide}}
+\item 
+struct \mbox{\hyperlink{structb3_dynamic_bvh_1_1_i_writer}{IWriter}}
+\item 
+struct \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_c_l_n}{s\+Stk\+CLN}}
+\item 
+struct \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_n_n}{s\+Stk\+NN}}
+\item 
+struct \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_n_p}{s\+Stk\+NP}}
+\item 
+struct \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_n_p_s}{s\+Stk\+NPS}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structb3_dynamic_bvh_a66297bbb766a0ce25298a2b33217465e}\label{structb3_dynamic_bvh_a66297bbb766a0ce25298a2b33217465e} 
+enum \{ {\bfseries B3\+\_\+\+SIMPLE\+\_\+\+STACKSIZE} = 64
+, {\bfseries B3\+\_\+\+DOUBLE\+\_\+\+STACKSIZE} = B3\+\_\+\+SIMPLE\+\_\+\+STACKSIZE \texorpdfstring{$\ast$}{*} 2
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structb3_dynamic_bvh_a8ca5c8f27f5f17d669cd7a5fa90b9784}\label{structb3_dynamic_bvh_a8ca5c8f27f5f17d669cd7a5fa90b9784} 
+void {\bfseries clear} ()
+\item 
+\Hypertarget{structb3_dynamic_bvh_ad5d5f37ac2e4260f195821a15fcf255e}\label{structb3_dynamic_bvh_ad5d5f37ac2e4260f195821a15fcf255e} 
+bool {\bfseries empty} () const
+\item 
+\Hypertarget{structb3_dynamic_bvh_ad3e04e5404a22eb475c4a28144304ad4}\label{structb3_dynamic_bvh_ad3e04e5404a22eb475c4a28144304ad4} 
+void {\bfseries optimize\+Bottom\+Up} ()
+\item 
+\Hypertarget{structb3_dynamic_bvh_af82ebb4f5cc533a1255583bbcacf5375}\label{structb3_dynamic_bvh_af82ebb4f5cc533a1255583bbcacf5375} 
+void {\bfseries optimize\+Top\+Down} (int bu\+\_\+treshold=128)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a7f0cadab6bcb3000ee57342bc6fe0146}\label{structb3_dynamic_bvh_a7f0cadab6bcb3000ee57342bc6fe0146} 
+void {\bfseries optimize\+Incremental} (int passes)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a8c03edf7d8c65340d05854c3f4ca83b2}\label{structb3_dynamic_bvh_a8c03edf7d8c65340d05854c3f4ca83b2} 
+\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*} {\bfseries insert} (const \mbox{\hyperlink{structb3_dbvt_aabb_mm}{b3\+Dbvt\+Volume}} \&box, void \texorpdfstring{$\ast$}{*}data)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a28962c1f37ea20a2a5981716b8943fb9}\label{structb3_dynamic_bvh_a28962c1f37ea20a2a5981716b8943fb9} 
+void {\bfseries update} (\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}leaf, int lookahead=-\/1)
+\item 
+\Hypertarget{structb3_dynamic_bvh_aabbd2a9065b13bbfffa65656beed6ed0}\label{structb3_dynamic_bvh_aabbd2a9065b13bbfffa65656beed6ed0} 
+void {\bfseries update} (\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}leaf, \mbox{\hyperlink{structb3_dbvt_aabb_mm}{b3\+Dbvt\+Volume}} \&volume)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a7efa8c3d15b24a698ac8bcb007f39016}\label{structb3_dynamic_bvh_a7efa8c3d15b24a698ac8bcb007f39016} 
+bool {\bfseries update} (\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}leaf, \mbox{\hyperlink{structb3_dbvt_aabb_mm}{b3\+Dbvt\+Volume}} \&volume, const b3\+Vector3 \&velocity, b3\+Scalar margin)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a564e7f4f4cd5a1c0c31587ed9d696e29}\label{structb3_dynamic_bvh_a564e7f4f4cd5a1c0c31587ed9d696e29} 
+bool {\bfseries update} (\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}leaf, \mbox{\hyperlink{structb3_dbvt_aabb_mm}{b3\+Dbvt\+Volume}} \&volume, const b3\+Vector3 \&velocity)
+\item 
+\Hypertarget{structb3_dynamic_bvh_ad50c624c96fd6e59b1bc8296c921864d}\label{structb3_dynamic_bvh_ad50c624c96fd6e59b1bc8296c921864d} 
+bool {\bfseries update} (\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}leaf, \mbox{\hyperlink{structb3_dbvt_aabb_mm}{b3\+Dbvt\+Volume}} \&volume, b3\+Scalar margin)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a0a9f6a65186fc79006bb70a38f50b32b}\label{structb3_dynamic_bvh_a0a9f6a65186fc79006bb70a38f50b32b} 
+void {\bfseries remove} (\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}leaf)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a27f5cec5f77a88aec5fd71a9efa1b67d}\label{structb3_dynamic_bvh_a27f5cec5f77a88aec5fd71a9efa1b67d} 
+void {\bfseries write} (\mbox{\hyperlink{structb3_dynamic_bvh_1_1_i_writer}{IWriter}} \texorpdfstring{$\ast$}{*}iwriter) const
+\item 
+\Hypertarget{structb3_dynamic_bvh_af4b0d15a4cd9ce646fb034d063df4870}\label{structb3_dynamic_bvh_af4b0d15a4cd9ce646fb034d063df4870} 
+void {\bfseries clone} (\mbox{\hyperlink{structb3_dynamic_bvh}{b3\+Dynamic\+Bvh}} \&dest, \mbox{\hyperlink{structb3_dynamic_bvh_1_1_i_clone}{IClone}} \texorpdfstring{$\ast$}{*}iclone=0) const
+\item 
+\Hypertarget{structb3_dynamic_bvh_a64e7fe770c8057bfec49413888866b5d}\label{structb3_dynamic_bvh_a64e7fe770c8057bfec49413888866b5d} 
+B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries collide\+TT} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root0, const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root1, B3\+\_\+\+DBVT\+\_\+\+IPOLICY)
+\item 
+\Hypertarget{structb3_dynamic_bvh_af7990e02888057aab7e03f6697c061e6}\label{structb3_dynamic_bvh_af7990e02888057aab7e03f6697c061e6} 
+B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries collide\+TTpersistent\+Stack} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root0, const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root1, B3\+\_\+\+DBVT\+\_\+\+IPOLICY)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a09f375fb0fd112a70986866977e7ec0b}\label{structb3_dynamic_bvh_a09f375fb0fd112a70986866977e7ec0b} 
+B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries collide\+TV} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, const \mbox{\hyperlink{structb3_dbvt_aabb_mm}{b3\+Dbvt\+Volume}} \&volume, B3\+\_\+\+DBVT\+\_\+\+IPOLICY) const
+\item 
+B3\+\_\+\+DBVT\+\_\+\+PREFIX void \mbox{\hyperlink{structb3_dynamic_bvh_a654bd9d8c32db4d2fd4d220746318df5}{ray\+Test\+Internal}} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, const b3\+Vector3 \&ray\+From, const b3\+Vector3 \&ray\+To, const b3\+Vector3 \&ray\+Direction\+Inverse, unsigned int signs\mbox{[}3\mbox{]}, b3\+Scalar lambda\+\_\+max, const b3\+Vector3 \&aabb\+Min, const b3\+Vector3 \&aabb\+Max, B3\+\_\+\+DBVT\+\_\+\+IPOLICY) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structb3_dynamic_bvh_ac11b24064cab8d996802c4fc63a64398}\label{structb3_dynamic_bvh_ac11b24064cab8d996802c4fc63a64398} 
+static int {\bfseries maxdepth} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}node)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a2872b9752f45b90fbe6be0d168a3aa2a}\label{structb3_dynamic_bvh_a2872b9752f45b90fbe6be0d168a3aa2a} 
+static int {\bfseries count\+Leaves} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}node)
+\item 
+\Hypertarget{structb3_dynamic_bvh_addf1e3f0f6c0e29bd328b9827f4f29fc}\label{structb3_dynamic_bvh_addf1e3f0f6c0e29bd328b9827f4f29fc} 
+static void {\bfseries extract\+Leaves} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}node, \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*} $>$ \&leaves)
+\item 
+\Hypertarget{structb3_dynamic_bvh_aaadb51ab6e1e8e837ee752e12398a336}\label{structb3_dynamic_bvh_aaadb51ab6e1e8e837ee752e12398a336} 
+static void {\bfseries benchmark} ()
+\item 
+\Hypertarget{structb3_dynamic_bvh_a98e15df92a6ac9f44d0ef8b54ad5f615}\label{structb3_dynamic_bvh_a98e15df92a6ac9f44d0ef8b54ad5f615} 
+static B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries enum\+Nodes} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, B3\+\_\+\+DBVT\+\_\+\+IPOLICY)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a989340ca2a09c6e3cb0906f6a9fd954f}\label{structb3_dynamic_bvh_a989340ca2a09c6e3cb0906f6a9fd954f} 
+static B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries enum\+Leaves} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, B3\+\_\+\+DBVT\+\_\+\+IPOLICY)
+\item 
+static B3\+\_\+\+DBVT\+\_\+\+PREFIX void \mbox{\hyperlink{structb3_dynamic_bvh_ab913761020aef36751217a877fcf7e6d}{ray\+Test}} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, const b3\+Vector3 \&ray\+From, const b3\+Vector3 \&ray\+To, B3\+\_\+\+DBVT\+\_\+\+IPOLICY)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a865629c1af83ea1754f26a635806392c}\label{structb3_dynamic_bvh_a865629c1af83ea1754f26a635806392c} 
+static B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries collide\+KDOP} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, const b3\+Vector3 \texorpdfstring{$\ast$}{*}normals, const b3\+Scalar \texorpdfstring{$\ast$}{*}offsets, int count, B3\+\_\+\+DBVT\+\_\+\+IPOLICY)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a09cff46ad42fb292d3cd8d1e4222d49b}\label{structb3_dynamic_bvh_a09cff46ad42fb292d3cd8d1e4222d49b} 
+static B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries collide\+OCL} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, const b3\+Vector3 \texorpdfstring{$\ast$}{*}normals, const b3\+Scalar \texorpdfstring{$\ast$}{*}offsets, const b3\+Vector3 \&sortaxis, int count, B3\+\_\+\+DBVT\+\_\+\+IPOLICY, bool fullsort=true)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a734c50c7a21f00a053e3dec7bc6948e7}\label{structb3_dynamic_bvh_a734c50c7a21f00a053e3dec7bc6948e7} 
+static B3\+\_\+\+DBVT\+\_\+\+PREFIX void {\bfseries collide\+TU} (const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}root, B3\+\_\+\+DBVT\+\_\+\+IPOLICY)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a8a143856ef885a4af64e6e63dd7669c0}\label{structb3_dynamic_bvh_a8a143856ef885a4af64e6e63dd7669c0} 
+static B3\+\_\+\+DBVT\+\_\+\+INLINE int {\bfseries nearest} (const int \texorpdfstring{$\ast$}{*}i, const \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_n_p_s}{b3\+Dynamic\+Bvh\+::s\+Stk\+NPS}} \texorpdfstring{$\ast$}{*}a, b3\+Scalar v, int l, int h)
+\item 
+\Hypertarget{structb3_dynamic_bvh_a25898d15730e4c5b49f11e2b8dc79252}\label{structb3_dynamic_bvh_a25898d15730e4c5b49f11e2b8dc79252} 
+static B3\+\_\+\+DBVT\+\_\+\+INLINE int {\bfseries allocate} (\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ int $>$ \&ifree, \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_n_p_s}{s\+Stk\+NPS}} $>$ \&stock, const \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_n_p_s}{s\+Stk\+NPS}} \&value)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structb3_dynamic_bvh_a0edb7efe69e171a62fa1d3813392d8fa}\label{structb3_dynamic_bvh_a0edb7efe69e171a62fa1d3813392d8fa} 
+\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+root}
+\item 
+\Hypertarget{structb3_dynamic_bvh_aacbd0e740dcbf0ffb3c3daf1197d0b84}\label{structb3_dynamic_bvh_aacbd0e740dcbf0ffb3c3daf1197d0b84} 
+\mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+free}
+\item 
+\Hypertarget{structb3_dynamic_bvh_a6412569ad74981a5eafc385d11f384e1}\label{structb3_dynamic_bvh_a6412569ad74981a5eafc385d11f384e1} 
+int {\bfseries m\+\_\+lkhd}
+\item 
+\Hypertarget{structb3_dynamic_bvh_a6c38f8486b655758d41e85cf5123f7fa}\label{structb3_dynamic_bvh_a6c38f8486b655758d41e85cf5123f7fa} 
+int {\bfseries m\+\_\+leaves}
+\item 
+\Hypertarget{structb3_dynamic_bvh_a02452118a89b5e13b47356de5eb8e9df}\label{structb3_dynamic_bvh_a02452118a89b5e13b47356de5eb8e9df} 
+unsigned {\bfseries m\+\_\+opath}
+\item 
+\Hypertarget{structb3_dynamic_bvh_acbbadc5653ddd3195ccd3b20ca20c3b4}\label{structb3_dynamic_bvh_acbbadc5653ddd3195ccd3b20ca20c3b4} 
+\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ \mbox{\hyperlink{structb3_dynamic_bvh_1_1s_stk_n_n}{s\+Stk\+NN}} $>$ {\bfseries m\+\_\+stk\+Stack}
+\item 
+\Hypertarget{structb3_dynamic_bvh_a4eb706c11cf1b90fe21e2d714d0b2812}\label{structb3_dynamic_bvh_a4eb706c11cf1b90fe21e2d714d0b2812} 
+\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*} $>$ {\bfseries m\+\_\+ray\+Test\+Stack}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxylink{structb3_dynamic_bvh}{b3\+Dynamic\+Bvh} class implements a fast dynamic bounding volume tree based on axis aligned bounding boxes (aabb tree). This \doxylink{structb3_dynamic_bvh}{b3\+Dynamic\+Bvh} is used for soft body collision detection and for the \doxylink{structb3_dynamic_bvh_broadphase}{b3\+Dynamic\+Bvh\+Broadphase}. It has a fast insert, remove and update of nodes. Unlike the b3\+Quantized\+Bvh, nodes can be dynamically moved around, which allows for change in topology of the underlying data structure. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structb3_dynamic_bvh_ab913761020aef36751217a877fcf7e6d}\label{structb3_dynamic_bvh_ab913761020aef36751217a877fcf7e6d} 
+\index{b3DynamicBvh@{b3DynamicBvh}!rayTest@{rayTest}}
+\index{rayTest@{rayTest}!b3DynamicBvh@{b3DynamicBvh}}
+\doxysubsubsection{\texorpdfstring{rayTest()}{rayTest()}}
+{\footnotesize\ttfamily B3\+\_\+\+DBVT\+\_\+\+PREFIX void b3\+Dynamic\+Bvh\+::ray\+Test (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}}]{root,  }\item[{const b3\+Vector3 \&}]{ray\+From,  }\item[{const b3\+Vector3 \&}]{ray\+To,  }\item[{B3\+\_\+\+DBVT\+\_\+\+IPOLICY}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+ray\+Test is a re-\/entrant ray test, and can be called in parallel as long as the b3\+Aligned\+Alloc is thread-\/safe (uses locking etc) ray\+Test is slower than ray\+Test\+Internal, because it builds a local stack, using memory allocations, and it recomputes signs/ray\+Direction\+Inverses each time what about division by zero? -\/-\/\texorpdfstring{$>$}{>} just set ray\+Direction\mbox{[}i\mbox{]} to INF/\+B3\+\_\+\+LARGE\+\_\+\+FLOAT\Hypertarget{structb3_dynamic_bvh_a654bd9d8c32db4d2fd4d220746318df5}\label{structb3_dynamic_bvh_a654bd9d8c32db4d2fd4d220746318df5} 
+\index{b3DynamicBvh@{b3DynamicBvh}!rayTestInternal@{rayTestInternal}}
+\index{rayTestInternal@{rayTestInternal}!b3DynamicBvh@{b3DynamicBvh}}
+\doxysubsubsection{\texorpdfstring{rayTestInternal()}{rayTestInternal()}}
+{\footnotesize\ttfamily B3\+\_\+\+DBVT\+\_\+\+PREFIX void b3\+Dynamic\+Bvh\+::ray\+Test\+Internal (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structb3_dbvt_node}{b3\+Dbvt\+Node}} \texorpdfstring{$\ast$}{*}}]{root,  }\item[{const b3\+Vector3 \&}]{ray\+From,  }\item[{const b3\+Vector3 \&}]{ray\+To,  }\item[{const b3\+Vector3 \&}]{ray\+Direction\+Inverse,  }\item[{unsigned int}]{signs\mbox{[}3\mbox{]},  }\item[{b3\+Scalar}]{lambda\+\_\+max,  }\item[{const b3\+Vector3 \&}]{aabb\+Min,  }\item[{const b3\+Vector3 \&}]{aabb\+Max,  }\item[{B3\+\_\+\+DBVT\+\_\+\+IPOLICY}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+ray\+Test\+Internal is faster than ray\+Test, because it uses a persistent stack (to reduce dynamic memory allocations to a minimum) and it uses precomputed signs/ray\+Inverse\+Directions ray\+Test\+Internal is used by \doxylink{structb3_dynamic_bvh_broadphase}{b3\+Dynamic\+Bvh\+Broadphase} to accelerate world ray casts 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Collision/\+Broad\+Phase\+Collision/b3\+Dynamic\+Bvh.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Collision/\+Broad\+Phase\+Collision/b3\+Dynamic\+Bvh.\+cpp\end{DoxyCompactItemize}

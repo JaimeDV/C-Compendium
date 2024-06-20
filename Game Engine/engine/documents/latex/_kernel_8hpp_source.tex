@@ -1,0 +1,58 @@
+\doxysection{Kernel.\+hpp}
+\hypertarget{_kernel_8hpp_source}{}\label{_kernel_8hpp_source}\index{code/headers/Kernel.hpp@{code/headers/Kernel.hpp}}
+\mbox{\hyperlink{_kernel_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <queue>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <list>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_message_8hpp}{Message.hpp}}"{}}}
+\DoxyCodeLine{00011\ \textcolor{keyword}{using\ namespace\ }\mbox{\hyperlink{namespacestd}{std}};}
+\DoxyCodeLine{00012\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{class\ }Task;}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_kernel}{Kernel}}\ \textcolor{comment}{//al\ instanciarse\ puede\ buscar\ dll\ de\ un\ archivo\ e\ instanciar\ las\ dll\ que\ esten\ dentro}}
+\DoxyCodeLine{00016\ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*struct\ Task\_wrapper\ //un\ used}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ Task*\ task;}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ bool\ operator\ <\ (const\ Task\_wrapper\&\ other)\ const}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ *this-\/>task\ <\ *other.task;}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ \ \ \ \};*/}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ dispacher;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ std::list<Task*>\ tasks;\ \textcolor{comment}{//queue\ en\ vez\ de\ lista\ para\ poder\ poner\ prioridades}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ exit;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_kernel_a4a29b744ffb75d64da3cbcaed03312af}{Kernel}}()}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ exit\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_kernel_a8d04a86e306a5193c5e5982a3b9d1cf4}{add}}(\mbox{\hyperlink{classmisi_1_1_task}{Task}}**\ task)}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ tasks.push\_front(*task);}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_kernel_a4f9bf084658e4865494e24fd81dfb33a}{set\_exit}}(\textcolor{keywordtype}{bool}\ \mbox{\hyperlink{glad_8h_ac783c2a5a0d42f36a33959f6a34ae0ba}{value}})}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ exit\ =\ \mbox{\hyperlink{glad_8h_ac783c2a5a0d42f36a33959f6a34ae0ba}{value}};}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_kernel_a39ad2f26a95cd2ab2033e670b5f0c372}{set\_dispacher}}(\mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ given\_value)}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ dispacher\ =\ given\_value;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ \mbox{\hyperlink{classmisi_1_1_kernel_a4e2abb3fd53dc0d62264c049b1cd8edc}{get\_dispacher}}()}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ dispacher;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_kernel_acf7537660b100573b5ededd9d0c19950}{run}}();}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_kernel_a60f19aae373a3c656a03dcbc8acb99c3}{stop}}()}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ exit\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \ \ \ \ \};}
+\DoxyCodeLine{00056\ \}}
+
+\end{DoxyCode}

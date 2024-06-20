@@ -1,0 +1,201 @@
+\doxysection{b2\+\_\+wheel\+\_\+joint.\+h}
+\hypertarget{b2__wheel__joint_8h_source}{}\label{b2__wheel__joint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_wheel\_joint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_wheel\_joint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_WHEEL\_JOINT\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_WHEEL\_JOINT\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}b2\_joint.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_wheel_joint_def}{b2WheelJointDef}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structb2_joint_def}{b2JointDef}}}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{structb2_wheel_joint_def}{b2WheelJointDef}}()}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ type\ =\ e\_wheelJoint;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ localAnchorA.SetZero();}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ localAnchorB.SetZero();}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ localAxisA.Set(1.0f,\ 0.0f);}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ enableLimit\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ lowerTranslation\ =\ 0.0f;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ upperTranslation\ =\ 0.0f;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ enableMotor\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ maxMotorTorque\ =\ 0.0f;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ motorSpeed\ =\ 0.0f;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ stiffness\ =\ 0.0f;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ damping\ =\ 0.0f;}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb2_wheel_joint_def_af26887092d36c3cd03898401a38783e2}{Initialize}}(\mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyA,\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ anchor,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ axis);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_wheel_joint_def_a9429d2273bfdd8bdc0db416e73b89ae4}{localAnchorA}};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_wheel_joint_def_a88ba0f7108076b9d7ced68425be95c27}{localAnchorB}};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_wheel_joint_def_ad635ee7b77b50037dc0e021a0f5c93a6}{localAxisA}};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_wheel_joint_def_a3d46200f4f5342a46f5ef79f6a059d28}{enableLimit}};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_wheel_joint_def_a74d5dd6cf83e7984e599da98500fd949}{lowerTranslation}};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_wheel_joint_def_a63cf58bd91517985d824cd983d3c7b94}{upperTranslation}};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_wheel_joint_def_a8e7193d6c34c784ffd71e79d3a70acc6}{enableMotor}};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_wheel_joint_def_ac2f848b113782cf594f7fe28aaeb7a97}{maxMotorTorque}};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_wheel_joint_def_a3afc5f07648a13caedc9ca3f223a556f}{motorSpeed}};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_wheel_joint_def_a4a93efb807f7ab44d51941748b42f038}{stiffness}};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_wheel_joint_def_abfef1664c79bc98b782cc8035931aad0}{damping}};}
+\DoxyCodeLine{00089\ \};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00095\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_wheel_joint}{b2WheelJoint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb2_joint}{b2Joint}}}
+\DoxyCodeLine{00096\ \{}
+\DoxyCodeLine{00097\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00098\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_wheel_joint_a43a301e48ba486278932c82d3a98abd8}{GetAnchorA}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_wheel_joint_a62f450ad368793c3cde36404a39775e0}{GetAnchorB}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_wheel_joint_af60590d061d9c47e1f30c6d96a667ff4}{GetReactionForce}}(\textcolor{keywordtype}{float}\ inv\_dt)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_a2dc2734c5df3b381163b2ae25779f665}{GetReactionTorque}}(\textcolor{keywordtype}{float}\ inv\_dt)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_wheel_joint_a545f68256e895eebeb769b59caaddcaf}{GetLocalAnchorA}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_localAnchorA;\ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_wheel_joint_ae7a4de5104a52d0b568034c9cb92198b}{GetLocalAnchorB}}()\textcolor{keyword}{\ const\ \ }\{\ \textcolor{keywordflow}{return}\ m\_localAnchorB;\ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_wheel_joint_a61853e06e73656b7dd9875840487fca8}{GetLocalAxisA}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_localXAxisA;\ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_a7bfbe118654808ef258000f21cfd69ff}{GetJointTranslation}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_adf275d41c2deee038c6e574a96482828}{GetJointLinearSpeed}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_a18d00b2e7a7837c00795ea295a484cba}{GetJointAngle}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_a4678f47b5875e76989e0531115fd3784}{GetJointAngularSpeed}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_wheel_joint_a8d94a1a2fe588fa5f4905334d4456ffd}{IsLimitEnabled}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_a73e40351f5f42cf2de7235524bf1afad}{EnableLimit}}(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_a6022fc9b4b2b57ded45b45df94f14503}{GetLowerLimit}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_ae095bf76b791e44736d3dfebcaf0bbe6}{GetUpperLimit}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_ad57816ee69ab15373aedd1079d97d926}{SetLimits}}(\textcolor{keywordtype}{float}\ lower,\ \textcolor{keywordtype}{float}\ upper);}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_wheel_joint_aef7948a18ec2784397a1d3745824cd78}{IsMotorEnabled}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_a7a832d814bdda135a78fad41ba671da6}{EnableMotor}}(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_aa4ec3bc7ea7b5c977ccab10593176594}{SetMotorSpeed}}(\textcolor{keywordtype}{float}\ speed);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{float}\ GetMotorSpeed()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_adf5fb5c84056f595636bbc86ec974749}{SetMaxMotorTorque}}(\textcolor{keywordtype}{float}\ torque);}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{float}\ GetMaxMotorTorque()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_a6272c7afa6a27cc7c2ec8c531d279070}{GetMotorTorque}}(\textcolor{keywordtype}{float}\ inv\_dt)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_a2ed4f65494d59e65b2319b840ef3a503}{SetStiffness}}(\textcolor{keywordtype}{float}\ stiffness);}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{float}\ GetStiffness()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_a8ef2ae12739ddd92e765cc0419395d3a}{SetDamping}}(\textcolor{keywordtype}{float}\ damping);}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordtype}{float}\ GetDamping()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_a8295644bd733c28c8c9fa6390a367f3f}{Dump}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_wheel_joint_a259eee444cf0bd720960b72a628db3fe}{Draw}}(\mbox{\hyperlink{classb2_draw}{b2Draw}}*\ draw)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_joint}{b2Joint}};}
+\DoxyCodeLine{00176\ \ \ \ \ \mbox{\hyperlink{classb2_wheel_joint}{b2WheelJoint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_wheel_joint_def}{b2WheelJointDef}}*\ def);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{void}\ InitVelocityConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveVelocityConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordtype}{bool}\ SolvePositionConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_solver_data}{b2SolverData}}\&\ data)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localAnchorA;}
+\DoxyCodeLine{00183\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localAnchorB;}
+\DoxyCodeLine{00184\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localXAxisA;}
+\DoxyCodeLine{00185\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localYAxisA;}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_impulse;}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_motorImpulse;}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_springImpulse;}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_lowerImpulse;}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_upperImpulse;}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_translation;}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_lowerTranslation;}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_upperTranslation;}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxMotorTorque;}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_motorSpeed;}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableLimit;}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableMotor;}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_stiffness;}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_damping;}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{comment}{//\ Solver\ temp}}
+\DoxyCodeLine{00207\ \ \ \ \ int32\ m\_indexA;}
+\DoxyCodeLine{00208\ \ \ \ \ int32\ m\_indexB;}
+\DoxyCodeLine{00209\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localCenterA;}
+\DoxyCodeLine{00210\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_localCenterB;}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invMassA;}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invMassB;}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invIA;}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invIB;}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_ax,\ m\_ay;}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_sAx,\ m\_sBx;}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_sAy,\ m\_sBy;}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_mass;}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_motorMass;}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_axialMass;}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_springMass;}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_bias;}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_gamma;}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \};}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_wheel_joint_a6d757bbcef609f4a496b71c89046663b}{b2WheelJoint::GetMotorSpeed}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00231\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_motorSpeed;}
+\DoxyCodeLine{00233\ \}}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ b2WheelJoint::GetMaxMotorTorque()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00236\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_maxMotorTorque;}
+\DoxyCodeLine{00238\ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

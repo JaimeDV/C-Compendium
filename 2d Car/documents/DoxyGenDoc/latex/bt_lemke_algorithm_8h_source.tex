@@ -1,0 +1,84 @@
+\doxysection{bt\+Lemke\+Algorithm.\+h}
+\hypertarget{bt_lemke_algorithm_8h_source}{}\label{bt_lemke_algorithm_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/MLCPSolvers/btLemkeAlgorithm.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/MLCPSolvers/btLemkeAlgorithm.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ Copyright\ (C)\ 2004-\/2013\ MBSim\ Development\ Team}}
+\DoxyCodeLine{00002\ \textcolor{comment}{}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Code\ was\ converted\ for\ the\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//The\ original\ version\ is\ here}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//https://code.google.com/p/mbsim-\/env/source/browse/trunk/kernel/mbsim/numerics/linear\_complementarity\_problem/lemke\_algorithm.cc}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//This\ file\ is\ re-\/distributed\ under\ the\ ZLib\ license,\ with\ permission\ of\ the\ original\ author\ (Kilian\ Grundl)}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//Math\ library\ was\ replaced\ from\ fmatvec\ to\ a\ the\ file\ src/LinearMath/btMatrixX.h}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//STL/std::vector\ replaced\ by\ btAlignedObjectArray}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#ifndef\ BT\_NUMERICS\_LEMKE\_ALGORITHM\_H\_}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ BT\_NUMERICS\_LEMKE\_ALGORITHM\_H\_}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btMatrixX.h"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <vector>}\ \ \textcolor{comment}{//todo:\ replace\ by\ btAlignedObjectArray}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_lemke_algorithm}{btLemkeAlgorithm}}}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{classbt_lemke_algorithm}{btLemkeAlgorithm}}(\textcolor{keyword}{const}\ btMatrixXu\&\ M\_,\ \textcolor{keyword}{const}\ btVectorXu\&\ q\_,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&\ DEBUGLEVEL\_\ =\ 0)\ :\ \mbox{\hyperlink{classbt_lemke_algorithm_a8df97e61497b888b59245c3e795f7925}{DEBUGLEVEL}}(DEBUGLEVEL\_)}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_lemke_algorithm_ab848a608563ed4269fb4c7b16af99a86}{setSystem}}(M\_,\ q\_);}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*\ GETTER\ /\ SETTER\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_lemke_algorithm_a71794dd1601b4ec4ef953c4dd11570ac}{getInfo}}()}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classbt_lemke_algorithm_a4ce1ded119f4bae37c51bd74e996d80b}{info}};}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_lemke_algorithm_a2073fde0ffdf970812c4a7fe991b22c2}{getSteps}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classbt_lemke_algorithm_ac94bd69dafbd22cc601d3b1ff6de5a5b}{steps}};}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_lemke_algorithm_ab848a608563ed4269fb4c7b16af99a86}{setSystem}}(\textcolor{keyword}{const}\ btMatrixXu\&\ M\_,\ \textcolor{keyword}{const}\ btVectorXu\&\ q\_)}
+\DoxyCodeLine{00058\ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ m\_M\ =\ M\_;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ m\_q\ =\ q\_;}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ /***************************************************/}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00067\ \ \ \ \ btVectorXu\ \mbox{\hyperlink{classbt_lemke_algorithm_a452736e771d2119946fc9209be0410d9}{solve}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ maxloops\ =\ 0);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_lemke_algorithm}{\string~btLemkeAlgorithm}}()}
+\DoxyCodeLine{00070\ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{int}\ findLexicographicMinimum(\textcolor{keyword}{const}\ btMatrixXu\&\ A,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&\ pivotColIndex);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{bool}\ LexicographicPositive(\textcolor{keyword}{const}\ btVectorXu\&\ v);}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ GaussJordanEliminationStep(btMatrixXu\&\ A,\ \textcolor{keywordtype}{int}\ pivotRowIndex,\ \textcolor{keywordtype}{int}\ pivotColumnIndex,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ basis);}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{bool}\ greaterZero(\textcolor{keyword}{const}\ btVectorXu\&\ vector);}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{bool}\ validBasis(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ basis);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ btMatrixXu\ m\_M;}
+\DoxyCodeLine{00081\ \ \ \ \ btVectorXu\ m\_q;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_lemke_algorithm_ac94bd69dafbd22cc601d3b1ff6de5a5b}{steps}};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_lemke_algorithm_a8df97e61497b888b59245c3e795f7925}{DEBUGLEVEL}};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_lemke_algorithm_a4ce1ded119f4bae37c51bd74e996d80b}{info}};}
+\DoxyCodeLine{00100\ \};}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ BT\_NUMERICS\_LEMKE\_ALGORITHM\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

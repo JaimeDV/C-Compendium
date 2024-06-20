@@ -1,0 +1,101 @@
+\doxysection{Vertex\+\_\+\+Buffer\+\_\+\+Object.\+hpp}
+\hypertarget{_vertex___buffer___object_8hpp_source}{}\label{_vertex___buffer___object_8hpp_source}\index{libraries/opengl-\/toolkit/headers/Vertex\_Buffer\_Object.hpp@{libraries/opengl-\/toolkit/headers/Vertex\_Buffer\_Object.hpp}}
+\mbox{\hyperlink{_vertex___buffer___object_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ VERTEX\ BUFFER\ OBJECT}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ ©\ 2016+\ Ángel\ Rodríguez\ Ballesteros}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Distributed\ under\ the\ Boost\ Software\ License,\ version\ \ 1.0}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ See\ documents/LICENSE.TXT\ or\ www.boost.org/LICENSE\_1\_0.txt}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ angel.rodriguez@esne.edu}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OPENGL\_TOOLKIT\_VERTEX\_BUFFER\_OBJECT\_HEADER}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ OPENGL\_TOOLKIT\_VERTEX\_BUFFER\_OBJECT\_HEADER}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\ \ \ \ \#include\ <cassert>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\ \ \ \ \#include\ <\mbox{\hyperlink{_open_g_l_8hpp}{OpenGL.hpp}}>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglt}{glt}}}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classglt_1_1_vertex___buffer___object}{Vertex\_Buffer\_Object}}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}}\ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{glad_8h_a7180045dcb52b22af2cd0366026bc3ed}{GL\_ARRAY\_BUFFER}},}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089fabef7cbbdcdcbe274e021a1ca36bcdb70}{ELEMENT\_ARRAY\_BUFFER}}\ =\ \mbox{\hyperlink{glad_8h_ad26c63125c72cbf0347b589d51676e6a}{GL\_ELEMENT\_ARRAY\_BUFFER}}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a68c4714e43d8e827d80759f9cb864f3c}{GLuint}}\ vbo\_id;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}};}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ element\_type;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ error;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ EL\ PARÁMETRO\ SIZE\ DE\ LOS\ CONSTRUCTORES\ ESTÁ\ EN\ BYTES,\ PERO\ POSIBLEMENTE\ FUESE\ MÁS\ CONVENIENTE\ QUE\ INDICASE\ NÚMERO\ DE\ ELEMENTOS:}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a2ed33d283342b57f46dfa1b6dbbf38fa}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_a0a9e8b1f1d9c4bcf1c0bc5d5d4e3608a}{GLbyte}}\ \ \ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}},\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}\ =\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}})\ :\ element\_type(\mbox{\hyperlink{glad_8h_a66f452ef2a3d3a1f92e38d9fd6e3f8ec}{GL\_BYTE}}\ \ \ \ \ \ \ \ \ \ ),\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}(\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}))\ \{\ create\ (\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});\ \}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a9f9ca187e5b7a338c20a6c2b006fb38f}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_a0595908be03a8cff881a23cdc9170e7c}{GLubyte}}\ \ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}},\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}\ =\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}})\ :\ element\_type(\mbox{\hyperlink{glad_8h_a80a33c79f69417372d65d2a65ca36d49}{GL\_UNSIGNED\_BYTE}}\ ),\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}(\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}))\ \{\ create\ (\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});\ \}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a19016ddf21e0a54542a4539073c3bd71}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_a2dfad4d45d694268922f502efa9c1cc0}{GLshort}}\ \ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}},\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}\ =\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}})\ :\ element\_type(\mbox{\hyperlink{glad_8h_a7a2b436e565363c81b22611b8392a341}{GL\_SHORT}}\ \ \ \ \ \ \ \ \ ),\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}(\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}))\ \{\ create\ (\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});\ \}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a391b9187cab395c7665978aec6302785}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_ac995a558f6571eb5f98b7a6d2b2a4468}{GLushort}}\ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}},\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}\ =\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}})\ :\ element\_type(\mbox{\hyperlink{glad_8h_a36c3f955599ab92217a70cce8a22e11f}{GL\_UNSIGNED\_SHORT}}),\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}(\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}))\ \{\ create\ (\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});\ \}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_ad50582d0fcbc8f9799bf730be03da789}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_acebcc1c5663f14ebde1d16831e5fed94}{GLint}}\ \ \ \ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}},\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}\ =\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}})\ :\ element\_type(\mbox{\hyperlink{glad_8h_a165997187828b3a8a0db9d49d568406b}{GL\_INT}}\ \ \ \ \ \ \ \ \ \ \ ),\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}(\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}))\ \{\ create\ (\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});\ \}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a71b65d5136f9c0c201004bd5167e5ec3}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_a68c4714e43d8e827d80759f9cb864f3c}{GLuint}}\ \ \ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}},\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}\ =\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}})\ :\ element\_type(\mbox{\hyperlink{glad_8h_a69b1c02ba0bd93c643c6d82e0c16eb99}{GL\_UNSIGNED\_INT}}\ \ ),\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}(\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}))\ \{\ create\ (\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});\ \}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_abea7f4bd3dae8d18b7da351523599db5}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_a31aeedaeef29442c9c015ab355c8f5ab}{GLfloat}}\ \ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}},\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089f}{Target}}\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}\ =\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_af35a3c9b7372575c4c7185e1aaee089faf9c8aeaaf17ea15761600131156856f4}{ARRAY\_BUFFER}})\ :\ element\_type(\mbox{\hyperlink{glad_8h_a6d19915d4237cb559505bd3e5dcfcf3c}{GL\_FLOAT}}\ \ \ \ \ \ \ \ \ ),\ \mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}(\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}}))\ \{\ create\ (\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a2307ee69a628e35ea21347cbf4b449ae}{\string~Vertex\_Buffer\_Object}}()}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a55652a3f087bb13267a5481b6ff1fe19}{glDeleteBuffers}}\ (1,\ \&vbo\_id);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a2ed33d283342b57f46dfa1b6dbbf38fa}{Vertex\_Buffer\_Object}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object}{Vertex\_Buffer\_Object}}\ \&\ );}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a6d21f642cf0858bafe6293ebce9d5083}{is\_ok}}\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00061\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ error\ ==\ \mbox{\hyperlink{glad_8h_a8868c96a8632a9a5b2af712c62dfd36a}{GL\_NO\_ERROR}};}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a81932adb379508479739fb395b111a7d}{get\_error}}\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00066\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ error;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_adf4f9d5006b038e54bb867f5eab0cb7d}{get\_element\_type}}\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00071\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ element\_type;}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a17e1dc7706e8a82b3c985127f6c5583b}{bind}}\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00078\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a3b3a3f8200f094b781e9f61e2f19fc50}{glBindBuffer}}\ (\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}},\ vbo\_id);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classglt_1_1_vertex___buffer___object_a9a32609b9cd8bd754831eacf9618b3f2}{unbind}}\ ()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00083\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a3b3a3f8200f094b781e9f61e2f19fc50}{glBindBuffer}}\ (\mbox{\hyperlink{glad_8h_a22973b5f7dd6741d669b5ba44f0417fa}{target}},\ 0);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ create\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{glad_8h_a9f139c614d49f2a707b6037305b0fec0}{size}});}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

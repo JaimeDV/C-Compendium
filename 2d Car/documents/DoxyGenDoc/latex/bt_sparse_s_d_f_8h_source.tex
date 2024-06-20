@@ -1,0 +1,377 @@
+\doxysection{bt\+Sparse\+SDF.\+h}
+\hypertarget{bt_sparse_s_d_f_8h_source}{}\label{bt_sparse_s_d_f_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSparseSDF.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSparseSDF.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifndef\ BT\_SPARSE\_SDF\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ BT\_SPARSE\_SDF\_H}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkEpa2.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ Fast\ Hash}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#if\ !defined(get16bits)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ get16bits(d)\ ((((unsigned\ int)(((const\ unsigned\ char*)(d))[1]))\ <<\ 8)\ +\ (unsigned\ int)(((const\ unsigned\ char*)(d))[0]))}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ super\ hash\ function\ by\ Paul\ Hsieh}}
+\DoxyCodeLine{00030\ \textcolor{comment}{//}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ HsiehHash(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ data,\ \textcolor{keywordtype}{int}\ len)}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ hash\ =\ len,\ tmp;}
+\DoxyCodeLine{00034\ \ \ \ \ len\ >>=\ 2;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{/*\ Main\ loop\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ len\ >\ 0;\ len-\/-\/)}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ hash\ +=\ get16bits(data);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ tmp\ =\ (get16bits(data\ +\ 2)\ <<\ 11)\ \string^\ hash;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ hash\ =\ (hash\ <<\ 16)\ \string^\ tmp;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ data\ +=\ 2\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned}\ short);}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ hash\ +=\ hash\ >>\ 11;}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{/*\ Force\ "{}avalanching"{}\ of\ final\ 127\ bits\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ hash\ \string^=\ hash\ <<\ 3;}
+\DoxyCodeLine{00048\ \ \ \ \ hash\ +=\ hash\ >>\ 5;}
+\DoxyCodeLine{00049\ \ \ \ \ hash\ \string^=\ hash\ <<\ 4;}
+\DoxyCodeLine{00050\ \ \ \ \ hash\ +=\ hash\ >>\ 17;}
+\DoxyCodeLine{00051\ \ \ \ \ hash\ \string^=\ hash\ <<\ 25;}
+\DoxyCodeLine{00052\ \ \ \ \ hash\ +=\ hash\ >>\ 6;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{return}\ hash;}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{template}\ <const\ \textcolor{keywordtype}{int}\ CELLSIZE>}
+\DoxyCodeLine{00058\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_sparse_sdf}{btSparseSdf}}}
+\DoxyCodeLine{00059\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ Inner\ types}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_sparse_sdf_1_1_int_frac}{IntFrac}}}
+\DoxyCodeLine{00064\ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ b;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ btScalar\ f;}
+\DoxyCodeLine{00068\ \ \ \ \ \};}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_sparse_sdf_1_1_cell}{Cell}}}
+\DoxyCodeLine{00070\ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ btScalar\ d[CELLSIZE\ +\ 1][CELLSIZE\ +\ 1][CELLSIZE\ +\ 1];}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ c[3];}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ puid;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ hash;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ pclient;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_sparse_sdf_1_1_cell}{Cell}}*\ next;}
+\DoxyCodeLine{00077\ \ \ \ \ \};}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ Fields}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Cell*>}}\ cells;}
+\DoxyCodeLine{00083\ \ \ \ \ btScalar\ voxelsz;}
+\DoxyCodeLine{00084\ \ \ \ \ btScalar\ m\_defaultVoxelsz;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{int}\ puid;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{int}\ ncells;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_clampCells;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{int}\ nprobes;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{int}\ nqueries;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \mbox{\hyperlink{structbt_sparse_sdf}{\string~btSparseSdf}}()}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ Reset();}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{//\ Methods}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ Initialize(\textcolor{keywordtype}{int}\ hashsize\ =\ 2383,\ \textcolor{keywordtype}{int}\ clampCells\ =\ 256\ *\ 1024)}
+\DoxyCodeLine{00101\ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{comment}{//avoid\ a\ crash\ due\ to\ running\ out\ of\ memory,\ so\ clamp\ the\ maximum\ number\ of\ cells\ allocated}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ this\ limit\ is\ reached,\ the\ SDF\ is\ reset\ (at\ the\ cost\ of\ some\ performance\ during\ the\ reset)}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ m\_clampCells\ =\ clampCells;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ cells.resize(hashsize,\ 0);}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ m\_defaultVoxelsz\ =\ 0.25;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ Reset();}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ setDefaultVoxelsz(btScalar\ sz)}
+\DoxyCodeLine{00112\ \ \ \ \ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ m\_defaultVoxelsz\ =\ sz;}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{void}\ Reset()}
+\DoxyCodeLine{00117\ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0,\ ni\ =\ cells.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i\ <\ ni;\ ++i)}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ Cell*\ pc\ =\ cells[i];}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ cells[i]\ =\ 0;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (pc)}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Cell*\ pn\ =\ pc-\/>next;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ pc;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pc\ =\ pn;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ voxelsz\ =\ m\_defaultVoxelsz;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ puid\ =\ 0;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ ncells\ =\ 0;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ nprobes\ =\ 1;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ nqueries\ =\ 1;}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_sparse_sdf_a08dbaa356f577ebbd0808329766111d1}{GarbageCollect}}(\textcolor{keywordtype}{int}\ lifetime\ =\ 256)}
+\DoxyCodeLine{00137\ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ life\ =\ puid\ -\/\ lifetime;}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ cells.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_sparse_sdf_1_1_cell}{Cell}}*\&\ root\ =\ cells[i];}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_sparse_sdf_1_1_cell}{Cell}}*\ pp\ =\ 0;}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_sparse_sdf_1_1_cell}{Cell}}*\ pc\ =\ root;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (pc)}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_sparse_sdf_1_1_cell}{Cell}}*\ pn\ =\ pc-\/>next;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pc-\/>puid\ <\ life)}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pp)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pp-\/>next\ =\ pn;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ root\ =\ pn;}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ pc;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pc\ =\ pp;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/ncells;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pp\ =\ pc;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pc\ =\ pn;}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}GC[\%d]:\ \%d\ cells,\ PpQ:\ \%f\(\backslash\)r\(\backslash\)n"{},puid,ncells,nprobes/(btScalar)nqueries);}}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ nqueries\ =\ 1;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ nprobes\ =\ 1;}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ ++puid;\ \ }
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ else\ setup\ a\ priority\ list...\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00166\ \ \ \ \ \}}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{int}\ RemoveReferences(btCollisionShape*\ pcs)}
+\DoxyCodeLine{00169\ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ refcount\ =\ 0;}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ cells.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ Cell*\&\ root\ =\ cells[i];}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ Cell*\ pp\ =\ 0;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ Cell*\ pc\ =\ root;}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (pc)}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Cell*\ pn\ =\ pc-\/>next;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pc-\/>pclient\ ==\ pcs)}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pp)}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pp-\/>next\ =\ pn;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ root\ =\ pn;}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ pc;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pc\ =\ pp;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ++refcount;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pp\ =\ pc;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pc\ =\ pn;}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (refcount);}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00196\ \ \ \ \ btScalar\ Evaluate(\textcolor{keyword}{const}\ btVector3\&\ x,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ shape,}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\&\ normal,}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ margin)}
+\DoxyCodeLine{00200\ \ \ \ \ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Lookup\ cell\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ scx\ =\ x\ /\ voxelsz;}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IntFrac\ ix\ =\ Decompose(scx.x());}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IntFrac\ iy\ =\ Decompose(scx.y());}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IntFrac\ iz\ =\ Decompose(scx.z());}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ h\ =\ Hash(ix.b,\ iy.b,\ iz.b,\ shape);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ Cell*\&\ root\ =\ cells[\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(h\ \%\ cells.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())];}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ Cell*\ c\ =\ root;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ ++nqueries;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (c)}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ ++nprobes;}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((c-\/>hash\ ==\ h)\ \&\&}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c-\/>c[0]\ ==\ ix.b)\ \&\&}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c-\/>c[1]\ ==\ iy.b)\ \&\&}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c-\/>c[2]\ ==\ iz.b)\ \&\&}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c-\/>pclient\ ==\ shape))}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ printf("{}c-\/>hash/c[0][1][2]=\%d,\%d,\%d,\%d\(\backslash\)n"{},\ c-\/>hash,\ c-\/>c[0],\ c-\/>c[1],c-\/>c[2]);}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}h,ixb,iyb,izb=\%d,\%d,\%d,\%d\(\backslash\)n"{},\ h,ix.b,\ iy.b,\ iz.b);}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c\ =\ c-\/>next;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!c)}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ ++nprobes;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ ++ncells;}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//int\ sz\ =\ sizeof(Cell);}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ncells\ >\ m\_clampCells)}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ numResets\ =\ 0;}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numResets++;}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ printf("{}numResets=\%d\(\backslash\)n"{},numResets);}}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Reset();}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ c\ =\ \textcolor{keyword}{new}\ Cell();}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>next\ =\ root;}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ root\ =\ c;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>pclient\ =\ shape;}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>hash\ =\ h;}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>c[0]\ =\ ix.b;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>c[1]\ =\ iy.b;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>c[2]\ =\ iz.b;}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ BuildCell(*c);}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ c-\/>puid\ =\ puid;}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Extract\ infos\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ o[]\ =\ \{ix.i,\ iy.i,\ iz.i\};}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ d[]\ =\ \{c-\/>d[o[0]\ +\ 0][o[1]\ +\ 0][o[2]\ +\ 0],}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>d[o[0]\ +\ 1][o[1]\ +\ 0][o[2]\ +\ 0],}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>d[o[0]\ +\ 1][o[1]\ +\ 1][o[2]\ +\ 0],}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>d[o[0]\ +\ 0][o[1]\ +\ 1][o[2]\ +\ 0],}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>d[o[0]\ +\ 0][o[1]\ +\ 0][o[2]\ +\ 1],}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>d[o[0]\ +\ 1][o[1]\ +\ 0][o[2]\ +\ 1],}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>d[o[0]\ +\ 1][o[1]\ +\ 1][o[2]\ +\ 1],}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>d[o[0]\ +\ 0][o[1]\ +\ 1][o[2]\ +\ 1]\};}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Normal\ \ \ */}}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\#if\ 1}}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ gx[]\ =\ \{d[1]\ -\/\ d[0],\ d[2]\ -\/\ d[3],}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ d[5]\ -\/\ d[4],\ d[6]\ -\/\ d[7]\};}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ gy[]\ =\ \{d[3]\ -\/\ d[0],\ d[2]\ -\/\ d[1],}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ d[7]\ -\/\ d[4],\ d[6]\ -\/\ d[5]\};}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ gz[]\ =\ \{d[4]\ -\/\ d[0],\ d[5]\ -\/\ d[1],}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ d[7]\ -\/\ d[3],\ d[6]\ -\/\ d[2]\};}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ normal.setX(Lerp(Lerp(gx[0],\ gx[1],\ iy.f),}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Lerp(gx[2],\ gx[3],\ iy.f),\ iz.f));}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ normal.setY(Lerp(Lerp(gy[0],\ gy[1],\ ix.f),}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Lerp(gy[2],\ gy[3],\ ix.f),\ iz.f));}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ normal.setZ(Lerp(Lerp(gz[0],\ gz[1],\ ix.f),}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Lerp(gz[2],\ gz[3],\ ix.f),\ iy.f));}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ normal.safeNormalize();}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ normal\ =\ btVector3(d[1]\ -\/\ d[0],\ d[3]\ -\/\ d[0],\ d[4]\ -\/\ d[0]).normalized();}
+\DoxyCodeLine{00280\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Distance\ */}}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ d0\ =\ Lerp(Lerp(d[0],\ d[1],\ ix.f),}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Lerp(d[3],\ d[2],\ ix.f),\ iy.f);}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ d1\ =\ Lerp(Lerp(d[4],\ d[5],\ ix.f),}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Lerp(d[7],\ d[6],\ ix.f),\ iy.f);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (Lerp(d0,\ d1,\ iz.f)\ -\/\ margin);}
+\DoxyCodeLine{00287\ \ \ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keywordtype}{void}\ BuildCell(Cell\&\ c)}
+\DoxyCodeLine{00290\ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ org\ =\ btVector3((btScalar)c.c[0],}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (btScalar)c.c[1],}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (btScalar)c.c[2])\ *}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CELLSIZE\ *\ voxelsz;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ 0;\ k\ <=\ CELLSIZE;\ ++k)}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ z\ =\ voxelsz\ *\ k\ +\ org.z();}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <=\ CELLSIZE;\ ++j)}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ y\ =\ voxelsz\ *\ j\ +\ org.y();}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <=\ CELLSIZE;\ ++i)}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ x\ =\ voxelsz\ *\ i\ +\ org.x();}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.d[i][j][k]\ =\ DistanceToShape(btVector3(x,\ y,\ z),}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.pclient);}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00309\ \ \ \ \ \}}
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ DistanceToShape(\textcolor{keyword}{const}\ btVector3\&\ x,}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ shape)}
+\DoxyCodeLine{00313\ \ \ \ \ \{}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ btTransform\ unit;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ unit.setIdentity();}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (shape-\/>isConvex())}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_gjk_epa_solver2_1_1s_results}{btGjkEpaSolver2::sResults}}\ res;}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ csh\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btConvexShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (btGjkEpaSolver2::SignedDistance(x,\ 0,\ csh,\ unit,\ res));}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (0);}
+\DoxyCodeLine{00323\ \ \ \ \ \}}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ IntFrac\ Decompose(btScalar\ x)}
+\DoxyCodeLine{00326\ \ \ \ \ \{}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ That\ one\ need\ a\ lot\ of\ improvements...\ \ \ */}}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Remove\ test,\ faster\ floor...\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ IntFrac\ r;}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ x\ /=\ CELLSIZE;}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ o\ =\ x\ <\ 0\ ?\ (int)(-\/x\ +\ 1)\ :\ 0;}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ x\ +=\ o;}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ r.b\ =\ (int)x;}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ k\ =\ (x\ -\/\ r.b)\ *\ CELLSIZE;}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ r.i\ =\ (int)k;}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ r.f\ =\ k\ -\/\ r.i;}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ r.b\ -\/=\ o;}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (r);}
+\DoxyCodeLine{00339\ \ \ \ \ \}}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ Lerp(btScalar\ a,\ btScalar\ b,\ btScalar\ t)}
+\DoxyCodeLine{00342\ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ +\ (b\ -\/\ a)\ *\ t);}
+\DoxyCodeLine{00344\ \ \ \ \ \}}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00347\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ Hash(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ y,\ \textcolor{keywordtype}{int}\ z,\ \textcolor{keyword}{const}\ btCollisionShape*\ shape)}
+\DoxyCodeLine{00348\ \ \ \ \ \{}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }btS}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ x,\ y,\ z,\ w;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ p;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ btS\ myset;}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \textcolor{comment}{//memset\ may\ be\ needed\ in\ case\ of\ additional\ (uninitialized)\ padding!}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \textcolor{comment}{//memset(\&myset,\ 0,\ sizeof(btS));}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ myset.x\ =\ x;}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ myset.y\ =\ y;}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ myset.z\ =\ z;}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ myset.w\ =\ 0;}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ myset.p\ =\ (\textcolor{keywordtype}{void}*)shape;}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ ptr\ =\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)\&myset;}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ result\ =\ HsiehHash(ptr,\ \textcolor{keyword}{sizeof}(btS));}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00369\ \ \ \ \ \}}
+\DoxyCodeLine{00370\ \};}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SPARSE\_SDF\_H}}
+
+\end{DoxyCode}

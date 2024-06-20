@@ -1,0 +1,168 @@
+\doxysection{bt\+Collision\+Dispatcher\+Mt.\+cpp}
+\hypertarget{bt_collision_dispatcher_mt_8cpp_source}{}\label{bt_collision_dispatcher_mt_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionDispatcherMt.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionDispatcherMt.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btCollisionDispatcherMt.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuickprof.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCollisionShape.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btPoolAllocator.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionConfiguration.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"{}}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ btCollisionDispatcherMt::btCollisionDispatcherMt(\mbox{\hyperlink{classbt_collision_configuration}{btCollisionConfiguration}}*\ config,\ \textcolor{keywordtype}{int}\ grainSize)}
+\DoxyCodeLine{00029\ \ \ \ \ :\ \mbox{\hyperlink{classbt_collision_dispatcher}{btCollisionDispatcher}}(config)}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ m\_batchManifoldsPtr.resize(btGetTaskScheduler()-\/>getNumThreads());}
+\DoxyCodeLine{00032\ \ \ \ \ m\_batchUpdating\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00033\ \ \ \ \ m\_grainSize\ =\ grainSize;\ \ \textcolor{comment}{//\ iterations\ per\ task}}
+\DoxyCodeLine{00034\ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ btPersistentManifold*\ btCollisionDispatcherMt::getNewManifold(\textcolor{keyword}{const}\ btCollisionObject*\ body0,\ \textcolor{keyword}{const}\ btCollisionObject*\ body1)}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//optional\ relative\ contact\ breaking\ threshold,\ turned\ on\ by\ default\ (use\ setDispatcherFlags\ to\ switch\ off\ feature\ for\ improved\ performance)}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ btScalar\ contactBreakingThreshold\ =\ (m\_dispatcherFlags\ \&\ btCollisionDispatcher::CD\_USE\_RELATIVE\_CONTACT\_BREAKING\_THRESHOLD)\ ?\ btMin(body0-\/>getCollisionShape()-\/>getContactBreakingThreshold(gContactBreakingThreshold),\ body1-\/>getCollisionShape()-\/>getContactBreakingThreshold(gContactBreakingThreshold))}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ gContactBreakingThreshold;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ btScalar\ contactProcessingThreshold\ =\ btMin(body0-\/>getContactProcessingThreshold(),\ body1-\/>getContactProcessingThreshold());}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ m\_persistentManifoldPoolAllocator-\/>allocate(\textcolor{keyword}{sizeof}(btPersistentManifold));}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordflow}{if}\ (NULL\ ==\ mem)}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{comment}{//we\ got\ a\ pool\ memory\ overflow,\ by\ default\ we\ fallback\ to\ dynamically\ allocate\ memory.\ If\ we\ require\ a\ contiguous\ contact\ pool\ then\ assert.}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_dispatcherFlags\ \&\ CD\_DISABLE\_CONTACTPOOL\_DYNAMIC\_ALLOCATION)\ ==\ 0)}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ mem\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(btPersistentManifold),\ 16);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//make\ sure\ to\ increase\ the\ m\_defaultMaxPersistentManifoldPoolSize\ in\ the\ btDefaultCollisionConstructionInfo/btDefaultCollisionConfiguration}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ \ \ \ \ btPersistentManifold*\ manifold\ =\ \textcolor{keyword}{new}\ (mem)\ btPersistentManifold(body0,\ body1,\ 0,\ contactBreakingThreshold,\ contactProcessingThreshold);}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_batchUpdating)}
+\DoxyCodeLine{00062\ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ batch\ updater\ will\ update\ manifold\ pointers\ array\ after\ finishing,\ so}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ only\ need\ to\ update\ array\ when\ not\ batch-\/updating}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btAssert(\ !btThreadsAreRunning()\ );}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ manifold-\/>m\_index1a\ =\ m\_manifoldsPtr.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ m\_manifoldsPtr.push\_back(manifold);}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00070\ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ m\_batchManifoldsPtr[btGetCurrentThreadIndex()].push\_back(manifold);}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{return}\ manifold;}
+\DoxyCodeLine{00075\ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{void}\ btCollisionDispatcherMt::releaseManifold(btPersistentManifold*\ manifold)}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ clearManifold(manifold);}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{//btAssert(\ !btThreadsAreRunning()\ );}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_batchUpdating)}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ batch\ updater\ will\ update\ manifold\ pointers\ array\ after\ finishing,\ so}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ only\ need\ to\ update\ array\ when\ not\ batch-\/updating}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ findIndex\ =\ manifold-\/>m\_index1a;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ btAssert(findIndex\ <\ m\_manifoldsPtr.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ m\_manifoldsPtr.swap(findIndex,\ m\_manifoldsPtr.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ m\_manifoldsPtr[findIndex]-\/>m\_index1a\ =\ findIndex;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ m\_manifoldsPtr.pop\_back();}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ manifold-\/>\string~btPersistentManifold();}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_persistentManifoldPoolAllocator-\/>validPtr(manifold))}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ m\_persistentManifoldPoolAllocator-\/>freeMemory(manifold);}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00098\ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ btAlignedFree(manifold);}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_collision_dispatcher_updater}{CollisionDispatcherUpdater}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_i_parallel_for_body}{btIParallelForBody}}}
+\DoxyCodeLine{00104\ \{}
+\DoxyCodeLine{00105\ \ \ \ \ btBroadphasePair*\ mPairArray;}
+\DoxyCodeLine{00106\ \ \ \ \ btNearCallback\ mCallback;}
+\DoxyCodeLine{00107\ \ \ \ \ \mbox{\hyperlink{classbt_collision_dispatcher}{btCollisionDispatcher}}*\ mDispatcher;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}*\ mInfo;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \mbox{\hyperlink{struct_collision_dispatcher_updater}{CollisionDispatcherUpdater}}()}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ mPairArray\ =\ NULL;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ mCallback\ =\ NULL;}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ mDispatcher\ =\ NULL;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ mInfo\ =\ NULL;}
+\DoxyCodeLine{00116\ \ \ \ \ \}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{void}\ forLoop(\textcolor{keywordtype}{int}\ iBegin,\ \textcolor{keywordtype}{int}\ iEnd)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00118\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ iBegin;\ i\ <\ iEnd;\ ++i)}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ btBroadphasePair*\ pair\ =\ \&mPairArray[i];}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ mCallback(*pair,\ *mDispatcher,\ *mInfo);}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ \};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ btCollisionDispatcherMt::dispatchAllCollisionPairs(\mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ pairCache,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ info,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)}
+\DoxyCodeLine{00128\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ pairCount\ =\ pairCache-\/>getNumOverlappingPairs();}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordflow}{if}\ (pairCount\ ==\ 0)}
+\DoxyCodeLine{00131\ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{struct_collision_dispatcher_updater}{CollisionDispatcherUpdater}}\ updater;}
+\DoxyCodeLine{00135\ \ \ \ \ updater.mCallback\ =\ getNearCallback();}
+\DoxyCodeLine{00136\ \ \ \ \ updater.mPairArray\ =\ pairCache-\/>getOverlappingPairArrayPtr();}
+\DoxyCodeLine{00137\ \ \ \ \ updater.mDispatcher\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00138\ \ \ \ \ updater.mInfo\ =\ \&info;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ m\_batchUpdating\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00141\ \ \ \ \ btParallelFor(0,\ pairCount,\ m\_grainSize,\ updater);}
+\DoxyCodeLine{00142\ \ \ \ \ m\_batchUpdating\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{//\ merge\ new\ manifolds,\ if\ any}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_batchManifoldsPtr.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00146\ \ \ \ \ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btPersistentManifold*>}}\&\ batchManifoldsPtr\ =\ m\_batchManifoldsPtr[i];}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ batchManifoldsPtr.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ m\_manifoldsPtr.push\_back(batchManifoldsPtr[j]);}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ batchManifoldsPtr.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(0);}
+\DoxyCodeLine{00155\ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{comment}{//\ update\ the\ indices\ (used\ when\ releasing\ manifolds)}}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_manifoldsPtr.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00159\ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ m\_manifoldsPtr[i]-\/>m\_index1a\ =\ i;}
+\DoxyCodeLine{00161\ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \}}
+
+\end{DoxyCode}

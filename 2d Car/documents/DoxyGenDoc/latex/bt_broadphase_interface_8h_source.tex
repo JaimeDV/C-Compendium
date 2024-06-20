@@ -1,0 +1,77 @@
+\doxysection{bt\+Broadphase\+Interface.\+h}
+\hypertarget{bt_broadphase_interface_8h_source}{}\label{bt_broadphase_interface_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btBroadphaseInterface.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btBroadphaseInterface.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_BROADPHASE\_INTERFACE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_BROADPHASE\_INTERFACE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}};}
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}};}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btBroadphaseProxy.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_broadphase_aabb_callback}{btBroadphaseAabbCallback}}}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_broadphase_aabb_callback}{\string~btBroadphaseAabbCallback}}()\ \{\}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ process(\textcolor{keyword}{const}\ btBroadphaseProxy*\ proxy)\ =\ 0;}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_broadphase_aabb_callback}{btBroadphaseAabbCallback}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ btVector3\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}};}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ m\_signs[3];}
+\DoxyCodeLine{00036\ \ \ \ \ btScalar\ m\_lambda\_max;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_broadphase_ray_callback}{\string~btBroadphaseRayCallback}}()\ \{\}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}()\ \{\}}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_broadphase_interface}{btBroadphaseInterface}}}
+\DoxyCodeLine{00050\ \{}
+\DoxyCodeLine{00051\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_broadphase_interface}{\string~btBroadphaseInterface}}()\ \{\}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ btBroadphaseProxy*\ createProxy(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ shapeType,\ \textcolor{keywordtype}{void}*\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ destroyProxy(btBroadphaseProxy*\ proxy,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setAabb(btBroadphaseProxy*\ proxy,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getAabb(btBroadphaseProxy*\ proxy,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ rayTest(\textcolor{keyword}{const}\ btVector3\&\ rayFrom,\ \textcolor{keyword}{const}\ btVector3\&\ rayTo,\ \mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}\&\ rayCallback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin\ =\ btVector3(0,\ 0,\ 0),\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax\ =\ btVector3(0,\ 0,\ 0))\ =\ 0;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ aabbTest(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \mbox{\hyperlink{structbt_broadphase_aabb_callback}{btBroadphaseAabbCallback}}\&\ callback)\ =\ 0;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_broadphase_interface_a27e29cb6fd31e5fe626e7ba973e67ddb}{calculateOverlappingPairs}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ getOverlappingPairCache()\ =\ 0;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ getOverlappingPairCache()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_broadphase_interface_ab5af9e26414f5a72a76040b8fab4d9e2}{getBroadphaseAabb}}(btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_broadphase_interface_a8135b10b29bced0b1c62ba6be060dc29}{resetPool}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)\ \{\ (void)dispatcher;\ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ printStats()\ =\ 0;}
+\DoxyCodeLine{00077\ \};}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_BROADPHASE\_INTERFACE\_H}}
+
+\end{DoxyCode}

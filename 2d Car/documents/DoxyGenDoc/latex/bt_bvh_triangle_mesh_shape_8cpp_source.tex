@@ -1,0 +1,464 @@
+\doxysection{bt\+Bvh\+Triangle\+Mesh\+Shape.\+cpp}
+\hypertarget{bt_bvh_triangle_mesh_shape_8cpp_source}{}\label{bt_bvh_triangle_mesh_shape_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\#define\ DISABLE\_BVH}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btOptimizedBvh.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSerializer.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00024\ btBvhTriangleMeshShape::btBvhTriangleMeshShape(btStridingMeshInterface*\ meshInterface,\ \textcolor{keywordtype}{bool}\ useQuantizedAabbCompression,\ \textcolor{keywordtype}{bool}\ buildBvh)}
+\DoxyCodeLine{00025\ \ \ \ \ :\ btTriangleMeshShape(meshInterface),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ m\_bvh(0),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ m\_triangleInfoMap(0),}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ m\_useQuantizedAabbCompression(useQuantizedAabbCompression),}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ m\_ownsBvh(false)}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ m\_shapeType\ =\ TRIANGLE\_MESH\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//construct\ bvh\ from\ meshInterface}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#ifndef\ DISABLE\_BVH}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{if}\ (buildBvh)}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ buildOptimizedBvh();}
+\DoxyCodeLine{00038\ \ \ \ \ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DISABLE\_BVH}}
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ btBvhTriangleMeshShape::btBvhTriangleMeshShape(btStridingMeshInterface*\ meshInterface,\ \textcolor{keywordtype}{bool}\ useQuantizedAabbCompression,\ \textcolor{keyword}{const}\ btVector3\&\ bvhAabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ bvhAabbMax,\ \textcolor{keywordtype}{bool}\ buildBvh)}
+\DoxyCodeLine{00044\ \ \ \ \ :\ btTriangleMeshShape(meshInterface),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ m\_bvh(0),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ m\_triangleInfoMap(0),}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ m\_useQuantizedAabbCompression(useQuantizedAabbCompression),}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ m\_ownsBvh(false)}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ m\_shapeType\ =\ TRIANGLE\_MESH\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//construct\ bvh\ from\ meshInterface}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#ifndef\ DISABLE\_BVH}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{if}\ (buildBvh)}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(btOptimizedBvh),\ 16);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ m\_bvh\ =\ \textcolor{keyword}{new}\ (mem)\ btOptimizedBvh();}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ m\_bvh-\/>build(meshInterface,\ m\_useQuantizedAabbCompression,\ bvhAabbMin,\ bvhAabbMax);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ m\_ownsBvh\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DISABLE\_BVH}}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::partialRefitTree(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ m\_bvh-\/>refitPartial(m\_meshInterface,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ m\_localAabbMin.setMin(aabbMin);}
+\DoxyCodeLine{00071\ \ \ \ \ m\_localAabbMax.setMax(aabbMax);}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::refitTree(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)}
+\DoxyCodeLine{00075\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ m\_bvh-\/>refit(m\_meshInterface,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ recalcLocalAabb();}
+\DoxyCodeLine{00079\ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ btBvhTriangleMeshShape::\string~btBvhTriangleMeshShape()}
+\DoxyCodeLine{00082\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_ownsBvh)}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ m\_bvh-\/>\string~btOptimizedBvh();}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ btAlignedFree(m\_bvh);}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::performRaycast(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget)}
+\DoxyCodeLine{00091\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{struct\ }MyNodeOverlapCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}}
+\DoxyCodeLine{00093\ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ btStridingMeshInterface*\ m\_meshInterface;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ m\_callback;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ MyNodeOverlapCallback(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ btStridingMeshInterface*\ meshInterface)}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_meshInterface(meshInterface),}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_callback(callback)}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processNode(\textcolor{keywordtype}{int}\ nodeSubPart,\ \textcolor{keywordtype}{int}\ nodeTriangleIndex)}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ m\_triangle[3];}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ vertexbase;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numverts;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ PHY\_ScalarType\ type;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ stride;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ indexbase;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ indexstride;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numfaces;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ PHY\_ScalarType\ indicestype;}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ m\_meshInterface-\/>getLockedReadOnlyVertexIndexBase(}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&vertexbase,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numverts,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type,}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stride,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&indexbase,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indexstride,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numfaces,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicestype,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nodeSubPart);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*\ gfxbase\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*)(indexbase\ +\ nodeTriangleIndex\ *\ indexstride);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ meshScaling\ =\ m\_meshInterface-\/>getScaling();}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 2;\ j\ >=\ 0;\ j-\/-\/)}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ graphicsindex;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (indicestype)\ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_INTEGER:\ graphicsindex\ =\ gfxbase[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_SHORT:\ graphicsindex\ =\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*)gfxbase)[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_UCHAR:\ graphicsindex\ =\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)gfxbase)[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ btAssert(0);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type\ ==\ PHY\_FLOAT)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}*\ graphicsbase\ =\ (\textcolor{keywordtype}{float}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangle[j]\ =\ btVector3(graphicsbase[0]\ *\ meshScaling.getX(),\ graphicsbase[1]\ *\ meshScaling.getY(),\ graphicsbase[2]\ *\ meshScaling.getZ());}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}*\ graphicsbase\ =\ (\textcolor{keywordtype}{double}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangle[j]\ =\ btVector3(btScalar(graphicsbase[0])\ *\ meshScaling.getX(),\ btScalar(graphicsbase[1])\ *\ meshScaling.getY(),\ btScalar(graphicsbase[2])\ *\ meshScaling.getZ());}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Perform\ ray\ vs.\ triangle\ collision\ here\ */}}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ m\_callback-\/>processTriangle(m\_triangle,\ nodeSubPart,\ nodeTriangleIndex);}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ m\_meshInterface-\/>unLockReadOnlyVertexBase(nodeSubPart);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \};}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ MyNodeOverlapCallback\ myNodeCallback(callback,\ m\_meshInterface);}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ m\_bvh-\/>reportRayOverlappingNodex(\&myNodeCallback,\ raySource,\ rayTarget);}
+\DoxyCodeLine{00162\ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::performConvexcast(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)}
+\DoxyCodeLine{00165\ \{}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keyword}{struct\ }MyNodeOverlapCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}}
+\DoxyCodeLine{00167\ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ btStridingMeshInterface*\ m\_meshInterface;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ m\_callback;}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ MyNodeOverlapCallback(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ btStridingMeshInterface*\ meshInterface)}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_meshInterface(meshInterface),}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_callback(callback)}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processNode(\textcolor{keywordtype}{int}\ nodeSubPart,\ \textcolor{keywordtype}{int}\ nodeTriangleIndex)}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ m\_triangle[3];}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ vertexbase;}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numverts;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ PHY\_ScalarType\ type;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ stride;}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ indexbase;}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ indexstride;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numfaces;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ PHY\_ScalarType\ indicestype;}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ m\_meshInterface-\/>getLockedReadOnlyVertexIndexBase(}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&vertexbase,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numverts,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stride,}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&indexbase,}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indexstride,}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numfaces,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicestype,}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nodeSubPart);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*\ gfxbase\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*)(indexbase\ +\ nodeTriangleIndex\ *\ indexstride);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ meshScaling\ =\ m\_meshInterface-\/>getScaling();}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 2;\ j\ >=\ 0;\ j-\/-\/)}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ graphicsindex;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (indicestype)\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_INTEGER:\ graphicsindex\ =\ gfxbase[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_SHORT:\ graphicsindex\ =\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*)gfxbase)[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_UCHAR:\ graphicsindex\ =\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)gfxbase)[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ btAssert(0);}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type\ ==\ PHY\_FLOAT)}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}*\ graphicsbase\ =\ (\textcolor{keywordtype}{float}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangle[j]\ =\ btVector3(graphicsbase[0]\ *\ meshScaling.getX(),\ graphicsbase[1]\ *\ meshScaling.getY(),\ graphicsbase[2]\ *\ meshScaling.getZ());}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}*\ graphicsbase\ =\ (\textcolor{keywordtype}{double}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangle[j]\ =\ btVector3(btScalar(graphicsbase[0])\ *\ meshScaling.getX(),\ btScalar(graphicsbase[1])\ *\ meshScaling.getY(),\ btScalar(graphicsbase[2])\ *\ meshScaling.getZ());}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Perform\ ray\ vs.\ triangle\ collision\ here\ */}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ m\_callback-\/>processTriangle(m\_triangle,\ nodeSubPart,\ nodeTriangleIndex);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ m\_meshInterface-\/>unLockReadOnlyVertexBase(nodeSubPart);}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \};}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ MyNodeOverlapCallback\ myNodeCallback(callback,\ m\_meshInterface);}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ m\_bvh-\/>reportBoxCastOverlappingNodex(\&myNodeCallback,\ raySource,\ rayTarget,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00236\ \}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \textcolor{comment}{//perform\ bvh\ tree\ traversal\ and\ report\ overlapping\ triangles\ to\ 'callback'}}
+\DoxyCodeLine{00239\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::processAllTriangles(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00240\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\#ifdef\ DISABLE\_BVH}}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{comment}{//brute\ force\ traverse\ all\ triangles}}
+\DoxyCodeLine{00243\ \ \ \ \ btTriangleMeshShape::processAllTriangles(callback,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{comment}{//first\ get\ all\ the\ nodes}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keyword}{struct\ }MyNodeOverlapCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}}
+\DoxyCodeLine{00249\ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ btStridingMeshInterface*\ m\_meshInterface;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ m\_callback;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ btVector3\ m\_triangle[3];}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numOverlap;}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ MyNodeOverlapCallback(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ btStridingMeshInterface*\ meshInterface)}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_meshInterface(meshInterface),}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_callback(callback),}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_numOverlap(0)}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processNode(\textcolor{keywordtype}{int}\ nodeSubPart,\ \textcolor{keywordtype}{int}\ nodeTriangleIndex)}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ m\_numOverlap++;}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ vertexbase;}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numverts;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ PHY\_ScalarType\ type;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ stride;}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ indexbase;}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ indexstride;}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numfaces;}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ PHY\_ScalarType\ indicestype;}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ m\_meshInterface-\/>getLockedReadOnlyVertexIndexBase(}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&vertexbase,}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numverts,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type,}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stride,}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&indexbase,}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indexstride,}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numfaces,}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicestype,}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nodeSubPart);}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*\ gfxbase\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*)(indexbase\ +\ nodeTriangleIndex\ *\ indexstride);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(indicestype\ ==\ PHY\_INTEGER\ ||\ indicestype\ ==\ PHY\_SHORT\ ||\ indicestype\ ==\ PHY\_UCHAR);}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ meshScaling\ =\ m\_meshInterface-\/>getScaling();}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 2;\ j\ >=\ 0;\ j-\/-\/)}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ graphicsindex\ =\ indicestype\ ==\ PHY\_SHORT\ ?\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*)gfxbase)[j]\ :\ indicestype\ ==\ PHY\_INTEGER\ ?\ gfxbase[j]\ :\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)gfxbase)[j];}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_TRIANGLE\_MESH}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%d\ ,"{}},\ graphicsindex);}
+\DoxyCodeLine{00295\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_TRIANGLE\_MESH}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type\ ==\ PHY\_FLOAT)}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}*\ graphicsbase\ =\ (\textcolor{keywordtype}{float}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangle[j]\ =\ btVector3(}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ graphicsbase[0]\ *\ meshScaling.getX(),}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ graphicsbase[1]\ *\ meshScaling.getY(),}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ graphicsbase[2]\ *\ meshScaling.getZ());}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}*\ graphicsbase\ =\ (\textcolor{keywordtype}{double}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangle[j]\ =\ btVector3(}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar(graphicsbase[0])\ *\ meshScaling.getX(),}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar(graphicsbase[1])\ *\ meshScaling.getY(),}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar(graphicsbase[2])\ *\ meshScaling.getZ());}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00314\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_TRIANGLE\_MESH}}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}triangle\ vertices:\%f,\%f,\%f\(\backslash\)n"{}},\ triangle[j].x(),\ triangle[j].y(),\ triangle[j].z());}
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_TRIANGLE\_MESH}}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ m\_callback-\/>processTriangle(m\_triangle,\ nodeSubPart,\ nodeTriangleIndex);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ m\_meshInterface-\/>unLockReadOnlyVertexBase(nodeSubPart);}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00322\ \ \ \ \ \};}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ MyNodeOverlapCallback\ myNodeCallback(callback,\ m\_meshInterface);}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \ \ \ \ m\_bvh-\/>reportAabbOverlappingNodex(\&myNodeCallback,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DISABLE\_BVH}}
+\DoxyCodeLine{00329\ \}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::setLocalScaling(\textcolor{keyword}{const}\ btVector3\&\ scaling)}
+\DoxyCodeLine{00332\ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordflow}{if}\ ((getLocalScaling()\ -\/\ scaling).length2()\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00334\ \ \ \ \ \{}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ btTriangleMeshShape::setLocalScaling(scaling);}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ buildOptimizedBvh();}
+\DoxyCodeLine{00337\ \ \ \ \ \}}
+\DoxyCodeLine{00338\ \}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::buildOptimizedBvh()}
+\DoxyCodeLine{00341\ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_ownsBvh)}
+\DoxyCodeLine{00343\ \ \ \ \ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ m\_bvh-\/>\string~btOptimizedBvh();}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ btAlignedFree(m\_bvh);}
+\DoxyCodeLine{00346\ \ \ \ \ \}}
+\DoxyCodeLine{00348\ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(btOptimizedBvh),\ 16);}
+\DoxyCodeLine{00349\ \ \ \ \ m\_bvh\ =\ \textcolor{keyword}{new}\ (mem)\ btOptimizedBvh();}
+\DoxyCodeLine{00350\ \ \ \ \ \textcolor{comment}{//rebuild\ the\ bvh...}}
+\DoxyCodeLine{00351\ \ \ \ \ m\_bvh-\/>build(m\_meshInterface,\ m\_useQuantizedAabbCompression,\ m\_localAabbMin,\ m\_localAabbMax);}
+\DoxyCodeLine{00352\ \ \ \ \ m\_ownsBvh\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00353\ \}}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::setOptimizedBvh(btOptimizedBvh*\ bvh,\ \textcolor{keyword}{const}\ btVector3\&\ scaling)}
+\DoxyCodeLine{00356\ \{}
+\DoxyCodeLine{00357\ \ \ \ \ btAssert(!m\_bvh);}
+\DoxyCodeLine{00358\ \ \ \ \ btAssert(!m\_ownsBvh);}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ \ \ m\_bvh\ =\ bvh;}
+\DoxyCodeLine{00361\ \ \ \ \ m\_ownsBvh\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{comment}{//\ update\ the\ scaling\ without\ rebuilding\ the\ bvh}}
+\DoxyCodeLine{00363\ \ \ \ \ \textcolor{keywordflow}{if}\ ((getLocalScaling()\ -\/\ scaling).length2()\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00364\ \ \ \ \ \{}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ btTriangleMeshShape::setLocalScaling(scaling);}
+\DoxyCodeLine{00366\ \ \ \ \ \}}
+\DoxyCodeLine{00367\ \}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00370\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btBvhTriangleMeshShape::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00371\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00372\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_mesh_shape_data}{btTriangleMeshShapeData}}*\ trimeshData\ =\ (\mbox{\hyperlink{structbt_triangle_mesh_shape_data}{btTriangleMeshShapeData}}*)dataBuffer;}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \ \ \ \ btCollisionShape::serialize(\&trimeshData-\/>m\_collisionShapeData,\ serializer);}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \ \ \ \ m\_meshInterface-\/>serialize(\&trimeshData-\/>m\_meshInterface,\ serializer);}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ \ \ trimeshData-\/>m\_collisionMargin\ =\ float(m\_collisionMargin);}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_bvh\ \&\&\ !(serializer-\/>getSerializationFlags()\ \&\ BT\_SERIALIZE\_NO\_BVH))}
+\DoxyCodeLine{00381\ \ \ \ \ \{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ chunk\ =\ serializer-\/>findPointer(m\_bvh);}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (chunk)}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00385\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedDoubleBvh\ =\ (btQuantizedBvhData*)chunk;}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedFloatBvh\ =\ 0;}
+\DoxyCodeLine{00388\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedFloatBvh\ =\ (btQuantizedBvhData*)chunk;}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedDoubleBvh\ =\ 0;}
+\DoxyCodeLine{00391\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedDoubleBvh\ =\ (btQuantizedBvhData*)serializer-\/>getUniquePointer(m\_bvh);}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedFloatBvh\ =\ 0;}
+\DoxyCodeLine{00398\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedFloatBvh\ =\ (btQuantizedBvhData*)serializer-\/>getUniquePointer(m\_bvh);}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedDoubleBvh\ =\ 0;}
+\DoxyCodeLine{00401\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ m\_bvh-\/>calculateSerializeBufferSizeNew();}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(sz,\ 1);}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ structType\ =\ m\_bvh-\/>serialize(chunk-\/>m\_oldPtr,\ serializer);}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ structType,\ BT\_QUANTIZED\_BVH\_CODE,\ m\_bvh);}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00408\ \ \ \ \ \}}
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00410\ \ \ \ \ \{}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedFloatBvh\ =\ 0;}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ trimeshData-\/>m\_quantizedDoubleBvh\ =\ 0;}
+\DoxyCodeLine{00413\ \ \ \ \ \}}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_triangleInfoMap\ \&\&\ !(serializer-\/>getSerializationFlags()\ \&\ BT\_SERIALIZE\_NO\_TRIANGLEINFOMAP))}
+\DoxyCodeLine{00416\ \ \ \ \ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ chunk\ =\ serializer-\/>findPointer(m\_triangleInfoMap);}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (chunk)}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_triangleInfoMap\ =\ (\mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}}*)chunk;}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshData-\/>m\_triangleInfoMap\ =\ (\mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}}*)serializer-\/>getUniquePointer(m\_triangleInfoMap);}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ m\_triangleInfoMap-\/>calculateSerializeBufferSize();}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(sz,\ 1);}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ structType\ =\ m\_triangleInfoMap-\/>\mbox{\hyperlink{structbt_triangle_info_map_a261e882097348fb47cc787bcdf6e1420}{serialize}}(chunk-\/>m\_oldPtr,\ serializer);}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ structType,\ BT\_TRIANLGE\_INFO\_MAP,\ m\_triangleInfoMap);}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00430\ \ \ \ \ \}}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00432\ \ \ \ \ \{}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ trimeshData-\/>m\_triangleInfoMap\ =\ 0;}
+\DoxyCodeLine{00434\ \ \ \ \ \}}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ \ \ \ \ \textcolor{comment}{//\ Fill\ padding\ with\ zeros\ to\ appease\ msan.}}
+\DoxyCodeLine{00437\ \ \ \ \ memset(trimeshData-\/>m\_pad3,\ 0,\ \textcolor{keyword}{sizeof}(trimeshData-\/>m\_pad3));}
+\DoxyCodeLine{00438\ }
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}btTriangleMeshShapeData"{}};}
+\DoxyCodeLine{00440\ \}}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::serializeSingleBvh(\mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00443\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00444\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_bvh)}
+\DoxyCodeLine{00445\ \ \ \ \ \{}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len\ =\ m\_bvh-\/>calculateSerializeBufferSizeNew();\ \ \textcolor{comment}{//make\ sure\ not\ to\ use\ calculateSerializeBufferSize\ because\ it\ is\ used\ for\ in-\/place}}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(len,\ 1);}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ structType\ =\ m\_bvh-\/>serialize(chunk-\/>m\_oldPtr,\ serializer);}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ structType,\ BT\_QUANTIZED\_BVH\_CODE,\ (\textcolor{keywordtype}{void}*)m\_bvh);}
+\DoxyCodeLine{00450\ \ \ \ \ \}}
+\DoxyCodeLine{00451\ \}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \textcolor{keywordtype}{void}\ btBvhTriangleMeshShape::serializeSingleTriangleInfoMap(\mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00454\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00455\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_triangleInfoMap)}
+\DoxyCodeLine{00456\ \ \ \ \ \{}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len\ =\ m\_triangleInfoMap-\/>calculateSerializeBufferSize();}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(len,\ 1);}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ structType\ =\ m\_triangleInfoMap-\/>\mbox{\hyperlink{structbt_triangle_info_map_a261e882097348fb47cc787bcdf6e1420}{serialize}}(chunk-\/>m\_oldPtr,\ serializer);}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ structType,\ BT\_TRIANLGE\_INFO\_MAP,\ (\textcolor{keywordtype}{void}*)m\_triangleInfoMap);}
+\DoxyCodeLine{00461\ \ \ \ \ \}}
+\DoxyCodeLine{00462\ \}}
+
+\end{DoxyCode}

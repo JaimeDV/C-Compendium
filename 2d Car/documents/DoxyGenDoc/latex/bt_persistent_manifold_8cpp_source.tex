@@ -1,0 +1,452 @@
+\doxysection{bt\+Persistent\+Manifold.\+cpp}
+\hypertarget{bt_persistent_manifold_8cpp_source}{}\label{bt_persistent_manifold_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btPersistentManifold.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btPersistentManifold.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btPersistentManifold.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSerializer.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ btCollisionObjectData\ btCollisionObjectDoubleData}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ btCollisionObjectData\ btCollisionObjectFloatData}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ btScalar\ gContactBreakingThreshold\ =\ btScalar(0.02);}
+\DoxyCodeLine{00027\ ContactDestroyedCallback\ gContactDestroyedCallback\ =\ 0;}
+\DoxyCodeLine{00028\ ContactProcessedCallback\ gContactProcessedCallback\ =\ 0;}
+\DoxyCodeLine{00029\ ContactStartedCallback\ gContactStartedCallback\ =\ 0;}
+\DoxyCodeLine{00030\ ContactEndedCallback\ gContactEndedCallback\ =\ 0;}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{bool}\ gContactCalcArea3Points\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ btPersistentManifold::btPersistentManifold()}
+\DoxyCodeLine{00036\ \ \ \ \ :\ \mbox{\hyperlink{structbt_typed_object}{btTypedObject}}(BT\_PERSISTENT\_MANIFOLD\_TYPE),}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ m\_body0(0),}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ m\_body1(0),}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ m\_cachedPoints(0),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ m\_companionIdA(0),}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ m\_companionIdB(0),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ m\_index1a(0)}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ btPersistentManifold::DebugPersistency()}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00051\ \ \ \ \ printf(\textcolor{stringliteral}{"{}DebugPersistency\ :\ numPoints\ \%d\(\backslash\)n"{}},\ m\_cachedPoints);}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_cachedPoints;\ i++)}
+\DoxyCodeLine{00053\ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}m\_pointCache[\%d].m\_userPersistentData\ =\ \%x\(\backslash\)n"{}},\ i,\ m\_pointCache[i].m\_userPersistentData);}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+\DoxyCodeLine{00056\ \}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ btPersistentManifold::clearUserCache(\mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ pt)}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}*\ oldPtr\ =\ pt.m\_userPersistentData;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{if}\ (oldPtr)}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ occurance\ =\ 0;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_cachedPoints;\ i++)}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_pointCache[i].m\_userPersistentData\ ==\ oldPtr)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ occurance++;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (occurance\ >\ 1)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}error\ in\ clearUserCache\(\backslash\)n"{}});}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ btAssert(occurance\ <=\ 0);}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pt.m\_userPersistentData\ \&\&\ gContactDestroyedCallback)}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ (*gContactDestroyedCallback)(pt.m\_userPersistentData);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ pt.m\_userPersistentData\ =\ 0;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ DebugPersistency();}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ calcArea4Points(\textcolor{keyword}{const}\ btVector3\&\ p0,\ \textcolor{keyword}{const}\ btVector3\&\ p1,\ \textcolor{keyword}{const}\ btVector3\&\ p2,\ \textcolor{keyword}{const}\ btVector3\&\ p3)}
+\DoxyCodeLine{00092\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{//\ It\ calculates\ possible\ 3\ area\ constructed\ from\ random\ 4\ points\ and\ returns\ the\ biggest\ one.}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ btVector3\ a[3],\ b[3];}
+\DoxyCodeLine{00096\ \ \ \ \ a[0]\ =\ p0\ -\/\ p1;}
+\DoxyCodeLine{00097\ \ \ \ \ a[1]\ =\ p0\ -\/\ p2;}
+\DoxyCodeLine{00098\ \ \ \ \ a[2]\ =\ p0\ -\/\ p3;}
+\DoxyCodeLine{00099\ \ \ \ \ b[0]\ =\ p2\ -\/\ p3;}
+\DoxyCodeLine{00100\ \ \ \ \ b[1]\ =\ p1\ -\/\ p3;}
+\DoxyCodeLine{00101\ \ \ \ \ b[2]\ =\ p1\ -\/\ p2;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//todo:\ Following\ 3\ cross\ production\ can\ be\ easily\ optimized\ by\ SIMD.}}
+\DoxyCodeLine{00104\ \ \ \ \ btVector3\ tmp0\ =\ a[0].cross(b[0]);}
+\DoxyCodeLine{00105\ \ \ \ \ btVector3\ tmp1\ =\ a[1].cross(b[1]);}
+\DoxyCodeLine{00106\ \ \ \ \ btVector3\ tmp2\ =\ a[2].cross(b[2]);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordflow}{return}\ btMax(btMax(tmp0.length2(),\ tmp1.length2()),\ tmp2.length2());}
+\DoxyCodeLine{00109\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{int}\ btPersistentManifold::sortCachedPoints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ pt)}
+\DoxyCodeLine{00112\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{//calculate\ 4\ possible\ cases\ areas,\ and\ take\ biggest\ area}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{//also\ need\ to\ keep\ 'deepest'}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ maxPenetrationIndex\ =\ -\/1;}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#define\ KEEP\_DEEPEST\_POINT\ 1}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#ifdef\ KEEP\_DEEPEST\_POINT}}
+\DoxyCodeLine{00119\ \ \ \ \ btScalar\ maxPenetration\ =\ pt.getDistance();}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{00121\ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_pointCache[i].getDistance()\ <\ maxPenetration)}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ maxPenetrationIndex\ =\ i;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ maxPenetration\ =\ m\_pointCache[i].getDistance();}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//KEEP\_DEEPEST\_POINT}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ btScalar\ res0(btScalar(0.)),\ res1(btScalar(0.)),\ res2(btScalar(0.)),\ res3(btScalar(0.));}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordflow}{if}\ (gContactCalcArea3Points)}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 0)}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ a0\ =\ pt.m\_localPointA\ -\/\ m\_pointCache[1].m\_localPointA;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ b0\ =\ m\_pointCache[3].m\_localPointA\ -\/\ m\_pointCache[2].m\_localPointA;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ cross\ =\ a0.cross(b0);}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ res0\ =\ cross.length2();}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 1)}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ a1\ =\ pt.m\_localPointA\ -\/\ m\_pointCache[0].m\_localPointA;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ b1\ =\ m\_pointCache[3].m\_localPointA\ -\/\ m\_pointCache[2].m\_localPointA;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ cross\ =\ a1.cross(b1);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ res1\ =\ cross.length2();}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 2)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ a2\ =\ pt.m\_localPointA\ -\/\ m\_pointCache[0].m\_localPointA;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ b2\ =\ m\_pointCache[3].m\_localPointA\ -\/\ m\_pointCache[1].m\_localPointA;}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ cross\ =\ a2.cross(b2);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ res2\ =\ cross.length2();}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 3)}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ a3\ =\ pt.m\_localPointA\ -\/\ m\_pointCache[0].m\_localPointA;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ b3\ =\ m\_pointCache[2].m\_localPointA\ -\/\ m\_pointCache[1].m\_localPointA;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ cross\ =\ a3.cross(b3);}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ res3\ =\ cross.length2();}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00164\ \ \ \ \ \}}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00166\ \ \ \ \ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 0)}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ res0\ =\ calcArea4Points(pt.m\_localPointA,\ m\_pointCache[1].m\_localPointA,\ m\_pointCache[2].m\_localPointA,\ m\_pointCache[3].m\_localPointA);}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 1)}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ res1\ =\ calcArea4Points(pt.m\_localPointA,\ m\_pointCache[0].m\_localPointA,\ m\_pointCache[2].m\_localPointA,\ m\_pointCache[3].m\_localPointA);}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 2)}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ res2\ =\ calcArea4Points(pt.m\_localPointA,\ m\_pointCache[0].m\_localPointA,\ m\_pointCache[1].m\_localPointA,\ m\_pointCache[3].m\_localPointA);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxPenetrationIndex\ !=\ 3)}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ res3\ =\ calcArea4Points(pt.m\_localPointA,\ m\_pointCache[0].m\_localPointA,\ m\_pointCache[1].m\_localPointA,\ m\_pointCache[2].m\_localPointA);}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00186\ \ \ \ \ \}}
+\DoxyCodeLine{00187\ \ \ \ \ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ maxvec(res0,\ res1,\ res2,\ res3);}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{int}\ biggestarea\ =\ maxvec.closestAxis4();}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordflow}{return}\ biggestarea;}
+\DoxyCodeLine{00190\ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \textcolor{keywordtype}{int}\ btPersistentManifold::getCacheEntry(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ newPoint)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00193\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00194\ \ \ \ \ btScalar\ shortestDist\ =\ getContactBreakingThreshold()\ *\ getContactBreakingThreshold();}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{int}\ size\ =\ getNumContacts();}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{int}\ nearestPoint\ =\ -\/1;}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ size;\ i++)}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ mp\ =\ m\_pointCache[i];}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ btVector3\ diffA\ =\ mp.m\_localPointA\ -\/\ newPoint.m\_localPointA;}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ distToManiPoint\ =\ diffA.dot(diffA);}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (distToManiPoint\ <\ shortestDist)}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ shortestDist\ =\ distToManiPoint;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ nearestPoint\ =\ i;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordflow}{return}\ nearestPoint;}
+\DoxyCodeLine{00210\ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{keywordtype}{int}\ btPersistentManifold::addManifoldPoint(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ newPoint,\ \textcolor{keywordtype}{bool}\ isPredictive)}
+\DoxyCodeLine{00213\ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isPredictive)}
+\DoxyCodeLine{00215\ \ \ \ \ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ btAssert(validContactDistance(newPoint));}
+\DoxyCodeLine{00217\ \ \ \ \ \}}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{int}\ insertIndex\ =\ getNumContacts();}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordflow}{if}\ (insertIndex\ ==\ MANIFOLD\_CACHE\_SIZE)}
+\DoxyCodeLine{00221\ \ \ \ \ \{}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\#if\ MANIFOLD\_CACHE\_SIZE\ >=\ 4}}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{comment}{//sort\ cache\ so\ best\ points\ come\ first,\ based\ on\ area}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ insertIndex\ =\ sortCachedPoints(newPoint);}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ insertIndex\ =\ 0;}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ clearUserCache(m\_pointCache[insertIndex]);}
+\DoxyCodeLine{00229\ \ \ \ \ \}}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00231\ \ \ \ \ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ m\_cachedPoints++;}
+\DoxyCodeLine{00233\ \ \ \ \ \}}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{keywordflow}{if}\ (insertIndex\ <\ 0)}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ insertIndex\ =\ 0;}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ btAssert(m\_pointCache[insertIndex].m\_userPersistentData\ ==\ 0);}
+\DoxyCodeLine{00238\ \ \ \ \ m\_pointCache[insertIndex]\ =\ newPoint;}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordflow}{return}\ insertIndex;}
+\DoxyCodeLine{00240\ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ btScalar\ btPersistentManifold::getContactBreakingThreshold()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00243\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_contactBreakingThreshold;}
+\DoxyCodeLine{00245\ \}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \textcolor{keywordtype}{void}\ btPersistentManifold::refreshContactPoints(\textcolor{keyword}{const}\ btTransform\&\ trA,\ \textcolor{keyword}{const}\ btTransform\&\ trB)}
+\DoxyCodeLine{00248\ \{}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00251\ \ \ \ \ printf(\textcolor{stringliteral}{"{}refreshContactPoints\ posA\ =\ (\%f,\%f,\%f)\ posB\ =\ (\%f,\%f,\%f)\(\backslash\)n"{}},}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ trA.getOrigin().getX(),}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ trA.getOrigin().getY(),}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ trA.getOrigin().getZ(),}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ trB.getOrigin().getX(),}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ trB.getOrigin().getY(),}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ trB.getOrigin().getZ());}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00260\ \ \ \ \ for\ (i\ =\ getNumContacts()\ -\/\ 1;\ i\ >=\ 0;\ i-\/-\/)}
+\DoxyCodeLine{00261\ \ \ \ \ \{}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ manifoldPoint\ =\ m\_pointCache[i];}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ manifoldPoint.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ =\ trA(manifoldPoint.m\_localPointA);}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ manifoldPoint.m\_positionWorldOnB\ =\ trB(manifoldPoint.m\_localPointB);}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ manifoldPoint.m\_distance1\ =\ (manifoldPoint.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ -\/\ manifoldPoint.m\_positionWorldOnB).dot(manifoldPoint.m\_normalWorldOnB);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ manifoldPoint.m\_lifeTime++;}
+\DoxyCodeLine{00267\ \ \ \ \ \}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00270\ \ \ \ \ btScalar\ distance2d;}
+\DoxyCodeLine{00271\ \ \ \ \ btVector3\ projectedDifference,\ projectedPoint;}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ getNumContacts()\ -\/\ 1;\ i\ >=\ 0;\ i-\/-\/)}
+\DoxyCodeLine{00273\ \ \ \ \ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ manifoldPoint\ =\ m\_pointCache[i];}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{comment}{//contact\ becomes\ invalid\ when\ signed\ distance\ exceeds\ margin\ (projected\ on\ contactnormal\ direction)}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!validContactDistance(manifoldPoint))}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ removeContactPoint(i);}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//todo:\ friction\ anchor\ may\ require\ the\ contact\ to\ be\ around\ a\ bit\ longer}}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//contact\ also\ becomes\ invalid\ when\ relative\ movement\ orthogonal\ to\ normal\ exceeds\ margin}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ projectedPoint\ =\ manifoldPoint.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ -\/\ manifoldPoint.m\_normalWorldOnB\ *\ manifoldPoint.m\_distance1;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ projectedDifference\ =\ manifoldPoint.m\_positionWorldOnB\ -\/\ projectedPoint;}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ distance2d\ =\ projectedDifference.dot(projectedDifference);}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (distance2d\ >\ getContactBreakingThreshold()\ *\ getContactBreakingThreshold())}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ removeContactPoint(i);}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//contact\ point\ processed\ callback}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gContactProcessedCallback)}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (*gContactProcessedCallback)(manifoldPoint,\ (\textcolor{keywordtype}{void}*)m\_body0,\ (\textcolor{keywordtype}{void}*)m\_body1);}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00298\ \ \ \ \ \}}
+\DoxyCodeLine{00299\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_PERSISTENCY}}
+\DoxyCodeLine{00300\ \ \ \ \ DebugPersistency();}
+\DoxyCodeLine{00301\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//}}
+\DoxyCodeLine{00302\ \}}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \textcolor{keywordtype}{int}\ btPersistentManifold::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00305\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(btPersistentManifoldData);}
+\DoxyCodeLine{00307\ \}}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btPersistentManifold::serialize(\textcolor{keyword}{const}\ \textcolor{keyword}{class}\ btPersistentManifold*\ manifold,\ \textcolor{keywordtype}{void}*\ dataBuffer,\ \textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00310\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00311\ \ \ \ \ btPersistentManifoldData*\ dataOut\ =\ (btPersistentManifoldData*)dataBuffer;}
+\DoxyCodeLine{00312\ \ \ \ \ memset(dataOut,\ 0,\ \textcolor{keyword}{sizeof}(btPersistentManifoldData));}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ dataOut-\/>m\_body0\ =\ (btCollisionObjectData*)serializer-\/>getUniquePointer((\textcolor{keywordtype}{void}*)manifold-\/>getBody0());}
+\DoxyCodeLine{00315\ \ \ \ \ dataOut-\/>m\_body1\ =\ (btCollisionObjectData*)serializer-\/>getUniquePointer((\textcolor{keywordtype}{void}*)manifold-\/>getBody1());}
+\DoxyCodeLine{00316\ \ \ \ \ dataOut-\/>m\_contactBreakingThreshold\ =\ manifold-\/>getContactBreakingThreshold();}
+\DoxyCodeLine{00317\ \ \ \ \ dataOut-\/>m\_contactProcessingThreshold\ =\ manifold-\/>getContactProcessingThreshold();}
+\DoxyCodeLine{00318\ \ \ \ \ dataOut-\/>m\_numCachedPoints\ =\ manifold-\/>getNumContacts();}
+\DoxyCodeLine{00319\ \ \ \ \ dataOut-\/>m\_companionIdA\ =\ manifold-\/>m\_companionIdA;}
+\DoxyCodeLine{00320\ \ \ \ \ dataOut-\/>m\_companionIdB\ =\ manifold-\/>m\_companionIdB;}
+\DoxyCodeLine{00321\ \ \ \ \ dataOut-\/>m\_index1a\ =\ manifold-\/>m\_index1a;}
+\DoxyCodeLine{00322\ \ \ \ \ dataOut-\/>m\_objectType\ =\ manifold-\/>m\_objectType;}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ this-\/>getNumContacts();\ i++)}
+\DoxyCodeLine{00325\ \ \ \ \ \{}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ pt\ =\ manifold-\/>getContactPoint(i);}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheAppliedImpulse[i]\ =\ pt.m\_appliedImpulse;}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCachePrevRHS[i]\ =\ pt.m\_prevRHS;}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheAppliedImpulseLateral1[i]\ =\ pt.m\_appliedImpulseLateral1;}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheAppliedImpulseLateral2[i]\ =\ pt.m\_appliedImpulseLateral2;}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ pt.m\_localPointA.serialize(dataOut-\/>m\_pointCacheLocalPointA[i]);}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ pt.m\_localPointB.serialize(dataOut-\/>m\_pointCacheLocalPointB[i]);}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ pt.m\_normalWorldOnB.serialize(dataOut-\/>m\_pointCacheNormalWorldOnB[i]);}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheDistance[i]\ =\ pt.m\_distance1;}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheCombinedContactDamping1[i]\ =\ pt.m\_combinedContactDamping1;}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheCombinedContactStiffness1[i]\ =\ pt.m\_combinedContactStiffness1;}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheLifeTime[i]\ =\ pt.m\_lifeTime;}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheFrictionCFM[i]\ =\ pt.m\_frictionCFM;}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheContactERP[i]\ =\ pt.m\_contactERP;}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheContactCFM[i]\ =\ pt.m\_contactCFM;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheContactPointFlags[i]\ =\ pt.m\_contactPointFlags;}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheIndex0[i]\ =\ pt.m\_index0;}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheIndex1[i]\ =\ pt.m\_index1;}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCachePartId0[i]\ =\ pt.m\_partId0;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCachePartId1[i]\ =\ pt.m\_partId1;}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ pt.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}.serialize(dataOut-\/>m\_pointCachePositionWorldOnA[i]);}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ pt.m\_positionWorldOnB.serialize(dataOut-\/>m\_pointCachePositionWorldOnB[i]);}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheCombinedFriction[i]\ =\ pt.m\_combinedFriction;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ pt.m\_lateralFrictionDir1.serialize(dataOut-\/>m\_pointCacheLateralFrictionDir1[i]);}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ pt.m\_lateralFrictionDir2.serialize(dataOut-\/>m\_pointCacheLateralFrictionDir2[i]);}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheCombinedRollingFriction[i]\ =\ pt.m\_combinedRollingFriction;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheCombinedSpinningFriction[i]\ =\ pt.m\_combinedSpinningFriction;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheCombinedRestitution[i]\ =\ pt.m\_combinedRestitution;}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheContactMotion1[i]\ =\ pt.m\_contactMotion1;}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ dataOut-\/>m\_pointCacheContactMotion2[i]\ =\ pt.m\_contactMotion2;}
+\DoxyCodeLine{00356\ \ \ \ \ \}}
+\DoxyCodeLine{00357\ \ \ \ \ \textcolor{keywordflow}{return}\ btPersistentManifoldDataName;}
+\DoxyCodeLine{00358\ \}}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \textcolor{keywordtype}{void}\ btPersistentManifold::deSerialize(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structbt_persistent_manifold_double_data}{btPersistentManifoldDoubleData}}*\ manifoldDataPtr)}
+\DoxyCodeLine{00361\ \{}
+\DoxyCodeLine{00362\ \ \ \ \ m\_contactBreakingThreshold\ =\ manifoldDataPtr-\/>m\_contactBreakingThreshold;}
+\DoxyCodeLine{00363\ \ \ \ \ m\_contactProcessingThreshold\ =\ manifoldDataPtr-\/>m\_contactProcessingThreshold;}
+\DoxyCodeLine{00364\ \ \ \ \ m\_cachedPoints\ =\ manifoldDataPtr-\/>m\_numCachedPoints;}
+\DoxyCodeLine{00365\ \ \ \ \ m\_companionIdA\ =\ manifoldDataPtr-\/>m\_companionIdA;}
+\DoxyCodeLine{00366\ \ \ \ \ m\_companionIdB\ =\ manifoldDataPtr-\/>m\_companionIdB;}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{comment}{//m\_index1a\ =\ manifoldDataPtr-\/>m\_index1a;}}
+\DoxyCodeLine{00368\ \ \ \ \ m\_objectType\ =\ manifoldDataPtr-\/>m\_objectType;}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ this-\/>getNumContacts();\ i++)}
+\DoxyCodeLine{00371\ \ \ \ \ \{}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ pt\ =\ m\_pointCache[i];}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ pt.m\_appliedImpulse\ =\ manifoldDataPtr-\/>m\_pointCacheAppliedImpulse[i];}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ pt.m\_prevRHS\ =\ manifoldDataPtr-\/>m\_pointCachePrevRHS[i];}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ pt.m\_appliedImpulseLateral1\ =\ manifoldDataPtr-\/>m\_pointCacheAppliedImpulseLateral1[i];}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ pt.m\_appliedImpulseLateral2\ =\ manifoldDataPtr-\/>m\_pointCacheAppliedImpulseLateral2[i];}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ pt.m\_localPointA.deSerializeDouble(manifoldDataPtr-\/>m\_pointCacheLocalPointA[i]);}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ pt.m\_localPointB.deSerializeDouble(manifoldDataPtr-\/>m\_pointCacheLocalPointB[i]);}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ pt.m\_normalWorldOnB.deSerializeDouble(manifoldDataPtr-\/>m\_pointCacheNormalWorldOnB[i]);}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ pt.m\_distance1\ =\ manifoldDataPtr-\/>m\_pointCacheDistance[i];}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ pt.m\_combinedContactDamping1\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedContactDamping1[i];}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ pt.m\_combinedContactStiffness1\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedContactStiffness1[i];}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ pt.m\_lifeTime\ =\ manifoldDataPtr-\/>m\_pointCacheLifeTime[i];}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ pt.m\_frictionCFM\ =\ manifoldDataPtr-\/>m\_pointCacheFrictionCFM[i];}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ pt.m\_contactERP\ =\ manifoldDataPtr-\/>m\_pointCacheContactERP[i];}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ pt.m\_contactCFM\ =\ manifoldDataPtr-\/>m\_pointCacheContactCFM[i];}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ pt.m\_contactPointFlags\ =\ manifoldDataPtr-\/>m\_pointCacheContactPointFlags[i];}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ pt.m\_index0\ =\ manifoldDataPtr-\/>m\_pointCacheIndex0[i];}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ pt.m\_index1\ =\ manifoldDataPtr-\/>m\_pointCacheIndex1[i];}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ pt.m\_partId0\ =\ manifoldDataPtr-\/>m\_pointCachePartId0[i];}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ pt.m\_partId1\ =\ manifoldDataPtr-\/>m\_pointCachePartId1[i];}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ pt.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}.deSerializeDouble(manifoldDataPtr-\/>m\_pointCachePositionWorldOnA[i]);}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ pt.m\_positionWorldOnB.deSerializeDouble(manifoldDataPtr-\/>m\_pointCachePositionWorldOnB[i]);}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ pt.m\_combinedFriction\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedFriction[i];}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ pt.m\_lateralFrictionDir1.deSerializeDouble(manifoldDataPtr-\/>m\_pointCacheLateralFrictionDir1[i]);}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ pt.m\_lateralFrictionDir2.deSerializeDouble(manifoldDataPtr-\/>m\_pointCacheLateralFrictionDir2[i]);}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ pt.m\_combinedRollingFriction\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedRollingFriction[i];}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ pt.m\_combinedSpinningFriction\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedSpinningFriction[i];}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ pt.m\_combinedRestitution\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedRestitution[i];}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ pt.m\_contactMotion1\ =\ manifoldDataPtr-\/>m\_pointCacheContactMotion1[i];}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ pt.m\_contactMotion2\ =\ manifoldDataPtr-\/>m\_pointCacheContactMotion2[i];}
+\DoxyCodeLine{00403\ \ \ \ \ \}}
+\DoxyCodeLine{00404\ \}}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00406\ \textcolor{keywordtype}{void}\ btPersistentManifold::deSerialize(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structbt_persistent_manifold_float_data}{btPersistentManifoldFloatData}}*\ manifoldDataPtr)}
+\DoxyCodeLine{00407\ \{}
+\DoxyCodeLine{00408\ \ \ \ \ m\_contactBreakingThreshold\ =\ manifoldDataPtr-\/>m\_contactBreakingThreshold;}
+\DoxyCodeLine{00409\ \ \ \ \ m\_contactProcessingThreshold\ =\ manifoldDataPtr-\/>m\_contactProcessingThreshold;}
+\DoxyCodeLine{00410\ \ \ \ \ m\_cachedPoints\ =\ manifoldDataPtr-\/>m\_numCachedPoints;}
+\DoxyCodeLine{00411\ \ \ \ \ m\_companionIdA\ =\ manifoldDataPtr-\/>m\_companionIdA;}
+\DoxyCodeLine{00412\ \ \ \ \ m\_companionIdB\ =\ manifoldDataPtr-\/>m\_companionIdB;}
+\DoxyCodeLine{00413\ \ \ \ \ \textcolor{comment}{//m\_index1a\ =\ manifoldDataPtr-\/>m\_index1a;}}
+\DoxyCodeLine{00414\ \ \ \ \ m\_objectType\ =\ manifoldDataPtr-\/>m\_objectType;}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ this-\/>getNumContacts();\ i++)}
+\DoxyCodeLine{00417\ \ \ \ \ \{}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ pt\ =\ m\_pointCache[i];}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ pt.m\_appliedImpulse\ =\ manifoldDataPtr-\/>m\_pointCacheAppliedImpulse[i];}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ pt.m\_prevRHS\ =\ manifoldDataPtr-\/>m\_pointCachePrevRHS[i];}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ pt.m\_appliedImpulseLateral1\ =\ manifoldDataPtr-\/>m\_pointCacheAppliedImpulseLateral1[i];}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ pt.m\_appliedImpulseLateral2\ =\ manifoldDataPtr-\/>m\_pointCacheAppliedImpulseLateral2[i];}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ pt.m\_localPointA.deSerialize(manifoldDataPtr-\/>m\_pointCacheLocalPointA[i]);}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ pt.m\_localPointB.deSerialize(manifoldDataPtr-\/>m\_pointCacheLocalPointB[i]);}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ pt.m\_normalWorldOnB.deSerialize(manifoldDataPtr-\/>m\_pointCacheNormalWorldOnB[i]);}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ pt.m\_distance1\ =\ manifoldDataPtr-\/>m\_pointCacheDistance[i];}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ pt.m\_combinedContactDamping1\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedContactDamping1[i];}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ pt.m\_combinedContactStiffness1\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedContactStiffness1[i];}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ pt.m\_lifeTime\ =\ manifoldDataPtr-\/>m\_pointCacheLifeTime[i];}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ pt.m\_frictionCFM\ =\ manifoldDataPtr-\/>m\_pointCacheFrictionCFM[i];}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ pt.m\_contactERP\ =\ manifoldDataPtr-\/>m\_pointCacheContactERP[i];}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ pt.m\_contactCFM\ =\ manifoldDataPtr-\/>m\_pointCacheContactCFM[i];}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ pt.m\_contactPointFlags\ =\ manifoldDataPtr-\/>m\_pointCacheContactPointFlags[i];}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ pt.m\_index0\ =\ manifoldDataPtr-\/>m\_pointCacheIndex0[i];}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ pt.m\_index1\ =\ manifoldDataPtr-\/>m\_pointCacheIndex1[i];}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ pt.m\_partId0\ =\ manifoldDataPtr-\/>m\_pointCachePartId0[i];}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ pt.m\_partId1\ =\ manifoldDataPtr-\/>m\_pointCachePartId1[i];}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ pt.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}.deSerialize(manifoldDataPtr-\/>m\_pointCachePositionWorldOnA[i]);}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ pt.m\_positionWorldOnB.deSerialize(manifoldDataPtr-\/>m\_pointCachePositionWorldOnB[i]);}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ pt.m\_combinedFriction\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedFriction[i];}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ pt.m\_lateralFrictionDir1.deSerialize(manifoldDataPtr-\/>m\_pointCacheLateralFrictionDir1[i]);}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ pt.m\_lateralFrictionDir2.deSerialize(manifoldDataPtr-\/>m\_pointCacheLateralFrictionDir2[i]);}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ pt.m\_combinedRollingFriction\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedRollingFriction[i];}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ pt.m\_combinedSpinningFriction\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedSpinningFriction[i];}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ pt.m\_combinedRestitution\ =\ manifoldDataPtr-\/>m\_pointCacheCombinedRestitution[i];}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ pt.m\_contactMotion1\ =\ manifoldDataPtr-\/>m\_pointCacheContactMotion1[i];}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ pt.m\_contactMotion2\ =\ manifoldDataPtr-\/>m\_pointCacheContactMotion2[i];}
+\DoxyCodeLine{00449\ \ \ \ \ \}}
+\DoxyCodeLine{00450\ \}}
+
+\end{DoxyCode}

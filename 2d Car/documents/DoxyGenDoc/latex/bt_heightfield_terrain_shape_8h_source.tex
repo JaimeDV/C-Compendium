@@ -1,0 +1,187 @@
+\doxysection{bt\+Heightfield\+Terrain\+Shape.\+h}
+\hypertarget{bt_heightfield_terrain_shape_8h_source}{}\label{bt_heightfield_terrain_shape_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_HEIGHTFIELD\_TERRAIN\_SHAPE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_HEIGHTFIELD\_TERRAIN\_SHAPE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btConcaveShape.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00070\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00071\ btHeightfieldTerrainShape\ :\ public\ btConcaveShape}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{struct\ }Range}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ Range()\ \{\}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ Range(btScalar\ min,\ btScalar\ max)\ :\ min(min),\ max(max)\ \{\}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ overlaps(\textcolor{keyword}{const}\ Range\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00080\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ !(min\ >\ other.max\ ||\ max\ <\ other.min);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ btScalar\ min;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ btScalar\ max;}
+\DoxyCodeLine{00086\ \ \ \ \ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00089\ \ \ \ \ btVector3\ m\_localAabbMin;}
+\DoxyCodeLine{00090\ \ \ \ \ btVector3\ m\_localAabbMax;}
+\DoxyCodeLine{00091\ \ \ \ \ btVector3\ m\_localOrigin;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_heightStickWidth;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_heightStickLength;}
+\DoxyCodeLine{00096\ \ \ \ \ btScalar\ m\_minHeight;}
+\DoxyCodeLine{00097\ \ \ \ \ btScalar\ m\_maxHeight;}
+\DoxyCodeLine{00098\ \ \ \ \ btScalar\ m\_width;}
+\DoxyCodeLine{00099\ \ \ \ \ btScalar\ m\_length;}
+\DoxyCodeLine{00100\ \ \ \ \ btScalar\ m\_heightScale;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ m\_heightfieldDataUnsignedChar;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{short}*\ m\_heightfieldDataShort;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ m\_heightfieldDataFloat;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}*\ m\_heightfieldDataDouble;}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ m\_heightfieldDataUnknown;}
+\DoxyCodeLine{00107\ \ \ \ \ \};}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ PHY\_ScalarType\ m\_heightDataType;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_flipQuadEdges;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useDiamondSubdivision;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useZigzagSubdivision;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_flipTriangleWinding;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_upAxis;}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ btVector3\ m\_localScaling;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{//\ Accelerator}}
+\DoxyCodeLine{00119\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<Range>}}\ m\_vboundsGrid;}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_vboundsGridWidth;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_vboundsGridLength;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_vboundsChunkSize;}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ }
+\DoxyCodeLine{00125\ \ \ \ \ btScalar\ m\_userValue3;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ m\_triangleInfoMap;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ getRawHeightFieldValue(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ y)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ quantizeWithClamp(\textcolor{keywordtype}{int}*\ out,\ \textcolor{keyword}{const}\ btVector3\&\ point,\ \textcolor{keywordtype}{int}\ isMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{void}\ initialize(\textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ heightfieldData,\ btScalar\ heightScale,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minHeight,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PHY\_ScalarType\ heightDataType,\ \textcolor{keywordtype}{bool}\ flipQuadEdges);}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00143\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00146\ \ \ \ \ btHeightfieldTerrainShape(}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ heightfieldData,\ btScalar\ minHeight,\ btScalar\ maxHeight,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges);}
+\DoxyCodeLine{00150\ \ \ \ \ btHeightfieldTerrainShape(}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}*\ heightfieldData,\ btScalar\ minHeight,\ btScalar\ maxHeight,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges);}
+\DoxyCodeLine{00154\ \ \ \ \ btHeightfieldTerrainShape(}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{short}*\ heightfieldData,\ btScalar\ heightScale,\ btScalar\ minHeight,\ btScalar\ maxHeight,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges);}
+\DoxyCodeLine{00158\ \ \ \ \ btHeightfieldTerrainShape(}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ heightfieldData,\ btScalar\ heightScale,\ btScalar\ minHeight,\ btScalar\ maxHeight,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ flipQuadEdges);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00173\ \ \ \ \ btHeightfieldTerrainShape(\textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ heightfieldData,\ btScalar\ heightScale,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minHeight,\ btScalar\ maxHeight,}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis,\ PHY\_ScalarType\ heightDataType,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ flipQuadEdges);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00186\ \ \ \ \ btHeightfieldTerrainShape(\textcolor{keywordtype}{int}\ heightStickWidth,\ \textcolor{keywordtype}{int}\ heightStickLength,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ heightfieldData,\ btScalar\ maxHeight,\ \textcolor{keywordtype}{int}\ upAxis,\ \textcolor{keywordtype}{bool}\ useFloatData,\ \textcolor{keywordtype}{bool}\ flipQuadEdges);}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btHeightfieldTerrainShape();}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseDiamondSubdivision(\textcolor{keywordtype}{bool}\ useDiamondSubdivision\ =\ \textcolor{keyword}{true})\ \{\ m\_useDiamondSubdivision\ =\ useDiamondSubdivision;\ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseZigzagSubdivision(\textcolor{keywordtype}{bool}\ useZigzagSubdivision\ =\ \textcolor{keyword}{true})\ \{\ m\_useZigzagSubdivision\ =\ useZigzagSubdivision;\ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{void}\ setFlipTriangleWinding(\textcolor{keywordtype}{bool}\ flipTriangleWinding)}
+\DoxyCodeLine{00196\ \ \ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ m\_flipTriangleWinding\ =\ flipTriangleWinding;}
+\DoxyCodeLine{00198\ \ \ \ \ \}}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getAabb(\textcolor{keyword}{const}\ btTransform\&\ t,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processAllTriangles(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}\ *\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateLocalInertia(btScalar\ mass,\ btVector3\ \&\ inertia)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setLocalScaling(\textcolor{keyword}{const}\ btVector3\&\ scaling);}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ btVector3\&\ getLocalScaling()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordtype}{void}\ getVertex(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ y,\ btVector3\&\ vertex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{void}\ performRaycast(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}\ *\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordtype}{void}\ buildAccelerator(\textcolor{keywordtype}{int}\ chunkSize\ =\ 16);}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{void}\ clearAccelerator();}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordtype}{int}\ getUpAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00217\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_upAxis;}
+\DoxyCodeLine{00219\ \ \ \ \ \}}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{comment}{//debugging}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ getName()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}HEIGHTFIELD"{}};\ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{void}\ setUserValue3(btScalar\ value)}
+\DoxyCodeLine{00225\ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ m\_userValue3\ =\ value;}
+\DoxyCodeLine{00227\ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \ \ btScalar\ getUserValue3()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00229\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userValue3;}
+\DoxyCodeLine{00231\ \ \ \ \ \}}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ getTriangleInfoMap()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00233\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_triangleInfoMap;}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ getTriangleInfoMap()}
+\DoxyCodeLine{00237\ \ \ \ \ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_triangleInfoMap;}
+\DoxyCodeLine{00239\ \ \ \ \ \}}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keywordtype}{void}\ setTriangleInfoMap(\mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ map)}
+\DoxyCodeLine{00241\ \ \ \ \ \{}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ m\_triangleInfoMap\ =\ map;}
+\DoxyCodeLine{00243\ \ \ \ \ \}}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ getHeightfieldRawData()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00245\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_heightfieldDataUnsignedChar;}
+\DoxyCodeLine{00247\ \ \ \ \ \}}
+\DoxyCodeLine{00248\ \};}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_HEIGHTFIELD\_TERRAIN\_SHAPE\_H}}
+
+\end{DoxyCode}

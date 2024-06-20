@@ -1,0 +1,465 @@
+\doxysection{b3\+Hash\+Map.\+h}
+\hypertarget{b3_hash_map_8h_source}{}\label{b3_hash_map_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3HashMap.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3HashMap.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ B3\_HASH\_MAP\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ B3\_HASH\_MAP\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}b3AlignedObjectArray.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_hash_string}{b3HashString}}}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ std::string\ m\_string;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ m\_hash;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ getHash()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_hash;}
+\DoxyCodeLine{00032\ \ \ \ \ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structb3_hash_string}{b3HashString}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ :\ m\_string(name)}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ magic\ numbers\ from\ http://www.isthe.com/chongo/tech/comp/fnv/\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ InitialFNV\ =\ 2166136261u;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ FNVMultiple\ =\ 16777619u;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Fowler\ /\ Noll\ /\ Vo\ (FNV)\ Hash\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ hash\ =\ InitialFNV;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len\ =\ m\_string.length();}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ len;\ i++)}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ hash\ =\ hash\ \string^\ (m\_string[i]);\ \textcolor{comment}{/*\ xor\ \ the\ low\ 8\ bits\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ hash\ =\ hash\ *\ FNVMultiple;\ \ \ \textcolor{comment}{/*\ multiply\ by\ the\ magic\ number\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ m\_hash\ =\ hash;}
+\DoxyCodeLine{00050\ \ \ \ \ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ portableStringCompare(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ src,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ dst)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ret\ =\ 0;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (!(ret\ =\ *(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)src\ -\/\ *(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)dst)\ \&\&\ *dst)}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ ++src,\ ++dst;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ <\ 0)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ ret\ =\ -\/1;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (ret\ >\ 0)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ ret\ =\ 1;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (ret);}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_hash_string}{b3HashString}}\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_string\ ==\ other.m\_string);}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ \};}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ B3\_HASH\_NULL\ =\ 0xffffffff;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_hash_int}{b3HashInt}}}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_uid;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classb3_hash_int}{b3HashInt}}(\textcolor{keywordtype}{int}\ uid)\ :\ m\_uid(uid)}
+\DoxyCodeLine{00081\ \ \ \ \ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{int}\ getUid1()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00085\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_uid;}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ setUid1(\textcolor{keywordtype}{int}\ uid)}
+\DoxyCodeLine{00090\ \ \ \ \ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ m\_uid\ =\ uid;}
+\DoxyCodeLine{00092\ \ \ \ \ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_hash_int}{b3HashInt}}\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00095\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ getUid1()\ ==\ other.getUid1();}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{//to\ our\ success}}
+\DoxyCodeLine{00099\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ getHash()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ key\ =\ m\_uid;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thomas\ Wang's\ hash}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 15);}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 10);}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ key\ +=\ (key\ <<\ 3);}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 6);}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 11);}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 16);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ key;}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ \};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_hash_ptr}{b3HashPtr}}}
+\DoxyCodeLine{00114\ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ m\_pointer;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_hashValues[2];}
+\DoxyCodeLine{00118\ \ \ \ \ \};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00121\ \ \ \ \ \mbox{\hyperlink{classb3_hash_ptr}{b3HashPtr}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ ptr)}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ :\ m\_pointer(ptr)}
+\DoxyCodeLine{00123\ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ getPointer()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00127\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_pointer;}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_hash_ptr}{b3HashPtr}}\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00132\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ getPointer()\ ==\ other.getPointer();}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{//to\ our\ success}}
+\DoxyCodeLine{00137\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ getHash()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00138\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ VOID\_IS\_8\ =\ ((\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}*)\ ==\ 8));}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ key\ =\ VOID\_IS\_8\ ?\ m\_hashValues[0]\ +\ m\_hashValues[1]\ :\ m\_hashValues[0];}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thomas\ Wang's\ hash}}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 15);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 10);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ key\ +=\ (key\ <<\ 3);}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 6);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 11);}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 16);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ key;}
+\DoxyCodeLine{00151\ \ \ \ \ \}}
+\DoxyCodeLine{00152\ \};}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ Value>}
+\DoxyCodeLine{00155\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_hash_key_ptr}{b3HashKeyPtr}}}
+\DoxyCodeLine{00156\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_uid;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00160\ \ \ \ \ \mbox{\hyperlink{classb3_hash_key_ptr}{b3HashKeyPtr}}(\textcolor{keywordtype}{int}\ uid)\ :\ m\_uid(uid)}
+\DoxyCodeLine{00161\ \ \ \ \ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{int}\ getUid1()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00165\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_uid;}
+\DoxyCodeLine{00167\ \ \ \ \ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_hash_key_ptr}{b3HashKeyPtr<Value>}}\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00170\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ getUid1()\ ==\ other.getUid1();}
+\DoxyCodeLine{00172\ \ \ \ \ \}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{//to\ our\ success}}
+\DoxyCodeLine{00175\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ getHash()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00176\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ key\ =\ m\_uid;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thomas\ Wang's\ hash}}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 15);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 10);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ key\ +=\ (key\ <<\ 3);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 6);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 11);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 16);}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ key;}
+\DoxyCodeLine{00186\ \ \ \ \ \}}
+\DoxyCodeLine{00187\ \};}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ Value>}
+\DoxyCodeLine{00190\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_hash_key}{b3HashKey}}}
+\DoxyCodeLine{00191\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_uid;}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00195\ \ \ \ \ \mbox{\hyperlink{classb3_hash_key}{b3HashKey}}(\textcolor{keywordtype}{int}\ uid)\ :\ m\_uid(uid)}
+\DoxyCodeLine{00196\ \ \ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordtype}{int}\ getUid1()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00200\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_uid;}
+\DoxyCodeLine{00202\ \ \ \ \ \}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_hash_key}{b3HashKey<Value>}}\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00205\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ getUid1()\ ==\ other.getUid1();}
+\DoxyCodeLine{00207\ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{comment}{//to\ our\ success}}
+\DoxyCodeLine{00209\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ getHash()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00210\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ key\ =\ m\_uid;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thomas\ Wang's\ hash}}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 15);}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 10);}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ key\ +=\ (key\ <<\ 3);}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 6);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ key\ +=\ \string~(key\ <<\ 11);}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ key\ \string^=\ (key\ >>\ 16);}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ key;}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \};}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00225\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ Key,\ \textcolor{keyword}{class}\ Value>}
+\DoxyCodeLine{00226\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_hash_map}{b3HashMap}}}
+\DoxyCodeLine{00227\ \{}
+\DoxyCodeLine{00228\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00229\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_hashTable;}
+\DoxyCodeLine{00230\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_next;}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<Value>}}\ m\_valueArray;}
+\DoxyCodeLine{00233\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<Key>}}\ m\_keyArray;}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keywordtype}{void}\ growTables(\textcolor{keyword}{const}\ Key\&\ \textcolor{comment}{/*key*/})}
+\DoxyCodeLine{00236\ \ \ \ \ \{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ newCapacity\ =\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}();}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_hashTable.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ <\ newCapacity)}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//grow\ hashtable\ and\ next\ table}}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ curHashtableSize\ =\ m\_hashTable.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ m\_hashTable.resize(newCapacity);}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ m\_next.resize(newCapacity);}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ newCapacity;\ ++i)}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_hashTable[i]\ =\ B3\_HASH\_NULL;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ newCapacity;\ ++i)}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_next[i]\ =\ B3\_HASH\_NULL;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ curHashtableSize;\ i++)}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//const\ Value\&\ value\ =\ m\_valueArray[i];}}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//const\ Key\&\ key\ =\ m\_keyArray[i];}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ hashValue\ =\ m\_keyArray[i].getHash()\ \&\ (m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\ -\/\ 1);\ \ \textcolor{comment}{//\ New\ hash\ value\ with\ new\ mask}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_next[i]\ =\ m\_hashTable[hashValue];}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_hashTable[hashValue]\ =\ i;}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00268\ \ \ \ \ \}}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordtype}{void}\ insert(\textcolor{keyword}{const}\ Key\&\ key,\ \textcolor{keyword}{const}\ Value\&\ value)}
+\DoxyCodeLine{00272\ \ \ \ \ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ hash\ =\ key.getHash()\ \&\ (m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\ -\/\ 1);}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{comment}{//replace\ value\ if\ the\ key\ is\ already\ there}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ findIndex(key);}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ !=\ B3\_HASH\_NULL)}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ m\_valueArray[index]\ =\ value;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ count\ =\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ oldCapacity\ =\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}();}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ m\_valueArray.push\_back(value);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ m\_keyArray.push\_back(key);}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ newCapacity\ =\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}();}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (oldCapacity\ <\ newCapacity)}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ growTables(key);}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//hash\ with\ new\ capacity}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ hash\ =\ key.getHash()\ \&\ (m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\ -\/\ 1);}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ m\_next[count]\ =\ m\_hashTable[hash];}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ m\_hashTable[hash]\ =\ count;}
+\DoxyCodeLine{00297\ \ \ \ \ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{keywordtype}{void}\ remove(\textcolor{keyword}{const}\ Key\&\ key)}
+\DoxyCodeLine{00300\ \ \ \ \ \{}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ hash\ =\ key.getHash()\ \&\ (m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\ -\/\ 1);}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pairIndex\ =\ findIndex(key);}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pairIndex\ ==\ B3\_HASH\_NULL)}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remove\ the\ pair\ from\ the\ hash\ table.}}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ m\_hashTable[hash];}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ b3Assert(index\ !=\ B3\_HASH\_NULL);}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ previous\ =\ B3\_HASH\_NULL;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (index\ !=\ pairIndex)}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ previous\ =\ index;}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ index\ =\ m\_next[index];}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (previous\ !=\ B3\_HASH\_NULL)}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(m\_next[previous]\ ==\ pairIndex);}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ m\_next[previous]\ =\ m\_next[pairIndex];}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ m\_hashTable[hash]\ =\ m\_next[pairIndex];}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ We\ now\ move\ the\ last\ pair\ into\ spot\ of\ the}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ pair\ being\ removed.\ We\ need\ to\ fix\ the\ hash}}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ table\ indices\ to\ support\ the\ move.}}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lastPairIndex\ =\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}()\ -\/\ 1;}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ the\ removed\ pair\ is\ the\ last\ pair,\ we\ are\ done.}}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lastPairIndex\ ==\ pairIndex)}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ m\_valueArray.pop\_back();}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ m\_keyArray.pop\_back();}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remove\ the\ last\ pair\ from\ the\ hash\ table.}}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lastHash\ =\ m\_keyArray[lastPairIndex].getHash()\ \&\ (m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\ -\/\ 1);}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ index\ =\ m\_hashTable[lastHash];}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ b3Assert(index\ !=\ B3\_HASH\_NULL);}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ previous\ =\ B3\_HASH\_NULL;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (index\ !=\ lastPairIndex)}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ previous\ =\ index;}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ index\ =\ m\_next[index];}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (previous\ !=\ B3\_HASH\_NULL)}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ b3Assert(m\_next[previous]\ ==\ lastPairIndex);}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ m\_next[previous]\ =\ m\_next[lastPairIndex];}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ m\_hashTable[lastHash]\ =\ m\_next[lastPairIndex];}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Copy\ the\ last\ pair\ into\ the\ remove\ pair's\ spot.}}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ m\_valueArray[pairIndex]\ =\ m\_valueArray[lastPairIndex];}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ m\_keyArray[pairIndex]\ =\ m\_keyArray[lastPairIndex];}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Insert\ the\ last\ pair\ into\ the\ hash\ table}}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ m\_next[pairIndex]\ =\ m\_hashTable[lastHash];}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ m\_hashTable[lastHash]\ =\ pairIndex;}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ m\_valueArray.pop\_back();}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ m\_keyArray.pop\_back();}
+\DoxyCodeLine{00378\ \ \ \ \ \}}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keywordtype}{int}\ size()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00381\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00383\ \ \ \ \ \}}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{keyword}{const}\ Value*\ getAtIndex(\textcolor{keywordtype}{int}\ index)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00386\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ b3Assert(index\ <\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}());}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_valueArray[index];}
+\DoxyCodeLine{00390\ \ \ \ \ \}}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \ \ \ \ Value*\ getAtIndex(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00393\ \ \ \ \ \{}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ b3Assert(index\ <\ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}());}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_valueArray[index];}
+\DoxyCodeLine{00397\ \ \ \ \ \}}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \ \ Key\ getKeyAtIndex(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00400\ \ \ \ \ \{}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ b3Assert(index\ <\ m\_keyArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}());}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_keyArray[index];}
+\DoxyCodeLine{00403\ \ \ \ \ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keyword}{const}\ Key\ getKeyAtIndex(\textcolor{keywordtype}{int}\ index)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00406\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ b3Assert(index\ <\ m\_keyArray.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}());}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_keyArray[index];}
+\DoxyCodeLine{00409\ \ \ \ \ \}}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00411\ \ \ \ \ Value*\ operator[](\textcolor{keyword}{const}\ Key\&\ key)}
+\DoxyCodeLine{00412\ \ \ \ \ \{}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ find(key);}
+\DoxyCodeLine{00414\ \ \ \ \ \}}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \ \ \ \ \textcolor{keyword}{const}\ Value*\ find(\textcolor{keyword}{const}\ Key\&\ key)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00417\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ findIndex(key);}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ ==\ B3\_HASH\_NULL)}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_valueArray[index];}
+\DoxyCodeLine{00424\ \ \ \ \ \}}
+\DoxyCodeLine{00425\ }
+\DoxyCodeLine{00426\ \ \ \ \ Value*\ find(\textcolor{keyword}{const}\ Key\&\ key)}
+\DoxyCodeLine{00427\ \ \ \ \ \{}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ findIndex(key);}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ ==\ B3\_HASH\_NULL)}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_valueArray[index];}
+\DoxyCodeLine{00434\ \ \ \ \ \}}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ \ \ \ \ \textcolor{keywordtype}{int}\ findIndex(\textcolor{keyword}{const}\ Key\&\ key)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00437\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ hash\ =\ key.getHash()\ \&\ (m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_a5cba8454c7e0f5ea5904da191352654b}{capacity}}()\ -\/\ 1);}
+\DoxyCodeLine{00439\ }
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hash\ >=\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})m\_hashTable.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ B3\_HASH\_NULL;}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00444\ }
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ m\_hashTable[hash];}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ ((index\ !=\ B3\_HASH\_NULL)\ \&\&\ key.equals(m\_keyArray[index])\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ index\ =\ m\_next[index];}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ index;}
+\DoxyCodeLine{00451\ \ \ \ \ \}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ \textcolor{keywordtype}{void}\ clear()}
+\DoxyCodeLine{00454\ \ \ \ \ \{}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ m\_hashTable.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ m\_next.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ m\_valueArray.\mbox{\hyperlink{classb3_aligned_object_array_acdc54ab1ea43d23576dfcd62ca643995}{clear}}();}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ m\_keyArray.\mbox{\hyperlink{classb3_aligned_object_array_acdc54ab1ea43d23576dfcd62ca643995}{clear}}();}
+\DoxyCodeLine{00459\ \ \ \ \ \}}
+\DoxyCodeLine{00460\ \};}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_HASH\_MAP\_H}}
+
+\end{DoxyCode}

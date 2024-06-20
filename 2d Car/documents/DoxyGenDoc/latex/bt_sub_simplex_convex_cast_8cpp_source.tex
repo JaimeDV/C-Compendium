@@ -1,0 +1,147 @@
+\doxysection{bt\+Sub\+Simplex\+Convex\+Cast.\+cpp}
+\hypertarget{bt_sub_simplex_convex_cast_8cpp_source}{}\label{bt_sub_simplex_convex_cast_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btSubSimplexConvexCast.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexShape.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btMinkowskiSumShape.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btSimplexSolverInterface.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btPointCollector.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransformUtil.h"{}}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ btSubsimplexConvexCast::btSubsimplexConvexCast(\textcolor{keyword}{const}\ btConvexShape*\ convexA,\ \textcolor{keyword}{const}\ btConvexShape*\ convexB,\ btSimplexSolverInterface*\ simplexSolver)}
+\DoxyCodeLine{00025\ \ \ \ \ :\ m\_simplexSolver(simplexSolver),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ m\_convexA(convexA),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ m\_convexB(convexB)}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_subsimplex_convex_cast_a93202199b82c9d2f3074617f8db72e17}{btSubsimplexConvexCast::calcTimeOfImpact}}(}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ fromA,}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ toA,}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ fromB,}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ toB,}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{CastResult}}\&\ result)}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ m\_simplexSolver-\/>reset();}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ btVector3\ linVelA,\ linVelB;}
+\DoxyCodeLine{00042\ \ \ \ \ linVelA\ =\ toA.getOrigin()\ -\/\ fromA.getOrigin();}
+\DoxyCodeLine{00043\ \ \ \ \ linVelB\ =\ toB.getOrigin()\ -\/\ fromB.getOrigin();}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ btScalar\ lambda\ =\ btScalar(0.);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ btTransform\ interpolatedTransA\ =\ fromA;}
+\DoxyCodeLine{00048\ \ \ \ \ btTransform\ interpolatedTransB\ =\ fromB;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00051\ \ \ \ \ btVector3\ r\ =\ (linVelA\ -\/\ linVelB);}
+\DoxyCodeLine{00052\ \ \ \ \ btVector3\ v;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ btVector3\ supVertexA\ =\ fromA(m\_convexA-\/>localGetSupportingVertex(-\/r\ *\ fromA.getBasis()));}
+\DoxyCodeLine{00055\ \ \ \ \ btVector3\ supVertexB\ =\ fromB(m\_convexB-\/>localGetSupportingVertex(r\ *\ fromB.getBasis()));}
+\DoxyCodeLine{00056\ \ \ \ \ v\ =\ supVertexA\ -\/\ supVertexB;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{int}\ maxIter\ =\ result.m\_subSimplexCastMaxIterations;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ btVector3\ n;}
+\DoxyCodeLine{00060\ \ \ \ \ n.setValue(btScalar(0.),\ btScalar(0.),\ btScalar(0.));}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ btVector3\ c;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ btScalar\ dist2\ =\ v.length2();}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ btVector3\ w,\ p;}
+\DoxyCodeLine{00069\ \ \ \ \ btScalar\ VdotR;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{while}\ ((dist2\ >\ result.m\_subSimplexCastEpsilon)\ \&\&\ maxIter-\/-\/)}
+\DoxyCodeLine{00072\ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ supVertexA\ =\ interpolatedTransA(m\_convexA-\/>localGetSupportingVertex(-\/v\ *\ interpolatedTransA.getBasis()));}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ supVertexB\ =\ interpolatedTransB(m\_convexB-\/>localGetSupportingVertex(v\ *\ interpolatedTransB.getBasis()));}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ w\ =\ supVertexA\ -\/\ supVertexB;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ btScalar\ VdotW\ =\ v.dot(w);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lambda\ >\ btScalar(1.0))}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (VdotW\ >\ btScalar(0.))}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ VdotR\ =\ v.dot(r);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (VdotR\ >=\ -\/(SIMD\_EPSILON\ *\ SIMD\_EPSILON))}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lambda\ =\ lambda\ -\/\ VdotW\ /\ VdotR;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//interpolate\ to\ next\ lambda}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ x\ =\ s\ +\ lambda\ *\ r;}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ interpolatedTransA.getOrigin().setInterpolate3(fromA.getOrigin(),\ toA.getOrigin(),\ lambda);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ interpolatedTransB.getOrigin().setInterpolate3(fromB.getOrigin(),\ toB.getOrigin(),\ lambda);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//m\_simplexSolver-\/>reset();}}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//check\ next\ line}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ w\ =\ supVertexA\ -\/\ supVertexB;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ n\ =\ v;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_simplexSolver-\/>inSimplex(w))}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ m\_simplexSolver-\/>addVertex(w,\ supVertexA,\ supVertexB);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_simplexSolver-\/>closest(v))}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ dist2\ =\ v.length2();}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//todo:\ check\ this\ normal\ for\ validity}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//n=v;}}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}V=\%f\ ,\ \%f,\ \%f\(\backslash\)n"{},v[0],v[1],v[2]);}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}DIST2=\%f\(\backslash\)n"{},dist2);}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}numverts\ =\ \%i\(\backslash\)n"{},m\_simplexSolver-\/>numVertices());}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ dist2\ =\ btScalar(0.);}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{//int\ numiter\ =\ MAX\_ITERATIONS\ -\/\ maxIter;}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{//\ \ printf("{}number\ of\ iterations:\ \%d"{},\ numiter);}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{//don't\ report\ a\ time\ of\ impact\ when\ moving\ 'away'\ from\ the\ hitnormal}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ result.m\_fraction\ =\ lambda;}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordflow}{if}\ (n.length2()\ >=\ (SIMD\_EPSILON\ *\ SIMD\_EPSILON))}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ result.m\_normal\ =\ n.normalized();}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ result.m\_normal\ =\ btVector3(btScalar(0.0),\ btScalar(0.0),\ btScalar(0.0));}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{//don't\ report\ time\ of\ impact\ for\ motion\ away\ from\ the\ contact\ normal\ (or\ causes\ minor\ penetration)}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{if}\ (result.m\_normal.dot(r)\ >=\ -\/result.m\_allowedPenetration)}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ btVector3\ hitA,\ hitB;}
+\DoxyCodeLine{00140\ \ \ \ \ m\_simplexSolver-\/>compute\_points(hitA,\ hitB);}
+\DoxyCodeLine{00141\ \ \ \ \ result.m\_hitPoint\ =\ hitB;}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00143\ \}}
+
+\end{DoxyCode}

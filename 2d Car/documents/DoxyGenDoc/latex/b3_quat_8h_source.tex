@@ -1,0 +1,106 @@
+\doxysection{b3\+Quat.\+h}
+\hypertarget{b3_quat_8h_source}{}\label{b3_quat_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/shared/b3Quat.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/shared/b3Quat.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ B3\_QUAT\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ B3\_QUAT\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3PlatformDefinitions.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Float4.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Quaternion.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Transform.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ b3Quat\ b3Quaternion}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ b3QuatConstArg\ const\ b3Quaternion\&}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatInverse(b3QuatConstArg\ orn)}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordflow}{return}\ orn.inverse();}
+\DoxyCodeLine{00016\ \}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{inline}\ b3Float4\ b3TransformPoint(b3Float4ConstArg\ point,\ b3Float4ConstArg\ translation,\ b3QuatConstArg\ orientation)}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ b3Transform\ tr;}
+\DoxyCodeLine{00021\ \ \ \ \ tr.setOrigin(translation);}
+\DoxyCodeLine{00022\ \ \ \ \ tr.setRotation(orientation);}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordflow}{return}\ tr(point);}
+\DoxyCodeLine{00024\ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ float4\ b3Quat;}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ b3QuatConstArg\ const\ b3Quat}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{inline}\ float4\ b3FastNormalize4(float4\ v)}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ v\ =\ (float4)(v.xyz,\ 0.f);}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordflow}{return}\ fast\_normalize(v);}
+\DoxyCodeLine{00034\ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatMul(b3Quat\ a,\ b3Quat\ b);}
+\DoxyCodeLine{00037\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatNormalized(b3QuatConstArg\ in);}
+\DoxyCodeLine{00038\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatRotate(b3QuatConstArg\ q,\ b3QuatConstArg\ vec);}
+\DoxyCodeLine{00039\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatInvert(b3QuatConstArg\ q);}
+\DoxyCodeLine{00040\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatInverse(b3QuatConstArg\ q);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatMul(b3QuatConstArg\ a,\ b3QuatConstArg\ b)}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ b3Quat\ ans;}
+\DoxyCodeLine{00045\ \ \ \ \ ans\ =\ b3Cross3(a,\ b);}
+\DoxyCodeLine{00046\ \ \ \ \ ans\ +=\ a.w\ *\ b\ +\ b.w\ *\ a;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//\ \ ans.w\ =\ a.w*b.w\ -\/\ (a.x*b.x+a.y*b.y+a.z*b.z);}}
+\DoxyCodeLine{00048\ \ \ \ \ ans.w\ =\ a.w\ *\ b.w\ -\/\ b3Dot3F4(a,\ b);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{return}\ ans;}
+\DoxyCodeLine{00050\ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatNormalized(b3QuatConstArg\ in)}
+\DoxyCodeLine{00053\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ b3Quat\ q;}
+\DoxyCodeLine{00055\ \ \ \ \ q\ =\ in;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{//return\ b3FastNormalize4(in);}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{float}\ len\ =\ native\_sqrt(dot(q,\ q));}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ >\ 0.f)}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ q\ *=\ 1.f\ /\ len;}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ q.x\ =\ q.y\ =\ q.z\ =\ 0.f;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ q.w\ =\ 1.f;}
+\DoxyCodeLine{00066\ \ \ \ \ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{return}\ q;}
+\DoxyCodeLine{00068\ \}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{inline}\ float4\ b3QuatRotate(b3QuatConstArg\ q,\ b3QuatConstArg\ vec)}
+\DoxyCodeLine{00070\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ b3Quat\ qInv\ =\ b3QuatInvert(q);}
+\DoxyCodeLine{00072\ \ \ \ \ float4\ vcpy\ =\ vec;}
+\DoxyCodeLine{00073\ \ \ \ \ vcpy.w\ =\ 0.f;}
+\DoxyCodeLine{00074\ \ \ \ \ float4\ out\ =\ b3QuatMul(b3QuatMul(q,\ vcpy),\ qInv);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00076\ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatInverse(b3QuatConstArg\ q)}
+\DoxyCodeLine{00079\ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{return}\ (b3Quat)(-\/q.xyz,\ q.w);}
+\DoxyCodeLine{00081\ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{keyword}{inline}\ b3Quat\ b3QuatInvert(b3QuatConstArg\ q)}
+\DoxyCodeLine{00084\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{return}\ (b3Quat)(-\/q.xyz,\ q.w);}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{inline}\ float4\ b3QuatInvRotate(b3QuatConstArg\ q,\ b3QuatConstArg\ vec)}
+\DoxyCodeLine{00089\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{return}\ b3QuatRotate(b3QuatInvert(q),\ vec);}
+\DoxyCodeLine{00091\ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{inline}\ b3Float4\ b3TransformPoint(b3Float4ConstArg\ point,\ b3Float4ConstArg\ translation,\ b3QuatConstArg\ orientation)}
+\DoxyCodeLine{00094\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{return}\ b3QuatRotate(orientation,\ point)\ +\ (translation);}
+\DoxyCodeLine{00096\ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_QUAT\_H}}
+
+\end{DoxyCode}

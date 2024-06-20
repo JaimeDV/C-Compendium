@@ -1,0 +1,708 @@
+\doxysection{b2\+\_\+body.\+h}
+\hypertarget{b2__body_8h_source}{}\label{b2__body_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_body.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_body.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_BODY\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_BODY\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}b2\_math.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}b2\_shape.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_fixture}{b2Fixture}};}
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_joint}{b2Joint}};}
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact}{b2Contact}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }b2Controller;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_world}{b2World}};}
+\DoxyCodeLine{00035\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb2_fixture_def}{b2FixtureDef}};}
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}};}
+\DoxyCodeLine{00037\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{enum}\ b2BodyType}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ b2\_staticBody\ =\ 0,}
+\DoxyCodeLine{00046\ \ \ \ \ b2\_kinematicBody,}
+\DoxyCodeLine{00047\ \ \ \ \ b2\_dynamicBody}
+\DoxyCodeLine{00048\ \};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_body_def}{b2BodyDef}}}
+\DoxyCodeLine{00053\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{structb2_body_def_a87bee47596b3b3eced0d9dd1f4c18fee}{b2BodyDef}}()}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ position.Set(0.0f,\ 0.0f);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ angle\ =\ 0.0f;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ linearVelocity.Set(0.0f,\ 0.0f);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ angularVelocity\ =\ 0.0f;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ linearDamping\ =\ 0.0f;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ angularDamping\ =\ 0.0f;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ allowSleep\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ awake\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ fixedRotation\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ bullet\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ type\ =\ b2\_staticBody;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ enabled\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ gravityScale\ =\ 1.0f;}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00074\ \ \ \ \ b2BodyType\ \mbox{\hyperlink{structb2_body_def_a89cc3ad1873908042b002147b3861381}{type}};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_body_def_a680cadc09ad6cf4b3366cbf0914c648b}{position}};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_body_def_ab92ebd313164742c001724c6d00d5497}{angle}};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_body_def_a25fa5aa78d93159c344241af95bec2bf}{linearVelocity}};}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_body_def_aa1dff31771e6b9c4f041869693571d7f}{angularVelocity}};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_body_def_a973e312d5d95d2cd53c335ac3994d3ec}{linearDamping}};}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_body_def_afc1f985f274c93ac99b4dea71e1d77cc}{angularDamping}};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_body_def_a0765068172e521ed63cb34084c59c003}{allowSleep}};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_body_def_a17a8102638aac41e7ab94278651a45bd}{awake}};}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_body_def_a273a51c57440a8884de5939d76b6e3ea}{fixedRotation}};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_body_def_a7c0047c9a98a1d20614eeddcdbce7586}{bullet}};}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_body_def_a30e30e3af5977a325a918b848f774fb0}{enabled}};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00121\ \ \ \ \ \mbox{\hyperlink{structb2_body_user_data}{b2BodyUserData}}\ \mbox{\hyperlink{structb2_body_def_ae913ce354e5602ddafecd5999c2db170}{userData}};}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_body_def_ac9e6956338f4bd35c162bf1ac8deddd6}{gravityScale}};}
+\DoxyCodeLine{00125\ \};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00128\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_body}{b2Body}}}
+\DoxyCodeLine{00129\ \{}
+\DoxyCodeLine{00130\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_body_aa4892301e9b9d62ede5e93dad1743894}{CreateFixture}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_fixture_def}{b2FixtureDef}}*\ def);}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00147\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_body_a0ed4cc3cd5e872dfe624f2bc0e0fbb65}{CreateFixture}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ shape,\ \textcolor{keywordtype}{float}\ density);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a856d1df86b7bded91f02d8cfcaea1c2f}{DestroyFixture}}(\mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixture);}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_abfe3e65202189e99f46b8688886eff86}{SetTransform}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ position,\ \textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ GetTransform()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ GetPosition()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordtype}{float}\ GetAngle()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ GetWorldCenter()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ GetLocalCenter()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordtype}{void}\ SetLinearVelocity(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ v);}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ GetLinearVelocity()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{void}\ SetAngularVelocity(\textcolor{keywordtype}{float}\ omega);}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{float}\ GetAngularVelocity()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyForce(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ force,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ point,\ \textcolor{keywordtype}{bool}\ wake);}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyForceToCenter(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ force,\ \textcolor{keywordtype}{bool}\ wake);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyTorque(\textcolor{keywordtype}{float}\ torque,\ \textcolor{keywordtype}{bool}\ wake);}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyLinearImpulse(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ impulse,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ point,\ \textcolor{keywordtype}{bool}\ wake);}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyLinearImpulseToCenter(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ impulse,\ \textcolor{keywordtype}{bool}\ wake);}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyAngularImpulse(\textcolor{keywordtype}{float}\ impulse,\ \textcolor{keywordtype}{bool}\ wake);}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordtype}{float}\ GetMass()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keywordtype}{float}\ GetInertia()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keywordtype}{void}\ GetMassData(\mbox{\hyperlink{structb2_mass_data}{b2MassData}}*\ data)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a58a641fedf8a81e1e26d09ec00a22fe2}{SetMassData}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_mass_data}{b2MassData}}*\ data);}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a109d8567c6ae84c61fce2919fb209c63}{ResetMassData}}();}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00263\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ GetWorldPoint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ localPoint)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00268\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ GetWorldVector(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ localVector)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00273\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ GetLocalPoint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ worldPoint)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00278\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ GetLocalVector(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ worldVector)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00283\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ GetLinearVelocityFromWorldPoint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ worldPoint)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00288\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ GetLinearVelocityFromLocalPoint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ localPoint)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordtype}{float}\ GetLinearDamping()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keywordtype}{void}\ SetLinearDamping(\textcolor{keywordtype}{float}\ linearDamping);}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordtype}{float}\ GetAngularDamping()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordtype}{void}\ SetAngularDamping(\textcolor{keywordtype}{float}\ angularDamping);}
+\DoxyCodeLine{00301\ }
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordtype}{float}\ GetGravityScale()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keywordtype}{void}\ SetGravityScale(\textcolor{keywordtype}{float}\ scale);}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a34ff1c84b10b74eb990749a025a1b1ad}{SetType}}(b2BodyType\ type);}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00312\ \ \ \ \ b2BodyType\ GetType()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordtype}{void}\ SetBullet(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsBullet()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keywordtype}{void}\ SetSleepingAllowed(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsSleepingAllowed()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{keywordtype}{void}\ SetAwake(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsAwake()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00348\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a06bd5b953ff991174fdbf801d52db177}{SetEnabled}}(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsEnabled()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_aff35078e2a221d2d05409674936cb8d2}{SetFixedRotation}}(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsFixedRotation()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00361\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetFixtureList();}
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetFixtureList()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00365\ \ \ \ \ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}*\ GetJointList();}
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}*\ GetJointList()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00371\ \ \ \ \ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}*\ GetContactList();}
+\DoxyCodeLine{00372\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}*\ GetContactList()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00375\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ GetNext();}
+\DoxyCodeLine{00376\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ GetNext()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00379\ \ \ \ \ \mbox{\hyperlink{structb2_body_user_data}{b2BodyUserData}}\&\ GetUserData();}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00382\ \ \ \ \ \mbox{\hyperlink{classb2_world}{b2World}}*\ GetWorld();}
+\DoxyCodeLine{00383\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_world}{b2World}}*\ GetWorld()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00386\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_ac9e482f7d9df92801c24e79a7e751d06}{Dump}}();}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_world}{b2World}};}
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }b2Island;}
+\DoxyCodeLine{00392\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact_manager}{b2ContactManager}};}
+\DoxyCodeLine{00393\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }b2ContactSolver;}
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact}{b2Contact}};}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_distance_joint}{b2DistanceJoint}};}
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_friction_joint}{b2FrictionJoint}};}
+\DoxyCodeLine{00398\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_gear_joint}{b2GearJoint}};}
+\DoxyCodeLine{00399\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_motor_joint}{b2MotorJoint}};}
+\DoxyCodeLine{00400\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_mouse_joint}{b2MouseJoint}};}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_prismatic_joint}{b2PrismaticJoint}};}
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_pulley_joint}{b2PulleyJoint}};}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_revolute_joint}{b2RevoluteJoint}};}
+\DoxyCodeLine{00404\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }b2RopeJoint;}
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_weld_joint}{b2WeldJoint}};}
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_wheel_joint}{b2WheelJoint}};}
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00408\ \ \ \ \ \textcolor{comment}{//\ m\_flags}}
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00410\ \ \ \ \ \{}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ e\_islandFlag\ \ \ \ \ \ \ \ =\ 0x0001,}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ e\_awakeFlag\ \ \ \ \ \ \ \ \ =\ 0x0002,}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ e\_autoSleepFlag\ \ \ \ \ =\ 0x0004,}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ e\_bulletFlag\ \ \ \ \ \ \ \ =\ 0x0008,}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ e\_fixedRotationFlag\ =\ 0x0010,}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ e\_enabledFlag\ \ \ \ \ \ \ =\ 0x0020,}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ e\_toiFlag\ \ \ \ \ \ \ \ \ \ \ =\ 0x0040}
+\DoxyCodeLine{00418\ \ \ \ \ \};}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_body_def}{b2BodyDef}}*\ bd,\ \mbox{\hyperlink{classb2_world}{b2World}}*\ world);}
+\DoxyCodeLine{00421\ \ \ \ \ \mbox{\hyperlink{classb2_body}{\string~b2Body}}();}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00423\ \ \ \ \ \textcolor{keywordtype}{void}\ SynchronizeFixtures();}
+\DoxyCodeLine{00424\ \ \ \ \ \textcolor{keywordtype}{void}\ SynchronizeTransform();}
+\DoxyCodeLine{00425\ }
+\DoxyCodeLine{00426\ \ \ \ \ \textcolor{comment}{//\ This\ is\ used\ to\ prevent\ connected\ bodies\ from\ colliding.}}
+\DoxyCodeLine{00427\ \ \ \ \ \textcolor{comment}{//\ It\ may\ lie,\ depending\ on\ the\ collideConnected\ flag.}}
+\DoxyCodeLine{00428\ \ \ \ \ \textcolor{keywordtype}{bool}\ ShouldCollide(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \ \ \ \ \textcolor{keywordtype}{void}\ Advance(\textcolor{keywordtype}{float}\ t);}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00432\ \ \ \ \ b2BodyType\ m\_type;}
+\DoxyCodeLine{00433\ }
+\DoxyCodeLine{00434\ \ \ \ \ uint16\ m\_flags;}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ \ \ \ \ int32\ m\_islandIndex;}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \ \ \ \ \mbox{\hyperlink{structb2_transform}{b2Transform}}\ m\_xf;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ body\ origin\ transform}}
+\DoxyCodeLine{00439\ \ \ \ \ \mbox{\hyperlink{structb2_sweep}{b2Sweep}}\ m\_sweep;\ \ \ \ \ \textcolor{comment}{//\ the\ swept\ motion\ for\ CCD}}
+\DoxyCodeLine{00440\ }
+\DoxyCodeLine{00441\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_linearVelocity;}
+\DoxyCodeLine{00442\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_angularVelocity;}
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00444\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_force;}
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_torque;}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \ \ \mbox{\hyperlink{classb2_world}{b2World}}*\ m\_world;}
+\DoxyCodeLine{00448\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ m\_prev;}
+\DoxyCodeLine{00449\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ m\_next;}
+\DoxyCodeLine{00450\ }
+\DoxyCodeLine{00451\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ m\_fixtureList;}
+\DoxyCodeLine{00452\ \ \ \ \ int32\ m\_fixtureCount;}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00454\ \ \ \ \ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}*\ m\_jointList;}
+\DoxyCodeLine{00455\ \ \ \ \ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}*\ m\_contactList;}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_mass,\ m\_invMass;}
+\DoxyCodeLine{00458\ }
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{comment}{//\ Rotational\ inertia\ about\ the\ center\ of\ mass.}}
+\DoxyCodeLine{00460\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_I,\ m\_invI;}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_linearDamping;}
+\DoxyCodeLine{00463\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_angularDamping;}
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_gravityScale;}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_sleepTime;}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \ \ \ \ \mbox{\hyperlink{structb2_body_user_data}{b2BodyUserData}}\ m\_userData;}
+\DoxyCodeLine{00469\ \};}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \textcolor{keyword}{inline}\ b2BodyType\ \mbox{\hyperlink{classb2_body_a9c2234b5a5fff91305a65ecd0cf0ee59}{b2Body::GetType}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00472\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00473\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_type;}
+\DoxyCodeLine{00474\ \}}
+\DoxyCodeLine{00475\ }
+\DoxyCodeLine{00476\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ \mbox{\hyperlink{classb2_body_afb316448e6e555ceb2df23ed216b2f53}{b2Body::GetTransform}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00477\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00478\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_xf;}
+\DoxyCodeLine{00479\ \}}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_body_a7944dc953ac0cb1e00b32bc61b50e70d}{b2Body::GetPosition}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00482\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00483\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_xf.p;}
+\DoxyCodeLine{00484\ \}}
+\DoxyCodeLine{00485\ }
+\DoxyCodeLine{00486\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_body_ab5d135ef592b5f11f4e8d3ffbd831ac5}{b2Body::GetAngle}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00487\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00488\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_sweep.\mbox{\hyperlink{structb2_sweep_abe0aef7b6e9abcf39757c613a37173fc}{a}};}
+\DoxyCodeLine{00489\ \}}
+\DoxyCodeLine{00490\ }
+\DoxyCodeLine{00491\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_body_a3e14cfe61c63913ef7b0f719f7145318}{b2Body::GetWorldCenter}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00492\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00493\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a1b5402e01b92cc82473389fc6f0375c3}{c}};}
+\DoxyCodeLine{00494\ \}}
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_body_a60cc46fc46849b0d5e61a151b7c41269}{b2Body::GetLocalCenter}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00497\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00498\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}};}
+\DoxyCodeLine{00499\ \}}
+\DoxyCodeLine{00500\ }
+\DoxyCodeLine{00501\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a832f3989a44f0d4782c80456832197ad}{b2Body::SetLinearVelocity}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ v)}
+\DoxyCodeLine{00502\ \{}
+\DoxyCodeLine{00503\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ ==\ b2\_staticBody)}
+\DoxyCodeLine{00504\ \ \ \ \ \{}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00506\ \ \ \ \ \}}
+\DoxyCodeLine{00507\ }
+\DoxyCodeLine{00508\ \ \ \ \ \textcolor{keywordflow}{if}\ (b2Dot(v,v)\ >\ 0.0f)}
+\DoxyCodeLine{00509\ \ \ \ \ \{}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00511\ \ \ \ \ \}}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \ \ \ \ m\_linearVelocity\ =\ v;}
+\DoxyCodeLine{00514\ \}}
+\DoxyCodeLine{00515\ }
+\DoxyCodeLine{00516\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{classb2_body_a8fcaf842141320701057f679dff90b89}{b2Body::GetLinearVelocity}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00517\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00518\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_linearVelocity;}
+\DoxyCodeLine{00519\ \}}
+\DoxyCodeLine{00520\ }
+\DoxyCodeLine{00521\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a1a8ff152b3a0189b391c9dd6b4c5f12c}{b2Body::SetAngularVelocity}}(\textcolor{keywordtype}{float}\ w)}
+\DoxyCodeLine{00522\ \{}
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ ==\ b2\_staticBody)}
+\DoxyCodeLine{00524\ \ \ \ \ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00526\ \ \ \ \ \}}
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00528\ \ \ \ \ \textcolor{keywordflow}{if}\ (w\ *\ w\ >\ 0.0f)}
+\DoxyCodeLine{00529\ \ \ \ \ \{}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00531\ \ \ \ \ \}}
+\DoxyCodeLine{00532\ }
+\DoxyCodeLine{00533\ \ \ \ \ m\_angularVelocity\ =\ w;}
+\DoxyCodeLine{00534\ \}}
+\DoxyCodeLine{00535\ }
+\DoxyCodeLine{00536\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_body_a74598dd867e9e658198363e51fd9fc09}{b2Body::GetAngularVelocity}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00537\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00538\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_angularVelocity;}
+\DoxyCodeLine{00539\ \}}
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_body_a885eff0655c0b7c4a8d44821c1e261c7}{b2Body::GetMass}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00542\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00543\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_mass;}
+\DoxyCodeLine{00544\ \}}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_body_aeb14368285d1956e61c4ecdf388e3fe8}{b2Body::GetInertia}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00547\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_I\ +\ m\_mass\ *\ b2Dot(m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}},\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}});}
+\DoxyCodeLine{00549\ \}}
+\DoxyCodeLine{00550\ }
+\DoxyCodeLine{00551\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a5100927dbd39dd0addea79d5f323f3f1}{b2Body::GetMassData}}(\mbox{\hyperlink{structb2_mass_data}{b2MassData}}*\ data)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00552\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00553\ \ \ \ \ data-\/>mass\ =\ m\_mass;}
+\DoxyCodeLine{00554\ \ \ \ \ data-\/>I\ =\ m\_I\ +\ m\_mass\ *\ b2Dot(m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}},\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}});}
+\DoxyCodeLine{00555\ \ \ \ \ data-\/>center\ =\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}};}
+\DoxyCodeLine{00556\ \}}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00558\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_body_a712b782c61963c6f07beca86acc631ae}{b2Body::GetWorldPoint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ localPoint)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00559\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00560\ \ \ \ \ \textcolor{keywordflow}{return}\ b2Mul(m\_xf,\ localPoint);}
+\DoxyCodeLine{00561\ \}}
+\DoxyCodeLine{00562\ }
+\DoxyCodeLine{00563\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_body_ae8c434785b2a730f7c385e708b345bb6}{b2Body::GetWorldVector}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ localVector)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00564\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00565\ \ \ \ \ \textcolor{keywordflow}{return}\ b2Mul(m\_xf.q,\ localVector);}
+\DoxyCodeLine{00566\ \}}
+\DoxyCodeLine{00567\ }
+\DoxyCodeLine{00568\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_body_a0df8f4312ab23223489323326b2d763d}{b2Body::GetLocalPoint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ worldPoint)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00569\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00570\ \ \ \ \ \textcolor{keywordflow}{return}\ b2MulT(m\_xf,\ worldPoint);}
+\DoxyCodeLine{00571\ \}}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_body_aed2f88179cedf4cdbdc47429ebe41288}{b2Body::GetLocalVector}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ worldVector)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00574\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00575\ \ \ \ \ \textcolor{keywordflow}{return}\ b2MulT(m\_xf.q,\ worldVector);}
+\DoxyCodeLine{00576\ \}}
+\DoxyCodeLine{00577\ }
+\DoxyCodeLine{00578\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_body_a5bc9a483e5f59199daa1751786034c1d}{b2Body::GetLinearVelocityFromWorldPoint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ worldPoint)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00579\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00580\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_linearVelocity\ +\ b2Cross(m\_angularVelocity,\ worldPoint\ -\/\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a1b5402e01b92cc82473389fc6f0375c3}{c}});}
+\DoxyCodeLine{00581\ \}}
+\DoxyCodeLine{00582\ }
+\DoxyCodeLine{00583\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{classb2_body_a0ac0a4ad6ac3c7804652d9994239dcbd}{b2Body::GetLinearVelocityFromLocalPoint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ localPoint)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00584\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00585\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classb2_body_a5bc9a483e5f59199daa1751786034c1d}{GetLinearVelocityFromWorldPoint}}(\mbox{\hyperlink{classb2_body_a712b782c61963c6f07beca86acc631ae}{GetWorldPoint}}(localPoint));}
+\DoxyCodeLine{00586\ \}}
+\DoxyCodeLine{00587\ }
+\DoxyCodeLine{00588\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_body_a6bc2ee9d96ac58f48774ffd10fd45153}{b2Body::GetLinearDamping}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00589\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00590\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_linearDamping;}
+\DoxyCodeLine{00591\ \}}
+\DoxyCodeLine{00592\ }
+\DoxyCodeLine{00593\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_aa36fac8c5d7293d1a81405c147204d20}{b2Body::SetLinearDamping}}(\textcolor{keywordtype}{float}\ linearDamping)}
+\DoxyCodeLine{00594\ \{}
+\DoxyCodeLine{00595\ \ \ \ \ m\_linearDamping\ =\ linearDamping;}
+\DoxyCodeLine{00596\ \}}
+\DoxyCodeLine{00597\ }
+\DoxyCodeLine{00598\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_body_a18747d955ee0d0b15f1a9ac6519072c4}{b2Body::GetAngularDamping}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00599\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00600\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_angularDamping;}
+\DoxyCodeLine{00601\ \}}
+\DoxyCodeLine{00602\ }
+\DoxyCodeLine{00603\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a7fad826a126e08bfbf40037fd8f21ba3}{b2Body::SetAngularDamping}}(\textcolor{keywordtype}{float}\ angularDamping)}
+\DoxyCodeLine{00604\ \{}
+\DoxyCodeLine{00605\ \ \ \ \ m\_angularDamping\ =\ angularDamping;}
+\DoxyCodeLine{00606\ \}}
+\DoxyCodeLine{00607\ }
+\DoxyCodeLine{00608\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_body_a8f07fc15b51ff436c5fac17fa3b0217d}{b2Body::GetGravityScale}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00609\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00610\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_gravityScale;}
+\DoxyCodeLine{00611\ \}}
+\DoxyCodeLine{00612\ }
+\DoxyCodeLine{00613\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a91e20c85857663ae4454c0173f06e1a6}{b2Body::SetGravityScale}}(\textcolor{keywordtype}{float}\ scale)}
+\DoxyCodeLine{00614\ \{}
+\DoxyCodeLine{00615\ \ \ \ \ m\_gravityScale\ =\ scale;}
+\DoxyCodeLine{00616\ \}}
+\DoxyCodeLine{00617\ }
+\DoxyCodeLine{00618\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a3253af3725b8d6d63d8223bcd2ddab5c}{b2Body::SetBullet}}(\textcolor{keywordtype}{bool}\ flag)}
+\DoxyCodeLine{00619\ \{}
+\DoxyCodeLine{00620\ \ \ \ \ \textcolor{keywordflow}{if}\ (flag)}
+\DoxyCodeLine{00621\ \ \ \ \ \{}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ m\_flags\ |=\ e\_bulletFlag;}
+\DoxyCodeLine{00623\ \ \ \ \ \}}
+\DoxyCodeLine{00624\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00625\ \ \ \ \ \{}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ m\_flags\ \&=\ \string~e\_bulletFlag;}
+\DoxyCodeLine{00627\ \ \ \ \ \}}
+\DoxyCodeLine{00628\ \}}
+\DoxyCodeLine{00629\ }
+\DoxyCodeLine{00630\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_body_ad99db1c7a19e8de333ff7f65b0b953f4}{b2Body::IsBullet}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00631\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00632\ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_flags\ \&\ e\_bulletFlag)\ ==\ e\_bulletFlag;}
+\DoxyCodeLine{00633\ \}}
+\DoxyCodeLine{00634\ }
+\DoxyCodeLine{00635\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{b2Body::SetAwake}}(\textcolor{keywordtype}{bool}\ flag)}
+\DoxyCodeLine{00636\ \{}
+\DoxyCodeLine{00637\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ ==\ b2\_staticBody)}
+\DoxyCodeLine{00638\ \ \ \ \ \{}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00640\ \ \ \ \ \}}
+\DoxyCodeLine{00641\ }
+\DoxyCodeLine{00642\ \ \ \ \ \textcolor{keywordflow}{if}\ (flag)}
+\DoxyCodeLine{00643\ \ \ \ \ \{}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ m\_flags\ |=\ e\_awakeFlag;}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ m\_sleepTime\ =\ 0.0f;}
+\DoxyCodeLine{00646\ \ \ \ \ \}}
+\DoxyCodeLine{00647\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00648\ \ \ \ \ \{}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ m\_flags\ \&=\ \string~e\_awakeFlag;}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ m\_sleepTime\ =\ 0.0f;}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ m\_linearVelocity.\mbox{\hyperlink{structb2_vec2_a5c6cbe27cfb29c6dbb29b9a3285b88d0}{SetZero}}();}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ m\_angularVelocity\ =\ 0.0f;}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ m\_force.\mbox{\hyperlink{structb2_vec2_a5c6cbe27cfb29c6dbb29b9a3285b88d0}{SetZero}}();}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ m\_torque\ =\ 0.0f;}
+\DoxyCodeLine{00655\ \ \ \ \ \}}
+\DoxyCodeLine{00656\ \}}
+\DoxyCodeLine{00657\ }
+\DoxyCodeLine{00658\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_body_a697f708427cdf7d31a626e80e694682c}{b2Body::IsAwake}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00659\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00660\ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_flags\ \&\ e\_awakeFlag)\ ==\ e\_awakeFlag;}
+\DoxyCodeLine{00661\ \}}
+\DoxyCodeLine{00662\ }
+\DoxyCodeLine{00663\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_body_a065ecdf30e8d27a0a1164f5fb1bfc99a}{b2Body::IsEnabled}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00664\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00665\ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_flags\ \&\ e\_enabledFlag)\ ==\ e\_enabledFlag;}
+\DoxyCodeLine{00666\ \}}
+\DoxyCodeLine{00667\ }
+\DoxyCodeLine{00668\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_body_a0920b7a770f7c876cf6d149e227036b5}{b2Body::IsFixedRotation}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00669\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00670\ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_flags\ \&\ e\_fixedRotationFlag)\ ==\ e\_fixedRotationFlag;}
+\DoxyCodeLine{00671\ \}}
+\DoxyCodeLine{00672\ }
+\DoxyCodeLine{00673\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a229a6de228416203fecbf7a7544c33bb}{b2Body::SetSleepingAllowed}}(\textcolor{keywordtype}{bool}\ flag)}
+\DoxyCodeLine{00674\ \{}
+\DoxyCodeLine{00675\ \ \ \ \ \textcolor{keywordflow}{if}\ (flag)}
+\DoxyCodeLine{00676\ \ \ \ \ \{}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ m\_flags\ |=\ e\_autoSleepFlag;}
+\DoxyCodeLine{00678\ \ \ \ \ \}}
+\DoxyCodeLine{00679\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00680\ \ \ \ \ \{}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ m\_flags\ \&=\ \string~e\_autoSleepFlag;}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00683\ \ \ \ \ \}}
+\DoxyCodeLine{00684\ \}}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_body_ac47251de3a8c0ccff620be7bd5ae696a}{b2Body::IsSleepingAllowed}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00687\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00688\ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_flags\ \&\ e\_autoSleepFlag)\ ==\ e\_autoSleepFlag;}
+\DoxyCodeLine{00689\ \}}
+\DoxyCodeLine{00690\ }
+\DoxyCodeLine{00691\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_body_a64634da20c6e0ab2d68a3cc9ea15efc3}{b2Body::GetFixtureList}}()}
+\DoxyCodeLine{00692\ \{}
+\DoxyCodeLine{00693\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_fixtureList;}
+\DoxyCodeLine{00694\ \}}
+\DoxyCodeLine{00695\ }
+\DoxyCodeLine{00696\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_body_a64634da20c6e0ab2d68a3cc9ea15efc3}{b2Body::GetFixtureList}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00697\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00698\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_fixtureList;}
+\DoxyCodeLine{00699\ \}}
+\DoxyCodeLine{00700\ }
+\DoxyCodeLine{00701\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}*\ \mbox{\hyperlink{classb2_body_a55cf2eb851780599ca5c1f6f25a17e41}{b2Body::GetJointList}}()}
+\DoxyCodeLine{00702\ \{}
+\DoxyCodeLine{00703\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_jointList;}
+\DoxyCodeLine{00704\ \}}
+\DoxyCodeLine{00705\ }
+\DoxyCodeLine{00706\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_joint_edge}{b2JointEdge}}*\ \mbox{\hyperlink{classb2_body_a55cf2eb851780599ca5c1f6f25a17e41}{b2Body::GetJointList}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00707\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00708\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_jointList;}
+\DoxyCodeLine{00709\ \}}
+\DoxyCodeLine{00710\ }
+\DoxyCodeLine{00711\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}*\ \mbox{\hyperlink{classb2_body_a16bdbfb266c82a0ef51be351a8928bc5}{b2Body::GetContactList}}()}
+\DoxyCodeLine{00712\ \{}
+\DoxyCodeLine{00713\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_contactList;}
+\DoxyCodeLine{00714\ \}}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00716\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}*\ \mbox{\hyperlink{classb2_body_a16bdbfb266c82a0ef51be351a8928bc5}{b2Body::GetContactList}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00717\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00718\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_contactList;}
+\DoxyCodeLine{00719\ \}}
+\DoxyCodeLine{00720\ }
+\DoxyCodeLine{00721\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{classb2_body_ad54182a11d02362b027a0eb072775bdc}{b2Body::GetNext}}()}
+\DoxyCodeLine{00722\ \{}
+\DoxyCodeLine{00723\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00724\ \}}
+\DoxyCodeLine{00725\ }
+\DoxyCodeLine{00726\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{classb2_body_ad54182a11d02362b027a0eb072775bdc}{b2Body::GetNext}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00727\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00728\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00729\ \}}
+\DoxyCodeLine{00730\ }
+\DoxyCodeLine{00731\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_body_user_data}{b2BodyUserData}}\&\ \mbox{\hyperlink{classb2_body_a13eeec74f9c874f9dab25463b0c11717}{b2Body::GetUserData}}()}
+\DoxyCodeLine{00732\ \{}
+\DoxyCodeLine{00733\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userData;}
+\DoxyCodeLine{00734\ \}}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a942be8e1cd2bcd06f53c4638c45a9525}{b2Body::ApplyForce}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ force,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ point,\ \textcolor{keywordtype}{bool}\ wake)}
+\DoxyCodeLine{00737\ \{}
+\DoxyCodeLine{00738\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ !=\ b2\_dynamicBody)}
+\DoxyCodeLine{00739\ \ \ \ \ \{}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00741\ \ \ \ \ \}}
+\DoxyCodeLine{00742\ }
+\DoxyCodeLine{00743\ \ \ \ \ \textcolor{keywordflow}{if}\ (wake\ \&\&\ (m\_flags\ \&\ e\_awakeFlag)\ ==\ 0)}
+\DoxyCodeLine{00744\ \ \ \ \ \{}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00746\ \ \ \ \ \}}
+\DoxyCodeLine{00747\ }
+\DoxyCodeLine{00748\ \ \ \ \ \textcolor{comment}{//\ Don't\ accumulate\ a\ force\ if\ the\ body\ is\ sleeping.}}
+\DoxyCodeLine{00749\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flags\ \&\ e\_awakeFlag)}
+\DoxyCodeLine{00750\ \ \ \ \ \{}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ m\_force\ +=\ force;}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ m\_torque\ +=\ b2Cross(point\ -\/\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a1b5402e01b92cc82473389fc6f0375c3}{c}},\ force);}
+\DoxyCodeLine{00753\ \ \ \ \ \}}
+\DoxyCodeLine{00754\ \}}
+\DoxyCodeLine{00755\ }
+\DoxyCodeLine{00756\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_abeba04911f7a2a141169bb06fe98d06a}{b2Body::ApplyForceToCenter}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ force,\ \textcolor{keywordtype}{bool}\ wake)}
+\DoxyCodeLine{00757\ \{}
+\DoxyCodeLine{00758\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ !=\ b2\_dynamicBody)}
+\DoxyCodeLine{00759\ \ \ \ \ \{}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00761\ \ \ \ \ \}}
+\DoxyCodeLine{00762\ }
+\DoxyCodeLine{00763\ \ \ \ \ \textcolor{keywordflow}{if}\ (wake\ \&\&\ (m\_flags\ \&\ e\_awakeFlag)\ ==\ 0)}
+\DoxyCodeLine{00764\ \ \ \ \ \{}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00766\ \ \ \ \ \}}
+\DoxyCodeLine{00767\ }
+\DoxyCodeLine{00768\ \ \ \ \ \textcolor{comment}{//\ Don't\ accumulate\ a\ force\ if\ the\ body\ is\ sleeping}}
+\DoxyCodeLine{00769\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flags\ \&\ e\_awakeFlag)}
+\DoxyCodeLine{00770\ \ \ \ \ \{}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ m\_force\ +=\ force;}
+\DoxyCodeLine{00772\ \ \ \ \ \}}
+\DoxyCodeLine{00773\ \}}
+\DoxyCodeLine{00774\ }
+\DoxyCodeLine{00775\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_ad0156d7a74b15c87ca2793d69f45928f}{b2Body::ApplyTorque}}(\textcolor{keywordtype}{float}\ torque,\ \textcolor{keywordtype}{bool}\ wake)}
+\DoxyCodeLine{00776\ \{}
+\DoxyCodeLine{00777\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ !=\ b2\_dynamicBody)}
+\DoxyCodeLine{00778\ \ \ \ \ \{}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00780\ \ \ \ \ \}}
+\DoxyCodeLine{00781\ }
+\DoxyCodeLine{00782\ \ \ \ \ \textcolor{keywordflow}{if}\ (wake\ \&\&\ (m\_flags\ \&\ e\_awakeFlag)\ ==\ 0)}
+\DoxyCodeLine{00783\ \ \ \ \ \{}
+\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00785\ \ \ \ \ \}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \ \ \ \ \textcolor{comment}{//\ Don't\ accumulate\ a\ force\ if\ the\ body\ is\ sleeping}}
+\DoxyCodeLine{00788\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flags\ \&\ e\_awakeFlag)}
+\DoxyCodeLine{00789\ \ \ \ \ \{}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ m\_torque\ +=\ torque;}
+\DoxyCodeLine{00791\ \ \ \ \ \}}
+\DoxyCodeLine{00792\ \}}
+\DoxyCodeLine{00793\ }
+\DoxyCodeLine{00794\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a7f677e93efb3c4c065087aff317274a3}{b2Body::ApplyLinearImpulse}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ impulse,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ point,\ \textcolor{keywordtype}{bool}\ wake)}
+\DoxyCodeLine{00795\ \{}
+\DoxyCodeLine{00796\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ !=\ b2\_dynamicBody)}
+\DoxyCodeLine{00797\ \ \ \ \ \{}
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00799\ \ \ \ \ \}}
+\DoxyCodeLine{00800\ }
+\DoxyCodeLine{00801\ \ \ \ \ \textcolor{keywordflow}{if}\ (wake\ \&\&\ (m\_flags\ \&\ e\_awakeFlag)\ ==\ 0)}
+\DoxyCodeLine{00802\ \ \ \ \ \{}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00804\ \ \ \ \ \}}
+\DoxyCodeLine{00805\ }
+\DoxyCodeLine{00806\ \ \ \ \ \textcolor{comment}{//\ Don't\ accumulate\ velocity\ if\ the\ body\ is\ sleeping}}
+\DoxyCodeLine{00807\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flags\ \&\ e\_awakeFlag)}
+\DoxyCodeLine{00808\ \ \ \ \ \{}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ m\_linearVelocity\ +=\ m\_invMass\ *\ impulse;}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ m\_angularVelocity\ +=\ m\_invI\ *\ b2Cross(point\ -\/\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a1b5402e01b92cc82473389fc6f0375c3}{c}},\ impulse);}
+\DoxyCodeLine{00811\ \ \ \ \ \}}
+\DoxyCodeLine{00812\ \}}
+\DoxyCodeLine{00813\ }
+\DoxyCodeLine{00814\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_afa249d2fc11735985211e47c3d8e16fb}{b2Body::ApplyLinearImpulseToCenter}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ impulse,\ \textcolor{keywordtype}{bool}\ wake)}
+\DoxyCodeLine{00815\ \{}
+\DoxyCodeLine{00816\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ !=\ b2\_dynamicBody)}
+\DoxyCodeLine{00817\ \ \ \ \ \{}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00819\ \ \ \ \ \}}
+\DoxyCodeLine{00820\ }
+\DoxyCodeLine{00821\ \ \ \ \ \textcolor{keywordflow}{if}\ (wake\ \&\&\ (m\_flags\ \&\ e\_awakeFlag)\ ==\ 0)}
+\DoxyCodeLine{00822\ \ \ \ \ \{}
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00824\ \ \ \ \ \}}
+\DoxyCodeLine{00825\ }
+\DoxyCodeLine{00826\ \ \ \ \ \textcolor{comment}{//\ Don't\ accumulate\ velocity\ if\ the\ body\ is\ sleeping}}
+\DoxyCodeLine{00827\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flags\ \&\ e\_awakeFlag)}
+\DoxyCodeLine{00828\ \ \ \ \ \{}
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ m\_linearVelocity\ +=\ m\_invMass\ *\ impulse;}
+\DoxyCodeLine{00830\ \ \ \ \ \}}
+\DoxyCodeLine{00831\ \}}
+\DoxyCodeLine{00832\ }
+\DoxyCodeLine{00833\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_body_a1a6e1eb0807a0bbe1da7b063c0d0ed42}{b2Body::ApplyAngularImpulse}}(\textcolor{keywordtype}{float}\ impulse,\ \textcolor{keywordtype}{bool}\ wake)}
+\DoxyCodeLine{00834\ \{}
+\DoxyCodeLine{00835\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_type\ !=\ b2\_dynamicBody)}
+\DoxyCodeLine{00836\ \ \ \ \ \{}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00838\ \ \ \ \ \}}
+\DoxyCodeLine{00839\ }
+\DoxyCodeLine{00840\ \ \ \ \ \textcolor{keywordflow}{if}\ (wake\ \&\&\ (m\_flags\ \&\ e\_awakeFlag)\ ==\ 0)}
+\DoxyCodeLine{00841\ \ \ \ \ \{}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_body_ac72ed3df52a26c33db82252ab57399af}{SetAwake}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{00843\ \ \ \ \ \}}
+\DoxyCodeLine{00844\ }
+\DoxyCodeLine{00845\ \ \ \ \ \textcolor{comment}{//\ Don't\ accumulate\ velocity\ if\ the\ body\ is\ sleeping}}
+\DoxyCodeLine{00846\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flags\ \&\ e\_awakeFlag)}
+\DoxyCodeLine{00847\ \ \ \ \ \{}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ m\_angularVelocity\ +=\ m\_invI\ *\ impulse;}
+\DoxyCodeLine{00849\ \ \ \ \ \}}
+\DoxyCodeLine{00850\ \}}
+\DoxyCodeLine{00851\ }
+\DoxyCodeLine{00852\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ b2Body::SynchronizeTransform()}
+\DoxyCodeLine{00853\ \{}
+\DoxyCodeLine{00854\ \ \ \ \ m\_xf.q.\mbox{\hyperlink{structb2_rot_a16a35e0f8e38c2855d528ca0ae044bf3}{Set}}(m\_sweep.\mbox{\hyperlink{structb2_sweep_abe0aef7b6e9abcf39757c613a37173fc}{a}});}
+\DoxyCodeLine{00855\ \ \ \ \ m\_xf.p\ =\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a1b5402e01b92cc82473389fc6f0375c3}{c}}\ -\/\ b2Mul(m\_xf.q,\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}});}
+\DoxyCodeLine{00856\ \}}
+\DoxyCodeLine{00857\ }
+\DoxyCodeLine{00858\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ b2Body::Advance(\textcolor{keywordtype}{float}\ alpha)}
+\DoxyCodeLine{00859\ \{}
+\DoxyCodeLine{00860\ \ \ \ \ \textcolor{comment}{//\ Advance\ to\ the\ new\ safe\ time.\ This\ doesn't\ sync\ the\ broad-\/phase.}}
+\DoxyCodeLine{00861\ \ \ \ \ m\_sweep.\mbox{\hyperlink{structb2_sweep_a4252f7b2f4c5fe4c6fb9c611704c6298}{Advance}}(alpha);}
+\DoxyCodeLine{00862\ \ \ \ \ m\_sweep.\mbox{\hyperlink{structb2_sweep_a1b5402e01b92cc82473389fc6f0375c3}{c}}\ =\ m\_sweep.c0;}
+\DoxyCodeLine{00863\ \ \ \ \ m\_sweep.\mbox{\hyperlink{structb2_sweep_abe0aef7b6e9abcf39757c613a37173fc}{a}}\ =\ m\_sweep.a0;}
+\DoxyCodeLine{00864\ \ \ \ \ m\_xf.q.\mbox{\hyperlink{structb2_rot_a16a35e0f8e38c2855d528ca0ae044bf3}{Set}}(m\_sweep.\mbox{\hyperlink{structb2_sweep_abe0aef7b6e9abcf39757c613a37173fc}{a}});}
+\DoxyCodeLine{00865\ \ \ \ \ m\_xf.p\ =\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a1b5402e01b92cc82473389fc6f0375c3}{c}}\ -\/\ b2Mul(m\_xf.q,\ m\_sweep.\mbox{\hyperlink{structb2_sweep_a4bcc302cf78771896d6256fc53f2f8be}{localCenter}});}
+\DoxyCodeLine{00866\ \}}
+\DoxyCodeLine{00867\ }
+\DoxyCodeLine{00868\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_world}{b2World}}*\ \mbox{\hyperlink{classb2_body_abfd9466763b20977f9122d0e162dfeb9}{b2Body::GetWorld}}()}
+\DoxyCodeLine{00869\ \{}
+\DoxyCodeLine{00870\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_world;}
+\DoxyCodeLine{00871\ \}}
+\DoxyCodeLine{00872\ }
+\DoxyCodeLine{00873\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_world}{b2World}}*\ \mbox{\hyperlink{classb2_body_abfd9466763b20977f9122d0e162dfeb9}{b2Body::GetWorld}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00874\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00875\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_world;}
+\DoxyCodeLine{00876\ \}}
+\DoxyCodeLine{00877\ }
+\DoxyCodeLine{00878\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

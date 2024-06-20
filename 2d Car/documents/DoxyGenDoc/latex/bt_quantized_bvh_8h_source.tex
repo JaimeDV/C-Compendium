@@ -1,0 +1,521 @@
+\doxysection{bt\+Quantized\+Bvh.\+h}
+\hypertarget{bt_quantized_bvh_8h_source}{}\label{bt_quantized_bvh_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btQuantizedBvh.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btQuantizedBvh.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_QUANTIZED\_BVH\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_QUANTIZED\_BVH\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_serializer}{btSerializer}};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{//\#define\ DEBUG\_CHECK\_DEQUANTIZATION\ 1}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_CHECK\_DEQUANTIZATION}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifdef\ \_\_SPU\_\_}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ printf\ spu\_printf}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\_\_SPU\_\_}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_CHECK\_DEQUANTIZATION}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedAllocator.h"{}}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ btQuantizedBvhData\ btQuantizedBvhDoubleData}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ btOptimizedBvhNodeData\ btOptimizedBvhNodeDoubleData}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ btQuantizedBvhDataName\ "{}btQuantizedBvhDoubleData"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ btQuantizedBvhData\ btQuantizedBvhFloatData}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ btOptimizedBvhNodeData\ btOptimizedBvhNodeFloatData}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ btQuantizedBvhDataName\ "{}btQuantizedBvhFloatData"{}}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{comment}{//http://msdn.microsoft.com/library/default.asp?url=/library/en-\/us/vclang/html/vclrf\_\_m128.asp}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//Note:\ currently\ we\ have\ 16\ bytes\ per\ quantized\ node}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ MAX\_SUBTREE\_SIZE\_IN\_BYTES\ 2048}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{//\ 10\ gives\ the\ potential\ for\ 1024\ parts,\ with\ at\ most\ 2\string^21\ (2097152)\ (minus\ one}}
+\DoxyCodeLine{00050\ \textcolor{comment}{//\ actually)\ triangles\ each\ (since\ the\ sign\ bit\ is\ reserved}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ MAX\_NUM\_PARTS\_IN\_BITS\ 10}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00055\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00056\ btQuantizedBvhNode}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//12\ bytes}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_quantizedAabbMin[3];}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_quantizedAabbMax[3];}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//4\ bytes}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_escapeIndexOrTriangleIndex;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{bool}\ isLeafNode()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00067\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{comment}{//skipindex\ is\ negative\ (internal\ node),\ triangleindex\ >=0\ (leafnode)}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_escapeIndexOrTriangleIndex\ >=\ 0);}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ getEscapeIndex()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ btAssert(!isLeafNode());}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/m\_escapeIndexOrTriangleIndex;}
+\DoxyCodeLine{00075\ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{int}\ getTriangleIndex()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00077\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ btAssert(isLeafNode());}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ x\ =\ 0;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ y\ =\ (\string~(x\ \&\ 0))\ <<\ (31\ -\/\ MAX\_NUM\_PARTS\_IN\_BITS);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ only\ the\ lower\ bits\ where\ the\ triangle\ index\ is\ stored}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_escapeIndexOrTriangleIndex\ \&\ \string~(y));}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{int}\ getPartId()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00085\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ btAssert(isLeafNode());}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ only\ the\ highest\ bits\ where\ the\ part\ index\ is\ stored}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_escapeIndexOrTriangleIndex\ >>\ (31\ -\/\ MAX\_NUM\_PARTS\_IN\_BITS));}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ \};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00094\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00095\ btOptimizedBvhNode}
+\DoxyCodeLine{00096\ \{}
+\DoxyCodeLine{00097\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{//32\ bytes}}
+\DoxyCodeLine{00100\ \ \ \ \ btVector3\ m\_aabbMinOrg;}
+\DoxyCodeLine{00101\ \ \ \ \ btVector3\ m\_aabbMaxOrg;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//4}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_escapeIndex;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//8}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{//for\ child\ nodes}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_subPart;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_triangleIndex;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//pad\ the\ size\ to\ 64\ bytes}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_padding[20];}
+\DoxyCodeLine{00113\ \};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00116\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00117\ btBvhSubtreeInfo}
+\DoxyCodeLine{00118\ \{}
+\DoxyCodeLine{00119\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00120\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{//12\ bytes}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_quantizedAabbMin[3];}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_quantizedAabbMax[3];}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{//4\ bytes,\ points\ to\ the\ root\ of\ the\ subtree}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_rootNodeIndex;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{//4\ bytes}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_subtreeSize;}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_padding[3];}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ btBvhSubtreeInfo()}
+\DoxyCodeLine{00132\ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{comment}{//memset(\&m\_padding[0],\ 0,\ sizeof(m\_padding));}}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ setAabbFromQuantizeNode(\textcolor{keyword}{const}\ btQuantizedBvhNode\&\ quantizedNode)}
+\DoxyCodeLine{00137\ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ m\_quantizedAabbMin[0]\ =\ quantizedNode.m\_quantizedAabbMin[0];}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ m\_quantizedAabbMin[1]\ =\ quantizedNode.m\_quantizedAabbMin[1];}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ m\_quantizedAabbMin[2]\ =\ quantizedNode.m\_quantizedAabbMin[2];}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ m\_quantizedAabbMax[0]\ =\ quantizedNode.m\_quantizedAabbMax[0];}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ m\_quantizedAabbMax[1]\ =\ quantizedNode.m\_quantizedAabbMax[1];}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ m\_quantizedAabbMax[2]\ =\ quantizedNode.m\_quantizedAabbMax[2];}
+\DoxyCodeLine{00144\ \ \ \ \ \}}
+\DoxyCodeLine{00145\ \};}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}}
+\DoxyCodeLine{00148\ \{}
+\DoxyCodeLine{00149\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_node_overlap_callback}{\string~btNodeOverlapCallback}}()\{\};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processNode(\textcolor{keywordtype}{int}\ subPart,\ \textcolor{keywordtype}{int}\ triangleIndex)\ =\ 0;}
+\DoxyCodeLine{00153\ \};}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedAllocator.h"{}}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00159\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btOptimizedBvhNode>}}\ \mbox{\hyperlink{classb3_aligned_object_array}{NodeArray}};}
+\DoxyCodeLine{00160\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btQuantizedBvhNode>}}\ \mbox{\hyperlink{classb3_aligned_object_array}{QuantizedNodeArray}};}
+\DoxyCodeLine{00161\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btBvhSubtreeInfo>}}\ \mbox{\hyperlink{classb3_aligned_object_array}{BvhSubtreeInfoArray}};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00166\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00167\ btQuantizedBvh}
+\DoxyCodeLine{00168\ \{}
+\DoxyCodeLine{00169\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keyword}{enum}\ btTraversalMode}
+\DoxyCodeLine{00171\ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ TRAVERSAL\_STACKLESS\ =\ 0,}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ TRAVERSAL\_STACKLESS\_CACHE\_FRIENDLY,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ TRAVERSAL\_RECURSIVE}
+\DoxyCodeLine{00175\ \ \ \ \ \};}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00178\ \ \ \ \ btVector3\ m\_bvhAabbMin;}
+\DoxyCodeLine{00179\ \ \ \ \ btVector3\ m\_bvhAabbMax;}
+\DoxyCodeLine{00180\ \ \ \ \ btVector3\ m\_bvhQuantization;}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bulletVersion;\ \ \textcolor{comment}{//for\ serialization\ versioning.\ It\ could\ also\ be\ used\ to\ detect\ endianess.}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_curNodeIndex;}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{comment}{//quantization\ data}}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useQuantization;}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{NodeArray}}\ m\_leafNodes;}
+\DoxyCodeLine{00189\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{NodeArray}}\ m\_contiguousNodes;}
+\DoxyCodeLine{00190\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{QuantizedNodeArray}}\ m\_quantizedLeafNodes;}
+\DoxyCodeLine{00191\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{QuantizedNodeArray}}\ m\_quantizedContiguousNodes;}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ btTraversalMode\ m\_traversalMode;}
+\DoxyCodeLine{00194\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{BvhSubtreeInfoArray}}\ m\_SubtreeHeaders;}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{comment}{//This\ is\ only\ used\ for\ serialization\ so\ we\ don't\ have\ to\ add\ serialization\ directly\ to\ btAlignedObjectArray}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keyword}{mutable}\ \textcolor{keywordtype}{int}\ m\_subtreeHeaderCount;}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordtype}{void}\ setInternalNodeAabbMin(\textcolor{keywordtype}{int}\ nodeIndex,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin)}
+\DoxyCodeLine{00202\ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useQuantization)}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ quantize(\&m\_quantizedContiguousNodes[nodeIndex].m\_quantizedAabbMin[0],\ aabbMin,\ 0);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ m\_contiguousNodes[nodeIndex].m\_aabbMinOrg\ =\ aabbMin;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00211\ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordtype}{void}\ setInternalNodeAabbMax(\textcolor{keywordtype}{int}\ nodeIndex,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)}
+\DoxyCodeLine{00213\ \ \ \ \ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useQuantization)}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ quantize(\&m\_quantizedContiguousNodes[nodeIndex].m\_quantizedAabbMax[0],\ aabbMax,\ 1);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ m\_contiguousNodes[nodeIndex].m\_aabbMaxOrg\ =\ aabbMax;}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00222\ \ \ \ \ \}}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ btVector3\ getAabbMin(\textcolor{keywordtype}{int}\ nodeIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00225\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useQuantization)}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ unQuantize(\&m\_quantizedLeafNodes[nodeIndex].m\_quantizedAabbMin[0]);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{comment}{//non-\/quantized}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_leafNodes[nodeIndex].m\_aabbMinOrg;}
+\DoxyCodeLine{00232\ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ btVector3\ getAabbMax(\textcolor{keywordtype}{int}\ nodeIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00234\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useQuantization)}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ unQuantize(\&m\_quantizedLeafNodes[nodeIndex].m\_quantizedAabbMax[0]);}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{comment}{//non-\/quantized}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_leafNodes[nodeIndex].m\_aabbMaxOrg;}
+\DoxyCodeLine{00241\ \ \ \ \ \}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keywordtype}{void}\ setInternalNodeEscapeIndex(\textcolor{keywordtype}{int}\ nodeIndex,\ \textcolor{keywordtype}{int}\ escapeIndex)}
+\DoxyCodeLine{00244\ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useQuantization)}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ m\_quantizedContiguousNodes[nodeIndex].m\_escapeIndexOrTriangleIndex\ =\ -\/escapeIndex;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ m\_contiguousNodes[nodeIndex].m\_escapeIndex\ =\ escapeIndex;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00253\ \ \ \ \ \}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordtype}{void}\ mergeInternalNodeAabb(\textcolor{keywordtype}{int}\ nodeIndex,\ \textcolor{keyword}{const}\ btVector3\&\ newAabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ newAabbMax)}
+\DoxyCodeLine{00256\ \ \ \ \ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useQuantization)}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ quantizedAabbMin[3];}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ quantizedAabbMax[3];}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ quantize(quantizedAabbMin,\ newAabbMin,\ 0);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ quantize(quantizedAabbMax,\ newAabbMax,\ 1);}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_quantizedContiguousNodes[nodeIndex].m\_quantizedAabbMin[i]\ >\ quantizedAabbMin[i])}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_quantizedContiguousNodes[nodeIndex].m\_quantizedAabbMin[i]\ =\ quantizedAabbMin[i];}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_quantizedContiguousNodes[nodeIndex].m\_quantizedAabbMax[i]\ <\ quantizedAabbMax[i])}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_quantizedContiguousNodes[nodeIndex].m\_quantizedAabbMax[i]\ =\ quantizedAabbMax[i];}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//non-\/quantized}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ m\_contiguousNodes[nodeIndex].m\_aabbMinOrg.setMin(newAabbMin);}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ m\_contiguousNodes[nodeIndex].m\_aabbMaxOrg.setMax(newAabbMax);}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00278\ \ \ \ \ \}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordtype}{void}\ swapLeafNodes(\textcolor{keywordtype}{int}\ firstIndex,\ \textcolor{keywordtype}{int}\ secondIndex);}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keywordtype}{void}\ assignInternalNodeFromLeafNode(\textcolor{keywordtype}{int}\ internalNode,\ \textcolor{keywordtype}{int}\ leafNodeIndex);}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordtype}{void}\ buildTree(\textcolor{keywordtype}{int}\ startIndex,\ \textcolor{keywordtype}{int}\ endIndex);}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keywordtype}{int}\ calcSplittingAxis(\textcolor{keywordtype}{int}\ startIndex,\ \textcolor{keywordtype}{int}\ endIndex);}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keywordtype}{int}\ sortAndCalcSplittingIndex(\textcolor{keywordtype}{int}\ startIndex,\ \textcolor{keywordtype}{int}\ endIndex,\ \textcolor{keywordtype}{int}\ splitAxis);}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordtype}{void}\ walkStacklessTree(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordtype}{void}\ walkStacklessQuantizedTreeAgainstRay(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ startNodeIndex,\ \textcolor{keywordtype}{int}\ endNodeIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keywordtype}{void}\ walkStacklessQuantizedTree(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ quantizedQueryAabbMin,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ quantizedQueryAabbMax,\ \textcolor{keywordtype}{int}\ startNodeIndex,\ \textcolor{keywordtype}{int}\ endNodeIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{keywordtype}{void}\ walkStacklessTreeAgainstRay(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ startNodeIndex,\ \textcolor{keywordtype}{int}\ endNodeIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{keywordtype}{void}\ walkStacklessQuantizedTreeCacheFriendly(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ quantizedQueryAabbMin,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ quantizedQueryAabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{keywordtype}{void}\ walkRecursiveQuantizedTreeAgainstQueryAabb(\textcolor{keyword}{const}\ btQuantizedBvhNode*\ currentNode,\ \mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}*\ nodeCallback,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ quantizedQueryAabbMin,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}*\ quantizedQueryAabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordtype}{void}\ walkRecursiveQuantizedTreeAgainstQuantizedTree(\textcolor{keyword}{const}\ btQuantizedBvhNode*\ treeNodeA,\ \textcolor{keyword}{const}\ btQuantizedBvhNode*\ treeNodeB,\ \mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}*\ nodeCallback)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keywordtype}{void}\ updateSubtreeHeaders(\textcolor{keywordtype}{int}\ leftChildNodexIndex,\ \textcolor{keywordtype}{int}\ rightChildNodexIndex);}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00309\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \ \ \ \ btQuantizedBvh();}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btQuantizedBvh();}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordtype}{void}\ setQuantizationValues(\textcolor{keyword}{const}\ btVector3\&\ bvhAabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ bvhAabbMax,\ btScalar\ quantizationMargin\ =\ btScalar(1.0));}
+\DoxyCodeLine{00317\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{QuantizedNodeArray}}\&\ getLeafNodeArray()\ \{\ \textcolor{keywordflow}{return}\ m\_quantizedLeafNodes;\ \}}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordtype}{void}\ buildInternal();}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keywordtype}{void}\ reportAabbOverlappingNodex(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordtype}{void}\ reportRayOverlappingNodex(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordtype}{void}\ reportBoxCastOverlappingNodex(\mbox{\hyperlink{classbt_node_overlap_callback}{btNodeOverlapCallback}}\ *\ nodeCallback,\ \textcolor{keyword}{const}\ btVector3\&\ raySource,\ \textcolor{keyword}{const}\ btVector3\&\ rayTarget,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ quantize(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ out,\ \textcolor{keyword}{const}\ btVector3\&\ point,\ \textcolor{keywordtype}{int}\ isMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00327\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ btAssert(m\_useQuantization);}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ btAssert(point.getX()\ <=\ m\_bvhAabbMax.getX());}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ btAssert(point.getY()\ <=\ m\_bvhAabbMax.getY());}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ btAssert(point.getZ()\ <=\ m\_bvhAabbMax.getZ());}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ btAssert(point.getX()\ >=\ m\_bvhAabbMin.getX());}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ btAssert(point.getY()\ >=\ m\_bvhAabbMin.getY());}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ btAssert(point.getZ()\ >=\ m\_bvhAabbMin.getZ());}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ btVector3\ v\ =\ (point\ -\/\ m\_bvhAabbMin)\ *\ m\_bvhQuantization;}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isMax)}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ out[0]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.getX()\ +\ btScalar(1.))\ |\ 1));}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ out[1]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.getY()\ +\ btScalar(1.))\ |\ 1));}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ out[2]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.getZ()\ +\ btScalar(1.))\ |\ 1));}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ out[0]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.getX())\ \&\ 0xfffe));}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ out[1]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.getY())\ \&\ 0xfffe));}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ out[2]\ =\ (\textcolor{keywordtype}{unsigned}\ short)(((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short})(v.getZ())\ \&\ 0xfffe));}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_CHECK\_DEQUANTIZATION}}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ btVector3\ newPoint\ =\ unQuantize(out);}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isMax)}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newPoint.getX()\ <\ point.getX())}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}unconservative\ X,\ diffX\ =\ \%f,\ oldX=\%f,newX=\%f\(\backslash\)n"{}},\ newPoint.getX()\ -\/\ point.getX(),\ newPoint.getX(),\ point.getX());}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newPoint.getY()\ <\ point.getY())}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}unconservative\ Y,\ diffY\ =\ \%f,\ oldY=\%f,newY=\%f\(\backslash\)n"{}},\ newPoint.getY()\ -\/\ point.getY(),\ newPoint.getY(),\ point.getY());}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newPoint.getZ()\ <\ point.getZ())}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}unconservative\ Z,\ diffZ\ =\ \%f,\ oldZ=\%f,newZ=\%f\(\backslash\)n"{}},\ newPoint.getZ()\ -\/\ point.getZ(),\ newPoint.getZ(),\ point.getZ());}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newPoint.getX()\ >\ point.getX())}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}unconservative\ X,\ diffX\ =\ \%f,\ oldX=\%f,newX=\%f\(\backslash\)n"{}},\ newPoint.getX()\ -\/\ point.getX(),\ newPoint.getX(),\ point.getX());}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newPoint.getY()\ >\ point.getY())}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}unconservative\ Y,\ diffY\ =\ \%f,\ oldY=\%f,newY=\%f\(\backslash\)n"{}},\ newPoint.getY()\ -\/\ point.getY(),\ newPoint.getY(),\ point.getY());}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newPoint.getZ()\ >\ point.getZ())}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}unconservative\ Z,\ diffZ\ =\ \%f,\ oldZ=\%f,newZ=\%f\(\backslash\)n"{}},\ newPoint.getZ()\ -\/\ point.getZ(),\ newPoint.getZ(),\ point.getZ());}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_CHECK\_DEQUANTIZATION}}
+\DoxyCodeLine{00388\ \ \ \ \ \}}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ quantizeWithClamp(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ out,\ \textcolor{keyword}{const}\ btVector3\&\ point2,\ \textcolor{keywordtype}{int}\ isMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00391\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ btAssert(m\_useQuantization);}
+\DoxyCodeLine{00393\ }
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ btVector3\ clampedPoint(point2);}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ clampedPoint.setMax(m\_bvhAabbMin);}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ clampedPoint.setMin(m\_bvhAabbMax);}
+\DoxyCodeLine{00397\ }
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ quantize(out,\ clampedPoint,\ isMax);}
+\DoxyCodeLine{00399\ \ \ \ \ \}}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ \ \ \ \ SIMD\_FORCE\_INLINE\ btVector3\ unQuantize(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ vecIn)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00402\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ btVector3\ vecOut;}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ vecOut.setValue(}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ (btScalar)(vecIn[0])\ /\ (m\_bvhQuantization.getX()),}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ (btScalar)(vecIn[1])\ /\ (m\_bvhQuantization.getY()),}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ (btScalar)(vecIn[2])\ /\ (m\_bvhQuantization.getZ()));}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ vecOut\ +=\ m\_bvhAabbMin;}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ vecOut;}
+\DoxyCodeLine{00410\ \ \ \ \ \}}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00413\ \ \ \ \ \textcolor{keywordtype}{void}\ setTraversalMode(btTraversalMode\ traversalMode)}
+\DoxyCodeLine{00414\ \ \ \ \ \{}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ m\_traversalMode\ =\ traversalMode;}
+\DoxyCodeLine{00416\ \ \ \ \ \}}
+\DoxyCodeLine{00417\ }
+\DoxyCodeLine{00418\ \ \ \ \ SIMD\_FORCE\_INLINE\ \mbox{\hyperlink{classb3_aligned_object_array}{QuantizedNodeArray}}\&\ getQuantizedNodeArray()}
+\DoxyCodeLine{00419\ \ \ \ \ \{}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_quantizedContiguousNodes;}
+\DoxyCodeLine{00421\ \ \ \ \ \}}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00423\ \ \ \ \ SIMD\_FORCE\_INLINE\ \mbox{\hyperlink{classb3_aligned_object_array}{BvhSubtreeInfoArray}}\&\ getSubtreeInfoArray()}
+\DoxyCodeLine{00424\ \ \ \ \ \{}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_SubtreeHeaders;}
+\DoxyCodeLine{00426\ \ \ \ \ \}}
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00434\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ serialize(\textcolor{keywordtype}{void}*\ o\_alignedDataBuffer,\ \textcolor{keywordtype}{unsigned}\ i\_dataBufferSize,\ \textcolor{keywordtype}{bool}\ i\_swapEndian)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00437\ \ \ \ \ \textcolor{keyword}{static}\ btQuantizedBvh*\ deSerializeInPlace(\textcolor{keywordtype}{void}*\ i\_alignedDataBuffer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\_dataBufferSize,\ \textcolor{keywordtype}{bool}\ i\_swapEndian);}
+\DoxyCodeLine{00438\ }
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ getAlignmentSerializationPadding();}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSizeNew()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ deSerializeFloat(\textcolor{keyword}{struct}\ btQuantizedBvhFloatData\ \&\ quantizedBvhFloatData);}
+\DoxyCodeLine{00448\ }
+\DoxyCodeLine{00449\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ deSerializeDouble(\textcolor{keyword}{struct}\ btQuantizedBvhDoubleData\ \&\ quantizedBvhDoubleData);}
+\DoxyCodeLine{00450\ }
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ isQuantized()}
+\DoxyCodeLine{00454\ \ \ \ \ \{}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_useQuantization;}
+\DoxyCodeLine{00456\ \ \ \ \ \}}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{comment}{//\ Special\ "{}copy"{}\ constructor\ that\ allows\ for\ in-\/place\ deserialization}}
+\DoxyCodeLine{00460\ \ \ \ \ \textcolor{comment}{//\ Prevents\ btVector3's\ default\ constructor\ from\ being\ called,\ but\ doesn't\ inialize\ much\ else}}
+\DoxyCodeLine{00461\ \ \ \ \ \textcolor{comment}{//\ ownsMemory\ should\ most\ likely\ be\ false\ if\ deserializing,\ and\ if\ you\ are\ not,\ don't\ call\ this\ (it\ also\ changes\ the\ function\ signature,\ which\ we\ need)}}
+\DoxyCodeLine{00462\ \ \ \ \ btQuantizedBvh(btQuantizedBvh\ \&\ other,\ \textcolor{keywordtype}{bool}\ ownsMemory);}
+\DoxyCodeLine{00463\ \};}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00466\ \textcolor{comment}{//\ parser\ needs\ *\ with\ the\ name}}
+\DoxyCodeLine{00467\ \textcolor{keyword}{struct\ }btBvhSubtreeInfoData}
+\DoxyCodeLine{00468\ \{}
+\DoxyCodeLine{00469\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_rootNodeIndex;}
+\DoxyCodeLine{00470\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_subtreeSize;}
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ m\_quantizedAabbMin[3];}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ m\_quantizedAabbMax[3];}
+\DoxyCodeLine{00473\ \};}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \textcolor{keyword}{struct\ }btOptimizedBvhNodeFloatData}
+\DoxyCodeLine{00476\ \{}
+\DoxyCodeLine{00477\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_aabbMinOrg;}
+\DoxyCodeLine{00478\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_aabbMaxOrg;}
+\DoxyCodeLine{00479\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_escapeIndex;}
+\DoxyCodeLine{00480\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_subPart;}
+\DoxyCodeLine{00481\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_triangleIndex;}
+\DoxyCodeLine{00482\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_pad[4];}
+\DoxyCodeLine{00483\ \};}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \textcolor{keyword}{struct\ }btOptimizedBvhNodeDoubleData}
+\DoxyCodeLine{00486\ \{}
+\DoxyCodeLine{00487\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_aabbMinOrg;}
+\DoxyCodeLine{00488\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_aabbMaxOrg;}
+\DoxyCodeLine{00489\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_escapeIndex;}
+\DoxyCodeLine{00490\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_subPart;}
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_triangleIndex;}
+\DoxyCodeLine{00492\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_pad[4];}
+\DoxyCodeLine{00493\ \};}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \textcolor{keyword}{struct\ }btQuantizedBvhNodeData}
+\DoxyCodeLine{00497\ \{}
+\DoxyCodeLine{00498\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ m\_quantizedAabbMin[3];}
+\DoxyCodeLine{00499\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ m\_quantizedAabbMax[3];}
+\DoxyCodeLine{00500\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_escapeIndexOrTriangleIndex;}
+\DoxyCodeLine{00501\ \};}
+\DoxyCodeLine{00502\ }
+\DoxyCodeLine{00503\ \textcolor{keyword}{struct\ \ }btQuantizedBvhFloatData}
+\DoxyCodeLine{00504\ \{}
+\DoxyCodeLine{00505\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ \ \ \ \ \ \ \ \ \ \ \ m\_bvhAabbMin;}
+\DoxyCodeLine{00506\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ \ \ \ \ \ \ \ \ \ \ \ m\_bvhAabbMax;}
+\DoxyCodeLine{00507\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ \ \ \ \ \ \ \ \ \ \ \ m\_bvhQuantization;}
+\DoxyCodeLine{00508\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_curNodeIndex;}
+\DoxyCodeLine{00509\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_useQuantization;}
+\DoxyCodeLine{00510\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_numContiguousLeafNodes;}
+\DoxyCodeLine{00511\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_numQuantizedContiguousNodes;}
+\DoxyCodeLine{00512\ \ \ \ \ btOptimizedBvhNodeFloatData\ *m\_contiguousNodesPtr;}
+\DoxyCodeLine{00513\ \ \ \ \ btQuantizedBvhNodeData\ \ \ \ \ \ *m\_quantizedContiguousNodesPtr;}
+\DoxyCodeLine{00514\ \ \ \ \ btBvhSubtreeInfoData\ \ \ \ *m\_subTreeInfoPtr;}
+\DoxyCodeLine{00515\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_traversalMode;}
+\DoxyCodeLine{00516\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_numSubtreeHeaders;}
+\DoxyCodeLine{00517\ \ \ \ \ }
+\DoxyCodeLine{00518\ \};}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \textcolor{keyword}{struct\ \ }btQuantizedBvhDoubleData}
+\DoxyCodeLine{00521\ \{}
+\DoxyCodeLine{00522\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ \ \ \ \ \ \ \ \ \ m\_bvhAabbMin;}
+\DoxyCodeLine{00523\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ \ \ \ \ \ \ \ \ \ m\_bvhAabbMax;}
+\DoxyCodeLine{00524\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ \ \ \ \ \ \ \ \ \ m\_bvhQuantization;}
+\DoxyCodeLine{00525\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_curNodeIndex;}
+\DoxyCodeLine{00526\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_useQuantization;}
+\DoxyCodeLine{00527\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_numContiguousLeafNodes;}
+\DoxyCodeLine{00528\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_numQuantizedContiguousNodes;}
+\DoxyCodeLine{00529\ \ \ \ \ btOptimizedBvhNodeDoubleData\ \ \ \ *m\_contiguousNodesPtr;}
+\DoxyCodeLine{00530\ \ \ \ \ btQuantizedBvhNodeData\ \ \ \ \ \ \ \ \ \ *m\_quantizedContiguousNodesPtr;}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_traversalMode;}
+\DoxyCodeLine{00533\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_numSubtreeHeaders;}
+\DoxyCodeLine{00534\ \ \ \ \ btBvhSubtreeInfoData\ \ \ \ \ \ \ \ *m\_subTreeInfoPtr;}
+\DoxyCodeLine{00535\ \};}
+\DoxyCodeLine{00536\ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00537\ }
+\DoxyCodeLine{00538\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btQuantizedBvh::calculateSerializeBufferSizeNew()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00539\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00540\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(btQuantizedBvhData);}
+\DoxyCodeLine{00541\ \}}
+\DoxyCodeLine{00542\ }
+\DoxyCodeLine{00543\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_QUANTIZED\_BVH\_H}}
+
+\end{DoxyCode}

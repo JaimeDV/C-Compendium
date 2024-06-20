@@ -1,0 +1,200 @@
+\doxysection{bt\+Quad\+Word.\+h}
+\hypertarget{bt_quad_word_8h_source}{}\label{bt_quad_word_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btQuadWord.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btQuadWord.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Gino\ van\ den\ Bergen\ /\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00007\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00009\ \textcolor{comment}{}}
+\DoxyCodeLine{00010\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifndef\ BT\_SIMD\_QUADWORD\_H}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ BT\_SIMD\_QUADWORD\_H}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}btScalar.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btMinMax.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#if\ defined(\_\_CELLOS\_LV2)\ \&\&\ defined(\_\_SPU\_\_)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <altivec.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#ifndef\ USE\_LIBSPE2}}
+\DoxyCodeLine{00029\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00030\ btQuadWord}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }btQuadWord}
+\DoxyCodeLine{00033\ \#endif}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#if\ defined(\_\_SPU\_\_)\ \&\&\ defined(\_\_CELLOS\_LV2\_\_)}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ vec\_float4\ mVec128;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ btScalar\ m\_floats[4];}
+\DoxyCodeLine{00040\ \ \ \ \ \};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00043\ \ \ \ \ vec\_float4\ get128()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mVec128;}
+\DoxyCodeLine{00046\ \ \ \ \ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#else\ \ }\textcolor{comment}{//\_\_CELLOS\_LV2\_\_\ \_\_SPU\_\_}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#if\ defined(BT\_USE\_SSE)\ ||\ defined(BT\_USE\_NEON)}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ btSimdFloat4\ mVec128;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ btScalar\ m\_floats[4];}
+\DoxyCodeLine{00055\ \ \ \ \ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00058\ \ \ \ \ SIMD\_FORCE\_INLINE\ btSimdFloat4\ get128()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00059\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mVec128;}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ set128(btSimdFloat4\ v128)}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ mVec128\ =\ v128;}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00067\ \ \ \ \ btScalar\ m\_floats[4];}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ BT\_USE\_SSE}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\_\_CELLOS\_LV2\_\_\ \_\_SPU\_\_}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#if\ (defined(BT\_USE\_SSE\_IN\_API)\ \&\&\ defined(BT\_USE\_SSE))\ ||\ defined(BT\_USE\_NEON)}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//\ Set\ Vector}}
+\DoxyCodeLine{00076\ \ \ \ \ SIMD\_FORCE\_INLINE\ btQuadWord(\textcolor{keyword}{const}\ btSimdFloat4\ vec)}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ mVec128\ =\ vec;}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ Copy\ constructor}}
+\DoxyCodeLine{00082\ \ \ \ \ SIMD\_FORCE\_INLINE\ btQuadWord(\textcolor{keyword}{const}\ btQuadWord\&\ rhs)}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ mVec128\ =\ rhs.mVec128;}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ Assignment\ Operator}}
+\DoxyCodeLine{00088\ \ \ \ \ SIMD\_FORCE\_INLINE\ btQuadWord\&}
+\DoxyCodeLine{00089\ \ \ \ \ operator=(\textcolor{keyword}{const}\ btQuadWord\&\ v)}
+\DoxyCodeLine{00090\ \ \ \ \ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ mVec128\ =\ v.mVec128;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00099\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btScalar\&\ getX()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[0];\ \}}
+\DoxyCodeLine{00101\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btScalar\&\ getY()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[1];\ \}}
+\DoxyCodeLine{00103\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btScalar\&\ getZ()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[2];\ \}}
+\DoxyCodeLine{00105\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setX(btScalar\ \_x)\ \{\ m\_floats[0]\ =\ \_x;\ \};}
+\DoxyCodeLine{00107\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setY(btScalar\ \_y)\ \{\ m\_floats[1]\ =\ \_y;\ \};}
+\DoxyCodeLine{00109\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setZ(btScalar\ \_z)\ \{\ m\_floats[2]\ =\ \_z;\ \};}
+\DoxyCodeLine{00111\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setW(btScalar\ \_w)\ \{\ m\_floats[3]\ =\ \_w;\ \};}
+\DoxyCodeLine{00113\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btScalar\&\ x()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[0];\ \}}
+\DoxyCodeLine{00115\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btScalar\&\ y()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[1];\ \}}
+\DoxyCodeLine{00117\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btScalar\&\ z()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[2];\ \}}
+\DoxyCodeLine{00119\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btScalar\&\ w()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_floats[3];\ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{//SIMD\_FORCE\_INLINE\ btScalar\&\ \ \ \ \ \ \ operator[](int\ i)\ \ \ \ \ \ \ \{\ return\ (\&m\_floats[0])[i];\ \}}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{//SIMD\_FORCE\_INLINE\ const\ btScalar\&\ operator[](int\ i)\ const\ \{\ return\ (\&m\_floats[0])[i];\ \}}}
+\DoxyCodeLine{00124\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{operator}\ btScalar*()\ \{\ \textcolor{keywordflow}{return}\ \&m\_floats[0];\ \}}
+\DoxyCodeLine{00125\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{operator}\ \textcolor{keyword}{const}\ btScalar*()\ \textcolor{keyword}{const}\ \{\ \textcolor{keywordflow}{return}\ \&m\_floats[0];\ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ btQuadWord\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00128\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_SSE}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (0xf\ ==\ \_mm\_movemask\_ps((\_\_m128)\_mm\_cmpeq\_ps(mVec128,\ other.mVec128)));}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((m\_floats[3]\ ==\ other.m\_floats[3])\ \&\&}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_floats[2]\ ==\ other.m\_floats[2])\ \&\&}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_floats[1]\ ==\ other.m\_floats[1])\ \&\&}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (m\_floats[0]\ ==\ other.m\_floats[0]));}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ operator!=(\textcolor{keyword}{const}\ btQuadWord\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00140\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ !(*\textcolor{keyword}{this}\ ==\ other);}
+\DoxyCodeLine{00142\ \ \ \ \ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00149\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setValue(\textcolor{keyword}{const}\ btScalar\&\ \_x,\ \textcolor{keyword}{const}\ btScalar\&\ \_y,\ \textcolor{keyword}{const}\ btScalar\&\ \_z)}
+\DoxyCodeLine{00150\ \ \ \ \ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ m\_floats[0]\ =\ \_x;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ m\_floats[1]\ =\ \_y;}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ m\_floats[2]\ =\ \_z;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ m\_floats[3]\ =\ 0.f;}
+\DoxyCodeLine{00155\ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ void\ getValue(btScalar\ *m)\ const\ }}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ m[0]\ =\ m\_floats[0];}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ m[1]\ =\ m\_floats[1];}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ m[2]\ =\ m\_floats[2];}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00163\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00170\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setValue(\textcolor{keyword}{const}\ btScalar\&\ \_x,\ \textcolor{keyword}{const}\ btScalar\&\ \_y,\ \textcolor{keyword}{const}\ btScalar\&\ \_z,\ \textcolor{keyword}{const}\ btScalar\&\ \_w)}
+\DoxyCodeLine{00171\ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ m\_floats[0]\ =\ \_x;}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ m\_floats[1]\ =\ \_y;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ m\_floats[2]\ =\ \_z;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ m\_floats[3]\ =\ \_w;}
+\DoxyCodeLine{00176\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ \ \ \ \ SIMD\_FORCE\_INLINE\ btQuadWord()}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{comment}{//\ \ :m\_floats[0](btScalar(0.)),m\_floats[1](btScalar(0.)),m\_floats[2](btScalar(0.)),m\_floats[3](btScalar(0.))}}
+\DoxyCodeLine{00180\ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00188\ \ \ \ \ SIMD\_FORCE\_INLINE\ btQuadWord(\textcolor{keyword}{const}\ btScalar\&\ \_x,\ \textcolor{keyword}{const}\ btScalar\&\ \_y,\ \textcolor{keyword}{const}\ btScalar\&\ \_z)}
+\DoxyCodeLine{00189\ \ \ \ \ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ m\_floats[0]\ =\ \_x,\ m\_floats[1]\ =\ \_y,\ m\_floats[2]\ =\ \_z,\ m\_floats[3]\ =\ 0.0f;}
+\DoxyCodeLine{00191\ \ \ \ \ \}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00199\ \ \ \ \ SIMD\_FORCE\_INLINE\ btQuadWord(\textcolor{keyword}{const}\ btScalar\&\ \_x,\ \textcolor{keyword}{const}\ btScalar\&\ \_y,\ \textcolor{keyword}{const}\ btScalar\&\ \_z,\ \textcolor{keyword}{const}\ btScalar\&\ \_w)}
+\DoxyCodeLine{00200\ \ \ \ \ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ m\_floats[0]\ =\ \_x,\ m\_floats[1]\ =\ \_y,\ m\_floats[2]\ =\ \_z,\ m\_floats[3]\ =\ \_w;}
+\DoxyCodeLine{00202\ \ \ \ \ \}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00207\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setMax(\textcolor{keyword}{const}\ btQuadWord\&\ other)}
+\DoxyCodeLine{00208\ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_SSE}}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_max\_ps(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#elif\ defined(BT\_USE\_NEON)}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ mVec128\ =\ vmaxq\_f32(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ btSetMax(m\_floats[0],\ other.m\_floats[0]);}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ btSetMax(m\_floats[1],\ other.m\_floats[1]);}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ btSetMax(m\_floats[2],\ other.m\_floats[2]);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ btSetMax(m\_floats[3],\ other.m\_floats[3]);}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00219\ \ \ \ \ \}}
+\DoxyCodeLine{00223\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setMin(\textcolor{keyword}{const}\ btQuadWord\&\ other)}
+\DoxyCodeLine{00224\ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_SSE}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ mVec128\ =\ \_mm\_min\_ps(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#elif\ defined(BT\_USE\_NEON)}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ mVec128\ =\ vminq\_f32(mVec128,\ other.mVec128);}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ btSetMin(m\_floats[0],\ other.m\_floats[0]);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ btSetMin(m\_floats[1],\ other.m\_floats[1]);}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ btSetMin(m\_floats[2],\ other.m\_floats[2]);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ btSetMin(m\_floats[3],\ other.m\_floats[3]);}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \};}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SIMD\_QUADWORD\_H}}
+
+\end{DoxyCode}

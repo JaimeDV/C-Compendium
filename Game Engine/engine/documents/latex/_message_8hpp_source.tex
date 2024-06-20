@@ -1,0 +1,114 @@
+\doxysection{Message.\+hpp}
+\hypertarget{_message_8hpp_source}{}\label{_message_8hpp_source}\index{code/headers/Message.hpp@{code/headers/Message.hpp}}
+\mbox{\hyperlink{_message_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <list>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <variant>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_task_8hpp}{Task.hpp}}"{}}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}\ }
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacemisi_a4282f1e17e98fd05f69b48951eac738c}{parameter}}\ =\ std::variant<int,\ float,\ std::string,\ std::vector<int>,\ std::vector<float>\ >;\ \textcolor{comment}{//poner\ aqui\ entre\ comas\ que\ tipos\ de\ parametros\ podemos\ querer\ in,\ string,}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmisi_1_1_message}{Message}}\ }
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{structmisi_1_1_message_a55829c88a413340aee43e3513ea465e5}{id}};\ \textcolor{comment}{//estaria\ bien\ cambiarlos\ por\ hash}}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ std::map<std::string,\ parameter>\ \mbox{\hyperlink{structmisi_1_1_message_a876ec1684fe6ba567bada9456e24a849}{parameters}};\ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ std::map<std::string,\ std::pair<parameter,\ parameter>>\ \mbox{\hyperlink{structmisi_1_1_message_aaea22bf8919622fd883c6ad31c67a46e}{double\_parameters}};}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structmisi_1_1_message_a70cee79cb9874ed732fa3b35aec6c0d5}{Message}}(std::string\ \textcolor{keywordtype}{id},\ std::map<std::string,\ parameter>\ \mbox{\hyperlink{structmisi_1_1_message_a876ec1684fe6ba567bada9456e24a849}{parameters}});}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structmisi_1_1_message_a70cee79cb9874ed732fa3b35aec6c0d5}{Message}}(std::string\ \textcolor{keywordtype}{id},\ std::map<std::string,\ std::pair<parameter,\ parameter>>\ \mbox{\hyperlink{structmisi_1_1_message_aaea22bf8919622fd883c6ad31c67a46e}{double\_parameters}});}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structmisi_1_1_message_a98ef14bf8b54484dc7513efbd1d23fbb}{set\_id}}(std::string\ given\_id)}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{id}\ =\ given\_id;}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structmisi_1_1_message_ab9cafb5738d925a08f056c1fa9efe92a}{set\_params}}(std::map<std::string,\ parameter>\ given\_param)}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structmisi_1_1_message_a876ec1684fe6ba567bada9456e24a849}{parameters}}\ =\ given\_param;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structmisi_1_1_message_a5212724fe9fdc88782fab3ffeb94a34c}{set\_params}}(std::map<std::string,\ std::pair<parameter,\ parameter>>\ given\_param)}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structmisi_1_1_message_aaea22bf8919622fd883c6ad31c67a46e}{double\_parameters}}\ =\ given\_param;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \ \ \ \ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}}\textcolor{comment}{//tienen\ que\ hereralo\ }}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a19abe6abc6ac2e10ec1bdf30f68a2527}{handle}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_ab5d4c2bfcb78f279c688575297d42f74}{message}})\ =\ 0;}
+\DoxyCodeLine{00042\ \ \ \ \ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}:\mbox{\hyperlink{classmisi_1_1_task}{Task}}}
+\DoxyCodeLine{00045\ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ std::list<Message>\ messages;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ std::map<\ std::string,\ std::list<Message\_Listener*>>\ messageListeners;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher_acd982d43cc34a4aa856b10329258600d}{Message\_Dispacher}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_message___dispacher_a2863396e23827b07770755c10160c7e1}{send}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_ab5d4c2bfcb78f279c688575297d42f74}{message}})\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ messages.push\_back(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_ab5d4c2bfcb78f279c688575297d42f74}{message}});}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_message___dispacher_a0ea98fb373541020ad3c25dd43adbc17}{add}}(\mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}}\&\ listener,\ \textcolor{keyword}{const}\ std::string\&\ message\_id)\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ messageListeners[message\_id].push\_back(\&listener);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_message___dispacher_a5cda33cc123ca1368147219b16b314a3}{execute}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\ \textcolor{keyword}{override};\textcolor{comment}{//esto\ podria\ estar\ en\ send\ en\ vez\ de\ ser\ una\ task}}
+\DoxyCodeLine{00060\ \ \ \ \ \};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//mesaje\ example\ //esto\ es\ solo\ de\ ejemplo}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ \ \ \ void\ key\_presed(int\_keycode)}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{//class\ enemy\ :\ public\ game\ object,\ public\ mesagelistener\ //ejemplo\ de\ uso\ de\ handeler}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//public:}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ \ \ \ void\ Handle(mensaje)}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ if(Message.id==...)}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//\};}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//while\ (poll\_event(event))}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//\ \ \ \ switch\ (event.type)}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \{}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ case\ key\ pressed:}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ if\ (event.key.code\ ==\ Key\_Space)\ //ojo\ esto\ estaria\ dentro\ del\ motor\ o}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //que\ input\ genere\ evnetos\ de\ hardware\ concreto\ y\ que\ el\ juego\ los\ use\ para\ sacar\ eventos}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //\ la\ mejor\ que\ fuera\ considerable\ input\ task\ para\ decirle\ que\ eventos\ de\ inputs\ concretos}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //\ es\ decir\ que\ el\ juego\ diga\ espacio\ =\ jump\ y\ el\ imput\ manager\ mirando\ un\ diccionario\ genere}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //\ un\ evento\ jump\ cuando\ de\ space}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //es\ decir\ aqui\ mandaria\ en\ jump}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Messaje\ jump\{"{}jump"{}\ \}\ //esta\ seria\ la\ implentación que\ quiere,\ el\ jugador\ deberia\ ser\ un\ listener\ de\ jump}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_pressed.parameters["{}key-\/code"{}]\ =\ event.key.code;}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scene.get\_message\_dispacher\ ().send(pressed)\ //manda\ el\ mensaje\ creado\ encima}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ break;}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \}}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{//solucion\ mala\ (en\ juego)}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{//\ \ \ \ class\ input\ handler\ \{}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{//\ \ \ \ void\ handle}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \{}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ if\ message\ id\ ==\ keypressed}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ switch\ (Message.paramerters["{}key-\/code"{}].get<int>())}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ -\/-\/-\/-\/}}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ kessahe}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scene.get\ dispacher}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \}}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//\};}}
+\DoxyCodeLine{00112\ \}}
+
+\end{DoxyCode}

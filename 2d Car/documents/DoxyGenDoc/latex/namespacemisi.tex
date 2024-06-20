@@ -1,0 +1,210 @@
+\doxysection{misi Namespace Reference}
+\hypertarget{namespacemisi}{}\label{namespacemisi}\index{misi@{misi}}
+
+
+contains implementations of the classes in \doxylink{_input_manager_8hpp_source}{input\+Manager.\+Hpp}  
+
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classmisi_1_1_back_ground}{Back\+Ground}}
+\begin{DoxyCompactList}\small\item\em Encapsulation of the physical model \& behaviour of the game background. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_car}{Car}}
+\begin{DoxyCompactList}\small\item\em Encapsulation of the physical model \& behaviour of the moving car inside scene. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_collision_listener}{Collision\+Listener}}
+\begin{DoxyCompactList}\small\item\em class that overwrites box2d\+Contactlistener to send b2body contact info to the message system \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_input_manager}{Input\+Manager}}
+\begin{DoxyCompactList}\small\item\em using sfml reads the players input \& sends messages trought the message system \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structmisi_1_1_message}{Message}}
+\begin{DoxyCompactList}\small\item\em message compement sent trought the message system, it allows up to 3 parameters, the first one being always the id \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\+\_\+\+Dispacher}}
+\begin{DoxyCompactList}\small\item\em Sends messages to all listener. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_message___listener}{Message\+\_\+\+Listener}}
+\begin{DoxyCompactList}\small\item\em abstract class used to listen messages from the message server \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_multi_shape_object}{Multi\+Shape\+Object}}
+\begin{DoxyCompactList}\small\item\em Class that instantiates an object made of multiple b2fixtures. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structmisi_1_1_particle}{Particle}}
+\begin{DoxyCompactList}\small\item\em Encapsulates the particles emited by the particle system, should use sfml shapes but due to errors with the render system has box2d body. ~\newline
+ \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_particle_pool}{Particle\+Pool}}
+\begin{DoxyCompactList}\small\item\em Pool that holds all the particles, active and inactinve. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_particle_renderer}{Particle\+Renderer}}
+\begin{DoxyCompactList}\small\item\em draws each particle in the window, unsued due to the renderbug \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_particle_system}{Particle\+System}}
+\begin{DoxyCompactList}\small\item\em Master class that encapsulates the behaviour of all particle components Due to render issues is now using box2d most feature don\textquotesingle{}t work ~\newline
+ \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_particle_updater}{Particle\+Updater}}
+\begin{DoxyCompactList}\small\item\em updates the status of each particle in the particle pool for some reason needs so time to wind up \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1physic_body}{physic\+Body}}
+\begin{DoxyCompactList}\small\item\em Father abstract class for all physical\+Objects, contains definitions shared between all the types of shape. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_physic_edge}{Physic\+Edge}}
+\begin{DoxyCompactList}\small\item\em Class that instantiates a b2\+Edge\+Shape with the given parameters. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_physic_polygon}{Physic\+Polygon}}
+\begin{DoxyCompactList}\small\item\em Class that instantiates an b2\+Polygon\+Shape with the given values. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_physic_sphere}{Physic\+Sphere}}
+\begin{DoxyCompactList}\small\item\em Class that instantiates a b2\+Circle\+Shape with the given values. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1physic_world}{physic\+World}}
+\begin{DoxyCompactList}\small\item\em Class that instantiates a b2\+World with added funtions to create b2\+Bodies. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_renderer}{Renderer}}
+\begin{DoxyCompactList}\small\item\em class that renders 2b\+Bodys using the sfm library \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmisi_1_1_scene}{Scene}}
+\begin{DoxyCompactList}\small\item\em Class that houses the physical word \& the window/ render kernel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{namespacemisi_a34e414f6f971e5e0098d1f18af9f4cd4}\label{namespacemisi_a34e414f6f971e5e0098d1f18af9f4cd4} 
+using {\bfseries parameter} = float
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{namespacemisi_afb62132c4c8ebc08c1d35a77a35a97e6}\label{namespacemisi_afb62132c4c8ebc08c1d35a77a35a97e6} 
+enum {\bfseries fixture\+Type} \{ {\bfseries cube} =0
+, {\bfseries polygon}
+, {\bfseries sphere}
+, {\bfseries edge}
+ \}
+\item 
+\Hypertarget{namespacemisi_af7301b65512eca6c177ead6bbe63084b}\label{namespacemisi_af7301b65512eca6c177ead6bbe63084b} 
+enum {\bfseries shape\+Type} \{ \newline
+{\bfseries Shapesphere}
+, {\bfseries Shaperectangle}
+, {\bfseries Shapepolygon}
+, {\bfseries Shapeconvex\+Polygon}
+, \newline
+{\bfseries Shape\+Line}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+contains implementations of the classes in \doxylink{_input_manager_8hpp_source}{input\+Manager.\+Hpp} 
+
+Class that implements the classes defined at \doxylink{_world_8hpp_source}{World.\+hpp} ~\newline
+
+
+implementation of \doxylink{_turret_8hpp_source}{turret.\+hpp} funtions
+
+Class that implements the classes defined at \doxylink{_sphere_8hpp_source}{sphere.\+hpp}.
+
+implements funtions of \doxylink{_scene_8hpp_source}{scene.\+hpp}
+
+impelementation class for the behaviours defined in renderer.\+hpp
+
+Class that implements the classes defined at \doxylink{_polygon_8hpp_source}{Polygon.\+hpp}.
+
+implements classes defined in particle updater.\+hpp
+
+implements classes defined at \doxylink{_particle_system_8hpp_source}{Particle\+System.\+hpp}
+
+implements particle hpp clases ~\newline
+
+
+implements \doxylink{_particle_renderer_8hpp_source}{particle\+Renderer.\+hpp}
+
+implements particle pool hpp clases ~\newline
+
+
+Class that instantiates a an object made of multiple b2fixtures.
+
+implments themethods defined in \doxylink{_message_8hpp_source}{message.\+hpp}
+
+Class that implements the classes defined at \doxylink{_edge_8hpp_source}{Edge.\+hpp}.
+
+class that implements \doxylink{_collision_8hpp_source}{collision.\+hpp} clases
+
+implementation of \doxylink{_car_8hpp_source}{car.\+hpp} funtions
+
+Class that implements the constructor defined at \doxylink{_body_8hpp_source}{body.\+hpp}.
+
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+18/02/2024
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+03/03/2024
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+02/03/2024
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+14/12/2023
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+30/12/2023
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+24/02/2024
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/03/2024
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+09/03/2024
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023 + Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/03/2024
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+© 2023+ Jaime díaz viéitez 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Author\+: Jaime Díaz Viéitez \href{mailto:pamecin@gmail.com}{\texttt{ pamecin@gmail.\+com}} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+25/02/2024 
+\end{DoxyDate}

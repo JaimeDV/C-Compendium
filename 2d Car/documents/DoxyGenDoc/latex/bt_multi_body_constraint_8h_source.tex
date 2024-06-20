@@ -1,0 +1,221 @@
+\doxysection{bt\+Multi\+Body\+Constraint.\+h}
+\hypertarget{bt_multi_body_constraint_8h_source}{}\label{bt_multi_body_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodyConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_MULTIBODY\_CONSTRAINT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_MULTIBODY\_CONSTRAINT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btMultiBody.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//Don't\ change\ any\ of\ the\ existing\ enum\ values,\ so\ add\ enum\ types\ at\ the\ end\ for\ serialization\ compatibility}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{enum}\ btTypedMultiBodyConstraintType}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ MULTIBODY\_CONSTRAINT\_LIMIT=3,}
+\DoxyCodeLine{00028\ \ \ \ \ MULTIBODY\_CONSTRAINT\_1DOF\_JOINT\_MOTOR,}
+\DoxyCodeLine{00029\ \ \ \ \ MULTIBODY\_CONSTRAINT\_GEAR,}
+\DoxyCodeLine{00030\ \ \ \ \ MULTIBODY\_CONSTRAINT\_POINT\_TO\_POINT,}
+\DoxyCodeLine{00031\ \ \ \ \ MULTIBODY\_CONSTRAINT\_SLIDER,}
+\DoxyCodeLine{00032\ \ \ \ \ MULTIBODY\_CONSTRAINT\_SPHERICAL\_MOTOR,}
+\DoxyCodeLine{00033\ \ \ \ \ MULTIBODY\_CONSTRAINT\_FIXED,}
+\DoxyCodeLine{00034\ \ \ \ \ }
+\DoxyCodeLine{00035\ \ \ \ \ MAX\_MULTIBODY\_CONSTRAINT\_TYPE,}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{class\ }btMultiBody;}
+\DoxyCodeLine{00039\ \textcolor{keyword}{struct\ }btSolverInfo;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#include\ "{}btMultiBodySolverConstraint.h"{}}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btScalar>}}\ m\_jacobians;}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btScalar>}}\ m\_deltaVelocitiesUnitImpulse;\ \ \textcolor{comment}{//holds\ the\ joint-\/space\ response\ of\ the\ corresp.\ tree\ to\ the\ test\ impulse\ in\ each\ constraint\ space\ dimension}}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btScalar>}}\ m\_deltaVelocities;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//holds\ joint-\/space\ vectors\ of\ all\ the\ constrained\ trees\ accumulating\ the\ effect\ of\ corrective\ impulses\ applied\ in\ SI}}
+\DoxyCodeLine{00048\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btScalar>}}\ scratch\_r;}
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ scratch\_v;}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btMatrix3x3>}}\ scratch\_m;}
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSolverBody>}}*\ m\_solverBodyPool;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_fixedBodyId;}
+\DoxyCodeLine{00053\ \};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00056\ btMultiBodyConstraint}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00059\ \ \ \ \ btMultiBody*\ m\_bodyA;}
+\DoxyCodeLine{00060\ \ \ \ \ btMultiBody*\ m\_bodyB;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_linkA;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_linkB;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_type;\ \textcolor{comment}{//btTypedMultiBodyConstraintType}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numRows;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_jacSizeA;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_jacSizeBoth;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_posOffset;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_isUnilateral;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numDofsFinalized;}
+\DoxyCodeLine{00073\ \ \ \ \ btScalar\ m\_maxAppliedImpulse;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//\ warning:\ the\ data\ block\ lay\ out\ is\ not\ consistent\ for\ all\ constraints}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//\ data\ block\ laid\ out\ as\ follows:}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//\ cached\ impulses.\ (one\ per\ row.)}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//\ jacobians.\ (interleaved,\ row1\ body1\ then\ row1\ body2\ then\ row2\ body\ 1\ etc)}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ positions.\ (one\ per\ row.)}}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btScalar>}}\ m\_data;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ applyDeltaVee(\mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\ \&\ data,\ btScalar\ *\ delta\_vee,\ btScalar\ impulse,\ \textcolor{keywordtype}{int}\ velocityIndex,\ \textcolor{keywordtype}{int}\ ndof);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ btScalar\ fillMultiBodyConstraint(btMultiBodySolverConstraint\ \&\ solverConstraint,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\ \&\ data,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ *\ jacOrgA,\ btScalar\ *\ jacOrgB,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ constraintNormalAng,}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ constraintNormalLin,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ posAworld,\ \textcolor{keyword}{const}\ btVector3\&\ posBworld,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ posError,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ lowerLimit,\ btScalar\ upperLimit,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ angConstraint\ =\ \textcolor{keyword}{false},}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ relaxation\ =\ 1.f,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isFriction\ =\ \textcolor{keyword}{false},\ btScalar\ desiredVelocity\ =\ 0,\ btScalar\ cfmSlip\ =\ 0,\ btScalar\ damping\ =\ 1.0);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00100\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ btMultiBodyConstraint(btMultiBody\ *\ bodyA,\ btMultiBody\ *\ bodyB,\ \textcolor{keywordtype}{int}\ linkA,\ \textcolor{keywordtype}{int}\ linkB,\ \textcolor{keywordtype}{int}\ numRows,\ \textcolor{keywordtype}{bool}\ isUnilateral,\ \textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btMultiBodyConstraint();}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{void}\ updateJacobianSizes();}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ allocateJacobiansMultiDof();}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{int}\ getConstraintType()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00109\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_type;}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{comment}{//many\ constraints\ have\ setFrameInB/setPivotInB.\ Will\ use\ 'getConstraintType'\ later.}}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setFrameInB(\textcolor{keyword}{const}\ btMatrix3x3\&\ frameInB)\ \{\}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPivotInB(\textcolor{keyword}{const}\ btVector3\&\ pivotInB)\ \{\}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ finalizeMultiDof()\ =\ 0;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getIslandIdA()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getIslandIdB()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ createConstraintRows(\mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}}\ \&\ constraintRows,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\ \&\ data,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)\ =\ 0;}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumRows()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00126\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_numRows;}
+\DoxyCodeLine{00128\ \ \ \ \ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ btMultiBody*\ getMultiBodyA()}
+\DoxyCodeLine{00131\ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_bodyA;}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ btMultiBody*\ getMultiBodyB()}
+\DoxyCodeLine{00135\ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_bodyB;}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{int}\ getLinkA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00140\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_linkA;}
+\DoxyCodeLine{00142\ \ \ \ \ \}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{int}\ getLinkB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00144\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_linkB;}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ internalSetAppliedImpulse(\textcolor{keywordtype}{int}\ dof,\ btScalar\ appliedImpulse)}
+\DoxyCodeLine{00148\ \ \ \ \ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ btAssert(dof\ >=\ 0);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ btAssert(dof\ <\ getNumRows());}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ m\_data[dof]\ =\ appliedImpulse;}
+\DoxyCodeLine{00152\ \ \ \ \ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ btScalar\ getAppliedImpulse(\textcolor{keywordtype}{int}\ dof)}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ btAssert(dof\ >=\ 0);}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ btAssert(dof\ <\ getNumRows());}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[dof];}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{comment}{//\ current\ constraint\ position}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//\ constraint\ is\ pos\ >=\ 0\ for\ unilateral,\ or\ pos\ =\ 0\ for\ bilateral}}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{//\ NOTE:\ ignored\ position\ for\ friction\ rows.}}
+\DoxyCodeLine{00163\ \ \ \ \ btScalar\ getPosition(\textcolor{keywordtype}{int}\ row)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00164\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data[m\_posOffset\ +\ \mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}}];}
+\DoxyCodeLine{00166\ \ \ \ \ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{void}\ setPosition(\textcolor{keywordtype}{int}\ row,\ btScalar\ pos)}
+\DoxyCodeLine{00169\ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ m\_data[m\_posOffset\ +\ \mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}}]\ =\ pos;}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{bool}\ isUnilateral()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00174\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_isUnilateral;}
+\DoxyCodeLine{00176\ \ \ \ \ \}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{comment}{//\ jacobian\ blocks.}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{comment}{//\ each\ of\ size\ 6\ +\ num\_links.\ (jacobian2\ is\ null\ if\ no\ body2.)}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{comment}{//\ format:\ 3\ 'omega'\ coefficients,\ 3\ 'v'\ coefficients,\ then\ the\ 'qdot'\ coefficients.}}
+\DoxyCodeLine{00181\ \ \ \ \ btScalar*\ jacobianA(\textcolor{keywordtype}{int}\ row)}
+\DoxyCodeLine{00182\ \ \ \ \ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_data[m\_numRows\ +\ \mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}}\ *\ m\_jacSizeBoth];}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ jacobianA(\textcolor{keywordtype}{int}\ row)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00186\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_data[m\_numRows\ +\ (\mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}}\ *\ m\_jacSizeBoth)];}
+\DoxyCodeLine{00188\ \ \ \ \ \}}
+\DoxyCodeLine{00189\ \ \ \ \ btScalar*\ jacobianB(\textcolor{keywordtype}{int}\ row)}
+\DoxyCodeLine{00190\ \ \ \ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_data[m\_numRows\ +\ (\mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}}\ *\ m\_jacSizeBoth)\ +\ m\_jacSizeA];}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ jacobianB(\textcolor{keywordtype}{int}\ row)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00194\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_data[m\_numRows\ +\ (\mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}}\ *\ m\_jacSizeBoth)\ +\ m\_jacSizeA];}
+\DoxyCodeLine{00196\ \ \ \ \ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ btScalar\ getMaxAppliedImpulse()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00199\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_maxAppliedImpulse;}
+\DoxyCodeLine{00201\ \ \ \ \ \}}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxAppliedImpulse(btScalar\ maxImp)}
+\DoxyCodeLine{00203\ \ \ \ \ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ m\_maxAppliedImpulse\ =\ maxImp;}
+\DoxyCodeLine{00205\ \ \ \ \ \}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ debugDraw(\textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}\ *\ drawer)\ =\ 0;}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setGearRatio(btScalar\ ratio)\ \{\}}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setGearAuxLink(\textcolor{keywordtype}{int}\ gearAuxLink)\ \{\}}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setRelativePositionTarget(btScalar\ relPosTarget)\ \{\}}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setErp(btScalar\ erp)\ \{\}}
+\DoxyCodeLine{00213\ \};}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MULTIBODY\_CONSTRAINT\_H}}
+
+\end{DoxyCode}

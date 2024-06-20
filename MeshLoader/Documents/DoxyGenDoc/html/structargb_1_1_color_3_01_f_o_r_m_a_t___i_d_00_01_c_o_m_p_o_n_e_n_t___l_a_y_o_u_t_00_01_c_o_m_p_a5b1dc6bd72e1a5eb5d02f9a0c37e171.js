@@ -1,0 +1,6 @@
+var structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01_c_o_m_p_a5b1dc6bd72e1a5eb5d02f9a0c37e171 =
+[
+    [ "Component_Layout", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01_c_o_m_p_a5b1dc6bd72e1a5eb5d02f9a0c37e171.html#ae366c1aa4cba43eebbd7f608df18fe40", null ],
+    [ "Component_Type", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01_c_o_m_p_a5b1dc6bd72e1a5eb5d02f9a0c37e171.html#afc24d711761e4c118a54aff5798c5c53", null ],
+    [ "components", "structargb_1_1_color_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t_00_01_c_o_m_p_a5b1dc6bd72e1a5eb5d02f9a0c37e171.html#ad7c29f322d4170098bf6e72064291646", null ]
+];

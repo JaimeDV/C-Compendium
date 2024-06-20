@@ -1,0 +1,350 @@
+\doxysection{b2\+\_\+contact.\+h}
+\hypertarget{b2__contact_8h_source}{}\label{b2__contact_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_contact.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_contact.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_CONTACT\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_CONTACT\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{b2__collision_8h}{b2\_collision.h}}"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}b2\_fixture.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}b2\_math.h"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}b2\_shape.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_body}{b2Body}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact}{b2Contact}};}
+\DoxyCodeLine{00034\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_fixture}{b2Fixture}};}
+\DoxyCodeLine{00035\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_world}{b2World}};}
+\DoxyCodeLine{00036\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}};}
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_stack_allocator}{b2StackAllocator}};}
+\DoxyCodeLine{00038\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact_listener}{b2ContactListener}};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ b2MixFriction(\textcolor{keywordtype}{float}\ friction1,\ \textcolor{keywordtype}{float}\ friction2)}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{return}\ b2Sqrt(friction1\ *\ friction2);}
+\DoxyCodeLine{00045\ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ b2MixRestitution(\textcolor{keywordtype}{float}\ restitution1,\ \textcolor{keywordtype}{float}\ restitution2)}
+\DoxyCodeLine{00050\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{return}\ restitution1\ >\ restitution2\ ?\ restitution1\ :\ restitution2;}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ b2MixRestitutionThreshold(\textcolor{keywordtype}{float}\ threshold1,\ \textcolor{keywordtype}{float}\ threshold2)}
+\DoxyCodeLine{00056\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{return}\ threshold1\ <\ threshold2\ ?\ threshold1\ :\ threshold2;}
+\DoxyCodeLine{00058\ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ b2ContactCreateFcn(\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureA,\ int32\ indexA,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureB,\ int32\ indexB,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00063\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{void}\ b2ContactDestroyFcn(\mbox{\hyperlink{classb2_contact}{b2Contact}}*\ contact,\ \mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_contact_register}{b2ContactRegister}}}
+\DoxyCodeLine{00066\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ b2ContactCreateFcn*\ createFcn;}
+\DoxyCodeLine{00068\ \ \ \ \ b2ContactDestroyFcn*\ destroyFcn;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{bool}\ primary;}
+\DoxyCodeLine{00070\ \};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{structb2_contact_edge_a69015fc22e064eac04ed74f27a13ae78}{other}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ \mbox{\hyperlink{structb2_contact_edge_a2fbfaffa0dfdf715fd1a709cff939dee}{contact}};\ \ \ \ \ }
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}*\ \mbox{\hyperlink{structb2_contact_edge_a606dfacb78dc5c51672e4d7449006b8c}{prev}};\ \ \ }
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}*\ \mbox{\hyperlink{structb2_contact_edge_a9af32b3cfadf35a927f4dffcf6338a6d}{next}};\ \ \ }
+\DoxyCodeLine{00083\ \};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_contact}{b2Contact}}}
+\DoxyCodeLine{00089\ \{}
+\DoxyCodeLine{00090\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00094\ \ \ \ \ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ GetManifold();}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ GetManifold()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{void}\ GetWorldManifold(\mbox{\hyperlink{structb2_world_manifold}{b2WorldManifold}}*\ worldManifold)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsTouching()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ SetEnabled(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsEnabled()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00112\ \ \ \ \ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ GetNext();}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ GetNext()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00116\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetFixtureA();}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetFixtureA()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00120\ \ \ \ \ int32\ GetChildIndexA()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00123\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetFixtureB();}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetFixtureB()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00127\ \ \ \ \ int32\ GetChildIndexB()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{void}\ SetFriction(\textcolor{keywordtype}{float}\ friction);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{float}\ GetFriction()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{void}\ ResetFriction();}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRestitution(\textcolor{keywordtype}{float}\ restitution);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{float}\ GetRestitution()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ ResetRestitution();}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRestitutionThreshold(\textcolor{keywordtype}{float}\ threshold);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{float}\ GetRestitutionThreshold()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{void}\ ResetRestitutionThreshold();}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{void}\ SetTangentSpeed(\textcolor{keywordtype}{float}\ speed);}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{float}\ GetTangentSpeed()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_ae3c2842e5325b2d4500f8ed1d4de2f72}{Evaluate}}(\mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB)\ =\ 0;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact_manager}{b2ContactManager}};}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_world}{b2World}};}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }b2ContactSolver;}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_body}{b2Body}};}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_fixture}{b2Fixture}};}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{//\ Flags\ stored\ in\ m\_flags}}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00177\ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Used\ when\ crawling\ contact\ graph\ when\ forming\ islands.}}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ e\_islandFlag\ \ \ \ \ \ \ \ =\ 0x0001,}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ when\ the\ shapes\ are\ touching.}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ e\_touchingFlag\ \ \ \ \ \ =\ 0x0002,}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ contact\ can\ be\ disabled\ (by\ user)}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ e\_enabledFlag\ \ \ \ \ \ \ =\ 0x0004,}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ contact\ needs\ filtering\ because\ a\ fixture\ filter\ was\ changed.}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ e\_filterFlag\ \ \ \ \ \ \ \ =\ 0x0008,}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ bullet\ contact\ had\ a\ TOI\ event}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ e\_bulletHitFlag\ \ \ \ \ =\ 0x0010,}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ contact\ has\ a\ valid\ TOI\ in\ m\_toi}}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ e\_toiFlag\ \ \ \ \ \ \ \ \ \ \ =\ 0x0020}
+\DoxyCodeLine{00195\ \ \ \ \ \};}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{void}\ FlagForFiltering();}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ AddType(b2ContactCreateFcn*\ createFcn,\ b2ContactDestroyFcn*\ destroyFcn,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b2Shape::Type\ typeA,\ b2Shape::Type\ typeB);}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ InitializeRegisters();}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ Create(\mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureA,\ int32\ indexA,\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureB,\ int32\ indexB,\ \mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Destroy(\mbox{\hyperlink{classb2_contact}{b2Contact}}*\ contact,\ b2Shape::Type\ typeA,\ b2Shape::Type\ typeB,\ \mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Destroy(\mbox{\hyperlink{classb2_contact}{b2Contact}}*\ contact,\ \mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \mbox{\hyperlink{classb2_contact}{b2Contact}}()\ :\ m\_fixtureA(nullptr),\ m\_fixtureB(nullptr)\ \{\}}
+\DoxyCodeLine{00208\ \ \ \ \ \mbox{\hyperlink{classb2_contact}{b2Contact}}(\mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureA,\ int32\ indexA,\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureB,\ int32\ indexB);}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb2_contact}{\string~b2Contact}}()\ \{\}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{void}\ Update(\mbox{\hyperlink{classb2_contact_listener}{b2ContactListener}}*\ listener);}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{structb2_contact_register}{b2ContactRegister}}\ s\_registers[b2Shape::e\_typeCount][b2Shape::e\_typeCount];}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_initialized;}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ uint32\ m\_flags;}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{comment}{//\ World\ pool\ and\ list\ pointers.}}
+\DoxyCodeLine{00219\ \ \ \ \ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ m\_prev;}
+\DoxyCodeLine{00220\ \ \ \ \ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ m\_next;}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{comment}{//\ Nodes\ for\ connecting\ bodies.}}
+\DoxyCodeLine{00223\ \ \ \ \ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}\ m\_nodeA;}
+\DoxyCodeLine{00224\ \ \ \ \ \mbox{\hyperlink{structb2_contact_edge}{b2ContactEdge}}\ m\_nodeB;}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ m\_fixtureA;}
+\DoxyCodeLine{00227\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ m\_fixtureB;}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ int32\ m\_indexA;}
+\DoxyCodeLine{00230\ \ \ \ \ int32\ m\_indexB;}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}\ m\_manifold;}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ int32\ m\_toiCount;}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_toi;}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_friction;}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restitution;}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restitutionThreshold;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_tangentSpeed;}
+\DoxyCodeLine{00242\ \};}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ \mbox{\hyperlink{classb2_contact_ab0597077b23615476327f9b32d9c4979}{b2Contact::GetManifold}}()}
+\DoxyCodeLine{00245\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_manifold;}
+\DoxyCodeLine{00247\ \}}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ \mbox{\hyperlink{classb2_contact_ab0597077b23615476327f9b32d9c4979}{b2Contact::GetManifold}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00250\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_manifold;}
+\DoxyCodeLine{00252\ \}}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_a7f5645863f6197fa28cc1baafbd11255}{b2Contact::GetWorldManifold}}(\mbox{\hyperlink{structb2_world_manifold}{b2WorldManifold}}*\ worldManifold)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00255\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyA\ =\ m\_fixtureA-\/>\mbox{\hyperlink{classb2_fixture_a9d6536ef274d768e86ab0a8330921535}{GetBody}}();}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ bodyB\ =\ m\_fixtureB-\/>\mbox{\hyperlink{classb2_fixture_a9d6536ef274d768e86ab0a8330921535}{GetBody}}();}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ shapeA\ =\ m\_fixtureA-\/>\mbox{\hyperlink{classb2_fixture_aaa2b73fa212fa53b1c800cccd7a1d31e}{GetShape}}();}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ shapeB\ =\ m\_fixtureB-\/>\mbox{\hyperlink{classb2_fixture_aaa2b73fa212fa53b1c800cccd7a1d31e}{GetShape}}();}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ worldManifold-\/>\mbox{\hyperlink{structb2_world_manifold_a205cd53748c5ee68f0958af96f45f5a4}{Initialize}}(\&m\_manifold,\ bodyA-\/>\mbox{\hyperlink{classb2_body_afb316448e6e555ceb2df23ed216b2f53}{GetTransform}}(),\ shapeA-\/>\mbox{\hyperlink{classb2_shape_af145c8df4c0ffb5780b40cf8e4d64c9c}{m\_radius}},\ bodyB-\/>\mbox{\hyperlink{classb2_body_afb316448e6e555ceb2df23ed216b2f53}{GetTransform}}(),\ shapeB-\/>\mbox{\hyperlink{classb2_shape_af145c8df4c0ffb5780b40cf8e4d64c9c}{m\_radius}});}
+\DoxyCodeLine{00262\ \}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_a6edf582f8c161d6632854cddefe55a0c}{b2Contact::SetEnabled}}(\textcolor{keywordtype}{bool}\ flag)}
+\DoxyCodeLine{00265\ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keywordflow}{if}\ (flag)}
+\DoxyCodeLine{00267\ \ \ \ \ \{}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ m\_flags\ |=\ e\_enabledFlag;}
+\DoxyCodeLine{00269\ \ \ \ \ \}}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00271\ \ \ \ \ \{}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ m\_flags\ \&=\ \string~e\_enabledFlag;}
+\DoxyCodeLine{00273\ \ \ \ \ \}}
+\DoxyCodeLine{00274\ \}}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_contact_af81964f40dce556efbc83ae760f166b0}{b2Contact::IsEnabled}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00277\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_flags\ \&\ e\_enabledFlag)\ ==\ e\_enabledFlag;}
+\DoxyCodeLine{00279\ \}}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_contact_a681346f93e2a27403383775a752c06a0}{b2Contact::IsTouching}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00282\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keywordflow}{return}\ (m\_flags\ \&\ e\_touchingFlag)\ ==\ e\_touchingFlag;}
+\DoxyCodeLine{00284\ \}}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ \mbox{\hyperlink{classb2_contact_aebfebb1e4b27dc0bd7aa120093e3d650}{b2Contact::GetNext}}()}
+\DoxyCodeLine{00287\ \{}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00289\ \}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_contact}{b2Contact}}*\ \mbox{\hyperlink{classb2_contact_aebfebb1e4b27dc0bd7aa120093e3d650}{b2Contact::GetNext}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00292\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00294\ \}}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_contact_a707a3a5a14c2cdd4c6eb7fc648d76037}{b2Contact::GetFixtureA}}()}
+\DoxyCodeLine{00297\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_fixtureA;}
+\DoxyCodeLine{00299\ \}}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_contact_a707a3a5a14c2cdd4c6eb7fc648d76037}{b2Contact::GetFixtureA}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00302\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_fixtureA;}
+\DoxyCodeLine{00304\ \}}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_contact_a68464fe587d7e6a1f52763e965bb7361}{b2Contact::GetFixtureB}}()}
+\DoxyCodeLine{00307\ \{}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_fixtureB;}
+\DoxyCodeLine{00309\ \}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \textcolor{keyword}{inline}\ int32\ \mbox{\hyperlink{classb2_contact_aa0b0739e6615ba8d38e9b5bd8761dc31}{b2Contact::GetChildIndexA}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00312\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_indexA;}
+\DoxyCodeLine{00314\ \}}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_contact_a68464fe587d7e6a1f52763e965bb7361}{b2Contact::GetFixtureB}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00317\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_fixtureB;}
+\DoxyCodeLine{00319\ \}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \textcolor{keyword}{inline}\ int32\ \mbox{\hyperlink{classb2_contact_aab201068e7f2cc31c69b1f5c8471d672}{b2Contact::GetChildIndexB}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00322\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_indexB;}
+\DoxyCodeLine{00324\ \}}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_a44a3d32149021269eb9dfd4015c98e0d}{b2Contact::FlagForFiltering}}()}
+\DoxyCodeLine{00327\ \{}
+\DoxyCodeLine{00328\ \ \ \ \ m\_flags\ |=\ e\_filterFlag;}
+\DoxyCodeLine{00329\ \}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_a6cac6c0db18a161a359d73672596b413}{b2Contact::SetFriction}}(\textcolor{keywordtype}{float}\ friction)}
+\DoxyCodeLine{00332\ \{}
+\DoxyCodeLine{00333\ \ \ \ \ m\_friction\ =\ friction;}
+\DoxyCodeLine{00334\ \}}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_contact_af1179718c7547a96bee7dc57fc553f38}{b2Contact::GetFriction}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00337\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_friction;}
+\DoxyCodeLine{00339\ \}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_ad66d9290da187cef4c9f48c5766d4460}{b2Contact::ResetFriction}}()}
+\DoxyCodeLine{00342\ \{}
+\DoxyCodeLine{00343\ \ \ \ \ m\_friction\ =\ b2MixFriction(m\_fixtureA-\/>m\_friction,\ m\_fixtureB-\/>m\_friction);}
+\DoxyCodeLine{00344\ \}}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_a685a1c4cfca30c379c402e20e04723b6}{b2Contact::SetRestitution}}(\textcolor{keywordtype}{float}\ restitution)}
+\DoxyCodeLine{00347\ \{}
+\DoxyCodeLine{00348\ \ \ \ \ m\_restitution\ =\ restitution;}
+\DoxyCodeLine{00349\ \}}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_contact_a94cbde7aa8fad9ed0f28b1d2c152208a}{b2Contact::GetRestitution}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00352\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_restitution;}
+\DoxyCodeLine{00354\ \}}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_a243501bc5c146e9eb1296162d328aef1}{b2Contact::ResetRestitution}}()}
+\DoxyCodeLine{00357\ \{}
+\DoxyCodeLine{00358\ \ \ \ \ m\_restitution\ =\ b2MixRestitution(m\_fixtureA-\/>m\_restitution,\ m\_fixtureB-\/>m\_restitution);}
+\DoxyCodeLine{00359\ \}}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_ab39c848fdeb22d1de4c1c3561b8579bd}{b2Contact::SetRestitutionThreshold}}(\textcolor{keywordtype}{float}\ threshold)}
+\DoxyCodeLine{00362\ \{}
+\DoxyCodeLine{00363\ \ \ \ \ m\_restitutionThreshold\ =\ threshold;}
+\DoxyCodeLine{00364\ \}}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_contact_a7c7ae870baa3dc346e0246658a2083e3}{b2Contact::GetRestitutionThreshold}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00367\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_restitutionThreshold;}
+\DoxyCodeLine{00369\ \}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_ad62865984306890f8cb5369b08918c1c}{b2Contact::ResetRestitutionThreshold}}()}
+\DoxyCodeLine{00372\ \{}
+\DoxyCodeLine{00373\ \ \ \ \ m\_restitutionThreshold\ =\ b2MixRestitutionThreshold(m\_fixtureA-\/>m\_restitutionThreshold,\ m\_fixtureB-\/>m\_restitutionThreshold);}
+\DoxyCodeLine{00374\ \}}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_ac58319a0fd072126191bd2bd31b6b3c3}{b2Contact::SetTangentSpeed}}(\textcolor{keywordtype}{float}\ speed)}
+\DoxyCodeLine{00377\ \{}
+\DoxyCodeLine{00378\ \ \ \ \ m\_tangentSpeed\ =\ speed;}
+\DoxyCodeLine{00379\ \}}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_contact_ad054cbfd6f12ac351b80c2d4789dc6c7}{b2Contact::GetTangentSpeed}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00382\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00383\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_tangentSpeed;}
+\DoxyCodeLine{00384\ \}}
+\DoxyCodeLine{00385\ }
+\DoxyCodeLine{00386\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

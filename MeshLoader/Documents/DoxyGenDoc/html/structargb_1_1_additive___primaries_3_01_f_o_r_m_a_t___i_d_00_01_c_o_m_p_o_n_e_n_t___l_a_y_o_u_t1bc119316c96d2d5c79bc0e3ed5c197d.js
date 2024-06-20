@@ -1,0 +1,14 @@
+var structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d =
+[
+    [ "blue_traits", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#a6f293ec9e1e7e55b24745f37e25f5f9f", null ],
+    [ "green_traits", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#ad9409484e2462773356d2ccebb8a540a", null ],
+    [ "red_traits", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#a6864a6be25120e506ecb5742858bb904", null ],
+    [ "Additive_Primaries", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#ae37343aa2ae7ad573a5f764c841ffa1f", null ],
+    [ "Additive_Primaries", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#ad8cc91dbb87d8b6d94b889df25f91042", null ],
+    [ "Additive_Primaries", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#a10d5450d3ab0205ffdaab55d2fb56b2f", null ],
+    [ "blue", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#a5bc71a2d060cd5f9f4ecf28db0bd5751", null ],
+    [ "green", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#a33e07218eeef6322dad3816afca1a900", null ],
+    [ "red", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#ae26cdc3145d1617888b5372eb0dc1bf1", null ],
+    [ "set", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#a04d644b3693eb65981f70817998e8481", null ],
+    [ "value", "structargb_1_1_additive___primaries_3_01_f_o_r_m_a_t___i_d_00_01_c_o_m_p_o_n_e_n_t___l_a_y_o_u_t1bc119316c96d2d5c79bc0e3ed5c197d.html#aabf36e1900139655fa14c26fff7dce4e", null ]
+];

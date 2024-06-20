@@ -1,0 +1,508 @@
+\doxysection{bt\+Generic6\+Dof\+Constraint.\+h}
+\hypertarget{bt_generic6_dof_constraint_8h_source}{}\label{bt_generic6_dof_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00020\ \textcolor{comment}{2007-\/09-\/09}}
+\DoxyCodeLine{00021\ \textcolor{comment}{btGeneric6DofConstraint\ Refactored\ by\ Francisco\ Le?n}}
+\DoxyCodeLine{00022\ \textcolor{comment}{email:\ projectileman@yahoo.com}}
+\DoxyCodeLine{00023\ \textcolor{comment}{http://gimpact.sf.net}}
+\DoxyCodeLine{00024\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#ifndef\ BT\_GENERIC\_6DOF\_CONSTRAINT\_H}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ BT\_GENERIC\_6DOF\_CONSTRAINT\_H}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}btJacobianEntry.h"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}btTypedConstraint.h"{}}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ btGeneric6DofConstraintData2\ btGeneric6DofConstraintDoubleData2}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ btGeneric6DofConstraintDataName\ "{}btGeneric6DofConstraintDoubleData2"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ btGeneric6DofConstraintData2\ btGeneric6DofConstraintData}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ btGeneric6DofConstraintDataName\ "{}btGeneric6DofConstraintData"{}}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rotational_limit_motor}{btRotationalLimitMotor}}}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00049\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a57ff414e1856d661d81b797702c4f986}{m\_loLimit}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a3201531c631a779615146a373840239c}{m\_hiLimit}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00051\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a2860fd161d1628ecadd9d39af888cd28}{m\_targetVelocity}};\ \ }
+\DoxyCodeLine{00052\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a3dfeda127bd08b83bb709ec2b40d63ec}{m\_maxMotorForce}};\ \ \ }
+\DoxyCodeLine{00053\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_acab8742c3e12050bd168fc8d45319721}{m\_maxLimitForce}};\ \ \ }
+\DoxyCodeLine{00054\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a4aaabbd7dac171217b2ac36c3f2bc240}{m\_damping}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00055\ \ \ \ \ btScalar\ m\_limitSoftness;\ \ \ }
+\DoxyCodeLine{00056\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a3d06f5a5de013fd97f39cf63273dce45}{m\_normalCFM}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a88139c248dfa9b9ab4a8a2431e86aa45}{m\_stopERP}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00058\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_ae2f949d3de4c3b059cd914e11fd5ebcd}{m\_stopCFM}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a4cfd3d5d8d3ba75f1ce4b59f01017364}{m\_bounce}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableMotor;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00066\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a7128feccb391176842f287b584e375d3}{m\_currentLimitError}};\ \ }
+\DoxyCodeLine{00067\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_a1f334e324d5e337257c2b338e8e948de}{m\_currentPosition}};\ \ \ \ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_rotational_limit_motor_ad1e4fa6cb3ea2e4b78c96feab97448e8}{m\_currentLimit}};\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00069\ \ \ \ \ btScalar\ m\_accumulatedImpulse;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor}{btRotationalLimitMotor}}()}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ m\_accumulatedImpulse\ =\ 0.f;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a2860fd161d1628ecadd9d39af888cd28}{m\_targetVelocity}}\ =\ 0;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a3dfeda127bd08b83bb709ec2b40d63ec}{m\_maxMotorForce}}\ =\ 6.0f;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_acab8742c3e12050bd168fc8d45319721}{m\_maxLimitForce}}\ =\ 300.0f;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a57ff414e1856d661d81b797702c4f986}{m\_loLimit}}\ =\ 1.0f;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a3201531c631a779615146a373840239c}{m\_hiLimit}}\ =\ -\/1.0f;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a3d06f5a5de013fd97f39cf63273dce45}{m\_normalCFM}}\ =\ 0.f;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a88139c248dfa9b9ab4a8a2431e86aa45}{m\_stopERP}}\ =\ 0.2f;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_ae2f949d3de4c3b059cd914e11fd5ebcd}{m\_stopCFM}}\ =\ 0.f;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a4cfd3d5d8d3ba75f1ce4b59f01017364}{m\_bounce}}\ =\ 0.0f;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a4aaabbd7dac171217b2ac36c3f2bc240}{m\_damping}}\ =\ 1.0f;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ m\_limitSoftness\ =\ 0.5f;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_ad1e4fa6cb3ea2e4b78c96feab97448e8}{m\_currentLimit}}\ =\ 0;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a7128feccb391176842f287b584e375d3}{m\_currentLimitError}}\ =\ 0;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ m\_enableMotor\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor}{btRotationalLimitMotor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rotational_limit_motor}{btRotationalLimitMotor}}\&\ limot)}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a2860fd161d1628ecadd9d39af888cd28}{m\_targetVelocity}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a2860fd161d1628ecadd9d39af888cd28}{m\_targetVelocity}};}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a3dfeda127bd08b83bb709ec2b40d63ec}{m\_maxMotorForce}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a3dfeda127bd08b83bb709ec2b40d63ec}{m\_maxMotorForce}};}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ m\_limitSoftness\ =\ limot.m\_limitSoftness;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a57ff414e1856d661d81b797702c4f986}{m\_loLimit}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a57ff414e1856d661d81b797702c4f986}{m\_loLimit}};}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a3201531c631a779615146a373840239c}{m\_hiLimit}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a3201531c631a779615146a373840239c}{m\_hiLimit}};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a3d06f5a5de013fd97f39cf63273dce45}{m\_normalCFM}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a3d06f5a5de013fd97f39cf63273dce45}{m\_normalCFM}};}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a88139c248dfa9b9ab4a8a2431e86aa45}{m\_stopERP}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a88139c248dfa9b9ab4a8a2431e86aa45}{m\_stopERP}};}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_ae2f949d3de4c3b059cd914e11fd5ebcd}{m\_stopCFM}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_ae2f949d3de4c3b059cd914e11fd5ebcd}{m\_stopCFM}};}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a4cfd3d5d8d3ba75f1ce4b59f01017364}{m\_bounce}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a4cfd3d5d8d3ba75f1ce4b59f01017364}{m\_bounce}};}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_ad1e4fa6cb3ea2e4b78c96feab97448e8}{m\_currentLimit}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_ad1e4fa6cb3ea2e4b78c96feab97448e8}{m\_currentLimit}};}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor_a7128feccb391176842f287b584e375d3}{m\_currentLimitError}}\ =\ limot.\mbox{\hyperlink{classbt_rotational_limit_motor_a7128feccb391176842f287b584e375d3}{m\_currentLimitError}};}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ m\_enableMotor\ =\ limot.m\_enableMotor;}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_rotational_limit_motor_aba9745414ed0de1b1c466cfc8a6841e2}{isLimited}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00109\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classbt_rotational_limit_motor_a57ff414e1856d661d81b797702c4f986}{m\_loLimit}}\ >\ \mbox{\hyperlink{classbt_rotational_limit_motor_a3201531c631a779615146a373840239c}{m\_hiLimit}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_rotational_limit_motor_a9e09a1c91bd92a421d8c3993e84ff064}{needApplyTorques}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00116\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classbt_rotational_limit_motor_ad1e4fa6cb3ea2e4b78c96feab97448e8}{m\_currentLimit}}\ ==\ 0\ \&\&\ m\_enableMotor\ ==\ \textcolor{keyword}{false})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00119\ \ \ \ \ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_rotational_limit_motor_ac0651bd36beda2dbb23c45a90dc1cccd}{testLimitValue}}(btScalar\ test\_value);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00128\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_rotational_limit_motor_ad52e9b1c402c7bdd47fb1a9de28afb7e}{solveAngularLimits}}(btScalar\ timeStep,\ btVector3\&\ axis,\ btScalar\ jacDiagABInv,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body0,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ body1);}
+\DoxyCodeLine{00129\ \};}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_translational_limit_motor}{btTranslationalLimitMotor}}}
+\DoxyCodeLine{00132\ \{}
+\DoxyCodeLine{00133\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00134\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_ab82c9b2252e3320b5e3bec417d980258}{m\_lowerLimit}};\ \ }
+\DoxyCodeLine{00135\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_af30c7b646dcff227f7ba61927708c69d}{m\_upperLimit}};\ \ }
+\DoxyCodeLine{00136\ \ \ \ \ btVector3\ m\_accumulatedImpulse;}
+\DoxyCodeLine{00139\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_translational_limit_motor_aa557a6c4d83ca5cb5a942f8f4b236f74}{m\_limitSoftness}};\ \ }
+\DoxyCodeLine{00140\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_translational_limit_motor_ae82a9f720aca3ddba4b174f2dd3a2fd2}{m\_damping}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00141\ \ \ \ \ btScalar\ m\_restitution;\ \ \ \ }
+\DoxyCodeLine{00142\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_a8970a726c2b50a0c60c0c8e079cc784f}{m\_normalCFM}};\ \ \ \ \ }
+\DoxyCodeLine{00143\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_a0320a9d4a9a46e7b8626ccd84f970228}{m\_stopERP}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00144\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_a531c6ae0a0805eaa4fc59a40982a67f8}{m\_stopCFM}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableMotor[3];}
+\DoxyCodeLine{00147\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_ab55110a017e8dcd45aa9ff51a414f433}{m\_targetVelocity}};\ \ \ \ \ }
+\DoxyCodeLine{00148\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_a69a8bbce52a1428be16d3b799a2c8020}{m\_maxMotorForce}};\ \ \ \ \ \ }
+\DoxyCodeLine{00149\ \ \ \ \ btVector3\ m\_currentLimitError;\ \ }
+\DoxyCodeLine{00150\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_translational_limit_motor_a82c7d9119513981d0bafae04e928b6d2}{m\_currentLinearDiff}};\ \ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_translational_limit_motor_a10c82797a218fd20026256f9e69b9b62}{m\_currentLimit}}[3];\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor}{btTranslationalLimitMotor}}()}
+\DoxyCodeLine{00154\ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_ab82c9b2252e3320b5e3bec417d980258}{m\_lowerLimit}}.setValue(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_af30c7b646dcff227f7ba61927708c69d}{m\_upperLimit}}.setValue(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ m\_accumulatedImpulse.setValue(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a8970a726c2b50a0c60c0c8e079cc784f}{m\_normalCFM}}.setValue(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a0320a9d4a9a46e7b8626ccd84f970228}{m\_stopERP}}.setValue(0.2f,\ 0.2f,\ 0.2f);}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a531c6ae0a0805eaa4fc59a40982a67f8}{m\_stopCFM}}.setValue(0.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_aa557a6c4d83ca5cb5a942f8f4b236f74}{m\_limitSoftness}}\ =\ 0.7f;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_ae82a9f720aca3ddba4b174f2dd3a2fd2}{m\_damping}}\ =\ btScalar(1.0f);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ m\_restitution\ =\ btScalar(0.5f);}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ m\_enableMotor[i]\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_ab55110a017e8dcd45aa9ff51a414f433}{m\_targetVelocity}}[i]\ =\ btScalar(0.f);}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a69a8bbce52a1428be16d3b799a2c8020}{m\_maxMotorForce}}[i]\ =\ btScalar(0.f);}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor}{btTranslationalLimitMotor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_translational_limit_motor}{btTranslationalLimitMotor}}\&\ other)}
+\DoxyCodeLine{00174\ \ \ \ \ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_ab82c9b2252e3320b5e3bec417d980258}{m\_lowerLimit}}\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_ab82c9b2252e3320b5e3bec417d980258}{m\_lowerLimit}};}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_af30c7b646dcff227f7ba61927708c69d}{m\_upperLimit}}\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_af30c7b646dcff227f7ba61927708c69d}{m\_upperLimit}};}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ m\_accumulatedImpulse\ =\ other.m\_accumulatedImpulse;}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_aa557a6c4d83ca5cb5a942f8f4b236f74}{m\_limitSoftness}}\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_aa557a6c4d83ca5cb5a942f8f4b236f74}{m\_limitSoftness}};}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_ae82a9f720aca3ddba4b174f2dd3a2fd2}{m\_damping}}\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_ae82a9f720aca3ddba4b174f2dd3a2fd2}{m\_damping}};}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ m\_restitution\ =\ other.m\_restitution;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a8970a726c2b50a0c60c0c8e079cc784f}{m\_normalCFM}}\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_a8970a726c2b50a0c60c0c8e079cc784f}{m\_normalCFM}};}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a0320a9d4a9a46e7b8626ccd84f970228}{m\_stopERP}}\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_a0320a9d4a9a46e7b8626ccd84f970228}{m\_stopERP}};}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a531c6ae0a0805eaa4fc59a40982a67f8}{m\_stopCFM}}\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_a531c6ae0a0805eaa4fc59a40982a67f8}{m\_stopCFM}};}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ m\_enableMotor[i]\ =\ other.m\_enableMotor[i];}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_ab55110a017e8dcd45aa9ff51a414f433}{m\_targetVelocity}}[i]\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_ab55110a017e8dcd45aa9ff51a414f433}{m\_targetVelocity}}[i];}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor_a69a8bbce52a1428be16d3b799a2c8020}{m\_maxMotorForce}}[i]\ =\ other.\mbox{\hyperlink{classbt_translational_limit_motor_a69a8bbce52a1428be16d3b799a2c8020}{m\_maxMotorForce}}[i];}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_translational_limit_motor_add5b438e13717eb0daebc9a5f735cd70}{isLimited}}(\textcolor{keywordtype}{int}\ limitIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00202\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{classbt_translational_limit_motor_af30c7b646dcff227f7ba61927708c69d}{m\_upperLimit}}[limitIndex]\ >=\ \mbox{\hyperlink{classbt_translational_limit_motor_ab82c9b2252e3320b5e3bec417d980258}{m\_lowerLimit}}[limitIndex]);}
+\DoxyCodeLine{00204\ \ \ \ \ \}}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ needApplyForce(\textcolor{keywordtype}{int}\ limitIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00206\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classbt_translational_limit_motor_a10c82797a218fd20026256f9e69b9b62}{m\_currentLimit}}[limitIndex]\ ==\ 0\ \&\&\ m\_enableMotor[limitIndex]\ ==\ \textcolor{keyword}{false})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00209\ \ \ \ \ \}}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordtype}{int}\ testLimitValue(\textcolor{keywordtype}{int}\ limitIndex,\ btScalar\ test\_value);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_translational_limit_motor_a40857b3a98cd8d8fc986516985726e49}{solveLinearAxis}}(}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ btScalar\ timeStep,}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ btScalar\ jacDiagABInv,}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ body1,\ \textcolor{keyword}{const}\ btVector3\&\ pointInA,}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ body2,\ \textcolor{keyword}{const}\ btVector3\&\ pointInB,}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ limit\_index,}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ axis\_normal\_on\_a,}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ anchorPos);}
+\DoxyCodeLine{00220\ \};}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \textcolor{keyword}{enum}\ bt6DofFlags}
+\DoxyCodeLine{00223\ \{}
+\DoxyCodeLine{00224\ \ \ \ \ BT\_6DOF\_FLAGS\_CFM\_NORM\ =\ 1,}
+\DoxyCodeLine{00225\ \ \ \ \ BT\_6DOF\_FLAGS\_CFM\_STOP\ =\ 2,}
+\DoxyCodeLine{00226\ \ \ \ \ BT\_6DOF\_FLAGS\_ERP\_STOP\ =\ 4}
+\DoxyCodeLine{00227\ \};}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\#define\ BT\_6DOF\_FLAGS\_AXIS\_SHIFT\ 3\ \ }\textcolor{comment}{//\ bits\ per\ axis}}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00266\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00267\ btGeneric6DofConstraint\ :\ public\ btTypedConstraint}
+\DoxyCodeLine{00268\ \{}
+\DoxyCodeLine{00269\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00272\ \ \ \ \ btTransform\ m\_frameInA;\ \ }
+\DoxyCodeLine{00273\ \ \ \ \ btTransform\ m\_frameInB;\ \ }
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00278\ \ \ \ \ btJacobianEntry\ m\_jacLinear[3];\ \ }
+\DoxyCodeLine{00279\ \ \ \ \ btJacobianEntry\ m\_jacAng[3];\ \ \ \ \ }
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00284\ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor}{btTranslationalLimitMotor}}\ m\_linearLimits;}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00289\ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor}{btRotationalLimitMotor}}\ m\_angularLimits[3];}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00295\ \ \ \ \ btScalar\ m\_timeStep;}
+\DoxyCodeLine{00296\ \ \ \ \ btTransform\ m\_calculatedTransformA;}
+\DoxyCodeLine{00297\ \ \ \ \ btTransform\ m\_calculatedTransformB;}
+\DoxyCodeLine{00298\ \ \ \ \ btVector3\ m\_calculatedAxisAngleDiff;}
+\DoxyCodeLine{00299\ \ \ \ \ btVector3\ m\_calculatedAxis[3];}
+\DoxyCodeLine{00300\ \ \ \ \ btVector3\ m\_calculatedLinearDiff;}
+\DoxyCodeLine{00301\ \ \ \ \ btScalar\ m\_factA;}
+\DoxyCodeLine{00302\ \ \ \ \ btScalar\ m\_factB;}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_hasStaticBody;}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \ \ \ \ btVector3\ m\_AnchorPos;\ \ \textcolor{comment}{//\ point\ betwen\ pivots\ of\ bodies\ A\ and\ B\ to\ solve\ linear\ axes}}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useLinearReferenceFrameA;}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_flags;}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ btGeneric6DofConstraint\&\ operator=(btGeneric6DofConstraint\&\ other)}
+\DoxyCodeLine{00315\ \ \ \ \ \{}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ (void)other;}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00319\ \ \ \ \ \}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keywordtype}{int}\ setAngularLimits(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info,\ \textcolor{keywordtype}{int}\ row\_offset,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ linVelA,\ \textcolor{keyword}{const}\ btVector3\&\ linVelB,\ \textcolor{keyword}{const}\ btVector3\&\ angVelA,\ \textcolor{keyword}{const}\ btVector3\&\ angVelB);}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordtype}{int}\ setLinearLimits(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info,\ \textcolor{keywordtype}{int}\ row,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ linVelA,\ \textcolor{keyword}{const}\ btVector3\&\ linVelB,\ \textcolor{keyword}{const}\ btVector3\&\ angVelA,\ \textcolor{keyword}{const}\ btVector3\&\ angVelB);}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keywordtype}{void}\ buildLinearJacobian(}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ btJacobianEntry\ \&\ jacLinear,\ \textcolor{keyword}{const}\ btVector3\&\ normalWorld,}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ pivotAInW,\ \textcolor{keyword}{const}\ btVector3\&\ pivotBInW);}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keywordtype}{void}\ buildAngularJacobian(btJacobianEntry\ \&\ jacAngular,\ \textcolor{keyword}{const}\ btVector3\&\ jointAxisW);}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{comment}{//\ tests\ linear\ limits}}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateLinearInfo();}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateAngleInfo();}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00338\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useSolveConstraintObsolete;}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \ \ \ \ btGeneric6DofConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ frameInA,\ \textcolor{keyword}{const}\ btTransform\&\ frameInB,\ \textcolor{keywordtype}{bool}\ useLinearReferenceFrameA);}
+\DoxyCodeLine{00344\ \ \ \ \ btGeneric6DofConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ frameInB,\ \textcolor{keywordtype}{bool}\ useLinearReferenceFrameB);}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateTransforms(\textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB);}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateTransforms();}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getCalculatedTransformA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00360\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_calculatedTransformA;}
+\DoxyCodeLine{00362\ \ \ \ \ \}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getCalculatedTransformB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00369\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_calculatedTransformB;}
+\DoxyCodeLine{00371\ \ \ \ \ \}}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getFrameOffsetA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00374\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_frameInA;}
+\DoxyCodeLine{00376\ \ \ \ \ \}}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getFrameOffsetB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00379\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_frameInB;}
+\DoxyCodeLine{00381\ \ \ \ \ \}}
+\DoxyCodeLine{00382\ }
+\DoxyCodeLine{00383\ \ \ \ \ btTransform\&\ getFrameOffsetA()}
+\DoxyCodeLine{00384\ \ \ \ \ \{}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_frameInA;}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \ \ \ \ btTransform\&\ getFrameOffsetB()}
+\DoxyCodeLine{00389\ \ \ \ \ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_frameInB;}
+\DoxyCodeLine{00391\ \ \ \ \ \}}
+\DoxyCodeLine{00392\ }
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ buildJacobian();}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo1(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}\ *\ info);}
+\DoxyCodeLine{00397\ }
+\DoxyCodeLine{00398\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo1NonVirtual(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}\ *\ info);}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo2(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info);}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo2NonVirtual(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ linVelA,\ \textcolor{keyword}{const}\ btVector3\&\ linVelB,\ \textcolor{keyword}{const}\ btVector3\&\ angVelA,\ \textcolor{keyword}{const}\ btVector3\&\ angVelB);}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \ \ \ \ \textcolor{keywordtype}{void}\ updateRHS(btScalar\ timeStep);}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00410\ \ \ \ \ btVector3\ getAxis(\textcolor{keywordtype}{int}\ axis\_index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00416\ \ \ \ \ btScalar\ getAngle(\textcolor{keywordtype}{int}\ axis\_index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00417\ }
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00422\ \ \ \ \ btScalar\ getRelativePivotPosition(\textcolor{keywordtype}{int}\ axis\_index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00423\ }
+\DoxyCodeLine{00424\ \ \ \ \ \textcolor{keywordtype}{void}\ setFrames(\textcolor{keyword}{const}\ btTransform\&\ frameA,\ \textcolor{keyword}{const}\ btTransform\&\ frameB);}
+\DoxyCodeLine{00425\ }
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordtype}{bool}\ testAngularLimitMotor(\textcolor{keywordtype}{int}\ axis\_index);}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \ \ \ \ \textcolor{keywordtype}{void}\ setLinearLowerLimit(\textcolor{keyword}{const}\ btVector3\&\ linearLower)}
+\DoxyCodeLine{00434\ \ \ \ \ \{}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_aeafb79ff142ace59c2edcaa0029f19b8}{m\_lowerLimit}}\ =\ linearLower;}
+\DoxyCodeLine{00436\ \ \ \ \ \}}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \ \ \ \ \textcolor{keywordtype}{void}\ getLinearLowerLimit(btVector3\ \&\ linearLower)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00439\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ linearLower\ =\ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_aeafb79ff142ace59c2edcaa0029f19b8}{m\_lowerLimit}};}
+\DoxyCodeLine{00441\ \ \ \ \ \}}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \ \ \ \ \textcolor{keywordtype}{void}\ setLinearUpperLimit(\textcolor{keyword}{const}\ btVector3\&\ linearUpper)}
+\DoxyCodeLine{00444\ \ \ \ \ \{}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_ab252424e0f70031a12667defe812a722}{m\_upperLimit}}\ =\ linearUpper;}
+\DoxyCodeLine{00446\ \ \ \ \ \}}
+\DoxyCodeLine{00447\ }
+\DoxyCodeLine{00448\ \ \ \ \ \textcolor{keywordtype}{void}\ getLinearUpperLimit(btVector3\ \&\ linearUpper)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00449\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ linearUpper\ =\ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_ab252424e0f70031a12667defe812a722}{m\_upperLimit}};}
+\DoxyCodeLine{00451\ \ \ \ \ \}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ \textcolor{keywordtype}{void}\ setAngularLowerLimit(\textcolor{keyword}{const}\ btVector3\&\ angularLower)}
+\DoxyCodeLine{00454\ \ \ \ \ \{}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularLimits[i].m\_loLimit\ =\ btNormalizeAngle(angularLower[i]);}
+\DoxyCodeLine{00457\ \ \ \ \ \}}
+\DoxyCodeLine{00458\ }
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keywordtype}{void}\ getAngularLowerLimit(btVector3\ \&\ angularLower)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00460\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ angularLower[i]\ =\ m\_angularLimits[i].m\_loLimit;}
+\DoxyCodeLine{00463\ \ \ \ \ \}}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ \ \ \ \ \textcolor{keywordtype}{void}\ setAngularUpperLimit(\textcolor{keyword}{const}\ btVector3\&\ angularUpper)}
+\DoxyCodeLine{00466\ \ \ \ \ \{}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularLimits[i].m\_hiLimit\ =\ btNormalizeAngle(angularUpper[i]);}
+\DoxyCodeLine{00469\ \ \ \ \ \}}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{keywordtype}{void}\ getAngularUpperLimit(btVector3\ \&\ angularUpper)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00472\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ angularUpper[i]\ =\ m\_angularLimits[i].m\_hiLimit;}
+\DoxyCodeLine{00475\ \ \ \ \ \}}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00478\ \ \ \ \ \mbox{\hyperlink{classbt_rotational_limit_motor}{btRotationalLimitMotor}}*\ getRotationalLimitMotor(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00479\ \ \ \ \ \{}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_angularLimits[index];}
+\DoxyCodeLine{00481\ \ \ \ \ \}}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00484\ \ \ \ \ \mbox{\hyperlink{classbt_translational_limit_motor}{btTranslationalLimitMotor}}*\ getTranslationalLimitMotor()}
+\DoxyCodeLine{00485\ \ \ \ \ \{}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_linearLimits;}
+\DoxyCodeLine{00487\ \ \ \ \ \}}
+\DoxyCodeLine{00488\ }
+\DoxyCodeLine{00489\ \ \ \ \ \textcolor{comment}{//first\ 3\ are\ linear,\ next\ 3\ are\ angular}}
+\DoxyCodeLine{00490\ \ \ \ \ \textcolor{keywordtype}{void}\ setLimit(\textcolor{keywordtype}{int}\ axis,\ btScalar\ lo,\ btScalar\ hi)}
+\DoxyCodeLine{00491\ \ \ \ \ \{}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (axis\ <\ 3)}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_aeafb79ff142ace59c2edcaa0029f19b8}{m\_lowerLimit}}[\mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}]\ =\ lo;}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_ab252424e0f70031a12667defe812a722}{m\_upperLimit}}[\mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}]\ =\ hi;}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \ lo\ =\ btNormalizeAngle(lo);}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ hi\ =\ btNormalizeAngle(hi);}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularLimits[\mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}\ -\/\ 3].\mbox{\hyperlink{classb3_rotational_limit_motor_a1ec51980cf1c20f39290b10f971ef378}{m\_loLimit}}\ =\ lo;}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularLimits[\mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}\ -\/\ 3].\mbox{\hyperlink{classb3_rotational_limit_motor_a7357fb509dcd2350c9e877a1fe94e3e3}{m\_hiLimit}}\ =\ hi;}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00504\ \ \ \ \ \}}
+\DoxyCodeLine{00505\ }
+\DoxyCodeLine{00507\ }
+\DoxyCodeLine{00513\ \ \ \ \ \textcolor{keywordtype}{bool}\ isLimited(\textcolor{keywordtype}{int}\ limitIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00514\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (limitIndex\ <\ 3)}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_ad0c21f76040be45cc7001b101ff6b606}{isLimited}}(limitIndex);}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_angularLimits[limitIndex\ -\/\ 3].\mbox{\hyperlink{classb3_rotational_limit_motor_af749ea80f651c820a2c18ef7c291f530}{isLimited}}();}
+\DoxyCodeLine{00520\ \ \ \ \ \}}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calcAnchorPos(\textcolor{keywordtype}{void});\ \ \textcolor{comment}{//\ overridable}}
+\DoxyCodeLine{00523\ }
+\DoxyCodeLine{00524\ \ \ \ \ \textcolor{keywordtype}{int}\ get\_limit\_motor\_info2(\mbox{\hyperlink{classbt_rotational_limit_motor}{btRotationalLimitMotor}}\ *\ limot,}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ linVelA,\ \textcolor{keyword}{const}\ btVector3\&\ linVelB,\ \textcolor{keyword}{const}\ btVector3\&\ angVelA,\ \textcolor{keyword}{const}\ btVector3\&\ angVelB,}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}*\ info,\ \textcolor{keywordtype}{int}\ row,\ btVector3\&\ ax1,\ \textcolor{keywordtype}{int}\ rotational,\ \textcolor{keywordtype}{int}\ rotAllowed\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00528\ \ \ \ \ \textcolor{comment}{//\ access\ for\ UseFrameOffset}}
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{keywordtype}{bool}\ getUseFrameOffset()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_useOffsetForConstraintFrame;\ \}}
+\DoxyCodeLine{00530\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseFrameOffset(\textcolor{keywordtype}{bool}\ frameOffsetOnOff)\ \{\ m\_useOffsetForConstraintFrame\ =\ frameOffsetOnOff;\ \}}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \ \ \ \ \textcolor{keywordtype}{bool}\ getUseLinearReferenceFrameA()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_useLinearReferenceFrameA;\ \}}
+\DoxyCodeLine{00533\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseLinearReferenceFrameA(\textcolor{keywordtype}{bool}\ linearReferenceFrameA)\ \{\ m\_useLinearReferenceFrameA\ =\ linearReferenceFrameA;\ \}}
+\DoxyCodeLine{00534\ }
+\DoxyCodeLine{00537\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setParam(\textcolor{keywordtype}{int}\ num,\ btScalar\ value,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1);}
+\DoxyCodeLine{00539\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ getParam(\textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxis(\textcolor{keyword}{const}\ btVector3\&\ axis1,\ \textcolor{keyword}{const}\ btVector3\&\ axis2);}
+\DoxyCodeLine{00542\ }
+\DoxyCodeLine{00543\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getFlags()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00544\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_flags;}
+\DoxyCodeLine{00546\ \ \ \ \ \}}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00551\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00552\ \};}
+\DoxyCodeLine{00553\ }
+\DoxyCodeLine{00554\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_generic6_dof_constraint_data}{btGeneric6DofConstraintData}}}
+\DoxyCodeLine{00555\ \{}
+\DoxyCodeLine{00556\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_data}{btTypedConstraintData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00557\ \ \ \ \ \mbox{\hyperlink{structbt_transform_float_data}{btTransformFloatData}}\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00558\ \ \ \ \ \mbox{\hyperlink{structbt_transform_float_data}{btTransformFloatData}}\ m\_rbBFrame;}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_linearUpperLimit;}
+\DoxyCodeLine{00561\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_linearLowerLimit;}
+\DoxyCodeLine{00562\ }
+\DoxyCodeLine{00563\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_angularUpperLimit;}
+\DoxyCodeLine{00564\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_angularLowerLimit;}
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useLinearReferenceFrameA;}
+\DoxyCodeLine{00567\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00568\ \};}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_generic6_dof_constraint_double_data2}{btGeneric6DofConstraintDoubleData2}}}
+\DoxyCodeLine{00571\ \{}
+\DoxyCodeLine{00572\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_double_data}{btTypedConstraintDoubleData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00573\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00574\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbBFrame;}
+\DoxyCodeLine{00575\ }
+\DoxyCodeLine{00576\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_linearUpperLimit;}
+\DoxyCodeLine{00577\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_linearLowerLimit;}
+\DoxyCodeLine{00578\ }
+\DoxyCodeLine{00579\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_angularUpperLimit;}
+\DoxyCodeLine{00580\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_double_data}{btVector3DoubleData}}\ m\_angularLowerLimit;}
+\DoxyCodeLine{00581\ }
+\DoxyCodeLine{00582\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useLinearReferenceFrameA;}
+\DoxyCodeLine{00583\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00584\ \};}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00586\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btGeneric6DofConstraint::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00587\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00588\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(btGeneric6DofConstraintData2);}
+\DoxyCodeLine{00589\ \}}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00592\ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btGeneric6DofConstraint::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00593\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00594\ \ \ \ \ btGeneric6DofConstraintData2*\ dof\ =\ (btGeneric6DofConstraintData2*)dataBuffer;}
+\DoxyCodeLine{00595\ \ \ \ \ btTypedConstraint::serialize(\&dof-\/>m\_typeConstraintData,\ serializer);}
+\DoxyCodeLine{00596\ }
+\DoxyCodeLine{00597\ \ \ \ \ m\_frameInA.serialize(dof-\/>m\_rbAFrame);}
+\DoxyCodeLine{00598\ \ \ \ \ m\_frameInB.serialize(dof-\/>m\_rbBFrame);}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00601\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00602\ \ \ \ \ \{}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ dof-\/>m\_angularLowerLimit.m\_floats[i]\ =\ m\_angularLimits[i].\mbox{\hyperlink{classb3_rotational_limit_motor_a1ec51980cf1c20f39290b10f971ef378}{m\_loLimit}};}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ dof-\/>m\_angularUpperLimit.m\_floats[i]\ =\ m\_angularLimits[i].\mbox{\hyperlink{classb3_rotational_limit_motor_a7357fb509dcd2350c9e877a1fe94e3e3}{m\_hiLimit}};}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ dof-\/>m\_linearLowerLimit.m\_floats[i]\ =\ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_aeafb79ff142ace59c2edcaa0029f19b8}{m\_lowerLimit}}[i];}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ dof-\/>m\_linearUpperLimit.m\_floats[i]\ =\ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_ab252424e0f70031a12667defe812a722}{m\_upperLimit}}[i];}
+\DoxyCodeLine{00607\ \ \ \ \ \}}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00609\ \ \ \ \ dof-\/>m\_useLinearReferenceFrameA\ =\ m\_useLinearReferenceFrameA\ ?\ 1\ :\ 0;}
+\DoxyCodeLine{00610\ \ \ \ \ dof-\/>m\_useOffsetForConstraintFrame\ =\ m\_useOffsetForConstraintFrame\ ?\ 1\ :\ 0;}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \ \ \ \ \textcolor{keywordflow}{return}\ btGeneric6DofConstraintDataName;}
+\DoxyCodeLine{00613\ \}}
+\DoxyCodeLine{00614\ }
+\DoxyCodeLine{00615\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_GENERIC\_6DOF\_CONSTRAINT\_H}}
+
+\end{DoxyCode}

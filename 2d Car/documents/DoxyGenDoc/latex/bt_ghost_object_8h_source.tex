@@ -1,0 +1,160 @@
+\doxysection{bt\+Ghost\+Object.\+h}
+\hypertarget{bt_ghost_object_8h_source}{}\label{bt_ghost_object_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btGhostObject.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btGhostObject.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2008\ Erwin\ Coumans\ \ http://bulletphysics.com}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_GHOST\_OBJECT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_GHOST\_OBJECT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btCollisionObject.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btOverlappingPairCallback.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedAllocator.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}btCollisionWorld.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }btConvexShape;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00033\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00034\ btGhostObject\ :\ public\ btCollisionObject}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\ m\_overlappingObjects;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00040\ \ \ \ \ btGhostObject();}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btGhostObject();}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ convexSweepTest(\textcolor{keyword}{const}\ \textcolor{keyword}{class}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ convexFromWorld,\ \textcolor{keyword}{const}\ btTransform\&\ convexToWorld,\ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}\&\ resultCallback,\ btScalar\ allowedCcdPenetration\ =\ 0.f)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ rayTest(\textcolor{keyword}{const}\ btVector3\&\ rayFromWorld,\ \textcolor{keyword}{const}\ btVector3\&\ rayToWorld,\ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}\&\ resultCallback)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addOverlappingObjectInternal(btBroadphaseProxy\ *\ otherProxy,\ btBroadphaseProxy*\ thisProxy\ =\ 0);}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeOverlappingObjectInternal(btBroadphaseProxy\ *\ otherProxy,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}\ *\ dispatcher,\ btBroadphaseProxy*\ thisProxy\ =\ 0);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumOverlappingObjects()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00054\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ btCollisionObject*\ getOverlappingObject(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingObjects[index];}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ getOverlappingObject(\textcolor{keywordtype}{int}\ index)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00064\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingObjects[index];}
+\DoxyCodeLine{00066\ \ \ \ \ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\&\ getOverlappingPairs()}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingObjects;}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\ getOverlappingPairs()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00074\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_overlappingObjects;}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ internal\ cast}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ btGhostObject*\ upcast(\textcolor{keyword}{const}\ btCollisionObject*\ colObj)}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj-\/>getInternalType()\ ==\ CO\_GHOST\_OBJECT)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{const}\ btGhostObject*)colObj;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{static}\ btGhostObject*\ upcast(btCollisionObject\ *\ colObj)}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj-\/>getInternalType()\ ==\ CO\_GHOST\_OBJECT)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (btGhostObject*)colObj;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ \};}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_pair_caching_ghost_object}{btPairCachingGhostObject}}\ :\ \textcolor{keyword}{public}\ btGhostObject}
+\DoxyCodeLine{00097\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ btHashedOverlappingPairCache*\ m\_hashPairCache;}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{classbt_pair_caching_ghost_object}{btPairCachingGhostObject}}();}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_pair_caching_ghost_object}{\string~btPairCachingGhostObject}}();}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_pair_caching_ghost_object_a636e114951f6fdf8a1f5a2b46849a9a7}{addOverlappingObjectInternal}}(btBroadphaseProxy*\ otherProxy,\ btBroadphaseProxy*\ thisProxy\ =\ 0);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeOverlappingObjectInternal(btBroadphaseProxy*\ otherProxy,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ btBroadphaseProxy*\ thisProxy\ =\ 0);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ btHashedOverlappingPairCache*\ getOverlappingPairCache()}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_hashPairCache;}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00117\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_ghost_pair_callback}{btGhostPairCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_overlapping_pair_callback}{btOverlappingPairCallback}}}
+\DoxyCodeLine{00118\ \{}
+\DoxyCodeLine{00119\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00120\ \ \ \ \ \mbox{\hyperlink{classbt_ghost_pair_callback}{btGhostPairCallback}}()}
+\DoxyCodeLine{00121\ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_ghost_pair_callback}{\string~btGhostPairCallback}}()}
+\DoxyCodeLine{00125\ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{virtual}\ btBroadphasePair*\ addOverlappingPair(btBroadphaseProxy*\ proxy0,\ btBroadphaseProxy*\ proxy1)}
+\DoxyCodeLine{00129\ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj0\ =\ (btCollisionObject*)proxy0-\/>m\_clientObject;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj1\ =\ (btCollisionObject*)proxy1-\/>m\_clientObject;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ btGhostObject*\ ghost0\ =\ btGhostObject::upcast(colObj0);}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ btGhostObject*\ ghost1\ =\ btGhostObject::upcast(colObj1);}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ghost0)}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ ghost0-\/>addOverlappingObjectInternal(proxy1,\ proxy0);}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ghost1)}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ ghost1-\/>addOverlappingObjectInternal(proxy0,\ proxy1);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}*\ removeOverlappingPair(btBroadphaseProxy*\ proxy0,\ btBroadphaseProxy*\ proxy1,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)}
+\DoxyCodeLine{00142\ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj0\ =\ (btCollisionObject*)proxy0-\/>m\_clientObject;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj1\ =\ (btCollisionObject*)proxy1-\/>m\_clientObject;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ btGhostObject*\ ghost0\ =\ btGhostObject::upcast(colObj0);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ btGhostObject*\ ghost1\ =\ btGhostObject::upcast(colObj1);}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ghost0)}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ ghost0-\/>removeOverlappingObjectInternal(proxy1,\ dispatcher,\ proxy0);}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ghost1)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ ghost1-\/>removeOverlappingObjectInternal(proxy0,\ dispatcher,\ proxy1);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00152\ \ \ \ \ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ removeOverlappingPairsContainingProxy(btBroadphaseProxy*\ \textcolor{comment}{/*proxy0*/},\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{comment}{//need\ to\ keep\ track\ of\ all\ ghost\ objects\ and\ call\ them\ here}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{comment}{//m\_hashPairCache-\/>removeOverlappingPairsContainingProxy(proxy0,dispatcher);}}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ \};}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

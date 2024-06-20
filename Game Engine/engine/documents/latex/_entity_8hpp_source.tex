@@ -1,0 +1,138 @@
+\doxysection{Entity.\+hpp}
+\hypertarget{_entity_8hpp_source}{}\label{_entity_8hpp_source}\index{code/headers/Entity.hpp@{code/headers/Entity.hpp}}
+\mbox{\hyperlink{_entity_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//ECS}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//las\ entidades}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//los\ componentes\ son\ clases\ que\ solo\ guardan\ datos,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//para\ checkear\ los\ valores\ de\ datos\ se\ encargan\ los\ sistemas}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//los\ gameobjects\ heredan\ piezas\ con\ propiedades,\ estas}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//tienen\ codigo,\ es\ decir\ gana\ por\ composición no\ herencia}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//sonido\ podria\ ser\ un\ componente,\ collider,}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_entity}{Entity}}\ \textcolor{comment}{//actor,\ gameobject\ only\ data}}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ map\ <\ String,\ shared\_ptr<Component>\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a3824c86dfa50d23068c74eafb87375c2}{components}}\ \textcolor{comment}{//string\ identificador}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ Transform\_Component\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a07993c0d92c1aeeb357ba0495c8b5325}{transform}};\ \textcolor{comment}{//esta\ qui\ popr\ qse\ usa\ mucho}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{public}:\ \textcolor{comment}{//puede\ tener\ codigo\ si\ es\ un\ get\ ser}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ component*\ get\ component\_by\_id(\textcolor{keyword}{const}\ std::string\&\ \textcolor{keywordtype}{id})\ \textcolor{comment}{//los\ ids\ tienen\ que\ estar\ documentados}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ item\ =\ component.find(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (item\ !=\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a3824c86dfa50d23068c74eafb87375c2}{components}}.end())\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ item-\/>second.get();}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ Transform\_Component\&\ getTransfor()\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a07993c0d92c1aeeb357ba0495c8b5325}{transform}};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Transform\_Component\&\ getTransfor()\textcolor{keyword}{const\ }\{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a07993c0d92c1aeeb357ba0495c8b5325}{transform}};}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00043\ \ \ \ \ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmisi_1_1_component}{Component}}\ \textcolor{comment}{//para\ cojer\ otros\ componentes\ los\ pillas\ del\ owner}}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_entity}{Entity}}*\ \mbox{\hyperlink{structmisi_1_1_component_a6f12000ec29c9ee365120c5222e9af61}{owner}};}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structmisi_1_1_component_aae1f6fa883f1ae2bcd21d71225a3ee3b}{\string~component}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{struct\ }Transform\_Component\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structmisi_1_1_component}{Component}}\ \textcolor{comment}{//<-\/\ componente\ importante}}
+\DoxyCodeLine{00052\ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ Transform\ component*\ parent}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ gml::vec3\ \mbox{\hyperlink{namespacemisi_a4aeb7641fe5711011cc236e150124b9a}{Position}};}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ gml::vec3\ \mbox{\hyperlink{namespacemisi_a6ad54a6b5b245064cf9b119683b34a3b}{Scale}};}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ gml::vec3\ \mbox{\hyperlink{namespacemisi_a20061d2ca904e4d7bd052c90d36c7e95}{rotation}};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ gml::Mp4\ \mbox{\hyperlink{namespacemisi_a3bd621830e39dbb04930d06752243c02}{get\_transform\_matrix}}()}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ gml::mat4\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}}(1);}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}}\ =\ gml::translate(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}},\ position);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}}\ =\ gml::scale(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a281421b881aa7a1266842b73a3bc7655}{scale}});}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}}\ =\ gml::rotate(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}},\ \mbox{\hyperlink{namespacemisi_a20061d2ca904e4d7bd052c90d36c7e95}{rotation}}.x,\ gml::vec3(1,\ 0,\ 0));}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a7b24a3f2f56eb1244ae69dacb4fecb6f}{matrix}};}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \ \ \ \ \};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmisi_1_1_model_component}{ModelComponent}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structmisi_1_1_component}{Component}}}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ shared\_ptr<glt::Model>\ \mbox{\hyperlink{structmisi_1_1_model_component_afb391116452bf672169ffe2fbac1633f}{model}};\ \textcolor{comment}{//una\ malla\ son\ grupo\ de\ vertices,\ un\ modelo\ un\ conjunto\ de\ mallas}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Model\ esta\ en\ opengl\ Toolkit}}
+\DoxyCodeLine{00072\ \ \ \ \ \};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmisi_1_1_camera___component}{Camera\_Component}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structmisi_1_1_component}{Component}}}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ shared\_ptr<glt::Camera>\ camera}
+\DoxyCodeLine{00077\ \ \ \ \ \};}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmisi_1_1_light___component}{Light\_Component}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structmisi_1_1_component}{Component}}}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ shared\_ptr<glt::Light>\ camera}
+\DoxyCodeLine{00082\ \ \ \ \ \};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmisi_1_1_audio}{Audio}}}
+\DoxyCodeLine{00085\ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ shared\_ptr<Audio>\ \mbox{\hyperlink{structmisi_1_1_audio_a37088952b30bab02ffa6fa58eac8463a}{audio}};\ \textcolor{comment}{//audio\ task}}
+\DoxyCodeLine{00087\ \ \ \ \ \};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{namespacemisi_a545935f305f281d94a7f26ca5c62ac08}{model}}\ =\ make\_shared<glt::Model\_obj>(\textcolor{stringliteral}{"{}..url"{}})}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ Cada\ scene\ tiene\ las\ entidades}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ Sistemas}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{//probablemente\ no\ haga\ esto}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{//rapidXML}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ class\ System\ :\ public\ \mbox{\hyperlink{classmisi_1_1_task}{Task}}\ \textcolor{comment}{//factorias\ de\ componentes}}
+\DoxyCodeLine{00100\ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ shared\_ptr<component>\ create\ component}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ (\textcolor{keyword}{const}\ std::string\&\ component\_id,\ \textcolor{keyword}{const}\ xml\_node*\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}})\ =\ 0;}
+\DoxyCodeLine{00105\ \ \ \ \ \};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_render__system}{Render\_system}}\ :\ \textcolor{keyword}{public}\ System}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ shared\_ptr<componet>\ create\ component}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::strinf\ \&\ component\_id,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ xml\_node\ *\ \mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{override}\{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ execute(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a7d65d00ca3b0630d9b5c52df855b19f5}{t}})\textcolor{keyword}{\ override}}
+\DoxyCodeLine{00117\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ component::components)}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gml::mat4\ transform\_matrix\ =\ componet-\/>owner-\/>getTransformmatrix}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{namespacemisi_a545935f305f281d94a7f26ca5c62ac08}{model}}\ =\ dinamyc\_cast<model\_component>\ (component.get());}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ renderer.render();}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ scene-\/>get\_window()-\/>swap\ \mbox{\hyperlink{glad_8h_a7fc54503e1a1cf98d128b839ebc0b4d0}{buffer}}();}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//para\ cada\ componenyt}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//aplicarle\ el\ transform\ de\ la\ entidad}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//llamar\ al\ metodo\ render\ de\ renderer}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//invocar\ swap\ buffers}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ Si\ no\ se\ usa\ no\ cuenta\ para\ la\ practica}
+\DoxyCodeLine{00135\ \ \ \ \ \};}
+\DoxyCodeLine{00136\ \}}
+
+\end{DoxyCode}

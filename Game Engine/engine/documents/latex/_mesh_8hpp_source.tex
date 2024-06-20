@@ -1,0 +1,126 @@
+\doxysection{Mesh.\+hpp}
+\hypertarget{_mesh_8hpp_source}{}\label{_mesh_8hpp_source}\index{libraries/opengl-\/toolkit/headers/Mesh.hpp@{libraries/opengl-\/toolkit/headers/Mesh.hpp}}
+\mbox{\hyperlink{_mesh_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ MESH}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ ©\ 2016+\ Ángel\ Rodríguez\ Ballesteros}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Distributed\ under\ the\ Boost\ Software\ License,\ version\ \ 1.0}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ See\ documents/LICENSE.TXT\ or\ www.boost.org/LICENSE\_1\_0.txt}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ angel.rodriguez@esne.edu}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OPENGL\_TOOLKIT\_MESH\_HEADER}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ OPENGL\_TOOLKIT\_MESH\_HEADER}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\ \ \ \ \#include\ <memory>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\ \ \ \ \#include\ <cassert>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\ \ \ \ \#include\ <\mbox{\hyperlink{_open_g_l_8hpp}{OpenGL.hpp}}>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\ \ \ \ \#include\ <\mbox{\hyperlink{_drawable_8hpp}{Drawable.hpp}}>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\ \ \ \ \#include\ <\mbox{\hyperlink{_vertex___array___object_8hpp}{Vertex\_Array\_Object.hpp}}>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglt}{glt}}}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classglt_1_1_mesh}{Mesh}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classglt_1_1_drawable}{Drawable}}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{classglt_1_1_mesh_a25f61c9a2e555e89bac986a4e871d0be}{Vertex\_Attribute}}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a25f61c9a2e555e89bac986a4e871d0beaf9b86bf1c6ac2f07507f6f4cb8034925}{COORDINATES}},}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a25f61c9a2e555e89bac986a4e871d0bea1b68ebffa37e57251b44445c991e28c0}{NORMALS}}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \ \mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \ \mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}};}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a9289d5b99dc1f27f01480360f2e18ae0}{GLsizei}}\ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<\ Vertex\_Array\_Object\ >\ \mbox{\hyperlink{classglt_1_1_mesh_a731435f51144187b39270e368487e82d}{vao}};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_afec3ea447cae2747eeb03f518cc594e1}{Mesh}}()}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ :}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}}(\mbox{\hyperlink{glad_8h_a089a3736e5280b9c7cc50129e2659974}{GL\_NONE}}),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}}\ \ (\mbox{\hyperlink{glad_8h_a089a3736e5280b9c7cc50129e2659974}{GL\_NONE}}),}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}}(0\ \ \ \ \ \ )}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_aabace7210c8f607a714a7db9d75d8751}{Mesh}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}})}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ :}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}}(\mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}}),}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}}\ \ (\mbox{\hyperlink{glad_8h_a089a3736e5280b9c7cc50129e2659974}{GL\_NONE}}\ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a689240ffa6a39f1a3e93285762effea6}{Mesh}}(\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}},\ \mbox{\hyperlink{glad_8h_a9289d5b99dc1f27f01480360f2e18ae0}{GLsizei}}\ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}},\ \mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ \mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}}\ =\ \mbox{\hyperlink{glad_8h_a089a3736e5280b9c7cc50129e2659974}{GL\_NONE}})}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ :}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}}(\mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}}),}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}}\ \ (\mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}}\ \ ),}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}}(\mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}})}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}}\ >\ 0);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classglt_1_1_mesh_affbbf74ed6f5611200f750f005e19fdd}{\string~Mesh}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classglt_1_1_mesh_a3d35ffdbaa49d5fb486d78d449570205}{set\_primitive\_type}}\ (\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ new\_primitive\_type)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}}\ =\ new\_primitive\_type;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classglt_1_1_mesh_a7f83c5f75a719763903afbb539b7e00b}{set\_indices\_type}}\ (\mbox{\hyperlink{glad_8h_a5d5233918a454ad3975c620a69ac5f0b}{GLenum}}\ new\_indices\_type)}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}}\ =\ new\_indices\_type;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classglt_1_1_mesh_ac62a5ada89f41c7147fbc71f337cb87a}{set\_vertices\_count}}\ (\mbox{\hyperlink{glad_8h_a9289d5b99dc1f27f01480360f2e18ae0}{GLsizei}}\ new\_vertices\_count)}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}}\ =\ new\_vertices\_count;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classglt_1_1_mesh_a2c4c609a0eb64ebc79a86113d0612913}{set\_vao}}\ (\textcolor{keyword}{const}\ std::shared\_ptr<\ Vertex\_Array\_Object\ >\ \&\ new\_vao)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a731435f51144187b39270e368487e82d}{vao}}\ =\ new\_vao;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classglt_1_1_mesh_a8d0041d30979e74268259b65bf2fffd3}{draw}}\ ()}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classglt_1_1_mesh_a731435f51144187b39270e368487e82d}{vao}}.get\ ())}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}}\ !=\ \mbox{\hyperlink{glad_8h_a089a3736e5280b9c7cc50129e2659974}{GL\_NONE}});}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}}\ >\ \ 0);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a731435f51144187b39270e368487e82d}{vao}}-\/>bind\ ();}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}}\ ==\ \mbox{\hyperlink{glad_8h_a089a3736e5280b9c7cc50129e2659974}{GL\_NONE}})}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a89377449aceadc060b577926b5413bd2}{glDrawArrays}}\ (\mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}},\ 0,\ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}});}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{glad_8h_a81cf4a101af4a4dba6544c8017b5f75e}{glDrawElements}}\ (\mbox{\hyperlink{classglt_1_1_mesh_a76ed3da2ebb55ac6033f98d19ccf0b3f}{primitive\_type}},\ \mbox{\hyperlink{classglt_1_1_mesh_ac3ba73f79041fd3b88e97e39e4a326f4}{vertices\_count}},\ \mbox{\hyperlink{classglt_1_1_mesh_a51a85b245023ba68c2aa681d9c164de9}{indices\_type}},\ 0);}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classglt_1_1_mesh_a731435f51144187b39270e368487e82d}{vao}}-\/>unbind\ ();}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

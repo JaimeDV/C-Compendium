@@ -1,0 +1,38 @@
+\doxysection{Particle\+Updater.\+hpp}
+\hypertarget{_particle_updater_8hpp_source}{}\label{_particle_updater_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/ParticleUpdater.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/ParticleUpdater.hpp}}
+\mbox{\hyperlink{_particle_updater_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_particle_pool_8hpp}{ParticlePool.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_message_8hpp}{Message.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_particle_updater}{ParticleUpdater}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}},\ \textcolor{keyword}{public}\ std::enable\_shared\_from\_this<ParticleUpdater>}
+\DoxyCodeLine{00015\ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ shared\_ptr<ParticlePool>\ particlePool;\ \textcolor{comment}{//\ Pointer\ to\ the\ particle\ pool}}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ particleFlow;\ \textcolor{comment}{//\ Flow\ rate\ of\ particles}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ firstStart;\ \textcolor{comment}{//\ Flag\ indicating\ the\ first\ update\ cycle}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ active;\ \textcolor{comment}{//\ Flag\ indicating\ whether\ the\ updater\ is\ active}}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ shared\_ptr<Scene>\ fatherScene\ =\ \textcolor{keyword}{nullptr};\ \textcolor{comment}{//\ Pointer\ to\ the\ scene}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_particle_updater_af55b2c34760515bac910c02ae051be71}{ParticleUpdater}}(shared\_ptr<ParticlePool>\ given\_particlePool,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ given\_particleFlow)\ :}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ particlePool(given\_particlePool),\ particleFlow(given\_particleFlow\ /\ 2),\ active(false),\ firstStart(true)\ \{\}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_updater_a5c713f49ba5d125177e1474a07dc90ba}{SetListener}}(shared\_ptr<Scene>\ givenScene)}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ fatherScene\ =\ givenScene;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ messenger\ =\ make\_shared<Message\_Dispacher>(givenScene);}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ messenger-\/>add(shared\_from\_this(),\ \textcolor{stringliteral}{"{}particle"{}});}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_updater_a806c81ae4fb18d18bd8e0707d7223f03}{Update}}(\textcolor{keywordtype}{float}\ t);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_particle_updater_ac497c6af84cefbb5ddecbf1037c35250}{handle}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ message)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00044\ \ \ \ \ \};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,187 @@
+\doxysection{bt\+Kinematic\+Character\+Controller.\+h}
+\hypertarget{bt_kinematic_character_controller_8h_source}{}\label{bt_kinematic_character_controller_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Character/btKinematicCharacterController.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Character/btKinematicCharacterController.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2008\ Erwin\ Coumans\ \ http://bulletphysics.com}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_KINEMATIC\_CHARACTER\_CONTROLLER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_KINEMATIC\_CHARACTER\_CONTROLLER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btCharacterControllerInterface.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }btCollisionShape;}
+\DoxyCodeLine{00026\ \textcolor{keyword}{class\ }btConvexShape;}
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}};}
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_collision_dispatcher}{btCollisionDispatcher}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_pair_caching_ghost_object}{btPairCachingGhostObject}};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00035\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00036\ btKinematicCharacterController\ :\ public\ \mbox{\hyperlink{classbt_character_controller_interface}{btCharacterControllerInterface}}}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00039\ \ \ \ \ btScalar\ m\_halfHeight;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classbt_pair_caching_ghost_object}{btPairCachingGhostObject}}*\ m\_ghostObject;}
+\DoxyCodeLine{00042\ \ \ \ \ btConvexShape*\ m\_convexShape;\ \ \textcolor{comment}{//is\ also\ in\ m\_ghostObject,\ but\ it\ needs\ to\ be\ convex,\ so\ we\ store\ it\ here\ to\ avoid\ upcast}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ btScalar\ m\_maxPenetrationDepth;}
+\DoxyCodeLine{00045\ \ \ \ \ btScalar\ m\_verticalVelocity;}
+\DoxyCodeLine{00046\ \ \ \ \ btScalar\ m\_verticalOffset;}
+\DoxyCodeLine{00047\ \ \ \ \ btScalar\ m\_fallSpeed;}
+\DoxyCodeLine{00048\ \ \ \ \ btScalar\ m\_jumpSpeed;}
+\DoxyCodeLine{00049\ \ \ \ \ btScalar\ m\_SetjumpSpeed;}
+\DoxyCodeLine{00050\ \ \ \ \ btScalar\ m\_maxJumpHeight;}
+\DoxyCodeLine{00051\ \ \ \ \ btScalar\ m\_maxSlopeRadians;\ \ \textcolor{comment}{//\ Slope\ angle\ that\ is\ set\ (used\ for\ returning\ the\ exact\ value)}}
+\DoxyCodeLine{00052\ \ \ \ \ btScalar\ m\_maxSlopeCosine;\ \ \ \textcolor{comment}{//\ Cosine\ equivalent\ of\ m\_maxSlopeRadians\ (calculated\ once\ when\ set,\ for\ optimization)}}
+\DoxyCodeLine{00053\ \ \ \ \ btScalar\ m\_gravity;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ btScalar\ m\_turnAngle;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ btScalar\ m\_stepHeight;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ m\_addedMargin;\ \ \textcolor{comment}{//@todo:\ remove\ this\ and\ fix\ the\ code}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00062\ \ \ \ \ btVector3\ m\_walkDirection;}
+\DoxyCodeLine{00063\ \ \ \ \ btVector3\ m\_normalizedDirection;}
+\DoxyCodeLine{00064\ \ \ \ \ btVector3\ m\_AngVel;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ btVector3\ m\_jumpPosition;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//some\ internal\ variables}}
+\DoxyCodeLine{00069\ \ \ \ \ btVector3\ m\_currentPosition;}
+\DoxyCodeLine{00070\ \ \ \ \ btScalar\ m\_currentStepOffset;}
+\DoxyCodeLine{00071\ \ \ \ \ btVector3\ m\_targetPosition;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ m\_currentOrientation;}
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ m\_targetOrientation;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btManifoldArray}}\ m\_manifoldArray;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_touchingContact;}
+\DoxyCodeLine{00080\ \ \ \ \ btVector3\ m\_touchingNormal;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ btScalar\ m\_linearDamping;}
+\DoxyCodeLine{00083\ \ \ \ \ btScalar\ m\_angularDamping;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_wasOnGround;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_wasJumping;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useGhostObjectSweepTest;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useWalkDirection;}
+\DoxyCodeLine{00089\ \ \ \ \ btScalar\ m\_velocityTimeInterval;}
+\DoxyCodeLine{00090\ \ \ \ \ btVector3\ m\_up;}
+\DoxyCodeLine{00091\ \ \ \ \ btVector3\ m\_jumpAxis;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{static}\ btVector3*\ getUpAxisDirections();}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_interpolateUp;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{bool}\ full\_drop;}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{bool}\ bounce\_fix;}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ btVector3\ computeReflectionDirection(\textcolor{keyword}{const}\ btVector3\&\ direction,\ \textcolor{keyword}{const}\ btVector3\&\ normal);}
+\DoxyCodeLine{00099\ \ \ \ \ btVector3\ parallelComponent(\textcolor{keyword}{const}\ btVector3\&\ direction,\ \textcolor{keyword}{const}\ btVector3\&\ normal);}
+\DoxyCodeLine{00100\ \ \ \ \ btVector3\ perpindicularComponent(\textcolor{keyword}{const}\ btVector3\&\ direction,\ \textcolor{keyword}{const}\ btVector3\&\ normal);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{bool}\ recoverFromPenetration(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld);}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{void}\ stepUp(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld);}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{void}\ updateTargetPositionBasedOnCollision(\textcolor{keyword}{const}\ btVector3\&\ hit\_normal,\ btScalar\ tangentMag\ =\ btScalar(0.0),\ btScalar\ normalMag\ =\ btScalar(1.0));}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{void}\ stepForwardAndStrafe(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld,\ \textcolor{keyword}{const}\ btVector3\&\ walkMove);}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ stepDown(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld,\ btScalar\ dt);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ needsCollision(\textcolor{keyword}{const}\ btCollisionObject*\ body0,\ \textcolor{keyword}{const}\ btCollisionObject*\ body1);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{void}\ setUpVector(\textcolor{keyword}{const}\ btVector3\&\ up);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ getRotation(btVector3\ \&\ v0,\ btVector3\ \&\ v1)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00115\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ btKinematicCharacterController(\mbox{\hyperlink{classbt_pair_caching_ghost_object}{btPairCachingGhostObject}}\ *\ ghostObject,\ btConvexShape\ *\ convexShape,\ btScalar\ stepHeight,\ \textcolor{keyword}{const}\ btVector3\&\ up\ =\ btVector3(1.0,\ 0.0,\ 0.0));}
+\DoxyCodeLine{00118\ \ \ \ \ \string~btKinematicCharacterController();}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ updateAction(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld,\ btScalar\ deltaTime)}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ preStep(collisionWorld);}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ playerStep(collisionWorld,\ deltaTime);}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ debugDraw(\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}\ *\ debugDrawer);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ setUp(\textcolor{keyword}{const}\ btVector3\&\ up);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getUp()\ \{\ \textcolor{keywordflow}{return}\ m\_up;\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setWalkDirection(\textcolor{keyword}{const}\ btVector3\&\ walkDirection);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setVelocityForTimeInterval(\textcolor{keyword}{const}\ btVector3\&\ velocity,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ timeInterval);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setAngularVelocity(\textcolor{keyword}{const}\ btVector3\&\ velocity);}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ btVector3\&\ getAngularVelocity()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setLinearVelocity(\textcolor{keyword}{const}\ btVector3\&\ velocity);}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getLinearVelocity()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{void}\ setLinearDamping(btScalar\ d)\ \{\ m\_linearDamping\ =\ btClamped(d,\ (btScalar)btScalar(0.0),\ (btScalar)btScalar(1.0));\ \}}
+\DoxyCodeLine{00156\ \ \ \ \ btScalar\ getLinearDamping()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_linearDamping;\ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{void}\ setAngularDamping(btScalar\ d)\ \{\ m\_angularDamping\ =\ btClamped(d,\ (btScalar)btScalar(0.0),\ (btScalar)btScalar(1.0));\ \}}
+\DoxyCodeLine{00158\ \ \ \ \ btScalar\ getAngularDamping()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_angularDamping;\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{void}\ reset(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld);}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{void}\ warp(\textcolor{keyword}{const}\ btVector3\&\ origin);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{void}\ preStep(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld);}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{void}\ playerStep(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}\ *\ collisionWorld,\ btScalar\ dt);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{void}\ setStepHeight(btScalar\ h);}
+\DoxyCodeLine{00167\ \ \ \ \ btScalar\ getStepHeight()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_stepHeight;\ \}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{void}\ setFallSpeed(btScalar\ fallSpeed);}
+\DoxyCodeLine{00169\ \ \ \ \ btScalar\ getFallSpeed()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_fallSpeed;\ \}}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{void}\ setJumpSpeed(btScalar\ jumpSpeed);}
+\DoxyCodeLine{00171\ \ \ \ \ btScalar\ getJumpSpeed()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_jumpSpeed;\ \}}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxJumpHeight(btScalar\ maxJumpHeight);}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{bool}\ canJump()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordtype}{void}\ jump(\textcolor{keyword}{const}\ btVector3\&\ v\ =\ btVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ v)\ \{\ jump(v);\ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{void}\ setGravity(\textcolor{keyword}{const}\ btVector3\&\ gravity);}
+\DoxyCodeLine{00180\ \ \ \ \ btVector3\ getGravity()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxSlope(btScalar\ slopeRadians);}
+\DoxyCodeLine{00185\ \ \ \ \ btScalar\ getMaxSlope()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxPenetrationDepth(btScalar\ d);}
+\DoxyCodeLine{00188\ \ \ \ \ btScalar\ getMaxPenetrationDepth()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \mbox{\hyperlink{classbt_pair_caching_ghost_object}{btPairCachingGhostObject}}*\ getGhostObject();}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseGhostSweepTest(\textcolor{keywordtype}{bool}\ useGhostObjectSweepTest)}
+\DoxyCodeLine{00192\ \ \ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ m\_useGhostObjectSweepTest\ =\ useGhostObjectSweepTest;}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{bool}\ onGround()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{void}\ setUpInterpolate(\textcolor{keywordtype}{bool}\ value);}
+\DoxyCodeLine{00198\ \};}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ BT\_KINEMATIC\_CHARACTER\_CONTROLLER\_H}}
+
+\end{DoxyCode}

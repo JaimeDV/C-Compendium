@@ -1,0 +1,2108 @@
+\doxysection{bt\+Soft\+Body\+Internals.\+h}
+\hypertarget{bt_soft_body_internals_8h_source}{}\label{bt_soft_body_internals_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSoftBodyInternals.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSoftBodyInternals.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifndef\ \_BT\_SOFT\_BODY\_INTERNALS\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ \_BT\_SOFT\_BODY\_INTERNALS\_H}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btSoftBody.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuickprof.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btPolarDecomposition.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionDispatcher.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexInternalShape.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkEpa2.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyConstraint.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <string.h>}\ \ \textcolor{comment}{//for\ memset}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}poly34.h"{}}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ Given\ a\ multibody\ link,\ a\ contact\ point\ and\ a\ contact\ direction,\ fill\ in\ the\ jacobian\ data\ needed\ to\ calculate\ the\ velocity\ change\ given\ an\ impulse\ in\ the\ contact\ direction}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ findJacobian(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_multi_body_link_collider}{btMultiBodyLinkCollider}}*\ multibodyLinkCol,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\&\ jacobianData,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ contact\_point,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ dir)}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ndof\ =\ multibodyLinkCol-\/>m\_multiBody-\/>getNumDofs()\ +\ 6;}
+\DoxyCodeLine{00040\ \ \ \ \ jacobianData.m\_jacobians.resize(ndof);}
+\DoxyCodeLine{00041\ \ \ \ \ jacobianData.m\_deltaVelocitiesUnitImpulse.resize(ndof);}
+\DoxyCodeLine{00042\ \ \ \ \ btScalar*\ jac\ =\ \&jacobianData.m\_jacobians[0];}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ multibodyLinkCol-\/>m\_multiBody-\/>fillContactJacobianMultiDof(multibodyLinkCol-\/>m\_link,\ contact\_point,\ dir,\ jac,\ jacobianData.scratch\_r,\ jacobianData.scratch\_v,\ jacobianData.scratch\_m);}
+\DoxyCodeLine{00045\ \ \ \ \ multibodyLinkCol-\/>m\_multiBody-\/>calcAccelerationDeltasMultiDof(\&jacobianData.m\_jacobians[0],\ \&jacobianData.m\_deltaVelocitiesUnitImpulse[0],\ jacobianData.scratch\_r,\ jacobianData.scratch\_v);}
+\DoxyCodeLine{00046\ \}}
+\DoxyCodeLine{00047\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ btVector3\ generateUnitOrthogonalVector(\textcolor{keyword}{const}\ btVector3\&\ u)}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ btScalar\ ux\ =\ u.getX();}
+\DoxyCodeLine{00050\ \ \ \ \ btScalar\ uy\ =\ u.getY();}
+\DoxyCodeLine{00051\ \ \ \ \ btScalar\ uz\ =\ u.getZ();}
+\DoxyCodeLine{00052\ \ \ \ \ btScalar\ ax\ =\ std::abs(ux);}
+\DoxyCodeLine{00053\ \ \ \ \ btScalar\ ay\ =\ std::abs(uy);}
+\DoxyCodeLine{00054\ \ \ \ \ btScalar\ az\ =\ std::abs(uz);}
+\DoxyCodeLine{00055\ \ \ \ \ btVector3\ v;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordflow}{if}\ (ax\ <=\ ay\ \&\&\ ax\ <=\ az)}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ v\ =\ btVector3(0,\ -\/uz,\ uy);}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (ay\ <=\ ax\ \&\&\ ay\ <=\ az)}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ v\ =\ btVector3(-\/uz,\ 0,\ ux);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ v\ =\ btVector3(-\/uy,\ ux,\ 0);}
+\DoxyCodeLine{00062\ \ \ \ \ v.normalize();}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{return}\ v;}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ proximityTest(\textcolor{keyword}{const}\ btVector3\&\ x1,\ \textcolor{keyword}{const}\ btVector3\&\ x2,\ \textcolor{keyword}{const}\ btVector3\&\ x3,\ \textcolor{keyword}{const}\ btVector3\&\ x4,\ \textcolor{keyword}{const}\ btVector3\&\ normal,\ \textcolor{keyword}{const}\ btScalar\&\ mrg,\ btVector3\&\ bary)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ btVector3\ x43\ =\ x4\ -\/\ x3;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::abs(x43.dot(normal))\ >\ mrg)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00071\ \ \ \ \ btVector3\ x13\ =\ x1\ -\/\ x3;}
+\DoxyCodeLine{00072\ \ \ \ \ btVector3\ x23\ =\ x2\ -\/\ x3;}
+\DoxyCodeLine{00073\ \ \ \ \ btScalar\ a11\ =\ x13.length2();}
+\DoxyCodeLine{00074\ \ \ \ \ btScalar\ a22\ =\ x23.length2();}
+\DoxyCodeLine{00075\ \ \ \ \ btScalar\ a12\ =\ x13.dot(x23);}
+\DoxyCodeLine{00076\ \ \ \ \ btScalar\ b1\ =\ x13.dot(x43);}
+\DoxyCodeLine{00077\ \ \ \ \ btScalar\ b2\ =\ x23.dot(x43);}
+\DoxyCodeLine{00078\ \ \ \ \ btScalar\ det\ =\ a11\ *\ a22\ -\/\ a12\ *\ a12;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{if}\ (det\ <\ SIMD\_EPSILON)}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00081\ \ \ \ \ btScalar\ w1\ =\ (b1\ *\ a22\ -\/\ b2\ *\ a12)\ /\ det;}
+\DoxyCodeLine{00082\ \ \ \ \ btScalar\ w2\ =\ (b2\ *\ a11\ -\/\ b1\ *\ a12)\ /\ det;}
+\DoxyCodeLine{00083\ \ \ \ \ btScalar\ w3\ =\ 1\ -\/\ w1\ -\/\ w2;}
+\DoxyCodeLine{00084\ \ \ \ \ btScalar\ delta\ =\ mrg\ /\ std::sqrt(0.5\ *\ std::abs(x13.cross(x23).safeNorm()));}
+\DoxyCodeLine{00085\ \ \ \ \ bary\ =\ btVector3(w1,\ w2,\ w3);}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bary[i]\ <\ -\/delta\ ||\ bary[i]\ >\ 1\ +\ delta)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00092\ \}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ KDOP\_COUNT\ =\ 13;}
+\DoxyCodeLine{00094\ \textcolor{keyword}{static}\ btVector3\ dop[KDOP\_COUNT]\ =\ \{btVector3(1,\ 0,\ 0),}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(0,\ 1,\ 0),}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(0,\ 0,\ 1),}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ 1,\ 0),}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ 0,\ 1),}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(0,\ 1,\ 1),}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ -\/1,\ 0),}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ 0,\ -\/1),}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(0,\ 1,\ -\/1),}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ 1,\ 1),}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ -\/1,\ 1),}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ 1,\ -\/1),}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ -\/1,\ -\/1)\};}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getSign(\textcolor{keyword}{const}\ btVector3\&\ n,\ \textcolor{keyword}{const}\ btVector3\&\ x)}
+\DoxyCodeLine{00109\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ btScalar\ d\ =\ n.dot(x);}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ -\/SIMD\_EPSILON)}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00116\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ hasSeparatingPlane(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt)}
+\DoxyCodeLine{00119\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ btVector3\ hex[6]\ =\ \{face-\/>m\_n[0]-\/>m\_x\ -\/\ node-\/>m\_x,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ face-\/>m\_n[1]-\/>m\_x\ -\/\ node-\/>m\_x,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ face-\/>m\_n[2]-\/>m\_x\ -\/\ node-\/>m\_x,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ face-\/>m\_n[0]-\/>m\_x\ +\ dt\ *\ face-\/>m\_n[0]-\/>m\_v\ -\/\ node-\/>m\_x,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ face-\/>m\_n[1]-\/>m\_x\ +\ dt\ *\ face-\/>m\_n[1]-\/>m\_v\ -\/\ node-\/>m\_x,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ face-\/>m\_n[2]-\/>m\_x\ +\ dt\ *\ face-\/>m\_n[2]-\/>m\_v\ -\/\ node-\/>m\_x\};}
+\DoxyCodeLine{00126\ \ \ \ \ btVector3\ segment\ =\ dt\ *\ node-\/>m\_v;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ KDOP\_COUNT;\ ++i)}
+\DoxyCodeLine{00128\ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ s\ =\ getSign(dop[i],\ segment);}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ j\ =\ 0;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ j\ <\ 6;\ ++j)}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getSign(dop[i],\ hex[j])\ ==\ s)}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (j\ ==\ 6)}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00138\ \ \ \ \ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00140\ \}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ nearZero(\textcolor{keyword}{const}\ btScalar\&\ a)}
+\DoxyCodeLine{00143\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ >\ -\/SAFE\_EPSILON\ \&\&\ a\ <\ SAFE\_EPSILON);}
+\DoxyCodeLine{00145\ \}}
+\DoxyCodeLine{00146\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ sameSign(\textcolor{keyword}{const}\ btScalar\&\ a,\ \textcolor{keyword}{const}\ btScalar\&\ b)}
+\DoxyCodeLine{00147\ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordflow}{return}\ (nearZero(a)\ ||\ nearZero(b)\ ||\ (a\ >\ SAFE\_EPSILON\ \&\&\ b\ >\ SAFE\_EPSILON)\ ||\ (a\ <\ -\/SAFE\_EPSILON\ \&\&\ b\ <\ -\/SAFE\_EPSILON));}
+\DoxyCodeLine{00149\ \}}
+\DoxyCodeLine{00150\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ diffSign(\textcolor{keyword}{const}\ btScalar\&\ a,\ \textcolor{keyword}{const}\ btScalar\&\ b)}
+\DoxyCodeLine{00151\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{return}\ !sameSign(a,\ b);}
+\DoxyCodeLine{00153\ \}}
+\DoxyCodeLine{00154\ \textcolor{keyword}{inline}\ btScalar\ evaluateBezier2(\textcolor{keyword}{const}\ btScalar\&\ p0,\ \textcolor{keyword}{const}\ btScalar\&\ p1,\ \textcolor{keyword}{const}\ btScalar\&\ p2,\ \textcolor{keyword}{const}\ btScalar\&\ t,\ \textcolor{keyword}{const}\ btScalar\&\ s)}
+\DoxyCodeLine{00155\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ btScalar\ s2\ =\ s\ *\ s;}
+\DoxyCodeLine{00157\ \ \ \ \ btScalar\ t2\ =\ t\ *\ t;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordflow}{return}\ p0\ *\ s2\ +\ p1\ *\ btScalar(2.0)\ *\ s\ *\ t\ +\ p2\ *\ t2;}
+\DoxyCodeLine{00160\ \}}
+\DoxyCodeLine{00161\ \textcolor{keyword}{inline}\ btScalar\ evaluateBezier(\textcolor{keyword}{const}\ btScalar\&\ p0,\ \textcolor{keyword}{const}\ btScalar\&\ p1,\ \textcolor{keyword}{const}\ btScalar\&\ p2,\ \textcolor{keyword}{const}\ btScalar\&\ p3,\ \textcolor{keyword}{const}\ btScalar\&\ t,\ \textcolor{keyword}{const}\ btScalar\&\ s)}
+\DoxyCodeLine{00162\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ btScalar\ s2\ =\ s\ *\ s;}
+\DoxyCodeLine{00164\ \ \ \ \ btScalar\ s3\ =\ s2\ *\ s;}
+\DoxyCodeLine{00165\ \ \ \ \ btScalar\ t2\ =\ t\ *\ t;}
+\DoxyCodeLine{00166\ \ \ \ \ btScalar\ t3\ =\ t2\ *\ t;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordflow}{return}\ p0\ *\ s3\ +\ p1\ *\ btScalar(3.0)\ *\ s2\ *\ t\ +\ p2\ *\ btScalar(3.0)\ *\ s\ *\ t2\ +\ p3\ *\ t3;}
+\DoxyCodeLine{00169\ \}}
+\DoxyCodeLine{00170\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ getSigns(\textcolor{keywordtype}{bool}\ type\_c,\ \textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ btScalar\&\ t0,\ \textcolor{keyword}{const}\ btScalar\&\ t1,\ btScalar\&\ lt0,\ btScalar\&\ lt1)}
+\DoxyCodeLine{00171\ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(t0,\ t1))}
+\DoxyCodeLine{00173\ \ \ \ \ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ lt0\ =\ t0;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ lt1\ =\ t0;}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{if}\ (type\_c\ ||\ diffSign(k0,\ k3))}
+\DoxyCodeLine{00180\ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ btScalar\ ft\ =\ evaluateBezier(k0,\ k1,\ k2,\ k3,\ t0,\ -\/t1);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t0\ <\ -\/0)}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ ft\ =\ -\/ft;}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(ft,\ k0))}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ lt0\ =\ t1;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ lt1\ =\ t1;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ lt0\ =\ t0;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ lt1\ =\ t0;}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00196\ \ \ \ \ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordflow}{if}\ (!type\_c)}
+\DoxyCodeLine{00199\ \ \ \ \ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ btScalar\ ft\ =\ evaluateBezier(k0,\ k1,\ k2,\ k3,\ t0,\ -\/t1);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t0\ <\ -\/0)}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ ft\ =\ -\/ft;}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (diffSign(ft,\ k0))}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ lt0\ =\ t0;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ lt1\ =\ t1;}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ btScalar\ fk\ =\ evaluateBezier2(k1\ -\/\ k0,\ k2\ -\/\ k1,\ k3\ -\/\ k2,\ t0,\ -\/t1);}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(fk,\ k1\ -\/\ k0))}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ lt0\ =\ lt1\ =\ t1;}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ lt0\ =\ lt1\ =\ t0;}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00219\ \ \ \ \ \}}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00221\ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getBernsteinCoeff(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt,\ btScalar\&\ k0,\ btScalar\&\ k1,\ btScalar\&\ k2,\ btScalar\&\ k3)}
+\DoxyCodeLine{00224\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ n0\ =\ face-\/>m\_n0;}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ n1\ =\ face-\/>m\_n1;}
+\DoxyCodeLine{00227\ \ \ \ \ btVector3\ n\_hat\ =\ n0\ +\ n1\ -\/\ face-\/>m\_vn;}
+\DoxyCodeLine{00228\ \ \ \ \ btVector3\ p0ma0\ =\ node-\/>m\_x\ -\/\ face-\/>m\_n[0]-\/>m\_x;}
+\DoxyCodeLine{00229\ \ \ \ \ btVector3\ p1ma1\ =\ node-\/>m\_q\ -\/\ face-\/>m\_n[0]-\/>m\_q;}
+\DoxyCodeLine{00230\ \ \ \ \ k0\ =\ (p0ma0).dot(n0)\ *\ 3.0;}
+\DoxyCodeLine{00231\ \ \ \ \ k1\ =\ (p0ma0).dot(n\_hat)\ +\ (p1ma1).dot(n0);}
+\DoxyCodeLine{00232\ \ \ \ \ k2\ =\ (p1ma1).dot(n\_hat)\ +\ (p0ma0).dot(n1);}
+\DoxyCodeLine{00233\ \ \ \ \ k3\ =\ (p1ma1).dot(n1)\ *\ 3.0;}
+\DoxyCodeLine{00234\ \}}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ polyDecomposition(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ btScalar\&\ j0,\ \textcolor{keyword}{const}\ btScalar\&\ j1,\ \textcolor{keyword}{const}\ btScalar\&\ j2,\ btScalar\&\ u0,\ btScalar\&\ u1,\ btScalar\&\ v0,\ btScalar\&\ v1)}
+\DoxyCodeLine{00237\ \{}
+\DoxyCodeLine{00238\ \ \ \ \ btScalar\ denom\ =\ 4.0\ *\ (j1\ -\/\ j2)\ *\ (j1\ -\/\ j0)\ +\ (j2\ -\/\ j0)\ *\ (j2\ -\/\ j0);}
+\DoxyCodeLine{00239\ \ \ \ \ u0\ =\ (2.0\ *\ (j1\ -\/\ j2)\ *\ (3.0\ *\ k1\ -\/\ 2.0\ *\ k0\ -\/\ k3)\ -\/\ (j0\ -\/\ j2)\ *\ (3.0\ *\ k2\ -\/\ 2.0\ *\ k3\ -\/\ k0))\ /\ denom;}
+\DoxyCodeLine{00240\ \ \ \ \ u1\ =\ (2.0\ *\ (j1\ -\/\ j0)\ *\ (3.0\ *\ k2\ -\/\ 2.0\ *\ k3\ -\/\ k0)\ -\/\ (j2\ -\/\ j0)\ *\ (3.0\ *\ k1\ -\/\ 2.0\ *\ k0\ -\/\ k3))\ /\ denom;}
+\DoxyCodeLine{00241\ \ \ \ \ v0\ =\ k0\ -\/\ u0\ *\ j0;}
+\DoxyCodeLine{00242\ \ \ \ \ v1\ =\ k3\ -\/\ u1\ *\ j2;}
+\DoxyCodeLine{00243\ \}}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ rootFindingLemma(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3)}
+\DoxyCodeLine{00246\ \{}
+\DoxyCodeLine{00247\ \ \ \ \ btScalar\ u0,\ u1,\ v0,\ v1;}
+\DoxyCodeLine{00248\ \ \ \ \ btScalar\ j0\ =\ 3.0\ *\ (k1\ -\/\ k0);}
+\DoxyCodeLine{00249\ \ \ \ \ btScalar\ j1\ =\ 3.0\ *\ (k2\ -\/\ k1);}
+\DoxyCodeLine{00250\ \ \ \ \ btScalar\ j2\ =\ 3.0\ *\ (k3\ -\/\ k2);}
+\DoxyCodeLine{00251\ \ \ \ \ polyDecomposition(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1);}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(v0,\ v1))}
+\DoxyCodeLine{00253\ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ btScalar\ Ypa\ =\ j0\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ +\ 2.0\ *\ j1\ *\ v0\ *\ (1.0\ -\/\ v0)\ +\ j2\ *\ v0\ *\ v0;\ \ \textcolor{comment}{//\ Y'(v0)}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(Ypa,\ j0))}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (diffSign(k0,\ v1));}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00259\ \ \ \ \ \}}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{keywordflow}{return}\ diffSign(k0,\ v0);}
+\DoxyCodeLine{00261\ \}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getJs(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ b,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ c,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ p,\ \textcolor{keyword}{const}\ btScalar\&\ dt,\ btScalar\&\ j0,\ btScalar\&\ j1,\ btScalar\&\ j2)}
+\DoxyCodeLine{00264\ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ a0\ =\ a-\/>m\_x;}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b0\ =\ b-\/>m\_x;}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ c0\ =\ c-\/>m\_x;}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ va\ =\ a-\/>m\_v;}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vb\ =\ b-\/>m\_v;}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vc\ =\ c-\/>m\_v;}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ a1\ =\ a0\ +\ dt\ *\ va;}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ b1\ =\ b0\ +\ dt\ *\ vb;}
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ c1\ =\ c0\ +\ dt\ *\ vc;}
+\DoxyCodeLine{00274\ \ \ \ \ btVector3\ n0\ =\ (b0\ -\/\ a0).cross(c0\ -\/\ a0);}
+\DoxyCodeLine{00275\ \ \ \ \ btVector3\ n1\ =\ (b1\ -\/\ a1).cross(c1\ -\/\ a1);}
+\DoxyCodeLine{00276\ \ \ \ \ btVector3\ n\_hat\ =\ n0\ +\ n1\ -\/\ dt\ *\ dt\ *\ (vb\ -\/\ va).cross(vc\ -\/\ va);}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ p0\ =\ p-\/>m\_x;}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vp\ =\ p-\/>m\_v;}
+\DoxyCodeLine{00279\ \ \ \ \ btVector3\ p1\ =\ p0\ +\ dt\ *\ vp;}
+\DoxyCodeLine{00280\ \ \ \ \ btVector3\ m0\ =\ (b0\ -\/\ p0).cross(c0\ -\/\ p0);}
+\DoxyCodeLine{00281\ \ \ \ \ btVector3\ m1\ =\ (b1\ -\/\ p1).cross(c1\ -\/\ p1);}
+\DoxyCodeLine{00282\ \ \ \ \ btVector3\ m\_hat\ =\ m0\ +\ m1\ -\/\ dt\ *\ dt\ *\ (vb\ -\/\ vp).cross(vc\ -\/\ vp);}
+\DoxyCodeLine{00283\ \ \ \ \ btScalar\ l0\ =\ m0.dot(n0);}
+\DoxyCodeLine{00284\ \ \ \ \ btScalar\ l1\ =\ 0.25\ *\ (m0.dot(n\_hat)\ +\ m\_hat.dot(n0));}
+\DoxyCodeLine{00285\ \ \ \ \ btScalar\ l2\ =\ btScalar(1)\ /\ btScalar(6)\ *\ (m0.dot(n1)\ +\ m\_hat.dot(n\_hat)\ +\ m1.dot(n0));}
+\DoxyCodeLine{00286\ \ \ \ \ btScalar\ l3\ =\ 0.25\ *\ (m\_hat.dot(n1)\ +\ m1.dot(n\_hat));}
+\DoxyCodeLine{00287\ \ \ \ \ btScalar\ l4\ =\ m1.dot(n1);}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ btScalar\ k1p\ =\ 0.25\ *\ k0\ +\ 0.75\ *\ k1;}
+\DoxyCodeLine{00290\ \ \ \ \ btScalar\ k2p\ =\ 0.5\ *\ k1\ +\ 0.5\ *\ k2;}
+\DoxyCodeLine{00291\ \ \ \ \ btScalar\ k3p\ =\ 0.75\ *\ k2\ +\ 0.25\ *\ k3;}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ btScalar\ s0\ =\ (l1\ *\ k0\ -\/\ l0\ *\ k1p)\ *\ 4.0;}
+\DoxyCodeLine{00294\ \ \ \ \ btScalar\ s1\ =\ (l2\ *\ k0\ -\/\ l0\ *\ k2p)\ *\ 2.0;}
+\DoxyCodeLine{00295\ \ \ \ \ btScalar\ s2\ =\ (l3\ *\ k0\ -\/\ l0\ *\ k3p)\ *\ btScalar(4)\ /\ btScalar(3);}
+\DoxyCodeLine{00296\ \ \ \ \ btScalar\ s3\ =\ l4\ *\ k0\ -\/\ l0\ *\ k3;}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \ \ j0\ =\ (s1\ *\ k0\ -\/\ s0\ *\ k1)\ *\ 3.0;}
+\DoxyCodeLine{00299\ \ \ \ \ j1\ =\ (s2\ *\ k0\ -\/\ s0\ *\ k2)\ *\ 1.5;}
+\DoxyCodeLine{00300\ \ \ \ \ j2\ =\ (s3\ *\ k0\ -\/\ s0\ *\ k3);}
+\DoxyCodeLine{00301\ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ signDetermination1Internal(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ btScalar\&\ u0,\ \textcolor{keyword}{const}\ btScalar\&\ u1,\ \textcolor{keyword}{const}\ btScalar\&\ v0,\ \textcolor{keyword}{const}\ btScalar\&\ v1)}
+\DoxyCodeLine{00304\ \{}
+\DoxyCodeLine{00305\ \ \ \ \ btScalar\ Yu0\ =\ k0\ *\ (1.0\ -\/\ u0)\ *\ (1.0\ -\/\ u0)\ *\ (1.0\ -\/\ u0)\ +\ 3.0\ *\ k1\ *\ u0\ *\ (1.0\ -\/\ u0)\ *\ (1.0\ -\/\ u0)\ +\ 3.0\ *\ k2\ *\ u0\ *\ u0\ *\ (1.0\ -\/\ u0)\ +\ k3\ *\ u0\ *\ u0\ *\ u0;\ \ \textcolor{comment}{//\ Y(u0)}}
+\DoxyCodeLine{00306\ \ \ \ \ btScalar\ Yv0\ =\ k0\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ +\ 3.0\ *\ k1\ *\ v0\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ +\ 3.0\ *\ k2\ *\ v0\ *\ v0\ *\ (1.0\ -\/\ v0)\ +\ k3\ *\ v0\ *\ v0\ *\ v0;\ \ \textcolor{comment}{//\ Y(v0)}}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ btScalar\ sign\_Ytp\ =\ (u0\ >\ u1)\ ?\ Yu0\ :\ -\/Yu0;}
+\DoxyCodeLine{00309\ \ \ \ \ btScalar\ L\ =\ sameSign(sign\_Ytp,\ k0)\ ?\ u1\ :\ u0;}
+\DoxyCodeLine{00310\ \ \ \ \ sign\_Ytp\ =\ (v0\ >\ v1)\ ?\ Yv0\ :\ -\/Yv0;}
+\DoxyCodeLine{00311\ \ \ \ \ btScalar\ K\ =\ (sameSign(sign\_Ytp,\ k0))\ ?\ v1\ :\ v0;}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordflow}{return}\ diffSign(L,\ K);}
+\DoxyCodeLine{00313\ \}}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ signDetermination2Internal(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ btScalar\&\ j0,\ \textcolor{keyword}{const}\ btScalar\&\ j1,\ \textcolor{keyword}{const}\ btScalar\&\ j2,\ \textcolor{keyword}{const}\ btScalar\&\ u0,\ \textcolor{keyword}{const}\ btScalar\&\ u1,\ \textcolor{keyword}{const}\ btScalar\&\ v0,\ \textcolor{keyword}{const}\ btScalar\&\ v1)}
+\DoxyCodeLine{00316\ \{}
+\DoxyCodeLine{00317\ \ \ \ \ btScalar\ Yu0\ =\ k0\ *\ (1.0\ -\/\ u0)\ *\ (1.0\ -\/\ u0)\ *\ (1.0\ -\/\ u0)\ +\ 3.0\ *\ k1\ *\ u0\ *\ (1.0\ -\/\ u0)\ *\ (1.0\ -\/\ u0)\ +\ 3.0\ *\ k2\ *\ u0\ *\ u0\ *\ (1.0\ -\/\ u0)\ +\ k3\ *\ u0\ *\ u0\ *\ u0;\ \ \textcolor{comment}{//\ Y(u0)}}
+\DoxyCodeLine{00318\ \ \ \ \ btScalar\ sign\_Ytp\ =\ (u0\ >\ u1)\ ?\ Yu0\ :\ -\/Yu0,\ L1,\ L2;}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordflow}{if}\ (diffSign(sign\_Ytp,\ k0))}
+\DoxyCodeLine{00320\ \ \ \ \ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ L1\ =\ u0;}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ L2\ =\ u1;}
+\DoxyCodeLine{00323\ \ \ \ \ \}}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00325\ \ \ \ \ \{}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ btScalar\ Yp\_u0\ =\ j0\ *\ (1.0\ -\/\ u0)\ *\ (1.0\ -\/\ u0)\ +\ 2.0\ *\ j1\ *\ (1.0\ -\/\ u0)\ *\ u0\ +\ j2\ *\ u0\ *\ u0;}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(Yp\_u0,\ j0))}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ L1\ =\ u1;}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ L2\ =\ u1;}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ L1\ =\ u0;}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ L2\ =\ u0;}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00337\ \ \ \ \ \}}
+\DoxyCodeLine{00338\ \ \ \ \ btScalar\ Yv0\ =\ k0\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ +\ 3.0\ *\ k1\ *\ v0\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ +\ 3.0\ *\ k2\ *\ v0\ *\ v0\ *\ (1.0\ -\/\ v0)\ +\ k3\ *\ v0\ *\ v0\ *\ v0;\ \ \textcolor{comment}{//\ Y(uv0)}}
+\DoxyCodeLine{00339\ \ \ \ \ sign\_Ytp\ =\ (v0\ >\ v1)\ ?\ Yv0\ :\ -\/Yv0;}
+\DoxyCodeLine{00340\ \ \ \ \ btScalar\ K1,\ K2;}
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordflow}{if}\ (diffSign(sign\_Ytp,\ k0))}
+\DoxyCodeLine{00342\ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ K1\ =\ v0;}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ K2\ =\ v1;}
+\DoxyCodeLine{00345\ \ \ \ \ \}}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00347\ \ \ \ \ \{}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ btScalar\ Yp\_v0\ =\ j0\ *\ (1.0\ -\/\ v0)\ *\ (1.0\ -\/\ v0)\ +\ 2.0\ *\ j1\ *\ (1.0\ -\/\ v0)\ *\ v0\ +\ j2\ *\ v0\ *\ v0;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(Yp\_v0,\ j0))}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ K1\ =\ v1;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ K2\ =\ v1;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ K1\ =\ v0;}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ K2\ =\ v0;}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00359\ \ \ \ \ \}}
+\DoxyCodeLine{00360\ \ \ \ \ \textcolor{keywordflow}{return}\ (diffSign(K1,\ L1)\ ||\ diffSign(L2,\ K2));}
+\DoxyCodeLine{00361\ \}}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00363\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ signDetermination1(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt)}
+\DoxyCodeLine{00364\ \{}
+\DoxyCodeLine{00365\ \ \ \ \ btScalar\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1;}
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{comment}{//\ p1}}
+\DoxyCodeLine{00367\ \ \ \ \ getJs(k0,\ k1,\ k2,\ k3,\ face-\/>m\_n[0],\ face-\/>m\_n[1],\ face-\/>m\_n[2],\ node,\ dt,\ j0,\ j1,\ j2);}
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{keywordflow}{if}\ (nearZero(j0\ +\ j2\ -\/\ j1\ *\ 2.0))}
+\DoxyCodeLine{00369\ \ \ \ \ \{}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ btScalar\ lt0,\ lt1;}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ getSigns(\textcolor{keyword}{true},\ k0,\ k1,\ k2,\ k3,\ j0,\ j2,\ lt0,\ lt1);}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt0\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00374\ \ \ \ \ \}}
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00376\ \ \ \ \ \{}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ polyDecomposition(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1);}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!signDetermination1Internal(k0,\ k1,\ k2,\ k3,\ u0,\ u1,\ v0,\ v1))}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00380\ \ \ \ \ \}}
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{comment}{//\ p2}}
+\DoxyCodeLine{00382\ \ \ \ \ getJs(k0,\ k1,\ k2,\ k3,\ face-\/>m\_n[1],\ face-\/>m\_n[2],\ face-\/>m\_n[0],\ node,\ dt,\ j0,\ j1,\ j2);}
+\DoxyCodeLine{00383\ \ \ \ \ \textcolor{keywordflow}{if}\ (nearZero(j0\ +\ j2\ -\/\ j1\ *\ 2.0))}
+\DoxyCodeLine{00384\ \ \ \ \ \{}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ btScalar\ lt0,\ lt1;}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ getSigns(\textcolor{keyword}{true},\ k0,\ k1,\ k2,\ k3,\ j0,\ j2,\ lt0,\ lt1);}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt0\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00389\ \ \ \ \ \}}
+\DoxyCodeLine{00390\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00391\ \ \ \ \ \{}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ polyDecomposition(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1);}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!signDetermination1Internal(k0,\ k1,\ k2,\ k3,\ u0,\ u1,\ v0,\ v1))}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00395\ \ \ \ \ \}}
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{comment}{//\ p3}}
+\DoxyCodeLine{00397\ \ \ \ \ getJs(k0,\ k1,\ k2,\ k3,\ face-\/>m\_n[2],\ face-\/>m\_n[0],\ face-\/>m\_n[1],\ node,\ dt,\ j0,\ j1,\ j2);}
+\DoxyCodeLine{00398\ \ \ \ \ \textcolor{keywordflow}{if}\ (nearZero(j0\ +\ j2\ -\/\ j1\ *\ 2.0))}
+\DoxyCodeLine{00399\ \ \ \ \ \{}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ btScalar\ lt0,\ lt1;}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ getSigns(\textcolor{keyword}{true},\ k0,\ k1,\ k2,\ k3,\ j0,\ j2,\ lt0,\ lt1);}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt0\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00404\ \ \ \ \ \}}
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00406\ \ \ \ \ \{}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ polyDecomposition(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1);}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!signDetermination1Internal(k0,\ k1,\ k2,\ k3,\ u0,\ u1,\ v0,\ v1))}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00410\ \ \ \ \ \}}
+\DoxyCodeLine{00411\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00412\ \}}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ signDetermination2(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt)}
+\DoxyCodeLine{00415\ \{}
+\DoxyCodeLine{00416\ \ \ \ \ btScalar\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1;}
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{comment}{//\ p1}}
+\DoxyCodeLine{00418\ \ \ \ \ getJs(k0,\ k1,\ k2,\ k3,\ face-\/>m\_n[0],\ face-\/>m\_n[1],\ face-\/>m\_n[2],\ node,\ dt,\ j0,\ j1,\ j2);}
+\DoxyCodeLine{00419\ \ \ \ \ \textcolor{keywordflow}{if}\ (nearZero(j0\ +\ j2\ -\/\ j1\ *\ 2.0))}
+\DoxyCodeLine{00420\ \ \ \ \ \{}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ btScalar\ lt0,\ lt1;}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ bt0\ =\ \textcolor{keyword}{true},\ bt1\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ getSigns(\textcolor{keyword}{false},\ k0,\ k1,\ k2,\ k3,\ j0,\ j2,\ lt0,\ lt1);}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt0\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ bt0\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt1\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ bt1\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bt0\ \&\&\ !bt1)}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00430\ \ \ \ \ \}}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00432\ \ \ \ \ \{}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ polyDecomposition(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1);}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!signDetermination2Internal(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1))}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00436\ \ \ \ \ \}}
+\DoxyCodeLine{00437\ \ \ \ \ \textcolor{comment}{//\ p2}}
+\DoxyCodeLine{00438\ \ \ \ \ getJs(k0,\ k1,\ k2,\ k3,\ face-\/>m\_n[1],\ face-\/>m\_n[2],\ face-\/>m\_n[0],\ node,\ dt,\ j0,\ j1,\ j2);}
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{keywordflow}{if}\ (nearZero(j0\ +\ j2\ -\/\ j1\ *\ 2.0))}
+\DoxyCodeLine{00440\ \ \ \ \ \{}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ btScalar\ lt0,\ lt1;}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ bt0\ =\ \textcolor{keyword}{true},\ bt1\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ getSigns(\textcolor{keyword}{false},\ k0,\ k1,\ k2,\ k3,\ j0,\ j2,\ lt0,\ lt1);}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt0\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ bt0\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt1\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ bt1\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bt0\ \&\&\ !bt1)}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00450\ \ \ \ \ \}}
+\DoxyCodeLine{00451\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00452\ \ \ \ \ \{}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ polyDecomposition(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1);}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!signDetermination2Internal(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1))}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00456\ \ \ \ \ \}}
+\DoxyCodeLine{00457\ \ \ \ \ \textcolor{comment}{//\ p3}}
+\DoxyCodeLine{00458\ \ \ \ \ getJs(k0,\ k1,\ k2,\ k3,\ face-\/>m\_n[2],\ face-\/>m\_n[0],\ face-\/>m\_n[1],\ node,\ dt,\ j0,\ j1,\ j2);}
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keywordflow}{if}\ (nearZero(j0\ +\ j2\ -\/\ j1\ *\ 2.0))}
+\DoxyCodeLine{00460\ \ \ \ \ \{}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ btScalar\ lt0,\ lt1;}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ bt0\ =\ \textcolor{keyword}{true},\ bt1\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ getSigns(\textcolor{keyword}{false},\ k0,\ k1,\ k2,\ k3,\ j0,\ j2,\ lt0,\ lt1);}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt0\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ bt0\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lt1\ <\ -\/SAFE\_EPSILON)}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ bt1\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bt0\ \&\&\ !bt1)}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00470\ \ \ \ \ \}}
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00472\ \ \ \ \ \{}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ polyDecomposition(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1);}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!signDetermination2Internal(k0,\ k1,\ k2,\ k3,\ j0,\ j1,\ j2,\ u0,\ u1,\ v0,\ v1))}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00476\ \ \ \ \ \}}
+\DoxyCodeLine{00477\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00478\ \}}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ coplanarAndInsideTest(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt)}
+\DoxyCodeLine{00481\ \{}
+\DoxyCodeLine{00482\ \ \ \ \ \textcolor{comment}{//\ Coplanar\ test}}
+\DoxyCodeLine{00483\ \ \ \ \ \textcolor{keywordflow}{if}\ (diffSign(k1\ -\/\ k0,\ k3\ -\/\ k2))}
+\DoxyCodeLine{00484\ \ \ \ \ \{}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case\ b:}}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(k0,\ k3)\ \&\&\ !rootFindingLemma(k0,\ k1,\ k2,\ k3))}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ inside\ test}}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ signDetermination2(k0,\ k1,\ k2,\ k3,\ face,\ node,\ dt);}
+\DoxyCodeLine{00490\ \ \ \ \ \}}
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00492\ \ \ \ \ \{}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case\ c:}}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sameSign(k0,\ k3))}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ inside\ test}}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ signDetermination1(k0,\ k1,\ k2,\ k3,\ face,\ node,\ dt);}
+\DoxyCodeLine{00498\ \ \ \ \ \}}
+\DoxyCodeLine{00499\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00500\ \}}
+\DoxyCodeLine{00501\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ conservativeCulling(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ btScalar\&\ mrg)}
+\DoxyCodeLine{00502\ \{}
+\DoxyCodeLine{00503\ \ \ \ \ \textcolor{keywordflow}{if}\ (k0\ >\ mrg\ \&\&\ k1\ >\ mrg\ \&\&\ k2\ >\ mrg\ \&\&\ k3\ >\ mrg)}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00505\ \ \ \ \ \textcolor{keywordflow}{if}\ (k0\ <\ -\/mrg\ \&\&\ k1\ <\ -\/mrg\ \&\&\ k2\ <\ -\/mrg\ \&\&\ k3\ <\ -\/mrg)}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00507\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00508\ \}}
+\DoxyCodeLine{00509\ }
+\DoxyCodeLine{00510\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ bernsteinVFTest(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ btScalar\&\ mrg,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt)}
+\DoxyCodeLine{00511\ \{}
+\DoxyCodeLine{00512\ \ \ \ \ \textcolor{keywordflow}{if}\ (conservativeCulling(k0,\ k1,\ k2,\ k3,\ mrg))}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00514\ \ \ \ \ \textcolor{keywordflow}{return}\ coplanarAndInsideTest(k0,\ k1,\ k2,\ k3,\ face,\ node,\ dt);}
+\DoxyCodeLine{00515\ \}}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ deCasteljau(\textcolor{keyword}{const}\ btScalar\&\ k0,\ \textcolor{keyword}{const}\ btScalar\&\ k1,\ \textcolor{keyword}{const}\ btScalar\&\ k2,\ \textcolor{keyword}{const}\ btScalar\&\ k3,\ \textcolor{keyword}{const}\ btScalar\&\ t0,\ btScalar\&\ k10,\ btScalar\&\ k20,\ btScalar\&\ k30,\ btScalar\&\ k21,\ btScalar\&\ k12)}
+\DoxyCodeLine{00518\ \{}
+\DoxyCodeLine{00519\ \ \ \ \ k10\ =\ k0\ *\ (1.0\ -\/\ t0)\ +\ k1\ *\ t0;}
+\DoxyCodeLine{00520\ \ \ \ \ btScalar\ k11\ =\ k1\ *\ (1.0\ -\/\ t0)\ +\ k2\ *\ t0;}
+\DoxyCodeLine{00521\ \ \ \ \ k12\ =\ k2\ *\ (1.0\ -\/\ t0)\ +\ k3\ *\ t0;}
+\DoxyCodeLine{00522\ \ \ \ \ k20\ =\ k10\ *\ (1.0\ -\/\ t0)\ +\ k11\ *\ t0;}
+\DoxyCodeLine{00523\ \ \ \ \ k21\ =\ k11\ *\ (1.0\ -\/\ t0)\ +\ k12\ *\ t0;}
+\DoxyCodeLine{00524\ \ \ \ \ k30\ =\ k20\ *\ (1.0\ -\/\ t0)\ +\ k21\ *\ t0;}
+\DoxyCodeLine{00525\ \}}
+\DoxyCodeLine{00526\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ bernsteinVFTest(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt,\ \textcolor{keyword}{const}\ btScalar\&\ mrg)}
+\DoxyCodeLine{00527\ \{}
+\DoxyCodeLine{00528\ \ \ \ \ btScalar\ k0,\ k1,\ k2,\ k3;}
+\DoxyCodeLine{00529\ \ \ \ \ getBernsteinCoeff(face,\ node,\ dt,\ k0,\ k1,\ k2,\ k3);}
+\DoxyCodeLine{00530\ \ \ \ \ \textcolor{keywordflow}{if}\ (conservativeCulling(k0,\ k1,\ k2,\ k3,\ mrg))}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00532\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00533\ \ \ \ \ \textcolor{keywordflow}{if}\ (diffSign(k2\ -\/\ 2.0\ *\ k1\ +\ k0,\ k3\ -\/\ 2.0\ *\ k2\ +\ k1))}
+\DoxyCodeLine{00534\ \ \ \ \ \{}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ btScalar\ k10,\ k20,\ k30,\ k21,\ k12;}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ btScalar\ t0\ =\ (k2\ -\/\ 2.0\ *\ k1\ +\ k0)\ /\ (k0\ -\/\ 3.0\ *\ k1\ +\ 3.0\ *\ k2\ -\/\ k3);}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ deCasteljau(k0,\ k1,\ k2,\ k3,\ t0,\ k10,\ k20,\ k30,\ k21,\ k12);}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ bernsteinVFTest(k0,\ k10,\ k20,\ k30,\ mrg,\ face,\ node,\ dt)\ ||\ bernsteinVFTest(k30,\ k21,\ k12,\ k3,\ mrg,\ face,\ node,\ dt);}
+\DoxyCodeLine{00539\ \ \ \ \ \}}
+\DoxyCodeLine{00540\ \ \ \ \ \textcolor{keywordflow}{return}\ coplanarAndInsideTest(k0,\ k1,\ k2,\ k3,\ face,\ node,\ dt);}
+\DoxyCodeLine{00541\ \}}
+\DoxyCodeLine{00542\ }
+\DoxyCodeLine{00543\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ continuousCollisionDetection(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt,\ \textcolor{keyword}{const}\ btScalar\&\ mrg,\ btVector3\&\ bary)}
+\DoxyCodeLine{00544\ \{}
+\DoxyCodeLine{00545\ \ \ \ \ \textcolor{keywordflow}{if}\ (hasSeparatingPlane(face,\ node,\ dt))}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00547\ \ \ \ \ btVector3\ x21\ =\ face-\/>m\_n[1]-\/>m\_x\ -\/\ face-\/>m\_n[0]-\/>m\_x;}
+\DoxyCodeLine{00548\ \ \ \ \ btVector3\ x31\ =\ face-\/>m\_n[2]-\/>m\_x\ -\/\ face-\/>m\_n[0]-\/>m\_x;}
+\DoxyCodeLine{00549\ \ \ \ \ btVector3\ x41\ =\ node-\/>m\_x\ -\/\ face-\/>m\_n[0]-\/>m\_x;}
+\DoxyCodeLine{00550\ \ \ \ \ btVector3\ v21\ =\ face-\/>m\_n[1]-\/>m\_v\ -\/\ face-\/>m\_n[0]-\/>m\_v;}
+\DoxyCodeLine{00551\ \ \ \ \ btVector3\ v31\ =\ face-\/>m\_n[2]-\/>m\_v\ -\/\ face-\/>m\_n[0]-\/>m\_v;}
+\DoxyCodeLine{00552\ \ \ \ \ btVector3\ v41\ =\ node-\/>m\_v\ -\/\ face-\/>m\_n[0]-\/>m\_v;}
+\DoxyCodeLine{00553\ \ \ \ \ btVector3\ a\ =\ x21.cross(x31);}
+\DoxyCodeLine{00554\ \ \ \ \ btVector3\ b\ =\ x21.cross(v31)\ +\ v21.cross(x31);}
+\DoxyCodeLine{00555\ \ \ \ \ btVector3\ c\ =\ v21.cross(v31);}
+\DoxyCodeLine{00556\ \ \ \ \ btVector3\ d\ =\ x41;}
+\DoxyCodeLine{00557\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}}\ =\ v41;}
+\DoxyCodeLine{00558\ \ \ \ \ btScalar\ a0\ =\ a.dot(d);}
+\DoxyCodeLine{00559\ \ \ \ \ btScalar\ a1\ =\ a.dot(e)\ +\ b.dot(d);}
+\DoxyCodeLine{00560\ \ \ \ \ btScalar\ a2\ =\ c.dot(d)\ +\ b.dot(e);}
+\DoxyCodeLine{00561\ \ \ \ \ btScalar\ a3\ =\ c.dot(e);}
+\DoxyCodeLine{00562\ \ \ \ \ btScalar\ eps\ =\ SAFE\_EPSILON;}
+\DoxyCodeLine{00563\ \ \ \ \ \textcolor{keywordtype}{int}\ num\_roots\ =\ 0;}
+\DoxyCodeLine{00564\ \ \ \ \ btScalar\ roots[3];}
+\DoxyCodeLine{00565\ \ \ \ \ \textcolor{keywordflow}{if}\ (std::abs(a3)\ <\ eps)}
+\DoxyCodeLine{00566\ \ \ \ \ \{}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ cubic\ term\ is\ zero}}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::abs(a2)\ <\ eps)}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::abs(a1)\ <\ eps)}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::abs(a0)\ <\ eps)}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_roots\ =\ 2;}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ roots[0]\ =\ 0;}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ roots[1]\ =\ dt;}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_roots\ =\ 1;}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ roots[0]\ =\ -\/a0\ /\ a1;}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ num\_roots\ =\ SolveP2(roots,\ a1\ /\ a2,\ a0\ /\ a2);}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00589\ \ \ \ \ \}}
+\DoxyCodeLine{00590\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00591\ \ \ \ \ \{}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ num\_roots\ =\ SolveP3(roots,\ a2\ /\ a3,\ a1\ /\ a3,\ a0\ /\ a3);}
+\DoxyCodeLine{00593\ \ \ \ \ \}}
+\DoxyCodeLine{00594\ \ \ \ \ \textcolor{comment}{//\ \ \ \ std::sort(roots,\ roots+num\_roots);}}
+\DoxyCodeLine{00595\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\_roots\ >\ 1)}
+\DoxyCodeLine{00596\ \ \ \ \ \{}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (roots[0]\ >\ roots[1])}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ btSwap(roots[0],\ roots[1]);}
+\DoxyCodeLine{00599\ \ \ \ \ \}}
+\DoxyCodeLine{00600\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\_roots\ >\ 2)}
+\DoxyCodeLine{00601\ \ \ \ \ \{}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (roots[0]\ >\ roots[2])}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ btSwap(roots[0],\ roots[2]);}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (roots[1]\ >\ roots[2])}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ btSwap(roots[1],\ roots[2]);}
+\DoxyCodeLine{00606\ \ \ \ \ \}}
+\DoxyCodeLine{00607\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ r\ =\ 0;\ r\ <\ num\_roots;\ ++r)}
+\DoxyCodeLine{00608\ \ \ \ \ \{}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ root\ =\ roots[r];}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (root\ <=\ 0)}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (root\ >\ dt\ +\ SIMD\_EPSILON)}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ btVector3\ x1\ =\ face-\/>m\_n[0]-\/>m\_x\ +\ root\ *\ face-\/>m\_n[0]-\/>m\_v;}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ btVector3\ x2\ =\ face-\/>m\_n[1]-\/>m\_x\ +\ root\ *\ face-\/>m\_n[1]-\/>m\_v;}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ btVector3\ x3\ =\ face-\/>m\_n[2]-\/>m\_x\ +\ root\ *\ face-\/>m\_n[2]-\/>m\_v;}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ btVector3\ x4\ =\ node-\/>m\_x\ +\ root\ *\ node-\/>m\_v;}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ btVector3\ normal\ =\ (x2\ -\/\ x1).cross(x3\ -\/\ x1);}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ normal.safeNormalize();}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (proximityTest(x1,\ x2,\ x3,\ x4,\ normal,\ mrg,\ bary))}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00622\ \ \ \ \ \}}
+\DoxyCodeLine{00623\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00624\ \}}
+\DoxyCodeLine{00625\ \textcolor{keyword}{static}\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ bernsteinCCD(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ btScalar\&\ dt,\ \textcolor{keyword}{const}\ btScalar\&\ mrg,\ btVector3\&\ bary)}
+\DoxyCodeLine{00626\ \{}
+\DoxyCodeLine{00627\ \ \ \ \ \textcolor{keywordflow}{if}\ (!bernsteinVFTest(face,\ node,\ dt,\ mrg))}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00629\ \ \ \ \ \textcolor{keywordflow}{if}\ (!continuousCollisionDetection(face,\ node,\ dt,\ 1e-\/6,\ bary))}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00631\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00632\ \}}
+\DoxyCodeLine{00633\ }
+\DoxyCodeLine{00634\ \textcolor{comment}{//}}
+\DoxyCodeLine{00635\ \textcolor{comment}{//\ btSymMatrix}}
+\DoxyCodeLine{00636\ \textcolor{comment}{//}}
+\DoxyCodeLine{00637\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00638\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_sym_matrix}{btSymMatrix}}}
+\DoxyCodeLine{00639\ \{}
+\DoxyCodeLine{00640\ \ \ \ \ \mbox{\hyperlink{structbt_sym_matrix}{btSymMatrix}}()\ :\ dim(0)\ \{\}}
+\DoxyCodeLine{00641\ \ \ \ \ \mbox{\hyperlink{structbt_sym_matrix}{btSymMatrix}}(\textcolor{keywordtype}{int}\ n,\ \textcolor{keyword}{const}\ T\&\ init\ =\ T())\ \{\ resize(n,\ init);\ \}}
+\DoxyCodeLine{00642\ \ \ \ \ \textcolor{keywordtype}{void}\ resize(\textcolor{keywordtype}{int}\ n,\ \textcolor{keyword}{const}\ T\&\ init\ =\ T())}
+\DoxyCodeLine{00643\ \ \ \ \ \{}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ dim\ =\ n;}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ store.resize((n\ *\ (n\ +\ 1))\ /\ 2,\ init);}
+\DoxyCodeLine{00646\ \ \ \ \ \}}
+\DoxyCodeLine{00647\ \ \ \ \ \textcolor{keywordtype}{int}\ index(\textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ r)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00648\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (c\ >\ r)\ btSwap(c,\ r);}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ btAssert(r\ <\ dim);}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((r\ *\ (r\ +\ 1))\ /\ 2\ +\ c);}
+\DoxyCodeLine{00652\ \ \ \ \ \}}
+\DoxyCodeLine{00653\ \ \ \ \ T\&\ operator()(\textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ r)\ \{\ \textcolor{keywordflow}{return}\ (store[index(c,\ r)]);\ \}}
+\DoxyCodeLine{00654\ \ \ \ \ \textcolor{keyword}{const}\ T\&\ operator()(\textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{int}\ r)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (store[index(c,\ r)]);\ \}}
+\DoxyCodeLine{00655\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<T>}}\ store;}
+\DoxyCodeLine{00656\ \ \ \ \ \textcolor{keywordtype}{int}\ dim;}
+\DoxyCodeLine{00657\ \};}
+\DoxyCodeLine{00658\ }
+\DoxyCodeLine{00659\ \textcolor{comment}{//}}
+\DoxyCodeLine{00660\ \textcolor{comment}{//\ btSoftBodyCollisionShape}}
+\DoxyCodeLine{00661\ \textcolor{comment}{//}}
+\DoxyCodeLine{00662\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_soft_body_collision_shape}{btSoftBodyCollisionShape}}\ :\ \textcolor{keyword}{public}\ btConcaveShape}
+\DoxyCodeLine{00663\ \{}
+\DoxyCodeLine{00664\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00665\ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ m\_body;}
+\DoxyCodeLine{00666\ }
+\DoxyCodeLine{00667\ \ \ \ \ \mbox{\hyperlink{classbt_soft_body_collision_shape}{btSoftBodyCollisionShape}}(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ backptr)}
+\DoxyCodeLine{00668\ \ \ \ \ \{}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ m\_shapeType\ =\ SOFTBODY\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ m\_body\ =\ backptr;}
+\DoxyCodeLine{00671\ \ \ \ \ \}}
+\DoxyCodeLine{00672\ }
+\DoxyCodeLine{00673\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_soft_body_collision_shape}{\string~btSoftBodyCollisionShape}}()}
+\DoxyCodeLine{00674\ \ \ \ \ \{}
+\DoxyCodeLine{00675\ \ \ \ \ \}}
+\DoxyCodeLine{00676\ }
+\DoxyCodeLine{00677\ \ \ \ \ \textcolor{keywordtype}{void}\ processAllTriangles(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ \textcolor{comment}{/*callback*/},\ \textcolor{keyword}{const}\ btVector3\&\ \textcolor{comment}{/*aabbMin*/},\ \textcolor{keyword}{const}\ btVector3\&\ \textcolor{comment}{/*aabbMax*/})\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00678\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \textcolor{comment}{//not\ yet}}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00681\ \ \ \ \ \}}
+\DoxyCodeLine{00682\ }
+\DoxyCodeLine{00684\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_soft_body_collision_shape_ade8898813d2d07ad30c26eab3b7a41fc}{getAabb}}(\textcolor{keyword}{const}\ btTransform\&\ t,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00685\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ t\ is\ usually\ identity,\ except\ when\ colliding\ against\ btCompoundShape.\ See\ Issue\ 512\ */}}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ mins\ =\ m\_body-\/>m\_bounds[0];}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ maxs\ =\ m\_body-\/>m\_bounds[1];}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ crns[]\ =\ \{t\ *\ btVector3(mins.x(),\ mins.y(),\ mins.z()),}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ *\ btVector3(maxs.x(),\ mins.y(),\ mins.z()),}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ *\ btVector3(maxs.x(),\ maxs.y(),\ mins.z()),}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ *\ btVector3(mins.x(),\ maxs.y(),\ mins.z()),}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ *\ btVector3(mins.x(),\ mins.y(),\ maxs.z()),}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ *\ btVector3(maxs.x(),\ mins.y(),\ maxs.z()),}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ *\ btVector3(maxs.x(),\ maxs.y(),\ maxs.z()),}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ *\ btVector3(mins.x(),\ maxs.y(),\ maxs.z())\};}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ aabbMin\ =\ aabbMax\ =\ crns[0];}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 1;\ i\ <\ 8;\ ++i)}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMin.setMin(crns[i]);}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMax.setMax(crns[i]);}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00703\ \ \ \ \ \}}
+\DoxyCodeLine{00704\ }
+\DoxyCodeLine{00705\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_soft_body_collision_shape_a4458e1135af76b7ddbaa4befe0bfbc7a}{setLocalScaling}}(\textcolor{keyword}{const}\ btVector3\&\ \textcolor{comment}{/*scaling*/})}
+\DoxyCodeLine{00706\ \ \ \ \ \{}
+\DoxyCodeLine{00708\ \ \ \ \ \}}
+\DoxyCodeLine{00709\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ btVector3\&\ getLocalScaling()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00710\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ btVector3\ dummy(1,\ 1,\ 1);}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ dummy;}
+\DoxyCodeLine{00713\ \ \ \ \ \}}
+\DoxyCodeLine{00714\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_soft_body_collision_shape_a03573ba1bcb8f6599493f80a7f0aae1e}{calculateLocalInertia}}(btScalar\ \textcolor{comment}{/*mass*/},\ btVector3\&\ \textcolor{comment}{/*inertia*/})\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00715\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00718\ \ \ \ \ \}}
+\DoxyCodeLine{00719\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ getName()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00720\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}SoftBody"{}};}
+\DoxyCodeLine{00722\ \ \ \ \ \}}
+\DoxyCodeLine{00723\ \};}
+\DoxyCodeLine{00724\ }
+\DoxyCodeLine{00725\ \textcolor{comment}{//}}
+\DoxyCodeLine{00726\ \textcolor{comment}{//\ btSoftClusterCollisionShape}}
+\DoxyCodeLine{00727\ \textcolor{comment}{//}}
+\DoxyCodeLine{00728\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_soft_cluster_collision_shape}{btSoftClusterCollisionShape}}\ :\ \textcolor{keyword}{public}\ btConvexInternalShape}
+\DoxyCodeLine{00729\ \{}
+\DoxyCodeLine{00730\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00731\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*\ m\_cluster;}
+\DoxyCodeLine{00732\ }
+\DoxyCodeLine{00733\ \ \ \ \ \mbox{\hyperlink{classbt_soft_cluster_collision_shape}{btSoftClusterCollisionShape}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*\ cluster)\ :\ m\_cluster(cluster)\ \{\ setMargin(0);\ \}}
+\DoxyCodeLine{00734\ }
+\DoxyCodeLine{00735\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ localGetSupportingVertex(\textcolor{keyword}{const}\ btVector3\&\ vec)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00736\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ \textcolor{keyword}{const}*\ n\ =\ \&m\_cluster-\/>m\_nodes[0];}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ btScalar\ d\ =\ btDot(vec,\ n[0]-\/>m\_x);}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ j\ =\ 0;}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 1,\ ni\ =\ m\_cluster-\/>m\_nodes.size();\ i\ <\ ni;\ ++i)}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ k\ =\ btDot(vec,\ n[i]-\/>m\_x);}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (k\ >\ d)}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ d\ =\ k;}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ j\ =\ i;}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (n[j]-\/>m\_x);}
+\DoxyCodeLine{00750\ \ \ \ \ \}}
+\DoxyCodeLine{00751\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ localGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3\&\ vec)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00752\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (localGetSupportingVertex(vec));}
+\DoxyCodeLine{00754\ \ \ \ \ \}}
+\DoxyCodeLine{00755\ \ \ \ \ \textcolor{comment}{//notice\ that\ the\ vectors\ should\ be\ unit\ length}}
+\DoxyCodeLine{00756\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ batchedUnitVectorGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3*\ vectors,\ btVector3*\ supportVerticesOut,\ \textcolor{keywordtype}{int}\ numVectors)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00757\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00758\ \ \ \ \ \}}
+\DoxyCodeLine{00759\ }
+\DoxyCodeLine{00760\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateLocalInertia(btScalar\ mass,\ btVector3\&\ inertia)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00761\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00762\ \ \ \ \ \}}
+\DoxyCodeLine{00763\ }
+\DoxyCodeLine{00764\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getAabb(\textcolor{keyword}{const}\ btTransform\&\ t,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00765\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00766\ \ \ \ \ \}}
+\DoxyCodeLine{00767\ }
+\DoxyCodeLine{00768\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getShapeType()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ SOFTBODY\_SHAPE\_PROXYTYPE;\ \}}
+\DoxyCodeLine{00769\ }
+\DoxyCodeLine{00770\ \ \ \ \ \textcolor{comment}{//debugging}}
+\DoxyCodeLine{00771\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ getName()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}SOFTCLUSTER"{}};\ \}}
+\DoxyCodeLine{00772\ }
+\DoxyCodeLine{00773\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setMargin(btScalar\ margin)}
+\DoxyCodeLine{00774\ \ \ \ \ \{}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ btConvexInternalShape::setMargin(margin);}
+\DoxyCodeLine{00776\ \ \ \ \ \}}
+\DoxyCodeLine{00777\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ getMargin()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00778\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btConvexInternalShape::getMargin();}
+\DoxyCodeLine{00780\ \ \ \ \ \}}
+\DoxyCodeLine{00781\ \};}
+\DoxyCodeLine{00782\ }
+\DoxyCodeLine{00783\ \textcolor{comment}{//}}
+\DoxyCodeLine{00784\ \textcolor{comment}{//\ Inline's}}
+\DoxyCodeLine{00785\ \textcolor{comment}{//}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \textcolor{comment}{//}}
+\DoxyCodeLine{00788\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00789\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ ZeroInitialize(T\&\ value)}
+\DoxyCodeLine{00790\ \{}
+\DoxyCodeLine{00791\ \ \ \ \ memset(\&value,\ 0,\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00792\ \}}
+\DoxyCodeLine{00793\ \textcolor{comment}{//}}
+\DoxyCodeLine{00794\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00795\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ CompLess(\textcolor{keyword}{const}\ T\&\ a,\ \textcolor{keyword}{const}\ T\&\ b)}
+\DoxyCodeLine{00796\ \{}
+\DoxyCodeLine{00797\ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ <\ b);}
+\DoxyCodeLine{00798\ \}}
+\DoxyCodeLine{00799\ \textcolor{comment}{//}}
+\DoxyCodeLine{00800\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00801\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ CompGreater(\textcolor{keyword}{const}\ T\&\ a,\ \textcolor{keyword}{const}\ T\&\ b)}
+\DoxyCodeLine{00802\ \{}
+\DoxyCodeLine{00803\ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ >\ b);}
+\DoxyCodeLine{00804\ \}}
+\DoxyCodeLine{00805\ \textcolor{comment}{//}}
+\DoxyCodeLine{00806\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00807\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ T\ Lerp(\textcolor{keyword}{const}\ T\&\ a,\ \textcolor{keyword}{const}\ T\&\ b,\ btScalar\ t)}
+\DoxyCodeLine{00808\ \{}
+\DoxyCodeLine{00809\ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ +\ (b\ -\/\ a)\ *\ t);}
+\DoxyCodeLine{00810\ \}}
+\DoxyCodeLine{00811\ \textcolor{comment}{//}}
+\DoxyCodeLine{00812\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00813\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ T\ InvLerp(\textcolor{keyword}{const}\ T\&\ a,\ \textcolor{keyword}{const}\ T\&\ b,\ btScalar\ t)}
+\DoxyCodeLine{00814\ \{}
+\DoxyCodeLine{00815\ \ \ \ \ \textcolor{keywordflow}{return}\ ((b\ +\ a\ *\ t\ -\/\ b\ *\ t)\ /\ (a\ *\ b));}
+\DoxyCodeLine{00816\ \}}
+\DoxyCodeLine{00817\ \textcolor{comment}{//}}
+\DoxyCodeLine{00818\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ Lerp(\textcolor{keyword}{const}\ btMatrix3x3\&\ a,}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ b,}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ t)}
+\DoxyCodeLine{00821\ \{}
+\DoxyCodeLine{00822\ \ \ \ \ btMatrix3x3\ r;}
+\DoxyCodeLine{00823\ \ \ \ \ r[0]\ =\ Lerp(a[0],\ b[0],\ t);}
+\DoxyCodeLine{00824\ \ \ \ \ r[1]\ =\ Lerp(a[1],\ b[1],\ t);}
+\DoxyCodeLine{00825\ \ \ \ \ r[2]\ =\ Lerp(a[2],\ b[2],\ t);}
+\DoxyCodeLine{00826\ \ \ \ \ \textcolor{keywordflow}{return}\ (r);}
+\DoxyCodeLine{00827\ \}}
+\DoxyCodeLine{00828\ \textcolor{comment}{//}}
+\DoxyCodeLine{00829\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btVector3\ Clamp(\textcolor{keyword}{const}\ btVector3\&\ v,\ btScalar\ maxlength)}
+\DoxyCodeLine{00830\ \{}
+\DoxyCodeLine{00831\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ sql\ =\ v.length2();}
+\DoxyCodeLine{00832\ \ \ \ \ \textcolor{keywordflow}{if}\ (sql\ >\ (maxlength\ *\ maxlength))}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((v\ *\ maxlength)\ /\ btSqrt(sql));}
+\DoxyCodeLine{00834\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (v);}
+\DoxyCodeLine{00836\ \}}
+\DoxyCodeLine{00837\ \textcolor{comment}{//}}
+\DoxyCodeLine{00838\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00839\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ T\ Clamp(\textcolor{keyword}{const}\ T\&\ x,\ \textcolor{keyword}{const}\ T\&\ l,\ \textcolor{keyword}{const}\ T\&\ h)}
+\DoxyCodeLine{00840\ \{}
+\DoxyCodeLine{00841\ \ \ \ \ \textcolor{keywordflow}{return}\ (x\ <\ l\ ?\ l\ :\ x\ >\ h\ ?\ h\ :\ x);}
+\DoxyCodeLine{00842\ \}}
+\DoxyCodeLine{00843\ \textcolor{comment}{//}}
+\DoxyCodeLine{00844\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00845\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ T\ Sq(\textcolor{keyword}{const}\ T\&\ x)}
+\DoxyCodeLine{00846\ \{}
+\DoxyCodeLine{00847\ \ \ \ \ \textcolor{keywordflow}{return}\ (x\ *\ x);}
+\DoxyCodeLine{00848\ \}}
+\DoxyCodeLine{00849\ \textcolor{comment}{//}}
+\DoxyCodeLine{00850\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00851\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ T\ Cube(\textcolor{keyword}{const}\ T\&\ x)}
+\DoxyCodeLine{00852\ \{}
+\DoxyCodeLine{00853\ \ \ \ \ \textcolor{keywordflow}{return}\ (x\ *\ x\ *\ x);}
+\DoxyCodeLine{00854\ \}}
+\DoxyCodeLine{00855\ \textcolor{comment}{//}}
+\DoxyCodeLine{00856\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00857\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ T\ Sign(\textcolor{keyword}{const}\ T\&\ x)}
+\DoxyCodeLine{00858\ \{}
+\DoxyCodeLine{00859\ \ \ \ \ \textcolor{keywordflow}{return}\ ((T)(x\ <\ 0\ ?\ -\/1\ :\ +1));}
+\DoxyCodeLine{00860\ \}}
+\DoxyCodeLine{00861\ \textcolor{comment}{//}}
+\DoxyCodeLine{00862\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00863\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ SameSign(\textcolor{keyword}{const}\ T\&\ x,\ \textcolor{keyword}{const}\ T\&\ y)}
+\DoxyCodeLine{00864\ \{}
+\DoxyCodeLine{00865\ \ \ \ \ \textcolor{keywordflow}{return}\ ((x\ *\ y)\ >\ 0);}
+\DoxyCodeLine{00866\ \}}
+\DoxyCodeLine{00867\ \textcolor{comment}{//}}
+\DoxyCodeLine{00868\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ ClusterMetric(\textcolor{keyword}{const}\ btVector3\&\ x,\ \textcolor{keyword}{const}\ btVector3\&\ y)}
+\DoxyCodeLine{00869\ \{}
+\DoxyCodeLine{00870\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ d\ =\ x\ -\/\ y;}
+\DoxyCodeLine{00871\ \ \ \ \ \textcolor{keywordflow}{return}\ (btFabs(d[0])\ +\ btFabs(d[1])\ +\ btFabs(d[2]));}
+\DoxyCodeLine{00872\ \}}
+\DoxyCodeLine{00873\ \textcolor{comment}{//}}
+\DoxyCodeLine{00874\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ ScaleAlongAxis(\textcolor{keyword}{const}\ btVector3\&\ a,\ btScalar\ s)}
+\DoxyCodeLine{00875\ \{}
+\DoxyCodeLine{00876\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ xx\ =\ a.x()\ *\ a.x();}
+\DoxyCodeLine{00877\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ yy\ =\ a.y()\ *\ a.y();}
+\DoxyCodeLine{00878\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ zz\ =\ a.z()\ *\ a.z();}
+\DoxyCodeLine{00879\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ xy\ =\ a.x()\ *\ a.y();}
+\DoxyCodeLine{00880\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ yz\ =\ a.y()\ *\ a.z();}
+\DoxyCodeLine{00881\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ zx\ =\ a.z()\ *\ a.x();}
+\DoxyCodeLine{00882\ \ \ \ \ btMatrix3x3\ m;}
+\DoxyCodeLine{00883\ \ \ \ \ m[0]\ =\ btVector3(1\ -\/\ xx\ +\ xx\ *\ s,\ xy\ *\ s\ -\/\ xy,\ zx\ *\ s\ -\/\ zx);}
+\DoxyCodeLine{00884\ \ \ \ \ m[1]\ =\ btVector3(xy\ *\ s\ -\/\ xy,\ 1\ -\/\ yy\ +\ yy\ *\ s,\ yz\ *\ s\ -\/\ yz);}
+\DoxyCodeLine{00885\ \ \ \ \ m[2]\ =\ btVector3(zx\ *\ s\ -\/\ zx,\ yz\ *\ s\ -\/\ yz,\ 1\ -\/\ zz\ +\ zz\ *\ s);}
+\DoxyCodeLine{00886\ \ \ \ \ \textcolor{keywordflow}{return}\ (m);}
+\DoxyCodeLine{00887\ \}}
+\DoxyCodeLine{00888\ \textcolor{comment}{//}}
+\DoxyCodeLine{00889\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ Cross(\textcolor{keyword}{const}\ btVector3\&\ v)}
+\DoxyCodeLine{00890\ \{}
+\DoxyCodeLine{00891\ \ \ \ \ btMatrix3x3\ m;}
+\DoxyCodeLine{00892\ \ \ \ \ m[0]\ =\ btVector3(0,\ -\/v.z(),\ +v.y());}
+\DoxyCodeLine{00893\ \ \ \ \ m[1]\ =\ btVector3(+v.z(),\ 0,\ -\/v.x());}
+\DoxyCodeLine{00894\ \ \ \ \ m[2]\ =\ btVector3(-\/v.y(),\ +v.x(),\ 0);}
+\DoxyCodeLine{00895\ \ \ \ \ \textcolor{keywordflow}{return}\ (m);}
+\DoxyCodeLine{00896\ \}}
+\DoxyCodeLine{00897\ \textcolor{comment}{//}}
+\DoxyCodeLine{00898\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ Diagonal(btScalar\ x)}
+\DoxyCodeLine{00899\ \{}
+\DoxyCodeLine{00900\ \ \ \ \ btMatrix3x3\ m;}
+\DoxyCodeLine{00901\ \ \ \ \ m[0]\ =\ btVector3(x,\ 0,\ 0);}
+\DoxyCodeLine{00902\ \ \ \ \ m[1]\ =\ btVector3(0,\ x,\ 0);}
+\DoxyCodeLine{00903\ \ \ \ \ m[2]\ =\ btVector3(0,\ 0,\ x);}
+\DoxyCodeLine{00904\ \ \ \ \ \textcolor{keywordflow}{return}\ (m);}
+\DoxyCodeLine{00905\ \}}
+\DoxyCodeLine{00906\ }
+\DoxyCodeLine{00907\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ Diagonal(\textcolor{keyword}{const}\ btVector3\&\ v)}
+\DoxyCodeLine{00908\ \{}
+\DoxyCodeLine{00909\ \ \ \ \ btMatrix3x3\ m;}
+\DoxyCodeLine{00910\ \ \ \ \ m[0]\ =\ btVector3(v.getX(),\ 0,\ 0);}
+\DoxyCodeLine{00911\ \ \ \ \ m[1]\ =\ btVector3(0,\ v.getY(),\ 0);}
+\DoxyCodeLine{00912\ \ \ \ \ m[2]\ =\ btVector3(0,\ 0,\ v.getZ());}
+\DoxyCodeLine{00913\ \ \ \ \ \textcolor{keywordflow}{return}\ (m);}
+\DoxyCodeLine{00914\ \}}
+\DoxyCodeLine{00915\ }
+\DoxyCodeLine{00916\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ Dot(\textcolor{keyword}{const}\ btScalar*\ a,\ \textcolor{keyword}{const}\ btScalar*\ b,\ \textcolor{keywordtype}{int}\ ndof)}
+\DoxyCodeLine{00917\ \{}
+\DoxyCodeLine{00918\ \ \ \ \ btScalar\ result\ =\ 0;}
+\DoxyCodeLine{00919\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ ndof;\ ++i)}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ result\ +=\ a[i]\ *\ b[i];}
+\DoxyCodeLine{00921\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00922\ \}}
+\DoxyCodeLine{00923\ }
+\DoxyCodeLine{00924\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ OuterProduct(\textcolor{keyword}{const}\ btScalar*\ v1,\ \textcolor{keyword}{const}\ btScalar*\ v2,\ \textcolor{keyword}{const}\ btScalar*\ v3,}
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ u1,\ \textcolor{keyword}{const}\ btScalar*\ u2,\ \textcolor{keyword}{const}\ btScalar*\ u3,\ \textcolor{keywordtype}{int}\ ndof)}
+\DoxyCodeLine{00926\ \{}
+\DoxyCodeLine{00927\ \ \ \ \ btMatrix3x3\ m;}
+\DoxyCodeLine{00928\ \ \ \ \ btScalar\ a11\ =\ Dot(v1,\ u1,\ ndof);}
+\DoxyCodeLine{00929\ \ \ \ \ btScalar\ a12\ =\ Dot(v1,\ u2,\ ndof);}
+\DoxyCodeLine{00930\ \ \ \ \ btScalar\ a13\ =\ Dot(v1,\ u3,\ ndof);}
+\DoxyCodeLine{00931\ }
+\DoxyCodeLine{00932\ \ \ \ \ btScalar\ a21\ =\ Dot(v2,\ u1,\ ndof);}
+\DoxyCodeLine{00933\ \ \ \ \ btScalar\ a22\ =\ Dot(v2,\ u2,\ ndof);}
+\DoxyCodeLine{00934\ \ \ \ \ btScalar\ a23\ =\ Dot(v2,\ u3,\ ndof);}
+\DoxyCodeLine{00935\ }
+\DoxyCodeLine{00936\ \ \ \ \ btScalar\ a31\ =\ Dot(v3,\ u1,\ ndof);}
+\DoxyCodeLine{00937\ \ \ \ \ btScalar\ a32\ =\ Dot(v3,\ u2,\ ndof);}
+\DoxyCodeLine{00938\ \ \ \ \ btScalar\ a33\ =\ Dot(v3,\ u3,\ ndof);}
+\DoxyCodeLine{00939\ \ \ \ \ m[0]\ =\ btVector3(a11,\ a12,\ a13);}
+\DoxyCodeLine{00940\ \ \ \ \ m[1]\ =\ btVector3(a21,\ a22,\ a23);}
+\DoxyCodeLine{00941\ \ \ \ \ m[2]\ =\ btVector3(a31,\ a32,\ a33);}
+\DoxyCodeLine{00942\ \ \ \ \ \textcolor{keywordflow}{return}\ (m);}
+\DoxyCodeLine{00943\ \}}
+\DoxyCodeLine{00944\ }
+\DoxyCodeLine{00945\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ OuterProduct(\textcolor{keyword}{const}\ btVector3\&\ v1,\ \textcolor{keyword}{const}\ btVector3\&\ v2)}
+\DoxyCodeLine{00946\ \{}
+\DoxyCodeLine{00947\ \ \ \ \ btMatrix3x3\ m;}
+\DoxyCodeLine{00948\ \ \ \ \ btScalar\ a11\ =\ v1[0]\ *\ v2[0];}
+\DoxyCodeLine{00949\ \ \ \ \ btScalar\ a12\ =\ v1[0]\ *\ v2[1];}
+\DoxyCodeLine{00950\ \ \ \ \ btScalar\ a13\ =\ v1[0]\ *\ v2[2];}
+\DoxyCodeLine{00951\ }
+\DoxyCodeLine{00952\ \ \ \ \ btScalar\ a21\ =\ v1[1]\ *\ v2[0];}
+\DoxyCodeLine{00953\ \ \ \ \ btScalar\ a22\ =\ v1[1]\ *\ v2[1];}
+\DoxyCodeLine{00954\ \ \ \ \ btScalar\ a23\ =\ v1[1]\ *\ v2[2];}
+\DoxyCodeLine{00955\ }
+\DoxyCodeLine{00956\ \ \ \ \ btScalar\ a31\ =\ v1[2]\ *\ v2[0];}
+\DoxyCodeLine{00957\ \ \ \ \ btScalar\ a32\ =\ v1[2]\ *\ v2[1];}
+\DoxyCodeLine{00958\ \ \ \ \ btScalar\ a33\ =\ v1[2]\ *\ v2[2];}
+\DoxyCodeLine{00959\ \ \ \ \ m[0]\ =\ btVector3(a11,\ a12,\ a13);}
+\DoxyCodeLine{00960\ \ \ \ \ m[1]\ =\ btVector3(a21,\ a22,\ a23);}
+\DoxyCodeLine{00961\ \ \ \ \ m[2]\ =\ btVector3(a31,\ a32,\ a33);}
+\DoxyCodeLine{00962\ \ \ \ \ \textcolor{keywordflow}{return}\ (m);}
+\DoxyCodeLine{00963\ \}}
+\DoxyCodeLine{00964\ }
+\DoxyCodeLine{00965\ \textcolor{comment}{//}}
+\DoxyCodeLine{00966\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ Add(\textcolor{keyword}{const}\ btMatrix3x3\&\ a,}
+\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ b)}
+\DoxyCodeLine{00968\ \{}
+\DoxyCodeLine{00969\ \ \ \ \ btMatrix3x3\ r;}
+\DoxyCodeLine{00970\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)\ r[i]\ =\ a[i]\ +\ b[i];}
+\DoxyCodeLine{00971\ \ \ \ \ \textcolor{keywordflow}{return}\ (r);}
+\DoxyCodeLine{00972\ \}}
+\DoxyCodeLine{00973\ \textcolor{comment}{//}}
+\DoxyCodeLine{00974\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ Sub(\textcolor{keyword}{const}\ btMatrix3x3\&\ a,}
+\DoxyCodeLine{00975\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ b)}
+\DoxyCodeLine{00976\ \{}
+\DoxyCodeLine{00977\ \ \ \ \ btMatrix3x3\ r;}
+\DoxyCodeLine{00978\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)\ r[i]\ =\ a[i]\ -\/\ b[i];}
+\DoxyCodeLine{00979\ \ \ \ \ \textcolor{keywordflow}{return}\ (r);}
+\DoxyCodeLine{00980\ \}}
+\DoxyCodeLine{00981\ \textcolor{comment}{//}}
+\DoxyCodeLine{00982\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ Mul(\textcolor{keyword}{const}\ btMatrix3x3\&\ a,}
+\DoxyCodeLine{00983\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ b)}
+\DoxyCodeLine{00984\ \{}
+\DoxyCodeLine{00985\ \ \ \ \ btMatrix3x3\ r;}
+\DoxyCodeLine{00986\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)\ r[i]\ =\ a[i]\ *\ b;}
+\DoxyCodeLine{00987\ \ \ \ \ \textcolor{keywordflow}{return}\ (r);}
+\DoxyCodeLine{00988\ \}}
+\DoxyCodeLine{00989\ \textcolor{comment}{//}}
+\DoxyCodeLine{00990\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ Orthogonalize(btMatrix3x3\&\ m)}
+\DoxyCodeLine{00991\ \{}
+\DoxyCodeLine{00992\ \ \ \ \ m[2]\ =\ btCross(m[0],\ m[1]).normalized();}
+\DoxyCodeLine{00993\ \ \ \ \ m[1]\ =\ btCross(m[2],\ m[0]).normalized();}
+\DoxyCodeLine{00994\ \ \ \ \ m[0]\ =\ btCross(m[1],\ m[2]).normalized();}
+\DoxyCodeLine{00995\ \}}
+\DoxyCodeLine{00996\ \textcolor{comment}{//}}
+\DoxyCodeLine{00997\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ MassMatrix(btScalar\ im,\ \textcolor{keyword}{const}\ btMatrix3x3\&\ iwi,\ \textcolor{keyword}{const}\ btVector3\&\ r)}
+\DoxyCodeLine{00998\ \{}
+\DoxyCodeLine{00999\ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\ cr\ =\ Cross(r);}
+\DoxyCodeLine{01000\ \ \ \ \ \textcolor{keywordflow}{return}\ (Sub(Diagonal(im),\ cr\ *\ iwi\ *\ cr));}
+\DoxyCodeLine{01001\ \}}
+\DoxyCodeLine{01002\ }
+\DoxyCodeLine{01003\ \textcolor{comment}{//}}
+\DoxyCodeLine{01004\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ ImpulseMatrix(btScalar\ dt,}
+\DoxyCodeLine{01005\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ ima,}
+\DoxyCodeLine{01006\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ imb,}
+\DoxyCodeLine{01007\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ iwi,}
+\DoxyCodeLine{01008\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ r)}
+\DoxyCodeLine{01009\ \{}
+\DoxyCodeLine{01010\ \ \ \ \ \textcolor{keywordflow}{return}\ (Diagonal(1\ /\ dt)\ *\ Add(Diagonal(ima),\ MassMatrix(imb,\ iwi,\ r)).inverse());}
+\DoxyCodeLine{01011\ \}}
+\DoxyCodeLine{01012\ }
+\DoxyCodeLine{01013\ \textcolor{comment}{//}}
+\DoxyCodeLine{01014\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ ImpulseMatrix(btScalar\ dt,}
+\DoxyCodeLine{01015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ effective\_mass\_inv,}
+\DoxyCodeLine{01016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ imb,}
+\DoxyCodeLine{01017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ iwi,}
+\DoxyCodeLine{01018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ r)}
+\DoxyCodeLine{01019\ \{}
+\DoxyCodeLine{01020\ \ \ \ \ \textcolor{keywordflow}{return}\ (Diagonal(1\ /\ dt)\ *\ Add(effective\_mass\_inv,\ MassMatrix(imb,\ iwi,\ r)).inverse());}
+\DoxyCodeLine{01021\ \ \ \ \ \textcolor{comment}{//\ \ \ \ btMatrix3x3\ iimb\ =\ MassMatrix(imb,\ iwi,\ r);}}
+\DoxyCodeLine{01022\ \ \ \ \ \textcolor{comment}{//\ \ \ \ if\ (iimb.determinant()\ ==\ 0)}}
+\DoxyCodeLine{01023\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ return\ effective\_mass\_inv.inverse();}}
+\DoxyCodeLine{01024\ \ \ \ \ \textcolor{comment}{//\ \ \ \ return\ effective\_mass\_inv.inverse()\ *\ \ Add(effective\_mass\_inv.inverse(),\ iimb.inverse()).inverse()\ *\ iimb.inverse();}}
+\DoxyCodeLine{01025\ \}}
+\DoxyCodeLine{01026\ }
+\DoxyCodeLine{01027\ \textcolor{comment}{//}}
+\DoxyCodeLine{01028\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ ImpulseMatrix(btScalar\ ima,\ \textcolor{keyword}{const}\ btMatrix3x3\&\ iia,\ \textcolor{keyword}{const}\ btVector3\&\ ra,}
+\DoxyCodeLine{01029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ imb,\ \textcolor{keyword}{const}\ btMatrix3x3\&\ iib,\ \textcolor{keyword}{const}\ btVector3\&\ rb)}
+\DoxyCodeLine{01030\ \{}
+\DoxyCodeLine{01031\ \ \ \ \ \textcolor{keywordflow}{return}\ (Add(MassMatrix(ima,\ iia,\ ra),\ MassMatrix(imb,\ iib,\ rb)).inverse());}
+\DoxyCodeLine{01032\ \}}
+\DoxyCodeLine{01033\ }
+\DoxyCodeLine{01034\ \textcolor{comment}{//}}
+\DoxyCodeLine{01035\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btMatrix3x3\ AngularImpulseMatrix(\textcolor{keyword}{const}\ btMatrix3x3\&\ iia,}
+\DoxyCodeLine{01036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ iib)}
+\DoxyCodeLine{01037\ \{}
+\DoxyCodeLine{01038\ \ \ \ \ \textcolor{keywordflow}{return}\ (Add(iia,\ iib).inverse());}
+\DoxyCodeLine{01039\ \}}
+\DoxyCodeLine{01040\ }
+\DoxyCodeLine{01041\ \textcolor{comment}{//}}
+\DoxyCodeLine{01042\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btVector3\ ProjectOnAxis(\textcolor{keyword}{const}\ btVector3\&\ v,}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ a)}
+\DoxyCodeLine{01044\ \{}
+\DoxyCodeLine{01045\ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ *\ btDot(v,\ a));}
+\DoxyCodeLine{01046\ \}}
+\DoxyCodeLine{01047\ \textcolor{comment}{//}}
+\DoxyCodeLine{01048\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btVector3\ ProjectOnPlane(\textcolor{keyword}{const}\ btVector3\&\ v,}
+\DoxyCodeLine{01049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ a)}
+\DoxyCodeLine{01050\ \{}
+\DoxyCodeLine{01051\ \ \ \ \ \textcolor{keywordflow}{return}\ (v\ -\/\ ProjectOnAxis(v,\ a));}
+\DoxyCodeLine{01052\ \}}
+\DoxyCodeLine{01053\ }
+\DoxyCodeLine{01054\ \textcolor{comment}{//}}
+\DoxyCodeLine{01055\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ ProjectOrigin(\textcolor{keyword}{const}\ btVector3\&\ a,}
+\DoxyCodeLine{01056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b,}
+\DoxyCodeLine{01057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\&\ prj,}
+\DoxyCodeLine{01058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\&\ sqd)}
+\DoxyCodeLine{01059\ \{}
+\DoxyCodeLine{01060\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ d\ =\ b\ -\/\ a;}
+\DoxyCodeLine{01061\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m2\ =\ d.length2();}
+\DoxyCodeLine{01062\ \ \ \ \ \textcolor{keywordflow}{if}\ (m2\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{01063\ \ \ \ \ \{}
+\DoxyCodeLine{01064\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ t\ =\ Clamp<btScalar>(-\/btDot(a,\ d)\ /\ m2,\ 0,\ 1);}
+\DoxyCodeLine{01065\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ p\ =\ a\ +\ d\ *\ t;}
+\DoxyCodeLine{01066\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ l2\ =\ p.length2();}
+\DoxyCodeLine{01067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l2\ <\ sqd)}
+\DoxyCodeLine{01068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01069\ \ \ \ \ \ \ \ \ \ \ \ \ prj\ =\ p;}
+\DoxyCodeLine{01070\ \ \ \ \ \ \ \ \ \ \ \ \ sqd\ =\ l2;}
+\DoxyCodeLine{01071\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01072\ \ \ \ \ \}}
+\DoxyCodeLine{01073\ \}}
+\DoxyCodeLine{01074\ \textcolor{comment}{//}}
+\DoxyCodeLine{01075\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ ProjectOrigin(\textcolor{keyword}{const}\ btVector3\&\ a,}
+\DoxyCodeLine{01076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b,}
+\DoxyCodeLine{01077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ c,}
+\DoxyCodeLine{01078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\&\ prj,}
+\DoxyCodeLine{01079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\&\ sqd)}
+\DoxyCodeLine{01080\ \{}
+\DoxyCodeLine{01081\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ q\ =\ btCross(b\ -\/\ a,\ c\ -\/\ a);}
+\DoxyCodeLine{01082\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m2\ =\ q.length2();}
+\DoxyCodeLine{01083\ \ \ \ \ \textcolor{keywordflow}{if}\ (m2\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{01084\ \ \ \ \ \{}
+\DoxyCodeLine{01085\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ n\ =\ q\ /\ btSqrt(m2);}
+\DoxyCodeLine{01086\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ k\ =\ btDot(a,\ n);}
+\DoxyCodeLine{01087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ k2\ =\ k\ *\ k;}
+\DoxyCodeLine{01088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (k2\ <\ sqd)}
+\DoxyCodeLine{01089\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01090\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ p\ =\ n\ *\ k;}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((btDot(btCross(a\ -\/\ p,\ b\ -\/\ p),\ q)\ >\ 0)\ \&\&}
+\DoxyCodeLine{01092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (btDot(btCross(b\ -\/\ p,\ c\ -\/\ p),\ q)\ >\ 0)\ \&\&}
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (btDot(btCross(c\ -\/\ p,\ a\ -\/\ p),\ q)\ >\ 0))}
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ prj\ =\ p;}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sqd\ =\ k2;}
+\DoxyCodeLine{01097\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01099\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProjectOrigin(a,\ b,\ prj,\ sqd);}
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProjectOrigin(b,\ c,\ prj,\ sqd);}
+\DoxyCodeLine{01102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProjectOrigin(c,\ a,\ prj,\ sqd);}
+\DoxyCodeLine{01103\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01104\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01105\ \ \ \ \ \}}
+\DoxyCodeLine{01106\ \}}
+\DoxyCodeLine{01107\ }
+\DoxyCodeLine{01108\ \textcolor{comment}{//}}
+\DoxyCodeLine{01109\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ rayIntersectsTriangle(\textcolor{keyword}{const}\ btVector3\&\ origin,\ \textcolor{keyword}{const}\ btVector3\&\ dir,\ \textcolor{keyword}{const}\ btVector3\&\ v0,\ \textcolor{keyword}{const}\ btVector3\&\ v1,\ \textcolor{keyword}{const}\ btVector3\&\ v2,\ btScalar\&\ t)}
+\DoxyCodeLine{01110\ \{}
+\DoxyCodeLine{01111\ \ \ \ \ btScalar\ a,\ f,\ u,\ v;}
+\DoxyCodeLine{01112\ }
+\DoxyCodeLine{01113\ \ \ \ \ btVector3\ e1\ =\ v1\ -\/\ v0;}
+\DoxyCodeLine{01114\ \ \ \ \ btVector3\ e2\ =\ v2\ -\/\ v0;}
+\DoxyCodeLine{01115\ \ \ \ \ btVector3\ h\ =\ dir.cross(e2);}
+\DoxyCodeLine{01116\ \ \ \ \ a\ =\ e1.dot(h);}
+\DoxyCodeLine{01117\ }
+\DoxyCodeLine{01118\ \ \ \ \ \textcolor{keywordflow}{if}\ (a\ >\ -\/0.00001\ \&\&\ a\ <\ 0.00001)}
+\DoxyCodeLine{01119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{false});}
+\DoxyCodeLine{01120\ }
+\DoxyCodeLine{01121\ \ \ \ \ f\ =\ btScalar(1)\ /\ a;}
+\DoxyCodeLine{01122\ \ \ \ \ btVector3\ s\ =\ origin\ -\/\ v0;}
+\DoxyCodeLine{01123\ \ \ \ \ u\ =\ f\ *\ s.dot(h);}
+\DoxyCodeLine{01124\ }
+\DoxyCodeLine{01125\ \ \ \ \ \textcolor{keywordflow}{if}\ (u\ <\ 0.0\ ||\ u\ >\ 1.0)}
+\DoxyCodeLine{01126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{false});}
+\DoxyCodeLine{01127\ }
+\DoxyCodeLine{01128\ \ \ \ \ btVector3\ q\ =\ s.cross(e1);}
+\DoxyCodeLine{01129\ \ \ \ \ v\ =\ f\ *\ dir.dot(q);}
+\DoxyCodeLine{01130\ \ \ \ \ \textcolor{keywordflow}{if}\ (v\ <\ 0.0\ ||\ u\ +\ v\ >\ 1.0)}
+\DoxyCodeLine{01131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{false});}
+\DoxyCodeLine{01132\ \ \ \ \ \textcolor{comment}{//\ at\ this\ stage\ we\ can\ compute\ t\ to\ find\ out\ where}}
+\DoxyCodeLine{01133\ \ \ \ \ \textcolor{comment}{//\ the\ intersection\ point\ is\ on\ the\ line}}
+\DoxyCodeLine{01134\ \ \ \ \ t\ =\ f\ *\ e2.dot(q);}
+\DoxyCodeLine{01135\ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ >\ 0)\ \ \textcolor{comment}{//\ ray\ intersection}}
+\DoxyCodeLine{01136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{true});}
+\DoxyCodeLine{01137\ \ \ \ \ \textcolor{keywordflow}{else}\ \ \textcolor{comment}{//\ this\ means\ that\ there\ is\ a\ line\ intersection}}
+\DoxyCodeLine{01138\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ but\ not\ a\ ray\ intersection}}
+\DoxyCodeLine{01139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{false});}
+\DoxyCodeLine{01140\ \}}
+\DoxyCodeLine{01141\ }
+\DoxyCodeLine{01142\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ lineIntersectsTriangle(\textcolor{keyword}{const}\ btVector3\&\ rayStart,\ \textcolor{keyword}{const}\ btVector3\&\ rayEnd,\ \textcolor{keyword}{const}\ btVector3\&\ p1,\ \textcolor{keyword}{const}\ btVector3\&\ p2,\ \textcolor{keyword}{const}\ btVector3\&\ p3,\ btVector3\&\ sect,\ btVector3\&\ normal)}
+\DoxyCodeLine{01143\ \{}
+\DoxyCodeLine{01144\ \ \ \ \ btVector3\ dir\ =\ rayEnd\ -\/\ rayStart;}
+\DoxyCodeLine{01145\ \ \ \ \ btScalar\ dir\_norm\ =\ dir.norm();}
+\DoxyCodeLine{01146\ \ \ \ \ \textcolor{keywordflow}{if}\ (dir\_norm\ <\ SIMD\_EPSILON)}
+\DoxyCodeLine{01147\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01148\ \ \ \ \ dir.normalize();}
+\DoxyCodeLine{01149\ \ \ \ \ btScalar\ t;}
+\DoxyCodeLine{01150\ \ \ \ \ \textcolor{keywordtype}{bool}\ ret\ =\ rayIntersectsTriangle(rayStart,\ dir,\ p1,\ p2,\ p3,\ t);}
+\DoxyCodeLine{01151\ }
+\DoxyCodeLine{01152\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret)}
+\DoxyCodeLine{01153\ \ \ \ \ \{}
+\DoxyCodeLine{01154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ <=\ dir\_norm)}
+\DoxyCodeLine{01155\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01156\ \ \ \ \ \ \ \ \ \ \ \ \ sect\ =\ rayStart\ +\ dir\ *\ t;}
+\DoxyCodeLine{01157\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01159\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01160\ \ \ \ \ \ \ \ \ \ \ \ \ ret\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01162\ \ \ \ \ \}}
+\DoxyCodeLine{01163\ }
+\DoxyCodeLine{01164\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret)}
+\DoxyCodeLine{01165\ \ \ \ \ \{}
+\DoxyCodeLine{01166\ \ \ \ \ \ \ \ \ btVector3\ n\ =\ (p3\ -\/\ p1).cross(p2\ -\/\ p1);}
+\DoxyCodeLine{01167\ \ \ \ \ \ \ \ \ n.safeNormalize();}
+\DoxyCodeLine{01168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n.dot(dir)\ <\ 0)}
+\DoxyCodeLine{01169\ \ \ \ \ \ \ \ \ \ \ \ \ normal\ =\ n;}
+\DoxyCodeLine{01170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01171\ \ \ \ \ \ \ \ \ \ \ \ \ normal\ =\ -\/n;}
+\DoxyCodeLine{01172\ \ \ \ \ \}}
+\DoxyCodeLine{01173\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{01174\ \}}
+\DoxyCodeLine{01175\ }
+\DoxyCodeLine{01176\ \textcolor{comment}{//}}
+\DoxyCodeLine{01177\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01178\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ T\ BaryEval(\textcolor{keyword}{const}\ T\&\ a,}
+\DoxyCodeLine{01179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ T\&\ b,}
+\DoxyCodeLine{01180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ T\&\ c,}
+\DoxyCodeLine{01181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ coord)}
+\DoxyCodeLine{01182\ \{}
+\DoxyCodeLine{01183\ \ \ \ \ \textcolor{keywordflow}{return}\ (a\ *\ coord.x()\ +\ b\ *\ coord.y()\ +\ c\ *\ coord.z());}
+\DoxyCodeLine{01184\ \}}
+\DoxyCodeLine{01185\ \textcolor{comment}{//}}
+\DoxyCodeLine{01186\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btVector3\ BaryCoord(\textcolor{keyword}{const}\ btVector3\&\ a,}
+\DoxyCodeLine{01187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b,}
+\DoxyCodeLine{01188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ c,}
+\DoxyCodeLine{01189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ p)}
+\DoxyCodeLine{01190\ \{}
+\DoxyCodeLine{01191\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ w[]\ =\ \{btCross(a\ -\/\ p,\ b\ -\/\ p).length(),}
+\DoxyCodeLine{01192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCross(b\ -\/\ p,\ c\ -\/\ p).length(),}
+\DoxyCodeLine{01193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCross(c\ -\/\ p,\ a\ -\/\ p).length()\};}
+\DoxyCodeLine{01194\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ isum\ =\ 1\ /\ (w[0]\ +\ w[1]\ +\ w[2]);}
+\DoxyCodeLine{01195\ \ \ \ \ \textcolor{keywordflow}{return}\ (btVector3(w[1]\ *\ isum,\ w[2]\ *\ isum,\ w[0]\ *\ isum));}
+\DoxyCodeLine{01196\ \}}
+\DoxyCodeLine{01197\ }
+\DoxyCodeLine{01198\ \textcolor{comment}{//}}
+\DoxyCodeLine{01199\ \textcolor{keyword}{inline}\ \textcolor{keyword}{static}\ btScalar\ ImplicitSolve(\mbox{\hyperlink{structbt_soft_body_1_1_implicit_fn}{btSoftBody::ImplicitFn}}*\ fn,}
+\DoxyCodeLine{01200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ a,}
+\DoxyCodeLine{01201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b,}
+\DoxyCodeLine{01202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ accuracy,}
+\DoxyCodeLine{01203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ maxiterations\ =\ 256)}
+\DoxyCodeLine{01204\ \{}
+\DoxyCodeLine{01205\ \ \ \ \ btScalar\ span[2]\ =\ \{0,\ 1\};}
+\DoxyCodeLine{01206\ \ \ \ \ btScalar\ values[2]\ =\ \{fn-\/>Eval(a),\ fn-\/>Eval(b)\};}
+\DoxyCodeLine{01207\ \ \ \ \ \textcolor{keywordflow}{if}\ (values[0]\ >\ values[1])}
+\DoxyCodeLine{01208\ \ \ \ \ \{}
+\DoxyCodeLine{01209\ \ \ \ \ \ \ \ \ btSwap(span[0],\ span[1]);}
+\DoxyCodeLine{01210\ \ \ \ \ \ \ \ \ btSwap(values[0],\ values[1]);}
+\DoxyCodeLine{01211\ \ \ \ \ \}}
+\DoxyCodeLine{01212\ \ \ \ \ \textcolor{keywordflow}{if}\ (values[0]\ >\ -\/accuracy)\ \textcolor{keywordflow}{return}\ (-\/1);}
+\DoxyCodeLine{01213\ \ \ \ \ \textcolor{keywordflow}{if}\ (values[1]\ <\ +accuracy)\ \textcolor{keywordflow}{return}\ (-\/1);}
+\DoxyCodeLine{01214\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ maxiterations;\ ++i)}
+\DoxyCodeLine{01215\ \ \ \ \ \{}
+\DoxyCodeLine{01216\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ t\ =\ Lerp(span[0],\ span[1],\ values[0]\ /\ (values[0]\ -\/\ values[1]));}
+\DoxyCodeLine{01217\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ v\ =\ fn-\/>Eval(Lerp(a,\ b,\ t));}
+\DoxyCodeLine{01218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((t\ <=\ 0)\ ||\ (t\ >=\ 1))\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(v)\ <\ accuracy)\ \textcolor{keywordflow}{return}\ (t);}
+\DoxyCodeLine{01220\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (v\ <\ 0)}
+\DoxyCodeLine{01221\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01222\ \ \ \ \ \ \ \ \ \ \ \ \ span[0]\ =\ t;}
+\DoxyCodeLine{01223\ \ \ \ \ \ \ \ \ \ \ \ \ values[0]\ =\ v;}
+\DoxyCodeLine{01224\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01225\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01226\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01227\ \ \ \ \ \ \ \ \ \ \ \ \ span[1]\ =\ t;}
+\DoxyCodeLine{01228\ \ \ \ \ \ \ \ \ \ \ \ \ values[1]\ =\ v;}
+\DoxyCodeLine{01229\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01230\ \ \ \ \ \}}
+\DoxyCodeLine{01231\ \ \ \ \ \textcolor{keywordflow}{return}\ (-\/1);}
+\DoxyCodeLine{01232\ \}}
+\DoxyCodeLine{01233\ }
+\DoxyCodeLine{01234\ \textcolor{keyword}{inline}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ EvaluateMedium(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_world_info}{btSoftBodyWorldInfo}}*\ wfi,}
+\DoxyCodeLine{01235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ x,}
+\DoxyCodeLine{01236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1s_medium}{btSoftBody::sMedium}}\&\ medium)}
+\DoxyCodeLine{01237\ \{}
+\DoxyCodeLine{01238\ \ \ \ \ medium.m\_velocity\ =\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{01239\ \ \ \ \ medium.m\_pressure\ =\ 0;}
+\DoxyCodeLine{01240\ \ \ \ \ medium.m\_density\ =\ wfi-\/>air\_density;}
+\DoxyCodeLine{01241\ \ \ \ \ \textcolor{keywordflow}{if}\ (wfi-\/>water\_density\ >\ 0)}
+\DoxyCodeLine{01242\ \ \ \ \ \{}
+\DoxyCodeLine{01243\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ depth\ =\ -\/(btDot(x,\ wfi-\/>water\_normal)\ +\ wfi-\/>water\_offset);}
+\DoxyCodeLine{01244\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ 0)}
+\DoxyCodeLine{01245\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01246\ \ \ \ \ \ \ \ \ \ \ \ \ medium.m\_density\ =\ wfi-\/>water\_density;}
+\DoxyCodeLine{01247\ \ \ \ \ \ \ \ \ \ \ \ \ medium.m\_pressure\ =\ depth\ *\ wfi-\/>water\_density\ *\ wfi-\/>m\_gravity.length();}
+\DoxyCodeLine{01248\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01249\ \ \ \ \ \}}
+\DoxyCodeLine{01250\ \}}
+\DoxyCodeLine{01251\ }
+\DoxyCodeLine{01252\ \textcolor{comment}{//}}
+\DoxyCodeLine{01253\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btVector3\ NormalizeAny(\textcolor{keyword}{const}\ btVector3\&\ v)}
+\DoxyCodeLine{01254\ \{}
+\DoxyCodeLine{01255\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ l\ =\ v.length();}
+\DoxyCodeLine{01256\ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{01257\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (v\ /\ l);}
+\DoxyCodeLine{01258\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01259\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (btVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{01260\ \}}
+\DoxyCodeLine{01261\ }
+\DoxyCodeLine{01262\ \textcolor{comment}{//}}
+\DoxyCodeLine{01263\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\ VolumeOf(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}\&\ f,}
+\DoxyCodeLine{01264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ margin)}
+\DoxyCodeLine{01265\ \{}
+\DoxyCodeLine{01266\ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ pts[]\ =\ \{\&f.m\_n[0]-\/>m\_x,}
+\DoxyCodeLine{01267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&f.m\_n[1]-\/>m\_x,}
+\DoxyCodeLine{01268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&f.m\_n[2]-\/>m\_x\};}
+\DoxyCodeLine{01269\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\ vol\ =\ btDbvtVolume::FromPoints(pts,\ 3);}
+\DoxyCodeLine{01270\ \ \ \ \ vol.Expand(btVector3(margin,\ margin,\ margin));}
+\DoxyCodeLine{01271\ \ \ \ \ \textcolor{keywordflow}{return}\ (vol);}
+\DoxyCodeLine{01272\ \}}
+\DoxyCodeLine{01273\ }
+\DoxyCodeLine{01274\ \textcolor{comment}{//}}
+\DoxyCodeLine{01275\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btVector3\ CenterOf(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}\&\ f)}
+\DoxyCodeLine{01276\ \{}
+\DoxyCodeLine{01277\ \ \ \ \ \textcolor{keywordflow}{return}\ ((f.m\_n[0]-\/>m\_x\ +\ f.m\_n[1]-\/>m\_x\ +\ f.m\_n[2]-\/>m\_x)\ /\ 3);}
+\DoxyCodeLine{01278\ \}}
+\DoxyCodeLine{01279\ }
+\DoxyCodeLine{01280\ \textcolor{comment}{//}}
+\DoxyCodeLine{01281\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ AreaOf(\textcolor{keyword}{const}\ btVector3\&\ x0,}
+\DoxyCodeLine{01282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ x1,}
+\DoxyCodeLine{01283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ x2)}
+\DoxyCodeLine{01284\ \{}
+\DoxyCodeLine{01285\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ a\ =\ x1\ -\/\ x0;}
+\DoxyCodeLine{01286\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ b\ =\ x2\ -\/\ x0;}
+\DoxyCodeLine{01287\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ cr\ =\ btCross(a,\ b);}
+\DoxyCodeLine{01288\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ area\ =\ cr.length();}
+\DoxyCodeLine{01289\ \ \ \ \ \textcolor{keywordflow}{return}\ (area);}
+\DoxyCodeLine{01290\ \}}
+\DoxyCodeLine{01291\ }
+\DoxyCodeLine{01292\ \textcolor{comment}{//}}
+\DoxyCodeLine{01293\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ VolumeOf(\textcolor{keyword}{const}\ btVector3\&\ x0,}
+\DoxyCodeLine{01294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ x1,}
+\DoxyCodeLine{01295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ x2,}
+\DoxyCodeLine{01296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ x3)}
+\DoxyCodeLine{01297\ \{}
+\DoxyCodeLine{01298\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ a\ =\ x1\ -\/\ x0;}
+\DoxyCodeLine{01299\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ b\ =\ x2\ -\/\ x0;}
+\DoxyCodeLine{01300\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ c\ =\ x3\ -\/\ x0;}
+\DoxyCodeLine{01301\ \ \ \ \ \textcolor{keywordflow}{return}\ (btDot(a,\ btCross(b,\ c)));}
+\DoxyCodeLine{01302\ \}}
+\DoxyCodeLine{01303\ }
+\DoxyCodeLine{01304\ \textcolor{comment}{//}}
+\DoxyCodeLine{01305\ }
+\DoxyCodeLine{01306\ \textcolor{comment}{//}}
+\DoxyCodeLine{01307\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ ApplyClampedForce(\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}\&\ n,}
+\DoxyCodeLine{01308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ f,}
+\DoxyCodeLine{01309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dt)}
+\DoxyCodeLine{01310\ \{}
+\DoxyCodeLine{01311\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ dtim\ =\ dt\ *\ n.m\_im;}
+\DoxyCodeLine{01312\ \ \ \ \ \textcolor{keywordflow}{if}\ ((f\ *\ dtim).length2()\ >\ n.m\_v.length2())}
+\DoxyCodeLine{01313\ \ \ \ \ \{\ \textcolor{comment}{/*\ Clamp\ \ */}}
+\DoxyCodeLine{01314\ \ \ \ \ \ \ \ \ n.m\_f\ -\/=\ ProjectOnAxis(n.m\_v,\ f.normalized())\ /\ dtim;}
+\DoxyCodeLine{01315\ \ \ \ \ \}}
+\DoxyCodeLine{01316\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01317\ \ \ \ \ \{\ \textcolor{comment}{/*\ Apply\ \ */}}
+\DoxyCodeLine{01318\ \ \ \ \ \ \ \ \ n.m\_f\ +=\ f;}
+\DoxyCodeLine{01319\ \ \ \ \ \}}
+\DoxyCodeLine{01320\ \}}
+\DoxyCodeLine{01321\ }
+\DoxyCodeLine{01322\ \textcolor{comment}{//}}
+\DoxyCodeLine{01323\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ MatchEdge(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ a,}
+\DoxyCodeLine{01324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ b,}
+\DoxyCodeLine{01325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ ma,}
+\DoxyCodeLine{01326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ mb)}
+\DoxyCodeLine{01327\ \{}
+\DoxyCodeLine{01328\ \ \ \ \ \textcolor{keywordflow}{if}\ ((a\ ==\ ma)\ \&\&\ (b\ ==\ mb))\ \textcolor{keywordflow}{return}\ (0);}
+\DoxyCodeLine{01329\ \ \ \ \ \textcolor{keywordflow}{if}\ ((a\ ==\ mb)\ \&\&\ (b\ ==\ ma))\ \textcolor{keywordflow}{return}\ (1);}
+\DoxyCodeLine{01330\ \ \ \ \ \textcolor{keywordflow}{return}\ (-\/1);}
+\DoxyCodeLine{01331\ \}}
+\DoxyCodeLine{01332\ }
+\DoxyCodeLine{01333\ \textcolor{comment}{//}}
+\DoxyCodeLine{01334\ \textcolor{comment}{//\ btEigen\ :\ Extract\ eigen\ system,}}
+\DoxyCodeLine{01335\ \textcolor{comment}{//\ straitforward\ implementation\ of\ http://math.fullerton.edu/mathews/n2003/JacobiMethodMod.html}}
+\DoxyCodeLine{01336\ \textcolor{comment}{//\ outputs\ are\ NOT\ sorted.}}
+\DoxyCodeLine{01337\ \textcolor{comment}{//}}
+\DoxyCodeLine{01338\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_eigen}{btEigen}}}
+\DoxyCodeLine{01339\ \{}
+\DoxyCodeLine{01340\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ system(btMatrix3x3\&\ a,\ btMatrix3x3*\ vectors,\ btVector3*\ values\ =\ 0)}
+\DoxyCodeLine{01341\ \ \ \ \ \{}
+\DoxyCodeLine{01342\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ maxiterations\ =\ 16;}
+\DoxyCodeLine{01343\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ btScalar\ accuracy\ =\ (btScalar)0.0001;}
+\DoxyCodeLine{01344\ \ \ \ \ \ \ \ \ btMatrix3x3\&\ v\ =\ *vectors;}
+\DoxyCodeLine{01345\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iterations\ =\ 0;}
+\DoxyCodeLine{01346\ \ \ \ \ \ \ \ \ vectors-\/>setIdentity();}
+\DoxyCodeLine{01347\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01348\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01349\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ p\ =\ 0,\ q\ =\ 1;}
+\DoxyCodeLine{01350\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(a[p][q])\ <\ btFabs(a[0][2]))}
+\DoxyCodeLine{01351\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\ =\ 0;}
+\DoxyCodeLine{01353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ q\ =\ 2;}
+\DoxyCodeLine{01354\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01355\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(a[p][q])\ <\ btFabs(a[1][2]))}
+\DoxyCodeLine{01356\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\ =\ 1;}
+\DoxyCodeLine{01358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ q\ =\ 2;}
+\DoxyCodeLine{01359\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01360\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(a[p][q])\ >\ accuracy)}
+\DoxyCodeLine{01361\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ w\ =\ (a[q][q]\ -\/\ a[p][p])\ /\ (2\ *\ a[p][q]);}
+\DoxyCodeLine{01363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ z\ =\ btFabs(w);}
+\DoxyCodeLine{01364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ t\ =\ w\ /\ (z\ *\ (btSqrt(1\ +\ w\ *\ w)\ +\ z));}
+\DoxyCodeLine{01365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ ==\ t)\ \textcolor{comment}{/*\ [WARNING]\ let\ hope\ that\ one\ does\ not\ get\ thrown\ aways\ by\ some\ compilers...\ */}}
+\DoxyCodeLine{01366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ c\ =\ 1\ /\ btSqrt(t\ *\ t\ +\ 1);}
+\DoxyCodeLine{01368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ s\ =\ c\ *\ t;}
+\DoxyCodeLine{01369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mulPQ(a,\ c,\ s,\ p,\ q);}
+\DoxyCodeLine{01370\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mulTPQ(a,\ c,\ s,\ p,\ q);}
+\DoxyCodeLine{01371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mulPQ(v,\ c,\ s,\ p,\ q);}
+\DoxyCodeLine{01372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01375\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01376\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01378\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ ((++iterations)\ <\ maxiterations);}
+\DoxyCodeLine{01379\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (values)}
+\DoxyCodeLine{01380\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01381\ \ \ \ \ \ \ \ \ \ \ \ \ *values\ =\ btVector3(a[0][0],\ a[1][1],\ a[2][2]);}
+\DoxyCodeLine{01382\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01383\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (iterations);}
+\DoxyCodeLine{01384\ \ \ \ \ \}}
+\DoxyCodeLine{01385\ }
+\DoxyCodeLine{01386\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{01387\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ mulTPQ(btMatrix3x3\&\ a,\ btScalar\ c,\ btScalar\ s,\ \textcolor{keywordtype}{int}\ p,\ \textcolor{keywordtype}{int}\ q)}
+\DoxyCodeLine{01388\ \ \ \ \ \{}
+\DoxyCodeLine{01389\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m[2][3]\ =\ \{\{a[p][0],\ a[p][1],\ a[p][2]\},}
+\DoxyCodeLine{01390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{a[q][0],\ a[q][1],\ a[q][2]\}\};}
+\DoxyCodeLine{01391\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{01392\ }
+\DoxyCodeLine{01393\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ ++i)\ a[p][i]\ =\ c\ *\ m[0][i]\ -\/\ s\ *\ m[1][i];}
+\DoxyCodeLine{01394\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ ++i)\ a[q][i]\ =\ c\ *\ m[1][i]\ +\ s\ *\ m[0][i];}
+\DoxyCodeLine{01395\ \ \ \ \ \}}
+\DoxyCodeLine{01396\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ mulPQ(btMatrix3x3\&\ a,\ btScalar\ c,\ btScalar\ s,\ \textcolor{keywordtype}{int}\ p,\ \textcolor{keywordtype}{int}\ q)}
+\DoxyCodeLine{01397\ \ \ \ \ \{}
+\DoxyCodeLine{01398\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m[2][3]\ =\ \{\{a[0][p],\ a[1][p],\ a[2][p]\},}
+\DoxyCodeLine{01399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{a[0][q],\ a[1][q],\ a[2][q]\}\};}
+\DoxyCodeLine{01400\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{01401\ }
+\DoxyCodeLine{01402\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ ++i)\ a[i][p]\ =\ c\ *\ m[0][i]\ -\/\ s\ *\ m[1][i];}
+\DoxyCodeLine{01403\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ ++i)\ a[i][q]\ =\ c\ *\ m[1][i]\ +\ s\ *\ m[0][i];}
+\DoxyCodeLine{01404\ \ \ \ \ \}}
+\DoxyCodeLine{01405\ \};}
+\DoxyCodeLine{01406\ }
+\DoxyCodeLine{01407\ \textcolor{comment}{//}}
+\DoxyCodeLine{01408\ \textcolor{comment}{//\ Polar\ decomposition,}}
+\DoxyCodeLine{01409\ \textcolor{comment}{//\ "{}Computing\ the\ Polar\ Decomposition\ with\ Applications"{},\ Nicholas\ J.\ Higham,\ 1986.}}
+\DoxyCodeLine{01410\ \textcolor{comment}{//}}
+\DoxyCodeLine{01411\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ PolarDecompose(\textcolor{keyword}{const}\ btMatrix3x3\&\ m,\ btMatrix3x3\&\ q,\ btMatrix3x3\&\ s)}
+\DoxyCodeLine{01412\ \{}
+\DoxyCodeLine{01413\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_polar_decomposition}{btPolarDecomposition}}\ polar;}
+\DoxyCodeLine{01414\ \ \ \ \ \textcolor{keywordflow}{return}\ polar.decompose(m,\ q,\ s);}
+\DoxyCodeLine{01415\ \}}
+\DoxyCodeLine{01416\ }
+\DoxyCodeLine{01417\ \textcolor{comment}{//}}
+\DoxyCodeLine{01418\ \textcolor{comment}{//\ btSoftColliders}}
+\DoxyCodeLine{01419\ \textcolor{comment}{//}}
+\DoxyCodeLine{01420\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders}{btSoftColliders}}}
+\DoxyCodeLine{01421\ \{}
+\DoxyCodeLine{01422\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01423\ \ \ \ \ \textcolor{comment}{//\ ClusterBase}}
+\DoxyCodeLine{01424\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01425\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_cluster_base}{ClusterBase}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{01426\ \ \ \ \ \{}
+\DoxyCodeLine{01427\ \ \ \ \ \ \ \ \ btScalar\ erp;}
+\DoxyCodeLine{01428\ \ \ \ \ \ \ \ \ btScalar\ idt;}
+\DoxyCodeLine{01429\ \ \ \ \ \ \ \ \ btScalar\ m\_margin;}
+\DoxyCodeLine{01430\ \ \ \ \ \ \ \ \ btScalar\ friction;}
+\DoxyCodeLine{01431\ \ \ \ \ \ \ \ \ btScalar\ threshold;}
+\DoxyCodeLine{01432\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_colliders_1_1_cluster_base}{ClusterBase}}()}
+\DoxyCodeLine{01433\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01434\ \ \ \ \ \ \ \ \ \ \ \ \ erp\ =\ (btScalar)1;}
+\DoxyCodeLine{01435\ \ \ \ \ \ \ \ \ \ \ \ \ idt\ =\ 0;}
+\DoxyCodeLine{01436\ \ \ \ \ \ \ \ \ \ \ \ \ m\_margin\ =\ 0;}
+\DoxyCodeLine{01437\ \ \ \ \ \ \ \ \ \ \ \ \ friction\ =\ 0;}
+\DoxyCodeLine{01438\ \ \ \ \ \ \ \ \ \ \ \ \ threshold\ =\ (btScalar)0;}
+\DoxyCodeLine{01439\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01440\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ SolveContact(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_gjk_epa_solver2_1_1s_results}{btGjkEpaSolver2::sResults}}\&\ res,}
+\DoxyCodeLine{01441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_body}{btSoftBody::Body}}\ ba,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_body}{btSoftBody::Body}}\ bb,}
+\DoxyCodeLine{01442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}\&\ joint)}
+\DoxyCodeLine{01443\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01444\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res.distance\ <\ m\_margin)}
+\DoxyCodeLine{01445\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ norm\ =\ res.normal;}
+\DoxyCodeLine{01447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ norm.normalize();\ \ \textcolor{comment}{//is\ it\ necessary?}}
+\DoxyCodeLine{01448\ }
+\DoxyCodeLine{01449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ ra\ =\ res.witnesses[0]\ -\/\ ba.xform().getOrigin();}
+\DoxyCodeLine{01450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ rb\ =\ res.witnesses[1]\ -\/\ bb.xform().getOrigin();}
+\DoxyCodeLine{01451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ va\ =\ ba.velocity(ra);}
+\DoxyCodeLine{01452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ vb\ =\ bb.velocity(rb);}
+\DoxyCodeLine{01453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ vrel\ =\ va\ -\/\ vb;}
+\DoxyCodeLine{01454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ rvac\ =\ btDot(vrel,\ norm);}
+\DoxyCodeLine{01455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ depth\ =\ res.distance\ -\/\ m\_margin;}
+\DoxyCodeLine{01456\ }
+\DoxyCodeLine{01457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ printf("{}depth=\%f\(\backslash\)n"{},depth);}}
+\DoxyCodeLine{01458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ iv\ =\ norm\ *\ rvac;}
+\DoxyCodeLine{01459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ fv\ =\ vrel\ -\/\ iv;}
+\DoxyCodeLine{01460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_bodies[0]\ =\ ba;}
+\DoxyCodeLine{01461\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_bodies[1]\ =\ bb;}
+\DoxyCodeLine{01462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_refs[0]\ =\ ra\ *\ ba.xform().getBasis();}
+\DoxyCodeLine{01463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_refs[1]\ =\ rb\ *\ bb.xform().getBasis();}
+\DoxyCodeLine{01464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_rpos[0]\ =\ ra;}
+\DoxyCodeLine{01465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_rpos[1]\ =\ rb;}
+\DoxyCodeLine{01466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_cfm\ =\ 1;}
+\DoxyCodeLine{01467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_erp\ =\ 1;}
+\DoxyCodeLine{01468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_life\ =\ 0;}
+\DoxyCodeLine{01469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_maxlife\ =\ 0;}
+\DoxyCodeLine{01470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_split\ =\ 1;}
+\DoxyCodeLine{01471\ }
+\DoxyCodeLine{01472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_drift\ =\ depth\ *\ norm;}
+\DoxyCodeLine{01473\ }
+\DoxyCodeLine{01474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_normal\ =\ norm;}
+\DoxyCodeLine{01475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ printf("{}normal=\%f,\%f,\%f\(\backslash\)n"{},res.normal.getX(),res.normal.getY(),res.normal.getZ());}}
+\DoxyCodeLine{01476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_delete\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_friction\ =\ fv.length2()\ <\ (rvac\ *\ friction\ *\ rvac\ *\ friction)\ ?\ 1\ :\ friction;}
+\DoxyCodeLine{01478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ joint.m\_massmatrix\ =\ ImpulseMatrix(ba.invMass(),\ ba.invWorldInertia(),\ joint.m\_rpos[0],}
+\DoxyCodeLine{01479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bb.invMass(),\ bb.invWorldInertia(),\ joint.m\_rpos[1]);}
+\DoxyCodeLine{01480\ }
+\DoxyCodeLine{01481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{true});}
+\DoxyCodeLine{01482\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01483\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{false});}
+\DoxyCodeLine{01484\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01485\ \ \ \ \ \};}
+\DoxyCodeLine{01486\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01487\ \ \ \ \ \textcolor{comment}{//\ CollideCL\_RS}}
+\DoxyCodeLine{01488\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01489\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_c_l___r_s}{CollideCL\_RS}}\ :\ \mbox{\hyperlink{structbt_soft_colliders_1_1_cluster_base}{ClusterBase}}}
+\DoxyCodeLine{01490\ \ \ \ \ \{}
+\DoxyCodeLine{01491\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb;}
+\DoxyCodeLine{01492\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_colObjWrap;}
+\DoxyCodeLine{01493\ }
+\DoxyCodeLine{01494\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_soft_colliders_1_1_collide_c_l___r_s_a020b9712f8e0c9c2dd901c93a1f97120}{Process}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf)}
+\DoxyCodeLine{01495\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01496\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*\ cluster\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*)leaf-\/>data;}
+\DoxyCodeLine{01497\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_cluster_collision_shape}{btSoftClusterCollisionShape}}\ cshape(cluster);}
+\DoxyCodeLine{01498\ }
+\DoxyCodeLine{01499\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ rshape\ =\ (\textcolor{keyword}{const}\ btConvexShape*)m\_colObjWrap-\/>getCollisionShape();}
+\DoxyCodeLine{01500\ }
+\DoxyCodeLine{01502\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_colObjWrap-\/>getCollisionObject()-\/>isStaticOrKinematicObject()\ \&\&\ cluster-\/>m\_containsAnchor)}
+\DoxyCodeLine{01503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{01504\ }
+\DoxyCodeLine{01505\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_gjk_epa_solver2_1_1s_results}{btGjkEpaSolver2::sResults}}\ res;}
+\DoxyCodeLine{01506\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGjkEpaSolver2::SignedDistance(\&cshape,\ btTransform::getIdentity(),}
+\DoxyCodeLine{01507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rshape,\ m\_colObjWrap-\/>getWorldTransform(),}
+\DoxyCodeLine{01508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3(1,\ 0,\ 0),\ res))}
+\DoxyCodeLine{01509\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}\ joint;}
+\DoxyCodeLine{01511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (SolveContact(res,\ cluster,\ m\_colObjWrap-\/>getCollisionObject(),\ joint))\ \ \textcolor{comment}{//prb,joint))}}
+\DoxyCodeLine{01512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}*\ pj\ =\ \textcolor{keyword}{new}\ (btAlignedAlloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}),\ 16))\ \mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}();}
+\DoxyCodeLine{01514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *pj\ =\ joint;}
+\DoxyCodeLine{01515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>m\_joints.push\_back(pj);}
+\DoxyCodeLine{01516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_colObjWrap-\/>getCollisionObject()-\/>isStaticOrKinematicObject())}
+\DoxyCodeLine{01517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj-\/>m\_erp\ *=\ psb-\/>m\_cfg.kSKHR\_CL;}
+\DoxyCodeLine{01519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj-\/>m\_split\ *=\ psb-\/>m\_cfg.kSK\_SPLT\_CL;}
+\DoxyCodeLine{01520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj-\/>m\_erp\ *=\ psb-\/>m\_cfg.kSRHR\_CL;}
+\DoxyCodeLine{01524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj-\/>m\_split\ *=\ psb-\/>m\_cfg.kSR\_SPLT\_CL;}
+\DoxyCodeLine{01525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01527\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01528\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01529\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_soft_colliders_1_1_collide_c_l___r_s_a34f463ddcfcda480e9843277d4bd732e}{ProcessColObj}}(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ ps,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObWrap)}
+\DoxyCodeLine{01530\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01531\ \ \ \ \ \ \ \ \ \ \ \ \ psb\ =\ ps;}
+\DoxyCodeLine{01532\ \ \ \ \ \ \ \ \ \ \ \ \ m\_colObjWrap\ =\ colObWrap;}
+\DoxyCodeLine{01533\ \ \ \ \ \ \ \ \ \ \ \ \ idt\ =\ ps-\/>m\_sst.isdt;}
+\DoxyCodeLine{01534\ \ \ \ \ \ \ \ \ \ \ \ \ m\_margin\ =\ m\_colObjWrap-\/>getCollisionShape()-\/>getMargin()\ +\ psb-\/>getCollisionShape()-\/>getMargin();}
+\DoxyCodeLine{01536\ \ \ \ \ \ \ \ \ \ \ \ \ friction\ =\ btMin(psb-\/>m\_cfg.kDF,\ m\_colObjWrap-\/>getCollisionObject()-\/>getFriction());}
+\DoxyCodeLine{01537\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ mins;}
+\DoxyCodeLine{01538\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ maxs;}
+\DoxyCodeLine{01539\ }
+\DoxyCodeLine{01540\ \ \ \ \ \ \ \ \ \ \ \ \ ATTRIBUTE\_ALIGNED16(\mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}})}
+\DoxyCodeLine{01541\ \ \ \ \ \ \ \ \ \ \ \ \ volume;}
+\DoxyCodeLine{01542\ \ \ \ \ \ \ \ \ \ \ \ \ colObWrap-\/>getCollisionShape()-\/>getAabb(colObWrap-\/>getWorldTransform(),\ mins,\ maxs);}
+\DoxyCodeLine{01543\ \ \ \ \ \ \ \ \ \ \ \ \ volume\ =\ btDbvtVolume::FromMM(mins,\ maxs);}
+\DoxyCodeLine{01544\ \ \ \ \ \ \ \ \ \ \ \ \ volume.Expand(btVector3(1,\ 1,\ 1)\ *\ m\_margin);}
+\DoxyCodeLine{01545\ \ \ \ \ \ \ \ \ \ \ \ \ ps-\/>m\_cdbvt.collideTV(ps-\/>m\_cdbvt.m\_root,\ volume,\ *\textcolor{keyword}{this});}
+\DoxyCodeLine{01546\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01547\ \ \ \ \ \};}
+\DoxyCodeLine{01548\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01549\ \ \ \ \ \textcolor{comment}{//\ CollideCL\_SS}}
+\DoxyCodeLine{01550\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01551\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_c_l___s_s}{CollideCL\_SS}}\ :\ \mbox{\hyperlink{structbt_soft_colliders_1_1_cluster_base}{ClusterBase}}}
+\DoxyCodeLine{01552\ \ \ \ \ \{}
+\DoxyCodeLine{01553\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ bodies[2];}
+\DoxyCodeLine{01554\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ la,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ lb)}
+\DoxyCodeLine{01555\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01556\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*\ cla\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*)la-\/>data;}
+\DoxyCodeLine{01557\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*\ clb\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_cluster}{btSoftBody::Cluster}}*)lb-\/>data;}
+\DoxyCodeLine{01558\ }
+\DoxyCodeLine{01559\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ connected\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01560\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((bodies[0]\ ==\ bodies[1])\ \&\&\ (bodies[0]-\/>m\_clusterConnectivity.size()))}
+\DoxyCodeLine{01561\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ connected\ =\ bodies[0]-\/>m\_clusterConnectivity[cla-\/>m\_clusterIndex\ +\ bodies[0]-\/>m\_clusters.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ *\ clb-\/>m\_clusterIndex];}
+\DoxyCodeLine{01563\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01564\ }
+\DoxyCodeLine{01565\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!connected)}
+\DoxyCodeLine{01566\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_cluster_collision_shape}{btSoftClusterCollisionShape}}\ csa(cla);}
+\DoxyCodeLine{01568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_cluster_collision_shape}{btSoftClusterCollisionShape}}\ csb(clb);}
+\DoxyCodeLine{01569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_gjk_epa_solver2_1_1s_results}{btGjkEpaSolver2::sResults}}\ res;}
+\DoxyCodeLine{01570\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btGjkEpaSolver2::SignedDistance(\&csa,\ btTransform::getIdentity(),}
+\DoxyCodeLine{01571\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&csb,\ btTransform::getIdentity(),}
+\DoxyCodeLine{01572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cla-\/>m\_com\ -\/\ clb-\/>m\_com,\ res))}
+\DoxyCodeLine{01573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01574\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}\ joint;}
+\DoxyCodeLine{01575\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (SolveContact(res,\ cla,\ clb,\ joint))}
+\DoxyCodeLine{01576\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}*\ pj\ =\ \textcolor{keyword}{new}\ (btAlignedAlloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}),\ 16))\ \mbox{\hyperlink{structbt_soft_body_1_1_c_joint}{btSoftBody::CJoint}}();}
+\DoxyCodeLine{01578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *pj\ =\ joint;}
+\DoxyCodeLine{01579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bodies[0]-\/>m\_joints.push\_back(pj);}
+\DoxyCodeLine{01580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj-\/>m\_erp\ *=\ btMax(bodies[0]-\/>m\_cfg.kSSHR\_CL,\ bodies[1]-\/>m\_cfg.kSSHR\_CL);}
+\DoxyCodeLine{01581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj-\/>m\_split\ *=\ (bodies[0]-\/>m\_cfg.kSS\_SPLT\_CL\ +\ bodies[1]-\/>m\_cfg.kSS\_SPLT\_CL)\ /\ 2;}
+\DoxyCodeLine{01582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01584\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01585\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01586\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ count\ =\ 0;}
+\DoxyCodeLine{01588\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{01589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}count=\%d\(\backslash\)n"{},count);}}
+\DoxyCodeLine{01590\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01591\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01592\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ProcessSoftSoft(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psa,\ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb)}
+\DoxyCodeLine{01593\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01594\ \ \ \ \ \ \ \ \ \ \ \ \ idt\ =\ psa-\/>m\_sst.isdt;}
+\DoxyCodeLine{01595\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//m\_margin\ \ \ \ \ \ =\ \ \ (psa-\/>getCollisionShape()-\/>getMargin()+psb-\/>getCollisionShape()-\/>getMargin())/2;}}
+\DoxyCodeLine{01596\ \ \ \ \ \ \ \ \ \ \ \ \ m\_margin\ =\ (psa-\/>getCollisionShape()-\/>getMargin()\ +\ psb-\/>getCollisionShape()-\/>getMargin());}
+\DoxyCodeLine{01597\ \ \ \ \ \ \ \ \ \ \ \ \ friction\ =\ btMin(psa-\/>m\_cfg.kDF,\ psb-\/>m\_cfg.kDF);}
+\DoxyCodeLine{01598\ \ \ \ \ \ \ \ \ \ \ \ \ bodies[0]\ =\ psa;}
+\DoxyCodeLine{01599\ \ \ \ \ \ \ \ \ \ \ \ \ bodies[1]\ =\ psb;}
+\DoxyCodeLine{01600\ \ \ \ \ \ \ \ \ \ \ \ \ psa-\/>m\_cdbvt.collideTT(psa-\/>m\_cdbvt.m\_root,\ psb-\/>m\_cdbvt.m\_root,\ *\textcolor{keyword}{this});}
+\DoxyCodeLine{01601\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01602\ \ \ \ \ \};}
+\DoxyCodeLine{01603\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01604\ \ \ \ \ \textcolor{comment}{//\ CollideSDF\_RS}}
+\DoxyCodeLine{01605\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01606\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_s_d_f___r_s}{CollideSDF\_RS}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{01607\ \ \ \ \ \{}
+\DoxyCodeLine{01608\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf)}
+\DoxyCodeLine{01609\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01610\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)leaf-\/>data;}
+\DoxyCodeLine{01611\ \ \ \ \ \ \ \ \ \ \ \ \ DoNode(*node);}
+\DoxyCodeLine{01612\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01613\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ DoNode(\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}\&\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01614\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{01615\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m\ =\ n.m\_im\ >\ 0\ ?\ dynmargin\ :\ stamargin;}
+\DoxyCodeLine{01616\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_r_contact}{btSoftBody::RContact}}\ c;}
+\DoxyCodeLine{01617\ }
+\DoxyCodeLine{01618\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((!n.m\_battach)\ \&\&}
+\DoxyCodeLine{01619\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>checkContact(m\_colObj1Wrap,\ n.m\_x,\ m,\ c.m\_cti))}
+\DoxyCodeLine{01620\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01621\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ima\ =\ n.m\_im;}
+\DoxyCodeLine{01622\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ imb\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getInvMass()\ :\ 0.f;}
+\DoxyCodeLine{01623\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ms\ =\ ima\ +\ imb;}
+\DoxyCodeLine{01624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ms\ >\ 0)}
+\DoxyCodeLine{01625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01626\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ wtr\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getWorldTransform()\ :\ m\_colObj1Wrap-\/>getCollisionObject()-\/>getWorldTransform();}
+\DoxyCodeLine{01627\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ btMatrix3x3\ iwiStatic(0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{01628\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ iwi\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getInvInertiaTensorWorld()\ :\ iwiStatic;}
+\DoxyCodeLine{01629\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ ra\ =\ n.m\_x\ -\/\ wtr.getOrigin();}
+\DoxyCodeLine{01630\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ va\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getVelocityInLocalPoint(ra)\ *\ psb-\/>m\_sst.sdt\ :\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{01631\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ vb\ =\ n.m\_x\ -\/\ n.m\_q;}
+\DoxyCodeLine{01632\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ vr\ =\ vb\ -\/\ va;}
+\DoxyCodeLine{01633\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ dn\ =\ btDot(vr,\ c.m\_cti.m\_normal);}
+\DoxyCodeLine{01634\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ fv\ =\ vr\ -\/\ c.m\_cti.m\_normal\ *\ dn;}
+\DoxyCodeLine{01635\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ fc\ =\ psb-\/>m\_cfg.kDF\ *\ m\_colObj1Wrap-\/>getCollisionObject()-\/>getFriction();}
+\DoxyCodeLine{01636\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_node\ =\ \&n;}
+\DoxyCodeLine{01637\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c0\ =\ ImpulseMatrix(psb-\/>m\_sst.sdt,\ ima,\ imb,\ iwi,\ ra);}
+\DoxyCodeLine{01638\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c1\ =\ ra;}
+\DoxyCodeLine{01639\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c2\ =\ ima\ *\ psb-\/>m\_sst.sdt;}
+\DoxyCodeLine{01640\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c3\ =\ fv.length2()\ <\ (dn\ *\ fc\ *\ dn\ *\ fc)\ ?\ 0\ :\ 1\ -\/\ fc;}
+\DoxyCodeLine{01641\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c4\ =\ m\_colObj1Wrap-\/>getCollisionObject()-\/>isStaticOrKinematicObject()\ ?\ psb-\/>m\_cfg.kKHR\ :\ psb-\/>m\_cfg.kCHR;}
+\DoxyCodeLine{01642\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>m\_rcontacts.push\_back(c);}
+\DoxyCodeLine{01643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_rigidBody)}
+\DoxyCodeLine{01644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rigidBody-\/>activate();}
+\DoxyCodeLine{01645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01646\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01647\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01648\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb;}
+\DoxyCodeLine{01649\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_colObj1Wrap;}
+\DoxyCodeLine{01650\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ m\_rigidBody;}
+\DoxyCodeLine{01651\ \ \ \ \ \ \ \ \ btScalar\ dynmargin;}
+\DoxyCodeLine{01652\ \ \ \ \ \ \ \ \ btScalar\ stamargin;}
+\DoxyCodeLine{01653\ \ \ \ \ \};}
+\DoxyCodeLine{01654\ }
+\DoxyCodeLine{01655\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01656\ \ \ \ \ \textcolor{comment}{//\ CollideSDF\_RD}}
+\DoxyCodeLine{01657\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01658\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_s_d_f___r_d}{CollideSDF\_RD}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{01659\ \ \ \ \ \{}
+\DoxyCodeLine{01660\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf)}
+\DoxyCodeLine{01661\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01662\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)leaf-\/>data;}
+\DoxyCodeLine{01663\ \ \ \ \ \ \ \ \ \ \ \ \ DoNode(*node);}
+\DoxyCodeLine{01664\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01665\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ DoNode(\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}\&\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01666\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{01667\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m\ =\ n.m\_im\ >\ 0\ ?\ dynmargin\ :\ stamargin;}
+\DoxyCodeLine{01668\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_node_rigid_contact}{btSoftBody::DeformableNodeRigidContact}}\ c;}
+\DoxyCodeLine{01669\ }
+\DoxyCodeLine{01670\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!n.m\_battach)}
+\DoxyCodeLine{01671\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01672\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ check\ for\ collision\ at\ x\_\{n+1\}\string^*}}
+\DoxyCodeLine{01673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (psb-\/>checkDeformableContact(m\_colObj1Wrap,\ n.m\_q,\ m,\ c.m\_cti,\ \textcolor{comment}{/*predict\ =\ */}\ \textcolor{keyword}{true}))}
+\DoxyCodeLine{01674\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ima\ =\ n.m\_im;}
+\DoxyCodeLine{01676\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ todo:\ collision\ between\ multibody\ and\ fixed\ deformable\ node\ will\ be\ missed.}}
+\DoxyCodeLine{01677\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ imb\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getInvMass()\ :\ 0.f;}
+\DoxyCodeLine{01678\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ms\ =\ ima\ +\ imb;}
+\DoxyCodeLine{01679\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ms\ >\ 0)}
+\DoxyCodeLine{01680\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ resolve\ contact\ at\ x\_n}}
+\DoxyCodeLine{01682\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>checkDeformableContact(m\_colObj1Wrap,\ n.m\_x,\ m,\ c.m\_cti,\ \textcolor{comment}{/*predict\ =\ */}\ \textcolor{keyword}{false});}
+\DoxyCodeLine{01683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1s_cti}{btSoftBody::sCti}}\&\ cti\ =\ c.m\_cti;}
+\DoxyCodeLine{01684\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_node\ =\ \&n;}
+\DoxyCodeLine{01685\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ fc\ =\ psb-\/>m\_cfg.kDF\ *\ m\_colObj1Wrap-\/>getCollisionObject()-\/>getFriction();}
+\DoxyCodeLine{01686\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c2\ =\ ima;}
+\DoxyCodeLine{01687\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c3\ =\ fc;}
+\DoxyCodeLine{01688\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c4\ =\ m\_colObj1Wrap-\/>getCollisionObject()-\/>isStaticOrKinematicObject()\ ?\ psb-\/>m\_cfg.kKHR\ :\ psb-\/>m\_cfg.kCHR;}
+\DoxyCodeLine{01689\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c5\ =\ n.m\_effectiveMass\_inv;}
+\DoxyCodeLine{01690\ }
+\DoxyCodeLine{01691\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cti.m\_colObj-\/>getInternalType()\ ==\ btCollisionObject::CO\_RIGID\_BODY)}
+\DoxyCodeLine{01692\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01693\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ wtr\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getWorldTransform()\ :\ m\_colObj1Wrap-\/>getCollisionObject()-\/>getWorldTransform();}
+\DoxyCodeLine{01694\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ btMatrix3x3\ iwiStatic(0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{01695\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ iwi\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getInvInertiaTensorWorld()\ :\ iwiStatic;}
+\DoxyCodeLine{01696\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ ra\ =\ n.m\_x\ -\/\ wtr.getOrigin();}
+\DoxyCodeLine{01697\ }
+\DoxyCodeLine{01698\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c0\ =\ ImpulseMatrix(1,\ n.m\_effectiveMass\_inv,\ imb,\ iwi,\ ra);}
+\DoxyCodeLine{01699\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c0\ =\ ImpulseMatrix(1,\ ima,\ imb,\ iwi,\ ra);}}
+\DoxyCodeLine{01700\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c1\ =\ ra;}
+\DoxyCodeLine{01701\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01702\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (cti.m\_colObj-\/>getInternalType()\ ==\ btCollisionObject::CO\_FEATHERSTONE\_LINK)}
+\DoxyCodeLine{01703\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01704\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_multi_body_link_collider}{btMultiBodyLinkCollider}}*\ multibodyLinkCol\ =\ (\mbox{\hyperlink{classbt_multi_body_link_collider}{btMultiBodyLinkCollider}}*)btMultiBodyLinkCollider::upcast(cti.m\_colObj);}
+\DoxyCodeLine{01705\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (multibodyLinkCol)}
+\DoxyCodeLine{01706\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01707\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normal\ =\ cti.m\_normal;}
+\DoxyCodeLine{01708\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ t1\ =\ generateUnitOrthogonalVector(normal);}
+\DoxyCodeLine{01709\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ t2\ =\ btCross(normal,\ t1);}
+\DoxyCodeLine{01710\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\ jacobianData\_normal,\ jacobianData\_t1,\ jacobianData\_t2;}
+\DoxyCodeLine{01711\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ findJacobian(multibodyLinkCol,\ jacobianData\_normal,\ c.m\_node-\/>m\_x,\ normal);}
+\DoxyCodeLine{01712\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ findJacobian(multibodyLinkCol,\ jacobianData\_t1,\ c.m\_node-\/>m\_x,\ t1);}
+\DoxyCodeLine{01713\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ findJacobian(multibodyLinkCol,\ jacobianData\_t2,\ c.m\_node-\/>m\_x,\ t2);}
+\DoxyCodeLine{01714\ }
+\DoxyCodeLine{01715\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ J\_n\ =\ \&jacobianData\_normal.m\_jacobians[0];}
+\DoxyCodeLine{01716\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ J\_t1\ =\ \&jacobianData\_t1.m\_jacobians[0];}
+\DoxyCodeLine{01717\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ J\_t2\ =\ \&jacobianData\_t2.m\_jacobians[0];}
+\DoxyCodeLine{01718\ }
+\DoxyCodeLine{01719\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ u\_n\ =\ \&jacobianData\_normal.m\_deltaVelocitiesUnitImpulse[0];}
+\DoxyCodeLine{01720\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ u\_t1\ =\ \&jacobianData\_t1.m\_deltaVelocitiesUnitImpulse[0];}
+\DoxyCodeLine{01721\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ u\_t2\ =\ \&jacobianData\_t2.m\_deltaVelocitiesUnitImpulse[0];}
+\DoxyCodeLine{01722\ }
+\DoxyCodeLine{01723\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ rot(normal.getX(),\ normal.getY(),\ normal.getZ(),}
+\DoxyCodeLine{01724\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t1.getX(),\ t1.getY(),\ t1.getZ(),}
+\DoxyCodeLine{01725\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t2.getX(),\ t2.getY(),\ t2.getZ());\ \ \textcolor{comment}{//\ world\ frame\ to\ local\ frame}}
+\DoxyCodeLine{01726\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ndof\ =\ multibodyLinkCol-\/>m\_multiBody-\/>getNumDofs()\ +\ 6;}
+\DoxyCodeLine{01727\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ local\_impulse\_matrix\ =\ (n.m\_effectiveMass\_inv\ +\ OuterProduct(J\_n,\ J\_t1,\ J\_t2,\ u\_n,\ u\_t1,\ u\_t2,\ ndof)).inverse();}
+\DoxyCodeLine{01728\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c0\ =\ rot.transpose()\ *\ local\_impulse\_matrix\ *\ rot;}
+\DoxyCodeLine{01729\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.jacobianData\_normal\ =\ jacobianData\_normal;}
+\DoxyCodeLine{01730\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.jacobianData\_t1\ =\ jacobianData\_t1;}
+\DoxyCodeLine{01731\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.jacobianData\_t2\ =\ jacobianData\_t2;}
+\DoxyCodeLine{01732\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.t1\ =\ t1;}
+\DoxyCodeLine{01733\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.t2\ =\ t2;}
+\DoxyCodeLine{01734\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01735\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>m\_nodeRigidContacts.push\_back(c);}
+\DoxyCodeLine{01737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01738\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01739\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01740\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01741\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb;}
+\DoxyCodeLine{01742\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_colObj1Wrap;}
+\DoxyCodeLine{01743\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ m\_rigidBody;}
+\DoxyCodeLine{01744\ \ \ \ \ \ \ \ \ btScalar\ dynmargin;}
+\DoxyCodeLine{01745\ \ \ \ \ \ \ \ \ btScalar\ stamargin;}
+\DoxyCodeLine{01746\ \ \ \ \ \};}
+\DoxyCodeLine{01747\ }
+\DoxyCodeLine{01748\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01749\ \ \ \ \ \textcolor{comment}{//\ CollideSDF\_RDF}}
+\DoxyCodeLine{01750\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01751\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_s_d_f___r_d_f}{CollideSDF\_RDF}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{01752\ \ \ \ \ \{}
+\DoxyCodeLine{01753\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf)}
+\DoxyCodeLine{01754\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01755\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)leaf-\/>data;}
+\DoxyCodeLine{01756\ \ \ \ \ \ \ \ \ \ \ \ \ DoNode(*face);}
+\DoxyCodeLine{01757\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01758\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ DoNode(\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}\&\ f)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01759\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{01760\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ n0\ =\ f.m\_n[0];}
+\DoxyCodeLine{01761\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ n1\ =\ f.m\_n[1];}
+\DoxyCodeLine{01762\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ n2\ =\ f.m\_n[2];}
+\DoxyCodeLine{01763\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m\ =\ (n0-\/>m\_im\ >\ 0\ \&\&\ n1-\/>m\_im\ >\ 0\ \&\&\ n2-\/>m\_im\ >\ 0)\ ?\ dynmargin\ :\ stamargin;}
+\DoxyCodeLine{01764\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_face_rigid_contact}{btSoftBody::DeformableFaceRigidContact}}\ c;}
+\DoxyCodeLine{01765\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ contact\_point;}
+\DoxyCodeLine{01766\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ bary;}
+\DoxyCodeLine{01767\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (psb-\/>checkDeformableFaceContact(m\_colObj1Wrap,\ f,\ contact\_point,\ bary,\ m,\ c.m\_cti,\ \textcolor{keyword}{true}))}
+\DoxyCodeLine{01768\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ ima\ =\ n0-\/>m\_im\ +\ n1-\/>m\_im\ +\ n2-\/>m\_im;}
+\DoxyCodeLine{01770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ imb\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getInvMass()\ :\ 0.f;}
+\DoxyCodeLine{01771\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ todo:\ collision\ between\ multibody\ and\ fixed\ deformable\ face\ will\ be\ missed.}}
+\DoxyCodeLine{01772\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ms\ =\ ima\ +\ imb;}
+\DoxyCodeLine{01773\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ms\ >\ 0)}
+\DoxyCodeLine{01774\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ resolve\ contact\ at\ x\_n}}
+\DoxyCodeLine{01776\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>checkDeformableFaceContact(m\_colObj1Wrap,\ f,\ contact\_point,\ bary,\ m,\ c.m\_cti,\ /*predict\ =\ */\ false);}}
+\DoxyCodeLine{01777\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1s_cti}{btSoftBody::sCti}}\&\ cti\ =\ c.m\_cti;}
+\DoxyCodeLine{01778\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_contactPoint\ =\ contact\_point;}
+\DoxyCodeLine{01779\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_bary\ =\ bary;}
+\DoxyCodeLine{01780\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ todo\ xuchenhan@:\ this\ is\ assuming\ mass\ of\ all\ vertices\ are\ the\ same.\ Need\ to\ modify\ if\ mass\ are\ different\ for\ distinct\ vertices}}
+\DoxyCodeLine{01781\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_weights\ =\ btScalar(2)\ /\ (btScalar(1)\ +\ bary.length2())\ *\ bary;}
+\DoxyCodeLine{01782\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_face\ =\ \&f;}
+\DoxyCodeLine{01783\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ friction\ is\ handled\ by\ the\ nodes\ to\ prevent\ sticking}}
+\DoxyCodeLine{01784\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ btScalar\ fc\ =\ 0;}}
+\DoxyCodeLine{01785\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ fc\ =\ psb-\/>m\_cfg.kDF\ *\ m\_colObj1Wrap-\/>getCollisionObject()-\/>getFriction();}
+\DoxyCodeLine{01786\ }
+\DoxyCodeLine{01787\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ effective\ inverse\ mass\ of\ the\ face\ as\ in\ https://graphics.stanford.edu/papers/cloth-\/sig02/cloth.pdf}}
+\DoxyCodeLine{01788\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ima\ =\ bary.getX()\ *\ c.m\_weights.getX()\ *\ n0-\/>m\_im\ +\ bary.getY()\ *\ c.m\_weights.getY()\ *\ n1-\/>m\_im\ +\ bary.getZ()\ *\ c.m\_weights.getZ()\ *\ n2-\/>m\_im;}
+\DoxyCodeLine{01789\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c2\ =\ ima;}
+\DoxyCodeLine{01790\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c3\ =\ fc;}
+\DoxyCodeLine{01791\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c4\ =\ m\_colObj1Wrap-\/>getCollisionObject()-\/>isStaticOrKinematicObject()\ ?\ psb-\/>m\_cfg.kKHR\ :\ psb-\/>m\_cfg.kCHR;}
+\DoxyCodeLine{01792\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c5\ =\ Diagonal(ima);}
+\DoxyCodeLine{01793\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cti.m\_colObj-\/>getInternalType()\ ==\ btCollisionObject::CO\_RIGID\_BODY)}
+\DoxyCodeLine{01794\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01795\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ wtr\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getWorldTransform()\ :\ m\_colObj1Wrap-\/>getCollisionObject()-\/>getWorldTransform();}
+\DoxyCodeLine{01796\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ btMatrix3x3\ iwiStatic(0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{01797\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ iwi\ =\ m\_rigidBody\ ?\ m\_rigidBody-\/>getInvInertiaTensorWorld()\ :\ iwiStatic;}
+\DoxyCodeLine{01798\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ ra\ =\ contact\_point\ -\/\ wtr.getOrigin();}
+\DoxyCodeLine{01799\ }
+\DoxyCodeLine{01800\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ do\ not\ scale\ the\ impulse\ matrix\ by\ dt}}
+\DoxyCodeLine{01801\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c0\ =\ ImpulseMatrix(1,\ ima,\ imb,\ iwi,\ ra);}
+\DoxyCodeLine{01802\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c1\ =\ ra;}
+\DoxyCodeLine{01803\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01804\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (cti.m\_colObj-\/>getInternalType()\ ==\ btCollisionObject::CO\_FEATHERSTONE\_LINK)}
+\DoxyCodeLine{01805\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01806\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_multi_body_link_collider}{btMultiBodyLinkCollider}}*\ multibodyLinkCol\ =\ (\mbox{\hyperlink{classbt_multi_body_link_collider}{btMultiBodyLinkCollider}}*)btMultiBodyLinkCollider::upcast(cti.m\_colObj);}
+\DoxyCodeLine{01807\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (multibodyLinkCol)}
+\DoxyCodeLine{01808\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01809\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normal\ =\ cti.m\_normal;}
+\DoxyCodeLine{01810\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ t1\ =\ generateUnitOrthogonalVector(normal);}
+\DoxyCodeLine{01811\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ t2\ =\ btCross(normal,\ t1);}
+\DoxyCodeLine{01812\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_multi_body_jacobian_data}{btMultiBodyJacobianData}}\ jacobianData\_normal,\ jacobianData\_t1,\ jacobianData\_t2;}
+\DoxyCodeLine{01813\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ findJacobian(multibodyLinkCol,\ jacobianData\_normal,\ contact\_point,\ normal);}
+\DoxyCodeLine{01814\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ findJacobian(multibodyLinkCol,\ jacobianData\_t1,\ contact\_point,\ t1);}
+\DoxyCodeLine{01815\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ findJacobian(multibodyLinkCol,\ jacobianData\_t2,\ contact\_point,\ t2);}
+\DoxyCodeLine{01816\ }
+\DoxyCodeLine{01817\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ J\_n\ =\ \&jacobianData\_normal.m\_jacobians[0];}
+\DoxyCodeLine{01818\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ J\_t1\ =\ \&jacobianData\_t1.m\_jacobians[0];}
+\DoxyCodeLine{01819\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ J\_t2\ =\ \&jacobianData\_t2.m\_jacobians[0];}
+\DoxyCodeLine{01820\ }
+\DoxyCodeLine{01821\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ u\_n\ =\ \&jacobianData\_normal.m\_deltaVelocitiesUnitImpulse[0];}
+\DoxyCodeLine{01822\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ u\_t1\ =\ \&jacobianData\_t1.m\_deltaVelocitiesUnitImpulse[0];}
+\DoxyCodeLine{01823\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar*\ u\_t2\ =\ \&jacobianData\_t2.m\_deltaVelocitiesUnitImpulse[0];}
+\DoxyCodeLine{01824\ }
+\DoxyCodeLine{01825\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ rot(normal.getX(),\ normal.getY(),\ normal.getZ(),}
+\DoxyCodeLine{01826\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t1.getX(),\ t1.getY(),\ t1.getZ(),}
+\DoxyCodeLine{01827\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t2.getX(),\ t2.getY(),\ t2.getZ());\ \ \textcolor{comment}{//\ world\ frame\ to\ local\ frame}}
+\DoxyCodeLine{01828\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ndof\ =\ multibodyLinkCol-\/>m\_multiBody-\/>getNumDofs()\ +\ 6;}
+\DoxyCodeLine{01829\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\ local\_impulse\_matrix\ =\ (Diagonal(ima)\ +\ OuterProduct(J\_n,\ J\_t1,\ J\_t2,\ u\_n,\ u\_t1,\ u\_t2,\ ndof)).inverse();}
+\DoxyCodeLine{01830\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_c0\ =\ rot.transpose()\ *\ local\_impulse\_matrix\ *\ rot;}
+\DoxyCodeLine{01831\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.jacobianData\_normal\ =\ jacobianData\_normal;}
+\DoxyCodeLine{01832\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.jacobianData\_t1\ =\ jacobianData\_t1;}
+\DoxyCodeLine{01833\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.jacobianData\_t2\ =\ jacobianData\_t2;}
+\DoxyCodeLine{01834\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.t1\ =\ t1;}
+\DoxyCodeLine{01835\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.t2\ =\ t2;}
+\DoxyCodeLine{01836\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01837\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01838\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>m\_faceRigidContacts.push\_back(c);}
+\DoxyCodeLine{01839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01840\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01841\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ caching\ barycenters\ to\ be\ false\ after\ collision\ detection.}}
+\DoxyCodeLine{01842\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Only\ turn\ on\ when\ contact\ is\ static.}}
+\DoxyCodeLine{01843\ \ \ \ \ \ \ \ \ \ \ \ \ f.m\_pcontact[3]\ =\ 0;}
+\DoxyCodeLine{01844\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01845\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb;}
+\DoxyCodeLine{01846\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_colObj1Wrap;}
+\DoxyCodeLine{01847\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ m\_rigidBody;}
+\DoxyCodeLine{01848\ \ \ \ \ \ \ \ \ btScalar\ dynmargin;}
+\DoxyCodeLine{01849\ \ \ \ \ \ \ \ \ btScalar\ stamargin;}
+\DoxyCodeLine{01850\ \ \ \ \ \};}
+\DoxyCodeLine{01851\ }
+\DoxyCodeLine{01852\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01853\ \ \ \ \ \textcolor{comment}{//\ CollideVF\_SS}}
+\DoxyCodeLine{01854\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01855\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_v_f___s_s}{CollideVF\_SS}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{01856\ \ \ \ \ \{}
+\DoxyCodeLine{01857\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ lnode,}
+\DoxyCodeLine{01858\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ lface)}
+\DoxyCodeLine{01859\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01860\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)lnode-\/>data;}
+\DoxyCodeLine{01861\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)lface-\/>data;}
+\DoxyCodeLine{01862\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{01863\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01864\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (face-\/>m\_n[i]\ ==\ node)}
+\DoxyCodeLine{01865\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{01866\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01867\ }
+\DoxyCodeLine{01868\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ o\ =\ node-\/>m\_x;}
+\DoxyCodeLine{01869\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ p;}
+\DoxyCodeLine{01870\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ d\ =\ SIMD\_INFINITY;}
+\DoxyCodeLine{01871\ \ \ \ \ \ \ \ \ \ \ \ \ ProjectOrigin(face-\/>m\_n[0]-\/>m\_x\ -\/\ o,}
+\DoxyCodeLine{01872\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ face-\/>m\_n[1]-\/>m\_x\ -\/\ o,}
+\DoxyCodeLine{01873\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ face-\/>m\_n[2]-\/>m\_x\ -\/\ o,}
+\DoxyCodeLine{01874\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p,\ d);}
+\DoxyCodeLine{01875\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ m\ =\ mrg\ +\ (o\ -\/\ node-\/>m\_q).length()\ *\ 2;}
+\DoxyCodeLine{01876\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ (m\ *\ m))}
+\DoxyCodeLine{01877\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01878\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ n[]\ =\ \{face-\/>m\_n[0],\ face-\/>m\_n[1],\ face-\/>m\_n[2]\};}
+\DoxyCodeLine{01879\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ w\ =\ BaryCoord(n[0]-\/>m\_x,\ n[1]-\/>m\_x,\ n[2]-\/>m\_x,\ p\ +\ o);}
+\DoxyCodeLine{01880\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ma\ =\ node-\/>m\_im;}
+\DoxyCodeLine{01881\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ mb\ =\ BaryEval(n[0]-\/>m\_im,\ n[1]-\/>m\_im,\ n[2]-\/>m\_im,\ w);}
+\DoxyCodeLine{01882\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((n[0]-\/>m\_im\ <=\ 0)\ ||}
+\DoxyCodeLine{01883\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (n[1]-\/>m\_im\ <=\ 0)\ ||}
+\DoxyCodeLine{01884\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (n[2]-\/>m\_im\ <=\ 0))}
+\DoxyCodeLine{01885\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01886\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mb\ =\ 0;}
+\DoxyCodeLine{01887\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01888\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ms\ =\ ma\ +\ mb;}
+\DoxyCodeLine{01889\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ms\ >\ 0)}
+\DoxyCodeLine{01890\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01891\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_s_contact}{btSoftBody::SContact}}\ c;}
+\DoxyCodeLine{01892\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ p\ /\ -\/btSqrt(d);}
+\DoxyCodeLine{01893\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_margin\ =\ m;}
+\DoxyCodeLine{01894\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_node\ =\ node;}
+\DoxyCodeLine{01895\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_face\ =\ face;}
+\DoxyCodeLine{01896\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_weights\ =\ w;}
+\DoxyCodeLine{01897\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_friction\ =\ btMax(psb[0]-\/>m\_cfg.kDF,\ psb[1]-\/>m\_cfg.kDF);}
+\DoxyCodeLine{01898\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_cfm[0]\ =\ ma\ /\ ms\ *\ psb[0]-\/>m\_cfg.kSHR;}
+\DoxyCodeLine{01899\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_cfm[1]\ =\ mb\ /\ ms\ *\ psb[1]-\/>m\_cfg.kSHR;}
+\DoxyCodeLine{01900\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb[0]-\/>m\_scontacts.push\_back(c);}
+\DoxyCodeLine{01901\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01902\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01903\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01904\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb[2];}
+\DoxyCodeLine{01905\ \ \ \ \ \ \ \ \ btScalar\ mrg;}
+\DoxyCodeLine{01906\ \ \ \ \ \};}
+\DoxyCodeLine{01907\ }
+\DoxyCodeLine{01908\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01909\ \ \ \ \ \textcolor{comment}{//\ CollideVF\_DD}}
+\DoxyCodeLine{01910\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01911\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_v_f___d_d}{CollideVF\_DD}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{01912\ \ \ \ \ \{}
+\DoxyCodeLine{01913\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ lnode,}
+\DoxyCodeLine{01914\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ lface)}
+\DoxyCodeLine{01915\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01916\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)lnode-\/>data;}
+\DoxyCodeLine{01917\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)lface-\/>data;}
+\DoxyCodeLine{01918\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ bary;}
+\DoxyCodeLine{01919\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (proximityTest(face-\/>m\_n[0]-\/>m\_x,\ face-\/>m\_n[1]-\/>m\_x,\ face-\/>m\_n[2]-\/>m\_x,\ node-\/>m\_x,\ face-\/>m\_normal,\ mrg,\ bary))}
+\DoxyCodeLine{01920\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01921\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ n[]\ =\ \{face-\/>m\_n[0],\ face-\/>m\_n[1],\ face-\/>m\_n[2]\};}
+\DoxyCodeLine{01922\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ w\ =\ bary;}
+\DoxyCodeLine{01923\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ma\ =\ node-\/>m\_im;}
+\DoxyCodeLine{01924\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ mb\ =\ BaryEval(n[0]-\/>m\_im,\ n[1]-\/>m\_im,\ n[2]-\/>m\_im,\ w);}
+\DoxyCodeLine{01925\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((n[0]-\/>m\_im\ <=\ 0)\ ||}
+\DoxyCodeLine{01926\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (n[1]-\/>m\_im\ <=\ 0)\ ||}
+\DoxyCodeLine{01927\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (n[2]-\/>m\_im\ <=\ 0))}
+\DoxyCodeLine{01928\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01929\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mb\ =\ 0;}
+\DoxyCodeLine{01930\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01931\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ ms\ =\ ma\ +\ mb;}
+\DoxyCodeLine{01932\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ms\ >\ 0)}
+\DoxyCodeLine{01933\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01934\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}\ c;}
+\DoxyCodeLine{01935\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ face-\/>m\_normal;}
+\DoxyCodeLine{01936\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!useFaceNormal\ \&\&\ c.m\_normal.dot(node-\/>m\_x\ -\/\ face-\/>m\_n[2]-\/>m\_x)\ <\ 0)}
+\DoxyCodeLine{01937\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ -\/face-\/>m\_normal;}
+\DoxyCodeLine{01938\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_margin\ =\ mrg;}
+\DoxyCodeLine{01939\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_node\ =\ node;}
+\DoxyCodeLine{01940\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_face\ =\ face;}
+\DoxyCodeLine{01941\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_bary\ =\ w;}
+\DoxyCodeLine{01942\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_friction\ =\ psb[0]-\/>m\_cfg.kDF\ *\ psb[1]-\/>m\_cfg.kDF;}
+\DoxyCodeLine{01943\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb[0]-\/>m\_faceNodeContacts.push\_back(c);}
+\DoxyCodeLine{01944\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01945\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01946\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01947\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb[2];}
+\DoxyCodeLine{01948\ \ \ \ \ \ \ \ \ btScalar\ mrg;}
+\DoxyCodeLine{01949\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ useFaceNormal;}
+\DoxyCodeLine{01950\ \ \ \ \ \};}
+\DoxyCodeLine{01951\ }
+\DoxyCodeLine{01952\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01953\ \ \ \ \ \textcolor{comment}{//\ CollideFF\_DD}}
+\DoxyCodeLine{01954\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{01955\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_f_f___d_d}{CollideFF\_DD}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{01956\ \ \ \ \ \{}
+\DoxyCodeLine{01957\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ lface1,}
+\DoxyCodeLine{01958\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ lface2)}
+\DoxyCodeLine{01959\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01960\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f1\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)lface1-\/>data;}
+\DoxyCodeLine{01961\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f2\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)lface2-\/>data;}
+\DoxyCodeLine{01962\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f1\ !=\ f2)}
+\DoxyCodeLine{01963\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01964\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Repel(f1,\ f2);}
+\DoxyCodeLine{01965\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Repel(f2,\ f1);}
+\DoxyCodeLine{01966\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01967\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01968\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Repel(\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f1,\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f2)}
+\DoxyCodeLine{01969\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01970\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\#define\ REPEL\_NEIGHBOR\ 1}}
+\DoxyCodeLine{01971\ \textcolor{preprocessor}{\#ifndef\ REPEL\_NEIGHBOR}}
+\DoxyCodeLine{01972\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ node\_id\ =\ 0;\ node\_id\ <\ 3;\ ++node\_id)}
+\DoxyCodeLine{01973\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01974\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ f1-\/>m\_n[node\_id];}
+\DoxyCodeLine{01975\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{01976\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01977\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f2-\/>m\_n[i]\ ==\ node)}
+\DoxyCodeLine{01978\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{01979\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01980\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01981\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01982\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ skip\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01983\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ node\_id\ =\ 0;\ node\_id\ <\ 3;\ ++node\_id)}
+\DoxyCodeLine{01984\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01985\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ f1-\/>m\_n[node\_id];}
+\DoxyCodeLine{01986\ \textcolor{preprocessor}{\#ifdef\ REPEL\_NEIGHBOR}}
+\DoxyCodeLine{01987\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{01988\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01989\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f2-\/>m\_n[i]\ ==\ node)}
+\DoxyCodeLine{01990\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01991\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ skip\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01992\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01993\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01994\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01995\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (skip)}
+\DoxyCodeLine{01996\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01997\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ skip\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01998\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{01999\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02000\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02001\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face\ =\ f2;}
+\DoxyCodeLine{02002\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ bary;}
+\DoxyCodeLine{02003\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!proximityTest(face-\/>m\_n[0]-\/>m\_x,\ face-\/>m\_n[1]-\/>m\_x,\ face-\/>m\_n[2]-\/>m\_x,\ node-\/>m\_x,\ face-\/>m\_normal,\ mrg,\ bary))}
+\DoxyCodeLine{02004\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{02005\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}\ c;}
+\DoxyCodeLine{02006\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ face-\/>m\_normal;}
+\DoxyCodeLine{02007\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!useFaceNormal\ \&\&\ c.m\_normal.dot(node-\/>m\_x\ -\/\ face-\/>m\_n[2]-\/>m\_x)\ <\ 0)}
+\DoxyCodeLine{02008\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ -\/face-\/>m\_normal;}
+\DoxyCodeLine{02009\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_margin\ =\ mrg;}
+\DoxyCodeLine{02010\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_node\ =\ node;}
+\DoxyCodeLine{02011\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_face\ =\ face;}
+\DoxyCodeLine{02012\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_bary\ =\ bary;}
+\DoxyCodeLine{02013\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_friction\ =\ psb[0]-\/>m\_cfg.kDF\ *\ psb[1]-\/>m\_cfg.kDF;}
+\DoxyCodeLine{02014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb[0]-\/>m\_faceNodeContacts.push\_back(c);}
+\DoxyCodeLine{02015\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02016\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02017\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb[2];}
+\DoxyCodeLine{02018\ \ \ \ \ \ \ \ \ btScalar\ mrg;}
+\DoxyCodeLine{02019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ useFaceNormal;}
+\DoxyCodeLine{02020\ \ \ \ \ \};}
+\DoxyCodeLine{02021\ }
+\DoxyCodeLine{02022\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_colliders_1_1_collide_c_c_d}{CollideCCD}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{02023\ \ \ \ \ \{}
+\DoxyCodeLine{02024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ lnode,}
+\DoxyCodeLine{02025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ lface)}
+\DoxyCodeLine{02026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02027\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)lnode-\/>data;}
+\DoxyCodeLine{02028\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)lface-\/>data;}
+\DoxyCodeLine{02029\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ bary;}
+\DoxyCodeLine{02030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bernsteinCCD(face,\ node,\ dt,\ SAFE\_EPSILON,\ bary))}
+\DoxyCodeLine{02031\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}\ c;}
+\DoxyCodeLine{02033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ face-\/>m\_normal;}
+\DoxyCodeLine{02034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!useFaceNormal\ \&\&\ c.m\_normal.dot(node-\/>m\_x\ -\/\ face-\/>m\_n[2]-\/>m\_x)\ <\ 0)}
+\DoxyCodeLine{02035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ -\/face-\/>m\_normal;}
+\DoxyCodeLine{02036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_node\ =\ node;}
+\DoxyCodeLine{02037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_face\ =\ face;}
+\DoxyCodeLine{02038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_bary\ =\ bary;}
+\DoxyCodeLine{02039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_friction\ =\ psb[0]-\/>m\_cfg.kDF\ *\ psb[1]-\/>m\_cfg.kDF;}
+\DoxyCodeLine{02040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb[0]-\/>m\_faceNodeContacts.push\_back(c);}
+\DoxyCodeLine{02041\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02042\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ lface1,}
+\DoxyCodeLine{02044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ lface2)}
+\DoxyCodeLine{02045\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02046\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f1\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)lface1-\/>data;}
+\DoxyCodeLine{02047\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f2\ =\ (\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*)lface2-\/>data;}
+\DoxyCodeLine{02048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f1\ !=\ f2)}
+\DoxyCodeLine{02049\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Repel(f1,\ f2);}
+\DoxyCodeLine{02051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Repel(f2,\ f1);}
+\DoxyCodeLine{02052\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02053\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Repel(\mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f1,\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ f2)}
+\DoxyCodeLine{02055\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\#define\ REPEL\_NEIGHBOR\ 1}}
+\DoxyCodeLine{02057\ \textcolor{preprocessor}{\#ifndef\ REPEL\_NEIGHBOR}}
+\DoxyCodeLine{02058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ node\_id\ =\ 0;\ node\_id\ <\ 3;\ ++node\_id)}
+\DoxyCodeLine{02059\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ f1-\/>m\_n[node\_id];}
+\DoxyCodeLine{02061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{02062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f2-\/>m\_n[i]\ ==\ node)}
+\DoxyCodeLine{02064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{02065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02066\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02067\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ skip\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{02069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ node\_id\ =\ 0;\ node\_id\ <\ 3;\ ++node\_id)}
+\DoxyCodeLine{02070\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node\ =\ f1-\/>m\_n[node\_id];}
+\DoxyCodeLine{02072\ \textcolor{preprocessor}{\#ifdef\ REPEL\_NEIGHBOR}}
+\DoxyCodeLine{02073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{02074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f2-\/>m\_n[i]\ ==\ node)}
+\DoxyCodeLine{02076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ skip\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{02078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{02079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (skip)}
+\DoxyCodeLine{02082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ skip\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{02084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{02085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02086\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ face\ =\ f2;}
+\DoxyCodeLine{02088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ bary;}
+\DoxyCodeLine{02089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bernsteinCCD(face,\ node,\ dt,\ SAFE\_EPSILON,\ bary))}
+\DoxyCodeLine{02090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{02091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}\ c;}
+\DoxyCodeLine{02092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ face-\/>m\_normal;}
+\DoxyCodeLine{02093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!useFaceNormal\ \&\&\ c.m\_normal.dot(node-\/>m\_x\ -\/\ face-\/>m\_n[2]-\/>m\_x)\ <\ 0)}
+\DoxyCodeLine{02094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_normal\ =\ -\/face-\/>m\_normal;}
+\DoxyCodeLine{02095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_node\ =\ node;}
+\DoxyCodeLine{02096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_face\ =\ face;}
+\DoxyCodeLine{02097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_bary\ =\ bary;}
+\DoxyCodeLine{02098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_friction\ =\ psb[0]-\/>m\_cfg.kDF\ *\ psb[1]-\/>m\_cfg.kDF;}
+\DoxyCodeLine{02099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb[0]-\/>m\_faceNodeContacts.push\_back(c);}
+\DoxyCodeLine{02100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02101\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02103\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb[2];}
+\DoxyCodeLine{02104\ \ \ \ \ \ \ \ \ btScalar\ dt,\ mrg;}
+\DoxyCodeLine{02105\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ useFaceNormal;}
+\DoxyCodeLine{02106\ \ \ \ \ \};}
+\DoxyCodeLine{02107\ \};}
+\DoxyCodeLine{02108\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\_BT\_SOFT\_BODY\_INTERNALS\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,76 @@
+\doxysection{bt\+Triangle\+Index\+Vertex\+Material\+Array.\+h}
+\hypertarget{bt_triangle_index_vertex_material_array_8h_source}{}\label{bt_triangle_index_vertex_material_array_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleIndexVertexMaterialArray.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleIndexVertexMaterialArray.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifndef\ BT\_MULTIMATERIAL\_TRIANGLE\_INDEX\_VERTEX\_ARRAY\_H}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ BT\_MULTIMATERIAL\_TRIANGLE\_INDEX\_VERTEX\_ARRAY\_H}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btTriangleIndexVertexArray.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00024\ btMaterialProperties}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numMaterials;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ m\_materialBase;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_materialStride;}
+\DoxyCodeLine{00030\ \ \ \ \ PHY\_ScalarType\ m\_materialType;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numTriangles;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ m\_triangleMaterialsBase;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_triangleMaterialStride;}
+\DoxyCodeLine{00039\ \ \ \ \ PHY\_ScalarType\ m\_triangleType;}
+\DoxyCodeLine{00040\ \};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btMaterialProperties>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{MaterialArray}};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00050\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00051\ btTriangleIndexVertexMaterialArray\ :\ public\ btTriangleIndexVertexArray}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{MaterialArray}}\ m\_materials;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00057\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ btTriangleIndexVertexMaterialArray()}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ btTriangleIndexVertexMaterialArray(\textcolor{keywordtype}{int}\ numTriangles,\ \textcolor{keywordtype}{int}*\ triangleIndexBase,\ \textcolor{keywordtype}{int}\ triangleIndexStride,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numVertices,\ btScalar*\ vertexBase,\ \textcolor{keywordtype}{int}\ vertexStride,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numMaterials,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ materialBase,\ \textcolor{keywordtype}{int}\ materialStride,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ triangleMaterialsBase,\ \textcolor{keywordtype}{int}\ materialIndexStride);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btTriangleIndexVertexMaterialArray()\ \{\}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ addMaterialProperties(\textcolor{keyword}{const}\ btMaterialProperties\&\ mat,\ PHY\_ScalarType\ triangleType\ =\ PHY\_INTEGER)}
+\DoxyCodeLine{00071\ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ m\_materials.push\_back(mat);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ m\_materials[m\_materials.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1].m\_triangleType\ =\ triangleType;}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getLockedMaterialBase(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ materialBase,\ \textcolor{keywordtype}{int}\&\ numMaterials,\ PHY\_ScalarType\&\ materialType,\ \textcolor{keywordtype}{int}\&\ materialStride,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ triangleMaterialBase,\ \textcolor{keywordtype}{int}\&\ numTriangles,\ \textcolor{keywordtype}{int}\&\ triangleMaterialStride,\ PHY\_ScalarType\&\ triangleType,\ \textcolor{keywordtype}{int}\ subpart\ =\ 0);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getLockedReadOnlyMaterialBase(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ materialBase,\ \textcolor{keywordtype}{int}\&\ numMaterials,\ PHY\_ScalarType\&\ materialType,\ \textcolor{keywordtype}{int}\&\ materialStride,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}**\ triangleMaterialBase,\ \textcolor{keywordtype}{int}\&\ numTriangles,\ \textcolor{keywordtype}{int}\&\ triangleMaterialStride,\ PHY\_ScalarType\&\ triangleType,\ \textcolor{keywordtype}{int}\ subpart\ =\ 0);}
+\DoxyCodeLine{00081\ \};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MULTIMATERIAL\_TRIANGLE\_INDEX\_VERTEX\_ARRAY\_H}}
+
+\end{DoxyCode}

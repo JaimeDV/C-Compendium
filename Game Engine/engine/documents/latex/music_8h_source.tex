@@ -1,0 +1,130 @@
+\doxysection{music.\+h}
+\hypertarget{music_8h_source}{}\label{music_8h_source}\index{libraries/sdl2-\/mixer-\/vs/include/music.h@{libraries/sdl2-\/mixer-\/vs/include/music.h}}
+\mbox{\hyperlink{music_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ SDL\_mixer:\ \ An\ audio\ mixer\ library\ based\ on\ the\ SDL\ library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ Copyright\ (C)\ 1997-\/2018\ Sam\ Lantinga\ <slouken@libsdl.org>}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ warranty.\ \ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ freely,\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00012\ \textcolor{comment}{}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ \ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ \ \ \ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ \ \ \ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ \ \ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ \ \ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00020\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_s_d_l__mixer_8h}{SDL\_mixer.h}}"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ MUSIC\_H\_}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ MUSIC\_H\_}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*\ Supported\ music\ APIs,\ in\ order\ of\ preference\ */}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aab388f882fabebce6b068e580a4b3bc5e}{MIX\_MUSIC\_CMD}},}
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aa5cd914c4c05903d4812a1889257f3fd2}{MIX\_MUSIC\_WAVE}},}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aad430c93a15524e62272c9faf682f63e6}{MIX\_MUSIC\_MODPLUG}},}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aa09fd304c63e387edd737f6b2ca307809}{MIX\_MUSIC\_MIKMOD}},}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aa174aa03c0790653900493b264c789a85}{MIX\_MUSIC\_FLUIDSYNTH}},}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aa5189ea2c9378077c8b463828cc3ce94e}{MIX\_MUSIC\_TIMIDITY}},}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aaa21b59f4b2aa7e98ccb0e89b4594af64}{MIX\_MUSIC\_NATIVEMIDI}},}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aa0939d098096e2249106f7444bdfb104b}{MIX\_MUSIC\_OGG}},}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aab867d46037a0fa0fe8044fd69857496d}{MIX\_MUSIC\_MPG123}},}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aa259f0f1bc98b083e6b1d5cca7b05c253}{MIX\_MUSIC\_MAD}},}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aac57a2f523a6257574f9403dc16385558}{MIX\_MUSIC\_FLAC}},}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aab55e17d8fac8fe2f2ca99598a19b008e}{MIX\_MUSIC\_OPUS}},}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579aa442ebd62e305f894fb7f37ac0de55735}{MIX\_MUSIC\_LAST}}}
+\DoxyCodeLine{00043\ \}\ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579a}{Mix\_MusicAPI}};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*\ Music\ API\ implementation\ */}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{struct_mix___music_interface_ae8da7cdaff9f546784629215524257a3}{tag}};}
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{music_8h_a07f226a9043ab19d41bef0ba4784579a}{Mix\_MusicAPI}}\ \mbox{\hyperlink{struct_mix___music_interface_a9fb8e85994f9c01c12e577a58d4973dc}{api}};}
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{_s_d_l__mixer_8h_a3deb8c84c2e0a1bb970cd496d9e46f46}{Mix\_MusicType}}\ \mbox{\hyperlink{struct_mix___music_interface_a9e2b628f02a5768d84acfa9dc20b283e}{type}};}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{_s_d_l__stdinc_8h_a8fca68df0f976765230fe589a7c7733b}{SDL\_bool}}\ \mbox{\hyperlink{struct_mix___music_interface_a10d605e096717dfb1018fa7cd54a8658}{loaded}};}
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{_s_d_l__stdinc_8h_a8fca68df0f976765230fe589a7c7733b}{SDL\_bool}}\ \mbox{\hyperlink{struct_mix___music_interface_a3773e16337dcc345f22a30309d8cb312}{opened}};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{/*\ Load\ the\ library\ */}}
+\DoxyCodeLine{00057\ \ \ \ \ int\ (*Load)(\mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}});}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{/*\ Initialize\ for\ the\ audio\ output\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ int\ (*Open)(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_s_d_l___audio_spec}{SDL\_AudioSpec}}\ *spec);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{/*\ Create\ a\ music\ object\ from\ an\ SDL\_RWops\ stream}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ \ \ *\ If\ the\ function\ returns\ NULL,\ 'src'\ will\ be\ freed\ if\ needed\ by\ the\ caller.}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ *(*CreateFromRW)(\mbox{\hyperlink{struct_s_d_l___r_wops}{SDL\_RWops}}\ *\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a2a98ddb6f79ec1048ff9e15cdd2422ba}{src}},\ \textcolor{keywordtype}{int}\ freesrc);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{/*\ Create\ a\ music\ object\ from\ a\ file,\ if\ SDL\_RWops\ are\ not\ supported\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ *(*CreateFromFile)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{/*\ Set\ the\ volume\ */}}
+\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}}\ (*SetVolume)(\textcolor{keywordtype}{void}\ *music,\ \textcolor{keywordtype}{int}\ volume);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{/*\ Start\ playing\ music\ from\ the\ beginning\ with\ an\ optional\ loop\ count\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ int\ (*Play)(\textcolor{keywordtype}{void}\ *music,\ \textcolor{keywordtype}{int}\ play\_count);}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{/*\ Returns\ SDL\_TRUE\ if\ music\ is\ still\ playing\ */}}
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{_s_d_l__stdinc_8h_a8fca68df0f976765230fe589a7c7733b}{SDL\_bool}}\ (*IsPlaying)(\textcolor{keywordtype}{void}\ *music);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{/*\ Get\ music\ data,\ returns\ the\ number\ of\ bytes\ left\ */}}
+\DoxyCodeLine{00080\ \ \ \ \ int\ (*GetAudio)(\textcolor{keywordtype}{void}\ *music,\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{int}\ bytes);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{/*\ Seek\ to\ a\ play\ position\ (in\ seconds)\ */}}
+\DoxyCodeLine{00083\ \ \ \ \ int\ (*Seek)(\textcolor{keywordtype}{void}\ *music,\ \textcolor{keywordtype}{double}\ position);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{/*\ Pause\ playing\ music\ */}}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}}\ (*Pause)(\textcolor{keywordtype}{void}\ *music);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{/*\ Resume\ playing\ music\ */}}
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}}\ (*Resume)(\textcolor{keywordtype}{void}\ *music);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{/*\ Stop\ playing\ music\ */}}
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}}\ (*Stop)(\textcolor{keywordtype}{void}\ *music);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{/*\ Delete\ a\ music\ object\ */}}
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}}\ (*Delete)(\textcolor{keywordtype}{void}\ *music);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{/*\ Close\ the\ library\ and\ clean\ up\ */}}
+\DoxyCodeLine{00098\ \ \ \ \ \mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}}\ (*Close)(\mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}});}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{/*\ Unload\ the\ library\ */}}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}}\ (*Unload)(\mbox{\hyperlink{glad_8h_a950fc91edb4504f62f1c577bf4727c29}{void}});}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \}\ \mbox{\hyperlink{struct_mix___music_interface}{Mix\_MusicInterface}};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{music_8h_a23e293eb24c91eab38d11219a8c05cd4}{get\_num\_music\_interfaces}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00107\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{struct_mix___music_interface}{Mix\_MusicInterface}}\ *\mbox{\hyperlink{music_8h_a58e3dce45aa9fb8fb66438c0f9c44791}{get\_music\_interface}}(\textcolor{keywordtype}{int}\ \mbox{\hyperlink{glad_8h_a57f14e05b1900f16a2da82ade47d0c6d}{index}});}
+\DoxyCodeLine{00108\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{_s_d_l__mixer_8h_a3deb8c84c2e0a1bb970cd496d9e46f46}{Mix\_MusicType}}\ \mbox{\hyperlink{music_8h_a5eb37a28c3bdc1b646f9845bce656c9d}{detect\_music\_type\_from\_magic}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__stdinc_8h_a2944638813a090aa23e62f4da842c3e2}{Uint8}}\ *magic);}
+\DoxyCodeLine{00109\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{_s_d_l__stdinc_8h_a8fca68df0f976765230fe589a7c7733b}{SDL\_bool}}\ \mbox{\hyperlink{music_8h_aecb8c8c16d30098b0259324884735a51}{load\_music\_type}}(\mbox{\hyperlink{_s_d_l__mixer_8h_a3deb8c84c2e0a1bb970cd496d9e46f46}{Mix\_MusicType}}\ \mbox{\hyperlink{glad_8h_ad5ddf6fca7b585646515660e810e0188}{type}});}
+\DoxyCodeLine{00110\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{_s_d_l__stdinc_8h_a8fca68df0f976765230fe589a7c7733b}{SDL\_bool}}\ \mbox{\hyperlink{music_8h_ae049c4f00ef0a8ba271302f7095bf18c}{open\_music\_type}}(\mbox{\hyperlink{_s_d_l__mixer_8h_a3deb8c84c2e0a1bb970cd496d9e46f46}{Mix\_MusicType}}\ \mbox{\hyperlink{glad_8h_ad5ddf6fca7b585646515660e810e0188}{type}});}
+\DoxyCodeLine{00111\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{_s_d_l__stdinc_8h_a8fca68df0f976765230fe589a7c7733b}{SDL\_bool}}\ \mbox{\hyperlink{music_8h_a04f49a0efa2aff47f4371674b84f55c8}{has\_music}}(\mbox{\hyperlink{_s_d_l__mixer_8h_a3deb8c84c2e0a1bb970cd496d9e46f46}{Mix\_MusicType}}\ \mbox{\hyperlink{glad_8h_ad5ddf6fca7b585646515660e810e0188}{type}});}
+\DoxyCodeLine{00112\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{music_8h_a9fc3599e2e71a64a5ec975cf7fb64d41}{open\_music}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_s_d_l___audio_spec}{SDL\_AudioSpec}}\ *spec);}
+\DoxyCodeLine{00113\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{music_8h_ab6abfebc5f1cf3ed8293c8424d6b98d0}{music\_pcm\_getaudio}}(\textcolor{keywordtype}{void}\ *context,\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{int}\ bytes,\ \textcolor{keywordtype}{int}\ volume,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*GetSome)(\textcolor{keywordtype}{void}\ *context,\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{glad_8h_a740d7f00b044f54a556c7208e01f9f02}{data}},\ \textcolor{keywordtype}{int}\ bytes,\ \mbox{\hyperlink{_s_d_l__stdinc_8h_a8fca68df0f976765230fe589a7c7733b}{SDL\_bool}}\ *done));}
+\DoxyCodeLine{00115\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{begin__code_8h_a81faf4ba0455dc75f2e0507eddb79401}{SDLCALL}}\ \mbox{\hyperlink{music_8h_abc988c06ca4b920700fe35e6db9fb16f}{music\_mixer}}(\textcolor{keywordtype}{void}\ *udata,\ \mbox{\hyperlink{_s_d_l__stdinc_8h_a2944638813a090aa23e62f4da842c3e2}{Uint8}}\ *\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a10d3bc96cdfc1d478f52c13d5ffd9316}{stream}},\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a652168017ea9a8bbcead03d5c16269fb}{len}});}
+\DoxyCodeLine{00116\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{music_8h_a6e298ae0e53bb5cc7084327a06598bce}{close\_music}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00117\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{music_8h_ad0df1ae10489cbdef658b4f8ebeff8a6}{unload\_music}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{music_8h_a46b412fdc231d393326eccba2865a378}{music\_cmd}};}
+\DoxyCodeLine{00120\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{struct_s_d_l___audio_spec}{SDL\_AudioSpec}}\ \mbox{\hyperlink{music_8h_aa0765967e6b46384a43712c243a5f699}{music\_spec}};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MUSIC\_H\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{comment}{/*\ vi:\ set\ ts=4\ sw=4\ expandtab:\ */}}
+
+\end{DoxyCode}

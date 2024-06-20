@@ -1,0 +1,217 @@
+\doxysection{bt\+Raycast\+Vehicle.\+h}
+\hypertarget{bt_raycast_vehicle_8h_source}{}\label{bt_raycast_vehicle_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Vehicle/btRaycastVehicle.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Vehicle/btRaycastVehicle.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2005\ Erwin\ Coumans\ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Permission\ to\ use,\ copy,\ modify,\ distribute\ and\ sell\ this\ software}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ and\ its\ documentation\ for\ any\ purpose\ is\ hereby\ granted\ without\ fee,}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ provided\ that\ the\ above\ copyright\ notice\ appear\ in\ all\ copies.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Erwin\ Coumans\ makes\ no\ representations\ about\ the\ suitability\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ of\ this\ software\ for\ any\ purpose.\ \ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ It\ is\ provided\ "{}as\ is"{}\ without\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ BT\_RAYCASTVEHICLE\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ BT\_RAYCASTVEHICLE\_H}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btTypedConstraint.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btVehicleRaycaster.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dynamics_world}{btDynamicsWorld}};}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btWheelInfo.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btActionInterface.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{//class\ btVehicleTuning;}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_raycast_vehicle}{btRaycastVehicle}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_action_interface}{btActionInterface}}}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ m\_forwardWS;}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ m\_axle;}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btScalar>}}\ m\_forwardImpulse;}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btScalar>}}\ m\_sideImpulse;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_userConstraintType;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_userConstraintId;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_raycast_vehicle_1_1bt_vehicle_tuning}{btVehicleTuning}}}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_raycast_vehicle_1_1bt_vehicle_tuning}{btVehicleTuning}}()}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_suspensionStiffness(btScalar(5.88)),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_suspensionCompression(btScalar(0.83)),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_suspensionDamping(btScalar(0.88)),}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_maxSuspensionTravelCm(btScalar(500.)),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_frictionSlip(btScalar(10.5)),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_maxSuspensionForce(btScalar(6000.))}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ btScalar\ m\_suspensionStiffness;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ btScalar\ m\_suspensionCompression;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ btScalar\ m\_suspensionDamping;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ btScalar\ m\_maxSuspensionTravelCm;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ btScalar\ m\_frictionSlip;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ btScalar\ m\_maxSuspensionForce;}
+\DoxyCodeLine{00055\ \ \ \ \ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{structbt_vehicle_raycaster}{btVehicleRaycaster}}*\ m\_vehicleRaycaster;}
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ m\_pitchControl;}
+\DoxyCodeLine{00060\ \ \ \ \ btScalar\ m\_steeringValue;}
+\DoxyCodeLine{00061\ \ \ \ \ btScalar\ m\_currentVehicleSpeedKmHour;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ m\_chassisBody;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_indexRightAxis;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_indexUpAxis;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_indexForwardAxis;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ defaultInit(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_raycast_vehicle_1_1bt_vehicle_tuning}{btVehicleTuning}}\&\ tuning);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//constructor\ to\ create\ a\ car\ from\ an\ existing\ rigidbody}}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{classbt_raycast_vehicle}{btRaycastVehicle}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_raycast_vehicle_1_1bt_vehicle_tuning}{btVehicleTuning}}\&\ tuning,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ chassis,\ \mbox{\hyperlink{structbt_vehicle_raycaster}{btVehicleRaycaster}}*\ raycaster);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_raycast_vehicle}{\string~btRaycastVehicle}}();}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_raycast_vehicle_a22d127e6b87137131485cdebd65ea5af}{updateAction}}(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ collisionWorld,\ btScalar\ step)}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ (void)collisionWorld;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ updateVehicle(step);}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_raycast_vehicle_ab5dfeb4a57f735f6fb069bfc5654428d}{debugDraw}}(\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getChassisWorldTransform()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_raycast_vehicle_a53451c4e3495561f3f078b2041ef04be}{rayCast}}(\mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ updateVehicle(btScalar\ step);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{void}\ resetSuspension();}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ btScalar\ getSteeringValue(\textcolor{keywordtype}{int}\ wheel)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{void}\ setSteeringValue(btScalar\ steering,\ \textcolor{keywordtype}{int}\ wheel);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ applyEngineForce(btScalar\ force,\ \textcolor{keywordtype}{int}\ wheel);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getWheelTransformWS(\textcolor{keywordtype}{int}\ wheelIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{void}\ updateWheelTransform(\textcolor{keywordtype}{int}\ wheelIndex,\ \textcolor{keywordtype}{bool}\ interpolatedTransform\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{//\ \ void\ \ \ \ setRaycastWheelInfo(\ int\ wheelIndex\ ,\ bool\ isInContact,\ const\ btVector3\&\ hitPoint,\ const\ btVector3\&\ hitNormal,btScalar\ depth);}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ addWheel(\textcolor{keyword}{const}\ btVector3\&\ connectionPointCS0,\ \textcolor{keyword}{const}\ btVector3\&\ wheelDirectionCS0,\ \textcolor{keyword}{const}\ btVector3\&\ wheelAxleCS,\ btScalar\ suspensionRestLength,\ btScalar\ wheelRadius,\ \textcolor{keyword}{const}\ btVehicleTuning\&\ tuning,\ \textcolor{keywordtype}{bool}\ isFrontWheel);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getNumWheels()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00110\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ int(m\_wheelInfo.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btWheelInfo>}}\ m\_wheelInfo;}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ getWheelInfo(\textcolor{keywordtype}{int}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ getWheelInfo(\textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{void}\ updateWheelTransformsWS(\mbox{\hyperlink{structbt_wheel_info}{btWheelInfo}}\&\ wheel,\ \textcolor{keywordtype}{bool}\ interpolatedTransform\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{void}\ setBrake(btScalar\ brake,\ \textcolor{keywordtype}{int}\ wheelIndex);}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{void}\ setPitchControl(btScalar\ pitch)}
+\DoxyCodeLine{00125\ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ m\_pitchControl\ =\ \mbox{\hyperlink{group__gtc__quaternion_ga7603e81477b46ddb448896909bc04928}{pitch}};}
+\DoxyCodeLine{00127\ \ \ \ \ \}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{void}\ updateSuspension(btScalar\ deltaTime);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ updateFriction(btScalar\ timeStep);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ getRigidBody()}
+\DoxyCodeLine{00134\ \ \ \ \ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_chassisBody;}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ getRigidBody()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00139\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_chassisBody;}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getRightAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00144\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_indexRightAxis;}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getUpAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00148\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_indexUpAxis;}
+\DoxyCodeLine{00150\ \ \ \ \ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getForwardAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00153\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_indexForwardAxis;}
+\DoxyCodeLine{00155\ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00158\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_raycast_vehicle_a24312c6dce6a155b14147170c0eef263}{getForwardVector}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00159\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ chassisTrans\ =\ getChassisWorldTransform();}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ btVector3\ forwardW(}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ chassisTrans.getBasis()[0][m\_indexForwardAxis],}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ chassisTrans.getBasis()[1][m\_indexForwardAxis],}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ chassisTrans.getBasis()[2][m\_indexForwardAxis]);}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ forwardW;}
+\DoxyCodeLine{00168\ \ \ \ \ \}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00171\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_raycast_vehicle_aee54020262c0ff82165ea0e542319906}{getCurrentSpeedKmHour}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00172\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_currentVehicleSpeedKmHour;}
+\DoxyCodeLine{00174\ \ \ \ \ \}}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setCoordinateSystem(\textcolor{keywordtype}{int}\ rightIndex,\ \textcolor{keywordtype}{int}\ upIndex,\ \textcolor{keywordtype}{int}\ forwardIndex)}
+\DoxyCodeLine{00177\ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ m\_indexRightAxis\ =\ rightIndex;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ m\_indexUpAxis\ =\ upIndex;}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ m\_indexForwardAxis\ =\ forwardIndex;}
+\DoxyCodeLine{00181\ \ \ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_raycast_vehicle_a1965219f0bc5b07eedb0fb745c890db6}{getUserConstraintType}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00185\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userConstraintType;}
+\DoxyCodeLine{00187\ \ \ \ \ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordtype}{void}\ setUserConstraintType(\textcolor{keywordtype}{int}\ userConstraintType)}
+\DoxyCodeLine{00190\ \ \ \ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ m\_userConstraintType\ =\ userConstraintType;}
+\DoxyCodeLine{00192\ \ \ \ \ \};}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{void}\ setUserConstraintId(\textcolor{keywordtype}{int}\ uid)}
+\DoxyCodeLine{00195\ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ m\_userConstraintId\ =\ uid;}
+\DoxyCodeLine{00197\ \ \ \ \ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordtype}{int}\ getUserConstraintId()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00200\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userConstraintId;}
+\DoxyCodeLine{00202\ \ \ \ \ \}}
+\DoxyCodeLine{00203\ \};}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_default_vehicle_raycaster}{btDefaultVehicleRaycaster}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_vehicle_raycaster}{btVehicleRaycaster}}}
+\DoxyCodeLine{00206\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \mbox{\hyperlink{classbt_dynamics_world}{btDynamicsWorld}}*\ m\_dynamicsWorld;}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00210\ \ \ \ \ \mbox{\hyperlink{classbt_default_vehicle_raycaster}{btDefaultVehicleRaycaster}}(\mbox{\hyperlink{classbt_dynamics_world}{btDynamicsWorld}}*\ world)}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ :\ m\_dynamicsWorld(world)}
+\DoxyCodeLine{00212\ \ \ \ \ \{}
+\DoxyCodeLine{00213\ \ \ \ \ \}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}*\ castRay(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \mbox{\hyperlink{structbt_vehicle_raycaster_1_1bt_vehicle_raycaster_result}{btVehicleRaycasterResult}}\&\ result);}
+\DoxyCodeLine{00216\ \};}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_RAYCASTVEHICLE\_H}}
+
+\end{DoxyCode}

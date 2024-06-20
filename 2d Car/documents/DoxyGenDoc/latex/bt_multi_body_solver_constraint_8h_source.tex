@@ -1,0 +1,95 @@
+\doxysection{bt\+Multi\+Body\+Solver\+Constraint.\+h}
+\hypertarget{bt_multi_body_solver_constraint_8h_source}{}\label{bt_multi_body_solver_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodySolverConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/Featherstone/btMultiBodySolverConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_MULTIBODY\_SOLVER\_CONSTRAINT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_MULTIBODY\_SOLVER\_CONSTRAINT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }btMultiBody;}
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }btMultiBodyConstraint;}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btSolverBody.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/ConstraintSolver/btContactSolverInfo.h"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00028\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00029\ btMultiBodySolverConstraint}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ btMultiBodySolverConstraint()\ :\ m\_solverBodyIdA(-\/1),\ m\_multiBodyA(0),\ m\_linkA(-\/1),\ m\_solverBodyIdB(-\/1),\ m\_multiBodyB(0),\ m\_linkB(-\/1),\ m\_orgConstraint(0),\ m\_orgDofIndex(-\/1)}
+\DoxyCodeLine{00034\ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_deltaVelAindex;\ \ \textcolor{comment}{//more\ generic\ version\ of\ m\_relpos1CrossNormal/m\_contactNormal1}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_jacAindex;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_deltaVelBindex;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_jacBindex;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ btVector3\ m\_relpos1CrossNormal;}
+\DoxyCodeLine{00043\ \ \ \ \ btVector3\ m\_contactNormal1;}
+\DoxyCodeLine{00044\ \ \ \ \ btVector3\ m\_relpos2CrossNormal;}
+\DoxyCodeLine{00045\ \ \ \ \ btVector3\ m\_contactNormal2;\ \ \textcolor{comment}{//usually\ m\_contactNormal2\ ==\ -\/m\_contactNormal1,\ but\ not\ always}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ btVector3\ m\_angularComponentA;}
+\DoxyCodeLine{00048\ \ \ \ \ btVector3\ m\_angularComponentB;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{mutable}\ btSimdScalar\ m\_appliedPushImpulse;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{mutable}\ btSimdScalar\ m\_appliedImpulse;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ btScalar\ m\_friction;}
+\DoxyCodeLine{00054\ \ \ \ \ btScalar\ m\_jacDiagABInv;}
+\DoxyCodeLine{00055\ \ \ \ \ btScalar\ m\_rhs;}
+\DoxyCodeLine{00056\ \ \ \ \ btScalar\ m\_cfm;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ btScalar\ m\_lowerLimit;}
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ m\_upperLimit;}
+\DoxyCodeLine{00060\ \ \ \ \ btScalar\ m\_rhsPenetration;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_originalContactPoint;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ btScalar\ m\_unusedPadding4;}
+\DoxyCodeLine{00064\ \ \ \ \ \};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_overrideNumSolverIterations;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_frictionIndex;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_solverBodyIdA;}
+\DoxyCodeLine{00070\ \ \ \ \ btMultiBody*\ m\_multiBodyA;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_linkA;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_solverBodyIdB;}
+\DoxyCodeLine{00074\ \ \ \ \ btMultiBody*\ m\_multiBodyB;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_linkB;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//for\ writing\ back\ applied\ impulses}}
+\DoxyCodeLine{00078\ \ \ \ \ btMultiBodyConstraint*\ m\_orgConstraint;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_orgDofIndex;}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{enum}\ btSolverConstraintType}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ BT\_SOLVER\_CONTACT\_1D\ =\ 0,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ BT\_SOLVER\_FRICTION\_1D}
+\DoxyCodeLine{00085\ \ \ \ \ \};}
+\DoxyCodeLine{00086\ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btMultiBodySolverConstraint>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{btMultiBodyConstraintArray}};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MULTIBODY\_SOLVER\_CONSTRAINT\_H}}
+
+\end{DoxyCode}

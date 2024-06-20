@@ -1,0 +1,79 @@
+\doxysection{bt\+Triangle\+Mesh Class Reference}
+\hypertarget{classbt_triangle_mesh}{}\label{classbt_triangle_mesh}\index{btTriangleMesh@{btTriangleMesh}}
+
+
+{\ttfamily \#include $<$bt\+Triangle\+Mesh.\+h$>$}
+
+Inheritance diagram for bt\+Triangle\+Mesh\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classbt_triangle_mesh}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_triangle_mesh_a686eefc0978d30da88bdc43c6d75589f}\label{classbt_triangle_mesh_a686eefc0978d30da88bdc43c6d75589f} 
+{\bfseries bt\+Triangle\+Mesh} (bool use32bit\+Indices=true, bool use4component\+Vertices=true)
+\item 
+\Hypertarget{classbt_triangle_mesh_af13198c9c8f5cb3f542a30ea4d5790fa}\label{classbt_triangle_mesh_af13198c9c8f5cb3f542a30ea4d5790fa} 
+bool {\bfseries get\+Use32bit\+Indices} () const
+\item 
+\Hypertarget{classbt_triangle_mesh_abac757c144236dcc133cb27dd9d9f5bf}\label{classbt_triangle_mesh_abac757c144236dcc133cb27dd9d9f5bf} 
+bool {\bfseries get\+Use4component\+Vertices} () const
+\item 
+void \mbox{\hyperlink{classbt_triangle_mesh_a28551d57ae59248a210163a504558583}{add\+Triangle}} (const bt\+Vector3 \&vertex0, const bt\+Vector3 \&vertex1, const bt\+Vector3 \&vertex2, bool remove\+Duplicate\+Vertices=false)
+\item 
+\Hypertarget{classbt_triangle_mesh_a3ec1774f0f06d5f5bcf815845589796b}\label{classbt_triangle_mesh_a3ec1774f0f06d5f5bcf815845589796b} 
+void {\bfseries add\+Triangle\+Indices} (int index1, int index2, int index3)
+\begin{DoxyCompactList}\small\item\em Add a triangle using its indices. Make sure the indices are pointing within the vertices array, so add the vertices first (and to be sure, avoid removal of duplicate vertices) \end{DoxyCompactList}\item 
+\Hypertarget{classbt_triangle_mesh_a2e6b51f9d56b3b5f1aca4f4ee11f6c1c}\label{classbt_triangle_mesh_a2e6b51f9d56b3b5f1aca4f4ee11f6c1c} 
+int {\bfseries get\+Num\+Triangles} () const
+\item 
+\Hypertarget{classbt_triangle_mesh_a8c1ca8fdf198eee1812e3efe9e0098b5}\label{classbt_triangle_mesh_a8c1ca8fdf198eee1812e3efe9e0098b5} 
+virtual void {\bfseries preallocate\+Vertices} (int numverts)
+\item 
+\Hypertarget{classbt_triangle_mesh_a0b2aee6bf89eecbf2a2b955253e62b7d}\label{classbt_triangle_mesh_a0b2aee6bf89eecbf2a2b955253e62b7d} 
+virtual void {\bfseries preallocate\+Indices} (int numindices)
+\item 
+int \mbox{\hyperlink{classbt_triangle_mesh_a3b521a1faa5862a818d9f983230749a2}{find\+Or\+Add\+Vertex}} (const bt\+Vector3 \&vertex, bool remove\+Duplicate\+Vertices)
+\begin{DoxyCompactList}\small\item\em find\+Or\+Add\+Vertex is an internal method, use add\+Triangle instead \end{DoxyCompactList}\item 
+\Hypertarget{classbt_triangle_mesh_aceefc2d4c6a9abaff3bd58310533fd8a}\label{classbt_triangle_mesh_aceefc2d4c6a9abaff3bd58310533fd8a} 
+void {\bfseries add\+Index} (int index)
+\begin{DoxyCompactList}\small\item\em add\+Index is an internal method, use add\+Triangle instead \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_triangle_mesh_a0b4be6aee36c84cb4d5679cde0ce91f8}\label{classbt_triangle_mesh_a0b4be6aee36c84cb4d5679cde0ce91f8} 
+bt\+Scalar {\bfseries m\+\_\+welding\+Threshold}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxylink{classbt_triangle_mesh}{bt\+Triangle\+Mesh} class is a convenience class derived from bt\+Triangle\+Index\+Vertex\+Array, that provides storage for a concave triangle mesh. It can be used as data for the bt\+Bvh\+Triangle\+Mesh\+Shape. It allows either 32bit or 16bit indices, and 4 (x-\/y-\/z-\/w) or 3 (x-\/y-\/z) component vertices. If you want to share triangle/index data between graphics mesh and collision mesh (bt\+Bvh\+Triangle\+Mesh\+Shape), you can directly use bt\+Triangle\+Index\+Vertex\+Array or derive your own class from bt\+Striding\+Mesh\+Interface. Performance of \doxylink{classbt_triangle_mesh}{bt\+Triangle\+Mesh} and bt\+Triangle\+Index\+Vertex\+Array used in a bt\+Bvh\+Triangle\+Mesh\+Shape is the same. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_triangle_mesh_a28551d57ae59248a210163a504558583}\label{classbt_triangle_mesh_a28551d57ae59248a210163a504558583} 
+\index{btTriangleMesh@{btTriangleMesh}!addTriangle@{addTriangle}}
+\index{addTriangle@{addTriangle}!btTriangleMesh@{btTriangleMesh}}
+\doxysubsubsection{\texorpdfstring{addTriangle()}{addTriangle()}}
+{\footnotesize\ttfamily void bt\+Triangle\+Mesh\+::add\+Triangle (\begin{DoxyParamCaption}\item[{const bt\+Vector3 \&}]{vertex0,  }\item[{const bt\+Vector3 \&}]{vertex1,  }\item[{const bt\+Vector3 \&}]{vertex2,  }\item[{bool}]{remove\+Duplicate\+Vertices = {\ttfamily false} }\end{DoxyParamCaption})}
+
+By default add\+Triangle won\textquotesingle{}t search for duplicate vertices, because the search is very slow for large triangle meshes. In general it is better to directly use bt\+Triangle\+Index\+Vertex\+Array instead. \Hypertarget{classbt_triangle_mesh_a3b521a1faa5862a818d9f983230749a2}\label{classbt_triangle_mesh_a3b521a1faa5862a818d9f983230749a2} 
+\index{btTriangleMesh@{btTriangleMesh}!findOrAddVertex@{findOrAddVertex}}
+\index{findOrAddVertex@{findOrAddVertex}!btTriangleMesh@{btTriangleMesh}}
+\doxysubsubsection{\texorpdfstring{findOrAddVertex()}{findOrAddVertex()}}
+{\footnotesize\ttfamily int bt\+Triangle\+Mesh\+::find\+Or\+Add\+Vertex (\begin{DoxyParamCaption}\item[{const bt\+Vector3 \&}]{vertex,  }\item[{bool}]{remove\+Duplicate\+Vertices }\end{DoxyParamCaption})}
+
+
+
+find\+Or\+Add\+Vertex is an internal method, use add\+Triangle instead 
+
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000024}{Todo}}]\+: could use acceleration structure for this \end{DoxyRefDesc}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Collision\+Shapes/bt\+Triangle\+Mesh.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Collision\+Shapes/bt\+Triangle\+Mesh.\+cpp\end{DoxyCompactItemize}

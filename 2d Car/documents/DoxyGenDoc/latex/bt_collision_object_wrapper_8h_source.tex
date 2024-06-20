@@ -1,0 +1,53 @@
+\doxysection{bt\+Collision\+Object\+Wrapper.\+h}
+\hypertarget{bt_collision_object_wrapper_8h_source}{}\label{bt_collision_object_wrapper_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ BT\_COLLISION\_OBJECT\_WRAPPER\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ BT\_COLLISION\_OBJECT\_WRAPPER\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{class\ }btCollisionShape;}
+\DoxyCodeLine{00007\ \textcolor{keyword}{class\ }btCollisionObject;}
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }btTransform;}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}\ \ \textcolor{comment}{//\ for\ SIMD\_FORCE\_INLINE\ definition}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ BT\_DECLARE\_STACK\_ONLY\_OBJECT\ \(\backslash\)}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{private:\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\ \ \ \ void*\ operator\ new(size\_t\ size);\ \(\backslash\)}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\ \ \ \ void\ operator\ delete(void*);}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}};}
+\DoxyCodeLine{00017\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ BT\_DECLARE\_STACK\_ONLY\_OBJECT}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00022\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\&);\ \ \textcolor{comment}{//\ not\ implemented.\ Not\ allowed.}}
+\DoxyCodeLine{00023\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\&);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_parent;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ m\_shape;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ m\_collisionObject;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ m\_worldTransform;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{const}\ btTransform*\ m\_preTransform;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_partId;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_index;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ parent,\ \textcolor{keyword}{const}\ btCollisionShape*\ shape,\ \textcolor{keyword}{const}\ btCollisionObject*\ collisionObject,\ \textcolor{keyword}{const}\ btTransform\&\ worldTransform,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ :\ m\_parent(parent),\ m\_shape(shape),\ m\_collisionObject(collisionObject),\ m\_worldTransform(worldTransform),\ m\_preTransform(NULL),\ m\_partId(partId),\ m\_index(index)}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ \ \ \ \ }
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ parent,\ \textcolor{keyword}{const}\ btCollisionShape*\ shape,\ \textcolor{keyword}{const}\ btCollisionObject*\ collisionObject,\ \textcolor{keyword}{const}\ btTransform\&\ worldTransform,\ \textcolor{keyword}{const}\ btTransform\&\ preTransform,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00040\ \ \ \ \ :\ m\_parent(parent),\ m\_shape(shape),\ m\_collisionObject(collisionObject),\ m\_worldTransform(worldTransform),\ m\_preTransform(\&preTransform),\ m\_partId(partId),\ m\_index(index)}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btTransform\&\ getWorldTransform()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_worldTransform;\ \}}
+\DoxyCodeLine{00045\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btCollisionObject*\ getCollisionObject()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_collisionObject;\ \}}
+\DoxyCodeLine{00046\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ btCollisionShape*\ getCollisionShape()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_shape;\ \}}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_COLLISION\_OBJECT\_WRAPPER\_H}}
+
+\end{DoxyCode}

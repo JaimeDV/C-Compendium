@@ -1,0 +1,106 @@
+\doxysection{bt\+Default\+Collision\+Configuration.\+h}
+\hypertarget{bt_default_collision_configuration_8h_source}{}\label{bt_default_collision_configuration_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DEFAULT\_COLLISION\_CONFIGURATION}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DEFAULT\_COLLISION\_CONFIGURATION}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btCollisionConfiguration.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }btVoronoiSimplexSolver;}
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_convex_penetration_depth_solver}{btConvexPenetrationDepthSolver}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_default_collision_construction_info}{btDefaultCollisionConstructionInfo}}}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ m\_persistentManifoldPool;}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ m\_collisionAlgorithmPool;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_defaultMaxPersistentManifoldPoolSize;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_defaultMaxCollisionAlgorithmPoolSize;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_customCollisionAlgorithmMaxElementSize;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useEpaPenetrationAlgorithm;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{structbt_default_collision_construction_info}{btDefaultCollisionConstructionInfo}}()}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ :\ m\_persistentManifoldPool(0),}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ m\_collisionAlgorithmPool(0),}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ m\_defaultMaxPersistentManifoldPoolSize(4096),}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ m\_defaultMaxCollisionAlgorithmPoolSize(4096),}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ m\_customCollisionAlgorithmMaxElementSize(0),}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ m\_useEpaPenetrationAlgorithm(\textcolor{keyword}{true})}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_default_collision_configuration}{btDefaultCollisionConfiguration}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_collision_configuration}{btCollisionConfiguration}}}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00048\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_persistentManifoldPoolSize;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ m\_persistentManifoldPool;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ownsPersistentManifoldPool;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ m\_collisionAlgorithmPool;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ownsCollisionAlgorithmPool;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{//default\ penetration\ depth\ solver}}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{classbt_convex_penetration_depth_solver}{btConvexPenetrationDepthSolver}}*\ m\_pdSolver;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//default\ CreationFunctions,\ filling\ the\ m\_doubleDispatch\ table}}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_convexConvexCreateFunc;}
+\DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_convexConcaveCreateFunc;}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_swappedConvexConcaveCreateFunc;}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_compoundCreateFunc;}
+\DoxyCodeLine{00065\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_compoundCompoundCreateFunc;}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_swappedCompoundCreateFunc;}
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_emptyCreateFunc;}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_sphereSphereCF;}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_sphereBoxCF;}
+\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_boxSphereCF;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_boxBoxCF;}
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_sphereTriangleCF;}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_triangleSphereCF;}
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_planeConvexCF;}
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ m\_convexPlaneCF;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classbt_default_collision_configuration_ad08e7d72b0bd0d3f98290c2a1649b0d9}{btDefaultCollisionConfiguration}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_default_collision_construction_info}{btDefaultCollisionConstructionInfo}}\&\ constructionInfo\ =\ \mbox{\hyperlink{structbt_default_collision_construction_info}{btDefaultCollisionConstructionInfo}}());}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_default_collision_configuration}{\string~btDefaultCollisionConfiguration}}();}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ \mbox{\hyperlink{classbt_default_collision_configuration_a533d477fe96a3dea6753ba51e555b3e1}{getPersistentManifoldPool}}()}
+\DoxyCodeLine{00086\ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_persistentManifoldPool;}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ getCollisionAlgorithmPool()}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_collisionAlgorithmPool;}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ getCollisionAlgorithmCreateFunc(\textcolor{keywordtype}{int}\ proxyType0,\ \textcolor{keywordtype}{int}\ proxyType1);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_collision_algorithm_create_func}{btCollisionAlgorithmCreateFunc}}*\ getClosestPointsAlgorithmCreateFunc(\textcolor{keywordtype}{int}\ proxyType0,\ \textcolor{keywordtype}{int}\ proxyType1);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_default_collision_configuration_a39a173eedf0e8d55dd89ef3b637925a9}{setConvexConvexMultipointIterations}}(\textcolor{keywordtype}{int}\ numPerturbationIterations\ =\ 3,\ \textcolor{keywordtype}{int}\ minimumPointsPerturbationThreshold\ =\ 3);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{void}\ setPlaneConvexMultipointIterations(\textcolor{keywordtype}{int}\ numPerturbationIterations\ =\ 3,\ \textcolor{keywordtype}{int}\ minimumPointsPerturbationThreshold\ =\ 3);}
+\DoxyCodeLine{00109\ \};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DEFAULT\_COLLISION\_CONFIGURATION}}
+
+\end{DoxyCode}

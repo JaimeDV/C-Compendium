@@ -1,0 +1,63 @@
+\doxysection{Door.\+hpp}
+\hypertarget{_door_8hpp_source}{}\label{_door_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Door.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Door.hpp}}
+\mbox{\hyperlink{_door_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_plane_8hpp}{Plane.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_message_8hpp}{Message.hpp}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_door_model}{DoorModel}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_physic_plane}{PhysicPlane}}}
+\DoxyCodeLine{00014\ \ \ \ \ \{}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ trigered\ =\ \textcolor{keyword}{false};\ \textcolor{comment}{//\ Flag\ indicating\ if\ the\ door\ is\ triggered}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_door_model_a8848090c03dae0084bbd752774ed86c9}{DoorModel}}(btVector3\ given\_rotation,\ \textcolor{keywordtype}{float}\ given\_mass,\ btVector3\ given\_inertia,\ \textcolor{keywordtype}{float}\ given\_restitution,\ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4e}{ObjectType}}\ given\_type,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ given\_origin,\ btVector3\ \mbox{\hyperlink{classmisi_1_1_physic_body_ad8ffdda377f50e5a1ebc38bef0cc73df}{scale}})\ :\ \mbox{\hyperlink{classmisi_1_1_physic_plane}{PhysicPlane}}(given\_rotation,\ given\_mass,\ given\_inertia,\ given\_restitution,\ given\_type,\ given\_origin,\ \mbox{\hyperlink{classmisi_1_1_physic_body_ad8ffdda377f50e5a1ebc38bef0cc73df}{scale}})}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_door_model_a4846553d02595334e19a79a81339f3fb}{ModelAction}}()\textcolor{keyword}{\ override}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (trigered)}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a1cd432898bc49008135adcfbc62b7ae5}{UnLockRotation}}();}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a9160462002ad1b887f0466c3349be566}{ApplyMotorForce}}(0.2f,\ 1.f);}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_door_model_a7a966882a2f61f45734a7251e44ea719}{Trigger}}();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classmisi_1_1_door_model_a2116c489ef70fd88297ec9aa28547cb1}{\string~DoorModel}}()\ \{\}\ }
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_door}{Door}}\ :\textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}}}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ shared\_ptr\ <DoorModel>\ doormodel;\ \textcolor{comment}{//\ Pointer\ to\ the\ door\ model}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_door_a5fed48fb56436259ffe6ebe9e1e0bda2}{handle}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ message)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_door_a05f5b62592962a14abbbb8c3f7d25571}{Door}}(btVector3\ given\_rotation,\ \textcolor{keywordtype}{float}\ given\_mass,\ btVector3\ given\_inertia,\ \textcolor{keywordtype}{float}\ given\_restitution,\ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4e}{ObjectType}}\ given\_type,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ given\_origin,\ btVector3\ scale)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ doormodel\ =\ make\_shared\ <DoorModel>(given\_rotation,\ given\_mass,\ given\_inertia,\ given\_restitution,\ given\_type,\ given\_origin,\ scale);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ shared\_ptr\ <DoorModel>\ \mbox{\hyperlink{classmisi_1_1_door_adde738982d02a18c38b61e072b326457}{GetModel}}()}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ doormodel;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ \ \ \ \ \};}
+\DoxyCodeLine{00084\ \}}
+
+\end{DoxyCode}

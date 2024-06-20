@@ -1,0 +1,82 @@
+\doxysection{Sample\+Renderer.\+hpp}
+\hypertarget{_sample_renderer_8hpp_source}{}\label{_sample_renderer_8hpp_source}\index{code/headers/SampleRenderer.hpp@{code/headers/SampleRenderer.hpp}}
+\mbox{\hyperlink{_sample_renderer_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_internal_8hpp}{Internal.hpp}}"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{_cube_8hpp}{Cube.hpp}}>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{_model_8hpp}{Model.hpp}}>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{_model___obj_8hpp}{Model\_Obj.hpp}}>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{_light_8hpp}{Light.hpp}}>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{_render___node_8hpp}{Render\_Node.hpp}}>}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{using\ namespace\ }\mbox{\hyperlink{namespacestd}{std}};}
+\DoxyCodeLine{00018\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }Window;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_sample___renderer}{Sample\_Renderer}}:\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}}}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ message\_dispacher;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ std::unique\_ptr<\ glt::Render\_Node\ >\ renderer;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ std::map<string,\ shared\_ptr<\ glt::Model>\ >\ models;\textcolor{comment}{//a\ list\ of\ all\ renderer\ models\ with\ their\ ids}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_window}{Window}}*\ window;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ exit;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a891b4094790adba392e17c3a7a2d77b3}{Sample\_Renderer}}(\mbox{\hyperlink{classmisi_1_1_window}{Window}}\&\ given\_window);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a81b8838d97d3412f7b430f0a2f5ca156}{\string~Sample\_Renderer}}();}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a6ca682d429c757acdbf67279a5ded93e}{render}}();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_adf914a0e6caaa84bd4367c5c70593926}{add\_model}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\ \textcolor{keywordtype}{string}\ file);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a07aa1d32e65ab29ff32a80fc65ac9c51}{move\_model}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{structglm_1_1vec}{glt::Vector3}}\ position);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a583ed8d47bba64ffdc868e65700ca04e}{scale\_model}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{structglm_1_1vec}{glt::Vector3}}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a281421b881aa7a1266842b73a3bc7655}{scale}});}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a583ed8d47bba64ffdc868e65700ca04e}{scale\_model}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a281421b881aa7a1266842b73a3bc7655}{scale}});}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a669527bcf114669e6f7eec6e30e01fcc}{rotate\_model}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{structglm_1_1vec}{glt::Vector3}}\ \mbox{\hyperlink{namespacemisi_a20061d2ca904e4d7bd052c90d36c7e95}{rotation}});}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a2173e24bdfdcf0c9f4c3768e592b5c8d}{remove\_model}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a1bc30beaefde699a8f989b6328954b9a}{add\_cube}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a6d4ee5986a49122eae92d2efa9ffdbff}{add\_camera}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\mbox{\hyperlink{structglm_1_1vec}{glt::Vector3}}\ position);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_aaf38d16b0bad91abb8f54b33061f52e6}{add\_light}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{structglm_1_1vec}{glt::Vector3}}\ position);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a886a21517a0960b929dd2001df6be231}{add\_parent}}(\textcolor{keywordtype}{string}\ son,\ \textcolor{keywordtype}{string}\ parent);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_af7b3c67ea50bd5d246b51e4023639811}{add\_son}}(\textcolor{keywordtype}{string}\ parent,\ \textcolor{keywordtype}{string}\ son);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a2d2856116dcdb40991ebdde9b0f04010}{renderloop}}();}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_afb351033e7815b4d00583f1ed92fcae7}{set\_visibility}}(\textcolor{keywordtype}{string}\ \textcolor{keywordtype}{id},\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{glad_8h_ac783c2a5a0d42f36a33959f6a34ae0ba}{value}});}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a19abe6abc6ac2e10ec1bdf30f68a2527}{handle}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_ab5d4c2bfcb78f279c688575297d42f74}{message}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_a94cf6cbb19d38d6798798bdb28f9e510}{get\_message\_dispacher}}()}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ message\_dispacher;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_sample___renderer_ae98439163870c439c88fb7f017a4a529}{set\_message\_dispacher}}(\mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}*\ given\_dispacher)}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ message\_dispacher\ =\ given\_dispacher;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00079\ \ \ \ \ \};}
+\DoxyCodeLine{00080\ \}}
+
+\end{DoxyCode}

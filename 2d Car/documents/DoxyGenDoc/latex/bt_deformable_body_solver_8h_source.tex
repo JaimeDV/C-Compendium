@@ -1,0 +1,166 @@
+\doxysection{bt\+Deformable\+Body\+Solver.\+h}
+\hypertarget{bt_deformable_body_solver_8h_source}{}\label{bt_deformable_body_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableBodySolver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableBodySolver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DEFORMABLE\_BODY\_SOLVERS\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DEFORMABLE\_BODY\_SOLVERS\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btSoftBodySolvers.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btDeformableBackwardEulerObjective.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btDeformableMultiBodyDynamicsWorld.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyConstraint.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}btConjugateResidual.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}btConjugateGradient.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}};}
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_backward_euler_objective}{btDeformableBackwardEulerObjective}};}
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world}{btDeformableMultiBodyDynamicsWorld}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_soft_body_solver}{btSoftBodySolver}}}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numNodes;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ total\ number\ of\ deformable\ body\ nodes}}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\ m\_dv;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ v\_\{n+1\}\ -\/\ v\_n}}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\ m\_backup\_dv;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ backed\ up\ dv}}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\ m\_ddv;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ incremental\ dv}}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\ m\_residual;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ rhs\ of\ the\ linear\ solve}}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\ m\_softBodies;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ all\ deformable\ bodies}}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\ m\_backupVelocity;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ backed\ up\ v,\ equals\ v\_n\ for\ implicit,\ equals\ v\_\{n+1\}\string^*\ for\ explicit}}
+\DoxyCodeLine{00042\ \ \ \ \ btScalar\ m\_dt;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dt}}
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{classbt_conjugate_gradient}{btConjugateGradient<btDeformableBackwardEulerObjective>}}\ m\_cg;\ \ \textcolor{comment}{//\ CG\ solver}}
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{classbt_conjugate_residual}{btConjugateResidual<btDeformableBackwardEulerObjective>}}\ m\_cr;\ \ \textcolor{comment}{//\ CR\ solver}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_implicit;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ use\ implicit\ scheme\ if\ true,\ explicit\ scheme\ if\ false}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_maxNewtonIterations;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ max\ number\ of\ newton\ iterations}}
+\DoxyCodeLine{00047\ \ \ \ \ btScalar\ m\_newtonTolerance;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ stop\ newton\ iterations\ if\ f(x)\ <\ m\_newtonTolerance}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_lineSearch;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ true,\ use\ newton's\ method\ with\ line\ search\ under\ implicit\ scheme}}
+\DoxyCodeLine{00049\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ handles\ data\ related\ to\ objective\ function}}
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_backward_euler_objective}{btDeformableBackwardEulerObjective}}*\ m\_objective;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useProjection;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}}();}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_body_solver}{\string~btDeformableBodySolver}}();}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{virtual}\ SolverTypes\ \mbox{\hyperlink{classbt_deformable_body_solver_a22ee7c274ddeaad805f1ed1d4c12ec8d}{getSolverType}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00059\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ DEFORMABLE\_SOLVER;}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ update\ soft\ body\ normals}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_body_solver_a0d0c73b82db9f6bd6cab8683f67ffd86}{updateSoftBodies}}();}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveContactConstraints(btCollisionObject**\ deformableBodies,\ \textcolor{keywordtype}{int}\ numDeformableBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ solve\ the\ momentum\ equation}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveDeformableConstraints(btScalar\ solverdt);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{//\ resize/clear\ data\ structures}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ reinitialize(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ softBodies,\ btScalar\ dt);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ set\ up\ contact\ constraints}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ setConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//\ add\ in\ elastic\ forces\ and\ gravity\ to\ obtain\ v\_\{n+1\}\string^*\ and\ calls\ predictDeformableMotion}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_body_solver_adf376ce8988b685092b6a99f8b54fea1}{predictMotion}}(btScalar\ solverdt);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{//\ move\ to\ temporary\ position\ x\_\{n+1\}\string^*\ =\ x\_n\ +\ dt\ *\ v\_\{n+1\}\string^*}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ x\_\{n+1\}\string^*\ is\ stored\ in\ m\_q}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ predictDeformableMotion(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb,\ btScalar\ dt);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//\ save\ the\ current\ velocity\ to\ m\_backupVelocity}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ backupVelocity();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ set\ m\_dv\ and\ m\_backupVelocity\ to\ desired\ value\ to\ prepare\ for\ momentum\ solve}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ setupDeformableSolve(\textcolor{keywordtype}{bool}\ implicit);}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ set\ the\ current\ velocity\ to\ that\ backed\ up\ in\ m\_backupVelocity}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ revertVelocity();}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{//\ set\ velocity\ to\ m\_dv\ +\ m\_backupVelocity}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{void}\ updateVelocity();}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{//\ update\ the\ node\ count}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{bool}\ updateNodes();}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{//\ calculate\ the\ change\ in\ dv\ resulting\ from\ the\ momentum\ solve}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ computeStep(TVStack\&\ ddv,\ \textcolor{keyword}{const}\ TVStack\&\ residual);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{//\ calculate\ the\ change\ in\ dv\ resulting\ from\ the\ momentum\ solve\ when\ line\ search\ is\ turned\ on}}
+\DoxyCodeLine{00103\ \ \ \ \ btScalar\ computeDescentStep(TVStack\&\ ddv,\ \textcolor{keyword}{const}\ TVStack\&\ residual,\ \textcolor{keywordtype}{bool}\ verbose\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ copySoftBodyToVertexBuffer(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ \textcolor{keyword}{const}\ softBody,\ \mbox{\hyperlink{classbt_vertex_buffer_descriptor}{btVertexBufferDescriptor}}*\ vertexBuffer)\ \{\}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{//\ process\ collision\ between\ deformable\ and\ rigid}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processCollision(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ softBody,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ collisionObjectWrap)}
+\DoxyCodeLine{00109\ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ softBody-\/>defaultCollisionHandler(collisionObjectWrap);}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{//\ process\ collision\ between\ deformable\ and\ deformable}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_body_solver_a0118378f5c8ac8124eb1b3140586f26e}{processCollision}}(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ softBody,\ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ otherSoftBody)}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ softBody-\/>defaultCollisionHandler(otherSoftBody);}
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//\ If\ true,\ implicit\ time\ stepping\ scheme\ is\ used.}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{//\ Otherwise,\ explicit\ time\ stepping\ scheme\ is\ used}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{void}\ setImplicit(\textcolor{keywordtype}{bool}\ implicit);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//\ If\ true,\ newton's\ method\ with\ line\ search\ is\ used\ when\ implicit\ time\ stepping\ scheme\ is\ turned\ on}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{void}\ setLineSearch(\textcolor{keywordtype}{bool}\ lineSearch);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{//\ set\ temporary\ position\ x\string^*\ =\ x\_n\ +\ dt\ *\ v}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{//\ update\ the\ deformation\ gradient\ at\ position\ x\string^*}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ updateState();}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{comment}{//\ set\ dv\ =\ dv\ +\ scale\ *\ ddv}}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{void}\ updateDv(btScalar\ scale\ =\ 1);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{comment}{//\ set\ temporary\ position\ x\string^*\ =\ x\_n\ +\ dt\ *\ v\string^*}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ updateTempPosition();}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{//\ save\ the\ current\ dv\ to\ m\_backup\_dv;}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{void}\ backupDv();}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{//\ set\ dv\ to\ the\ backed-\/up\ value}}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{void}\ revertDv();}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{comment}{//\ set\ dv\ =\ dv\ +\ scale\ *\ ddv}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{comment}{//\ set\ v\string^*\ =\ v\_n\ +\ dv}}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{//\ set\ temporary\ position\ x\string^*\ =\ x\_n\ +\ dt\ *\ v\string^*}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{comment}{//\ update\ the\ deformation\ gradient\ at\ position\ x\string^*}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{void}\ updateEnergy(btScalar\ scale);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{//\ calculates\ the\ appropriately\ scaled\ kinetic\ energy\ in\ the\ system,\ which\ is}}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{comment}{//\ 1/2\ *\ dv\string^T\ *\ M\ *\ dv}}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{//\ used\ in\ line\ search}}
+\DoxyCodeLine{00151\ \ \ \ \ btScalar\ kineticEnergy();}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{//\ unused\ functions}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_body_solver_a849fde1c8d0618ff3b11afca7f4d7190}{optimize}}(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ softBodies,\ \textcolor{keywordtype}{bool}\ forceUpdate\ =\ \textcolor{keyword}{false})\ \{\}}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_body_solver_ad4cbd912221c0bc69e95abc2bb00bddd}{solveConstraints}}(btScalar\ dt)\ \{\}}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_deformable_body_solver_a2620b1a76aefaec6dffc3b7fec432295}{checkInitialized}}()\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_body_solver_a737d4a7bb99e5c1229e09bb85f04f368}{copyBackToSoftBodies}}(\textcolor{keywordtype}{bool}\ bMove\ =\ \textcolor{keyword}{true})\ \{\}}
+\DoxyCodeLine{00158\ \};}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btDeformableBodySolver\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

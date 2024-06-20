@@ -1,0 +1,151 @@
+\doxysection{b2\+\_\+rope.\+h}
+\hypertarget{b2__rope_8h_source}{}\label{b2__rope_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_rope.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_rope.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_ROPE\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_ROPE\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}b2\_math.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_draw}{b2Draw}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }b2RopeStretch;}
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }b2RopeBend;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{enum}\ b2StretchingModel}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ b2\_pbdStretchingModel,}
+\DoxyCodeLine{00036\ \ \ \ \ b2\_xpbdStretchingModel}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{enum}\ b2BendingModel}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ b2\_springAngleBendingModel\ =\ 0,}
+\DoxyCodeLine{00042\ \ \ \ \ b2\_pbdAngleBendingModel,}
+\DoxyCodeLine{00043\ \ \ \ \ b2\_xpbdAngleBendingModel,}
+\DoxyCodeLine{00044\ \ \ \ \ b2\_pbdDistanceBendingModel,}
+\DoxyCodeLine{00045\ \ \ \ \ b2\_pbdHeightBendingModel,}
+\DoxyCodeLine{00046\ \ \ \ \ b2\_pbdTriangleBendingModel}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_rope_tuning}{b2RopeTuning}}}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{structb2_rope_tuning}{b2RopeTuning}}()}
+\DoxyCodeLine{00053\ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ stretchingModel\ =\ b2\_pbdStretchingModel;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ bendingModel\ =\ b2\_pbdAngleBendingModel;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ damping\ =\ 0.0f;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ stretchStiffness\ =\ 1.0f;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ bendStiffness\ =\ 0.5f;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ bendHertz\ =\ 1.0f;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ bendDamping\ =\ 0.0f;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ isometric\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ fixedEffectiveMass\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ warmStart\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ b2StretchingModel\ stretchingModel;}
+\DoxyCodeLine{00067\ \ \ \ \ b2BendingModel\ bendingModel;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{float}\ damping;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{float}\ stretchStiffness;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{float}\ stretchHertz;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{float}\ stretchDamping;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{float}\ bendStiffness;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{float}\ bendHertz;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{float}\ bendDamping;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{bool}\ isometric;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{bool}\ fixedEffectiveMass;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{bool}\ warmStart;}
+\DoxyCodeLine{00078\ \};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_rope_def}{b2RopeDef}}}
+\DoxyCodeLine{00082\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{structb2_rope_def}{b2RopeDef}}()}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ position.SetZero();}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ vertices\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ count\ =\ 0;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ masses\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ gravity.SetZero();}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ position;}
+\DoxyCodeLine{00093\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}*\ vertices;}
+\DoxyCodeLine{00094\ \ \ \ \ int32\ count;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{float}*\ masses;}
+\DoxyCodeLine{00096\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ gravity;}
+\DoxyCodeLine{00097\ \ \ \ \ \mbox{\hyperlink{structb2_rope_tuning}{b2RopeTuning}}\ tuning;}
+\DoxyCodeLine{00098\ \};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_rope}{b2Rope}}}
+\DoxyCodeLine{00102\ \{}
+\DoxyCodeLine{00103\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{classb2_rope}{b2Rope}}();}
+\DoxyCodeLine{00105\ \ \ \ \ \mbox{\hyperlink{classb2_rope}{\string~b2Rope}}();}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{void}\ Create(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_rope_def}{b2RopeDef}}\&\ def);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ SetTuning(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_rope_tuning}{b2RopeTuning}}\&\ tuning);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{void}\ Step(\textcolor{keywordtype}{float}\ timeStep,\ int32\ iterations,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ position);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{void}\ Reset(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ position);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{void}\ Draw(\mbox{\hyperlink{classb2_draw}{b2Draw}}*\ draw)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveStretch\_PBD();}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveStretch\_XPBD(\textcolor{keywordtype}{float}\ dt);}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveBend\_PBD\_Angle();}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveBend\_XPBD\_Angle(\textcolor{keywordtype}{float}\ dt);}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveBend\_PBD\_Distance();}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveBend\_PBD\_Height();}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ SolveBend\_PBD\_Triangle();}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyBendForces(\textcolor{keywordtype}{float}\ dt);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_position;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ int32\ m\_count;}
+\DoxyCodeLine{00136\ \ \ \ \ int32\ m\_stretchCount;}
+\DoxyCodeLine{00137\ \ \ \ \ int32\ m\_bendCount;}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ b2RopeStretch*\ m\_stretchConstraints;}
+\DoxyCodeLine{00140\ \ \ \ \ b2RopeBend*\ m\_bendConstraints;}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}*\ m\_bindPositions;}
+\DoxyCodeLine{00143\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}*\ m\_ps;}
+\DoxyCodeLine{00144\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}*\ m\_p0s;}
+\DoxyCodeLine{00145\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}*\ m\_vs;}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{float}*\ m\_invMasses;}
+\DoxyCodeLine{00148\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_gravity;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \mbox{\hyperlink{structb2_rope_tuning}{b2RopeTuning}}\ m\_tuning;}
+\DoxyCodeLine{00151\ \};}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

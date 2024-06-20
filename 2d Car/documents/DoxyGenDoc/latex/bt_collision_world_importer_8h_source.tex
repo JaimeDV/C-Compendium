@@ -1,0 +1,170 @@
+\doxysection{bt\+Collision\+World\+Importer.\+h}
+\hypertarget{bt_collision_world_importer_8h_source}{}\label{bt_collision_world_importer_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionWorldImporter.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionWorldImporter.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2014\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_COLLISION\_WORLD\_IMPORTER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_COLLISION\_WORLD\_IMPORTER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btHashMap.h"{}}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }btCollisionShape;}
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }btCollisionObject;}
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_bullet_serialized_arrays}{btBulletSerializedArrays}};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{struct\ }ConstraintInput;}
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_collision_shape_data}{btCollisionShapeData}};}
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }btTriangleIndexVertexArray;}
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }btStridingMeshInterface;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_striding_mesh_interface_data}{btStridingMeshInterfaceData}};}
+\DoxyCodeLine{00034\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_g_impact_mesh_shape}{btGImpactMeshShape}};}
+\DoxyCodeLine{00035\ \textcolor{keyword}{class\ }btOptimizedBvh;}
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}};}
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }btBvhTriangleMeshShape;}
+\DoxyCodeLine{00038\ \textcolor{keyword}{class\ }btPoint2PointConstraint;}
+\DoxyCodeLine{00039\ \textcolor{keyword}{class\ }btHingeConstraint;}
+\DoxyCodeLine{00040\ \textcolor{keyword}{class\ }btConeTwistConstraint;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{class\ }btGeneric6DofConstraint;}
+\DoxyCodeLine{00042\ \textcolor{keyword}{class\ }btGeneric6DofSpringConstraint;}
+\DoxyCodeLine{00043\ \textcolor{keyword}{class\ }btSliderConstraint;}
+\DoxyCodeLine{00044\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_gear_constraint}{btGearConstraint}};}
+\DoxyCodeLine{00045\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_collision_world_importer}{btCollisionWorldImporter}}}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ m\_collisionWorld;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_verboseMode;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionShape*>}}\ m\_allocatedCollisionShapes;}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\ m\_allocatedRigidBodies;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btOptimizedBvh*>}}\ m\_allocatedBvhs;}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTriangleInfoMap*>}}\ m\_allocatedTriangleInfoMaps;}
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btTriangleIndexVertexArray*>}}\ m\_allocatedTriangleIndexArrays;}
+\DoxyCodeLine{00060\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btStridingMeshInterfaceData*>}}\ m\_allocatedbtStridingMeshInterfaceDatas;}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionObject*>}}\ m\_allocatedCollisionObjects;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<char*>}}\ m\_allocatedNames;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int*>}}\ m\_indexArrays;}
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<short\ int*>}}\ m\_shortIndexArrays;}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<unsigned\ char*>}}\ m\_charIndexArrays;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3FloatData*>}}\ m\_floatVertexArrays;}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3DoubleData*>}}\ m\_doubleVertexArrays;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashPtr,\ btOptimizedBvh*>}}\ m\_bvhMap;}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashPtr,\ btTriangleInfoMap*>}}\ m\_timMap;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashString,\ btCollisionShape*>}}\ m\_nameShapeMap;}
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashString,\ btCollisionObject*>}}\ m\_nameColObjMap;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashPtr,\ const\ char*>}}\ m\_objectNameMap;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashPtr,\ btCollisionShape*>}}\ m\_shapeMap;}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashPtr,\ btCollisionObject*>}}\ m\_bodyMap;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//methods}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{char}*\ duplicateName(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ btCollisionShape*\ convertCollisionShape(\mbox{\hyperlink{structbt_collision_shape_data}{btCollisionShapeData}}*\ shapeData);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_importer}{btCollisionWorldImporter}}(\mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ world);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_collision_world_importer}{\string~btCollisionWorldImporter}}();}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{bool}\ convertAllObjects(\mbox{\hyperlink{structbt_bullet_serialized_arrays}{btBulletSerializedArrays}}*\ arrays);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_importer_a05ffdb6552717e92429807be4571b2b2}{deleteAllData}}();}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ setVerboseMode(\textcolor{keywordtype}{int}\ verboseMode)}
+\DoxyCodeLine{00101\ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ m\_verboseMode\ =\ verboseMode;}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ getVerboseMode()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00106\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_verboseMode;}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//\ query\ for\ data}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumCollisionShapes()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00112\ \ \ \ \ btCollisionShape*\ getCollisionShapeByIndex(\textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumRigidBodies()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00114\ \ \ \ \ btCollisionObject*\ getRigidBodyByIndex(\textcolor{keywordtype}{int}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumBvhs()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00117\ \ \ \ \ btOptimizedBvh*\ getBvhByIndex(\textcolor{keywordtype}{int}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumTriangleInfoMaps()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00119\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ getTriangleInfoMapByIndex(\textcolor{keywordtype}{int}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{//\ queris\ involving\ named\ objects}}
+\DoxyCodeLine{00122\ \ \ \ \ btCollisionShape*\ getCollisionShapeByName(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00123\ \ \ \ \ btCollisionObject*\ getCollisionObjectByName(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ getNameForPointer(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ ptr)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{comment}{//bodies}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionObject*\ \mbox{\hyperlink{classbt_collision_world_importer_adc1146c088b75d0916a08f72b1306501}{createCollisionObject}}(\textcolor{keyword}{const}\ btTransform\&\ startTransform,\ btCollisionShape*\ shape,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ bodyName);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ \mbox{\hyperlink{classbt_collision_world_importer_a31b5391383d8c1ff152ce3f1513669b1}{createPlaneShape}}(\textcolor{keyword}{const}\ btVector3\&\ planeNormal,\ btScalar\ planeConstant);}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createBoxShape(\textcolor{keyword}{const}\ btVector3\&\ halfExtents);}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createSphereShape(btScalar\ radius);}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createCapsuleShapeX(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createCapsuleShapeY(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createCapsuleShapeZ(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createCylinderShapeX(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createCylinderShapeY(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createCylinderShapeZ(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createConeShapeX(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createConeShapeY(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createConeShapeZ(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{class\ }btTriangleIndexVertexArray*\ createTriangleMeshContainer();}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{virtual}\ btBvhTriangleMeshShape*\ createBvhTriangleMeshShape(btStridingMeshInterface*\ trimesh,\ btOptimizedBvh*\ bvh);}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{virtual}\ btCollisionShape*\ createConvexTriangleMeshShape(btStridingMeshInterface*\ trimesh);}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#ifdef\ SUPPORT\_GIMPACT\_SHAPE\_IMPORT}}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_g_impact_mesh_shape}{btGImpactMeshShape}}*\ createGimpactShape(btStridingMeshInterface*\ trimesh);}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//SUPPORT\_GIMPACT\_SHAPE\_IMPORT}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_striding_mesh_interface_data}{btStridingMeshInterfaceData}}*\ \mbox{\hyperlink{classbt_collision_world_importer_a148f416a26e51ed5406b5bb7af51b5e6}{createStridingMeshInterfaceData}}(\mbox{\hyperlink{structbt_striding_mesh_interface_data}{btStridingMeshInterfaceData}}*\ interfaceData);}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{class\ }btConvexHullShape*\ createConvexHullShape();}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{class\ }btCompoundShape*\ createCompoundShape();}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{class\ }btScaledBvhTriangleMeshShape*\ createScaledTrangleMeshShape(btBvhTriangleMeshShape*\ meshShape,\ \textcolor{keyword}{const}\ btVector3\&\ localScalingbtBvhTriangleMeshShape);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{class\ }btMultiSphereShape*\ createMultiSphereShape(\textcolor{keyword}{const}\ btVector3*\ positions,\ \textcolor{keyword}{const}\ btScalar*\ radi,\ \textcolor{keywordtype}{int}\ numSpheres);}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keyword}{virtual}\ btTriangleIndexVertexArray*\ createMeshInterface(\mbox{\hyperlink{structbt_striding_mesh_interface_data}{btStridingMeshInterfaceData}}\&\ meshData);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{virtual}\ btOptimizedBvh*\ \mbox{\hyperlink{classbt_collision_world_importer_a1a4d83267c041e614767578e4d7ba061}{createOptimizedBvh}}();}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ createTriangleInfoMap();}
+\DoxyCodeLine{00167\ \};}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_WORLD\_IMPORTER\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,185 @@
+\doxysection{bt\+Triangle\+Mesh\+Shape.\+cpp}
+\hypertarget{bt_triangle_mesh_shape_8cpp_source}{}\label{bt_triangle_mesh_shape_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleMeshShape.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleMeshShape.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btTriangleMeshShape.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuaternion.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btStridingMeshInterface.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAabbUtil2.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCollisionMargin.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ btTriangleMeshShape::btTriangleMeshShape(btStridingMeshInterface*\ meshInterface)}
+\DoxyCodeLine{00024\ \ \ \ \ :\ btConcaveShape(),\ m\_meshInterface(meshInterface)}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ m\_shapeType\ =\ TRIANGLE\_MESH\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{if}\ (meshInterface-\/>hasPremadeAabb())}
+\DoxyCodeLine{00028\ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ meshInterface-\/>getPremadeAabb(\&m\_localAabbMin,\ \&m\_localAabbMax);}
+\DoxyCodeLine{00030\ \ \ \ \ \}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00032\ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ recalcLocalAabb();}
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+\DoxyCodeLine{00035\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ btTriangleMeshShape::\string~btTriangleMeshShape()}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ btTriangleMeshShape::getAabb(\textcolor{keyword}{const}\ btTransform\&\ trans,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00043\ \ \ \ \ btVector3\ localHalfExtents\ =\ btScalar(0.5)\ *\ (m\_localAabbMax\ -\/\ m\_localAabbMin);}
+\DoxyCodeLine{00044\ \ \ \ \ localHalfExtents\ +=\ btVector3(getMargin(),\ getMargin(),\ getMargin());}
+\DoxyCodeLine{00045\ \ \ \ \ btVector3\ localCenter\ =\ btScalar(0.5)\ *\ (m\_localAabbMax\ +\ m\_localAabbMin);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ btMatrix3x3\ abs\_b\ =\ trans.getBasis().absolute();}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ btVector3\ center\ =\ trans(localCenter);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ btVector3\ extent\ =\ localHalfExtents.dot3(abs\_b[0],\ abs\_b[1],\ abs\_b[2]);}
+\DoxyCodeLine{00052\ \ \ \ \ aabbMin\ =\ center\ -\/\ extent;}
+\DoxyCodeLine{00053\ \ \ \ \ aabbMax\ =\ center\ +\ extent;}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ btTriangleMeshShape::recalcLocalAabb()}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ btVector3\ vec(btScalar(0.),\ btScalar(0.),\ btScalar(0.));}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ vec[i]\ =\ btScalar(1.);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ btVector3\ tmp\ =\ localGetSupportingVertex(vec);}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ m\_localAabbMax[i]\ =\ tmp[i]\ +\ m\_collisionMargin;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ vec[i]\ =\ btScalar(-\/1.);}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ tmp\ =\ localGetSupportingVertex(vec);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ m\_localAabbMin[i]\ =\ tmp[i]\ -\/\ m\_collisionMargin;}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_support_vertex_callback}{SupportVertexCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}}
+\DoxyCodeLine{00071\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ btVector3\ m\_supportVertexLocal;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00075\ \ \ \ \ btTransform\ m\_worldTrans;}
+\DoxyCodeLine{00076\ \ \ \ \ btScalar\ m\_maxDot;}
+\DoxyCodeLine{00077\ \ \ \ \ btVector3\ m\_supportVecLocal;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{class_support_vertex_callback}{SupportVertexCallback}}(\textcolor{keyword}{const}\ btVector3\&\ supportVecWorld,\ \textcolor{keyword}{const}\ btTransform\&\ trans)}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ :\ m\_supportVertexLocal(btScalar(0.),\ btScalar(0.),\ btScalar(0.)),\ m\_worldTrans(trans),\ m\_maxDot(btScalar(-\/BT\_LARGE\_FLOAT))}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ m\_supportVecLocal\ =\ supportVecWorld\ *\ m\_worldTrans.getBasis();}
+\DoxyCodeLine{00084\ \ \ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processTriangle(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ (void)partId;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ (void)triangleIndex;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dot\ =\ m\_supportVecLocal.dot(triangle[i]);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ >\ m\_maxDot)}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_maxDot\ =\ dot;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_supportVertexLocal\ =\ triangle[i];}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ btVector3\ GetSupportVertexWorldSpace()}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_worldTrans(m\_supportVertexLocal);}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ btVector3\ GetSupportVertexLocal()}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_supportVertexLocal;}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \};}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ btTriangleMeshShape::setLocalScaling(\textcolor{keyword}{const}\ btVector3\&\ scaling)}
+\DoxyCodeLine{00113\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ m\_meshInterface-\/>setScaling(scaling);}
+\DoxyCodeLine{00115\ \ \ \ \ recalcLocalAabb();}
+\DoxyCodeLine{00116\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{keyword}{const}\ btVector3\&\ btTriangleMeshShape::getLocalScaling()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00119\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_meshInterface-\/>getScaling();}
+\DoxyCodeLine{00121\ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{//\#define\ DEBUG\_TRIANGLE\_MESH}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ btTriangleMeshShape::processAllTriangles(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00126\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{struct\ }FilteredCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_internal_triangle_index_callback}{btInternalTriangleIndexCallback}}}
+\DoxyCodeLine{00128\ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ m\_callback;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ btVector3\ m\_aabbMin;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ btVector3\ m\_aabbMax;}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ FilteredCallback(\mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}*\ callback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_callback(callback),}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_aabbMin(aabbMin),}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_aabbMax(aabbMax)}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ internalProcessTriangleIndex(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TestTriangleAgainstAabb2(\&triangle[0],\ m\_aabbMin,\ m\_aabbMax))}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//check\ aabb\ in\ triangle-\/space,\ before\ doing\ this}}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_callback-\/>processTriangle(triangle,\ partId,\ triangleIndex);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00148\ \ \ \ \ \};}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ FilteredCallback\ filterCallback(callback,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ m\_meshInterface-\/>InternalProcessAllTriangles(\&filterCallback,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00153\ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{void}\ btTriangleMeshShape::calculateLocalInertia(btScalar\ mass,\ btVector3\&\ inertia)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00156\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00157\ \ \ \ \ (void)mass;}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//moving\ concave\ objects\ not\ supported}}
+\DoxyCodeLine{00159\ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00160\ \ \ \ \ inertia.setValue(btScalar(0.),\ btScalar(0.),\ btScalar(0.));}
+\DoxyCodeLine{00161\ \}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ btVector3\ btTriangleMeshShape::localGetSupportingVertex(\textcolor{keyword}{const}\ btVector3\&\ vec)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00164\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00165\ \ \ \ \ btVector3\ supportVertex;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ btTransform\ ident;}
+\DoxyCodeLine{00168\ \ \ \ \ ident.setIdentity();}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \mbox{\hyperlink{class_support_vertex_callback}{SupportVertexCallback}}\ supportCallback(vec,\ ident);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ btVector3\ aabbMax(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ processAllTriangles(\&supportCallback,\ -\/aabbMax,\ aabbMax);}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ supportVertex\ =\ supportCallback.GetSupportVertexLocal();}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordflow}{return}\ supportVertex;}
+\DoxyCodeLine{00179\ \}}
+
+\end{DoxyCode}

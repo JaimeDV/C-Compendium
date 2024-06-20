@@ -1,0 +1,175 @@
+\doxysection{bt\+Capsule\+Shape.\+h}
+\hypertarget{bt_capsule_shape_8h_source}{}\label{bt_capsule_shape_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btCapsuleShape.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btCapsuleShape.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_CAPSULE\_SHAPE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_CAPSULE\_SHAPE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btConvexInternalShape.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"{}}\ \ \textcolor{comment}{//\ for\ the\ types}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00025\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00026\ btCapsuleShape\ :\ public\ btConvexInternalShape}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00028\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_upAxis;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00033\ \ \ \ \ btCapsuleShape()\ :\ btConvexInternalShape()\ \{\ m\_shapeType\ =\ CAPSULE\_SHAPE\_PROXYTYPE;\ \};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00036\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ btCapsuleShape(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateLocalInertia(btScalar\ mass,\ btVector3\ \&\ inertia)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ localGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3\&\ vec)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ batchedUnitVectorGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3*\ vectors,\ btVector3*\ supportVerticesOut,\ \textcolor{keywordtype}{int}\ numVectors)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setMargin(btScalar\ collisionMargin)}
+\DoxyCodeLine{00049\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{comment}{//don't\ override\ the\ margin\ for\ capsules,\ their\ entire\ radius\ ==\ margin}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ (void)collisionMargin;}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getAabb(\textcolor{keyword}{const}\ btTransform\&\ t,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00055\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ btVector3\ halfExtents(getRadius(),\ getRadius(),\ getRadius());}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ halfExtents[m\_upAxis]\ =\ getRadius()\ +\ getHalfHeight();}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ btMatrix3x3\ abs\_b\ =\ t.getBasis().absolute();}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ btVector3\ center\ =\ t.getOrigin();}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ btVector3\ extent\ =\ halfExtents.dot3(abs\_b[0],\ abs\_b[1],\ abs\_b[2]);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ aabbMin\ =\ center\ -\/\ extent;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ aabbMax\ =\ center\ +\ extent;}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ getName()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00067\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}CapsuleShape"{}};}
+\DoxyCodeLine{00069\ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ getUpAxis()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_upAxis;}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ btScalar\ getRadius()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00077\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ radiusAxis\ =\ (m\_upAxis\ +\ 2)\ \%\ 3;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_implicitShapeDimensions[radiusAxis];}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ btScalar\ getHalfHeight()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00083\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_implicitShapeDimensions[m\_upAxis];}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setLocalScaling(\textcolor{keyword}{const}\ btVector3\&\ scaling)}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ btVector3\ unScaledImplicitShapeDimensions\ =\ m\_implicitShapeDimensions\ /\ m\_localScaling;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ btConvexInternalShape::setLocalScaling(scaling);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ m\_implicitShapeDimensions\ =\ (unScaledImplicitShapeDimensions\ *\ scaling);}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{comment}{//update\ m\_collisionMargin,\ since\ entire\ radius==margin}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ radiusAxis\ =\ (m\_upAxis\ +\ 2)\ \%\ 3;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ m\_collisionMargin\ =\ m\_implicitShapeDimensions[radiusAxis];}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getAnisotropicRollingFrictionDirection()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00098\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ btVector3\ aniDir(0,\ 0,\ 0);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ aniDir[getUpAxis()]\ =\ 1;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ aniDir;}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ deSerializeFloat(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structbt_capsule_shape_data}{btCapsuleShapeData}}\ *\ dataBuffer);}
+\DoxyCodeLine{00110\ \};}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00114\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_capsule_shape_x}{btCapsuleShapeX}}\ :\ \textcolor{keyword}{public}\ btCapsuleShape}
+\DoxyCodeLine{00115\ \{}
+\DoxyCodeLine{00116\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00117\ \ \ \ \ \mbox{\hyperlink{classbt_capsule_shape_x}{btCapsuleShapeX}}(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//debugging}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ getName()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00121\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}CapsuleX"{}};}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \};}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00128\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_capsule_shape_z}{btCapsuleShapeZ}}\ :\ \textcolor{keyword}{public}\ btCapsuleShape}
+\DoxyCodeLine{00129\ \{}
+\DoxyCodeLine{00130\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00131\ \ \ \ \ \mbox{\hyperlink{classbt_capsule_shape_z}{btCapsuleShapeZ}}(btScalar\ radius,\ btScalar\ height);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{comment}{//debugging}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ getName()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00135\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}CapsuleZ"{}};}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \};}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00141\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_capsule_shape_data}{btCapsuleShapeData}}}
+\DoxyCodeLine{00142\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \mbox{\hyperlink{structbt_convex_internal_shape_data}{btConvexInternalShapeData}}\ m\_convexInternalShapeData;}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_upAxis;}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_padding[4];}
+\DoxyCodeLine{00148\ \};}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btCapsuleShape::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00151\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_capsule_shape_data}{btCapsuleShapeData}});}
+\DoxyCodeLine{00153\ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00156\ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btCapsuleShape::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00157\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00158\ \ \ \ \ \mbox{\hyperlink{structbt_capsule_shape_data}{btCapsuleShapeData}}*\ shapeData\ =\ (\mbox{\hyperlink{structbt_capsule_shape_data}{btCapsuleShapeData}}*)dataBuffer;}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ btConvexInternalShape::serialize(\&shapeData-\/>m\_convexInternalShapeData,\ serializer);}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ shapeData-\/>m\_upAxis\ =\ m\_upAxis;}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{comment}{//\ Fill\ padding\ with\ zeros\ to\ appease\ msan.}}
+\DoxyCodeLine{00165\ \ \ \ \ shapeData-\/>m\_padding[0]\ =\ 0;}
+\DoxyCodeLine{00166\ \ \ \ \ shapeData-\/>m\_padding[1]\ =\ 0;}
+\DoxyCodeLine{00167\ \ \ \ \ shapeData-\/>m\_padding[2]\ =\ 0;}
+\DoxyCodeLine{00168\ \ \ \ \ shapeData-\/>m\_padding[3]\ =\ 0;}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}btCapsuleShapeData"{}};}
+\DoxyCodeLine{00171\ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ btCapsuleShape::deSerializeFloat(\mbox{\hyperlink{structbt_capsule_shape_data}{btCapsuleShapeData}}*\ dataBuffer)}
+\DoxyCodeLine{00174\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ m\_implicitShapeDimensions.deSerializeFloat(dataBuffer-\/>m\_convexInternalShapeData.m\_implicitShapeDimensions);}
+\DoxyCodeLine{00176\ \ \ \ \ m\_collisionMargin\ =\ dataBuffer-\/>m\_convexInternalShapeData.m\_collisionMargin;}
+\DoxyCodeLine{00177\ \ \ \ \ m\_localScaling.deSerializeFloat(dataBuffer-\/>m\_convexInternalShapeData.m\_localScaling);}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{comment}{//it\ is\ best\ to\ already\ pre-\/allocate\ the\ matching\ btCapsuleShape*(X/Z)\ version\ to\ match\ m\_upAxis}}
+\DoxyCodeLine{00179\ \ \ \ \ m\_upAxis\ =\ dataBuffer-\/>m\_upAxis;}
+\DoxyCodeLine{00180\ \}}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_CAPSULE\_SHAPE\_H}}
+
+\end{DoxyCode}

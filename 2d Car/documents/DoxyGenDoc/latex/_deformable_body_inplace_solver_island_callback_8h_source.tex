@@ -1,0 +1,51 @@
+\doxysection{Deformable\+Body\+Inplace\+Solver\+Island\+Callback.\+h}
+\hypertarget{_deformable_body_inplace_solver_island_callback_8h_source}{}\label{_deformable_body_inplace_solver_island_callback_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/DeformableBodyInplaceSolverIslandCallback.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/DeformableBodyInplaceSolverIslandCallback.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ \ DeformableBodyInplaceSolverIslandCallback.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ \ BulletSoftBody}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ \ Created\ by\ Xuchen\ Han\ on\ 12/16/19.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ DeformableBodyInplaceSolverIslandCallback\_h}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ DeformableBodyInplaceSolverIslandCallback\_h}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_deformable_body_inplace_solver_island_callback}{DeformableBodyInplaceSolverIslandCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback}{MultiBodyInplaceSolverIslandCallback}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ btDeformableMultiBodyConstraintSolver*\ m\_deformableSolver;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{struct_deformable_body_inplace_solver_island_callback}{DeformableBodyInplaceSolverIslandCallback}}(btDeformableMultiBodyConstraintSolver*\ solver,}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback}{MultiBodyInplaceSolverIslandCallback}}(solver,\ dispatcher),\ m\_deformableSolver(solver)}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processConstraints(\textcolor{keywordtype}{int}\ islandId\ =\ -\/1)}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ btCollisionObject**\ bodies\ =\ m\_bodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_bodies[0]\ :\ 0;}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ btCollisionObject**\ softBodies\ =\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_softBodies[0]\ :\ 0;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ btPersistentManifold**\ manifold\ =\ m\_manifolds.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_manifolds[0]\ :\ 0;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ btTypedConstraint**\ constraints\ =\ m\_constraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_constraints[0]\ :\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ btMultiBodyConstraint**\ multiBodyConstraints\ =\ m\_multiBodyConstraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ \&m\_multiBodyConstraints[0]\ :\ 0;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}mb\ contacts\ =\ \%d,\ mb\ constraints\ =\ \%d\(\backslash\)n"{},\ mbContacts,\ m\_multiBodyConstraints.size());}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ m\_deformableSolver-\/>solveDeformableBodyGroup(bodies,\ m\_bodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ softBodies,\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ manifold,\ m\_manifolds.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ constraints,\ m\_constraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ multiBodyConstraints,\ m\_multiBodyConstraints.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}(),\ *m\_solverInfo,\ m\_debugDrawer,\ m\_dispatcher);}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_bodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ \&\&\ (m\_solverInfo-\/>m\_reportSolverAnalytics\ \&\ 1))}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ m\_deformableSolver-\/>m\_analyticsData.m\_islandId\ =\ islandId;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ m\_islandAnalyticsData.push\_back(m\_solver-\/>m\_analyticsData);}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ m\_bodies.resize(0);}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ m\_softBodies.resize(0);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ m\_manifolds.resize(0);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ m\_constraints.resize(0);}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ m\_multiBodyConstraints.resize(0);}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ DeformableBodyInplaceSolverIslandCallback\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

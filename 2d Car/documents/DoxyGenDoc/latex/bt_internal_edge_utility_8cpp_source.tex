@@ -1,0 +1,898 @@
+\doxysection{bt\+Internal\+Edge\+Utility.\+cpp}
+\hypertarget{bt_internal_edge_utility_8cpp_source}{}\label{bt_internal_edge_utility_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}btInternalEdgeUtility.h"{}}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btTriangleShape.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btIDebugDraw.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\#define\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00020\ \textcolor{keyword}{static}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ gDebugDrawer\ =\ 0;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ btSetDebugDrawer(\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ gDebugDrawer\ =\ debugDrawer;}
+\DoxyCodeLine{00025\ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ btDebugDrawLine(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{if}\ (gDebugDrawer)}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ gDebugDrawer-\/>drawLine(from,\ to,\ color);}
+\DoxyCodeLine{00031\ \}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ btGetHash(\textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ hash\ =\ (partId\ <<\ (31\ -\/\ MAX\_NUM\_PARTS\_IN\_BITS))\ |\ triangleIndex;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordflow}{return}\ hash;}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{static}\ btScalar\ btGetAngle(\textcolor{keyword}{const}\ btVector3\&\ edgeA,\ \textcolor{keyword}{const}\ btVector3\&\ normalA,\ \textcolor{keyword}{const}\ btVector3\&\ normalB)}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ refAxis0\ =\ edgeA;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ refAxis1\ =\ normalA;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ swingAxis\ =\ normalB;}
+\DoxyCodeLine{00045\ \ \ \ \ btScalar\ angle\ =\ btAtan2(swingAxis.dot(refAxis0),\ swingAxis.dot(refAxis1));}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordflow}{return}\ angle;}
+\DoxyCodeLine{00047\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_connectivity_processor}{btConnectivityProcessor}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}}
+\DoxyCodeLine{00050\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_partIdA;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_triangleIndexA;}
+\DoxyCodeLine{00053\ \ \ \ \ btVector3*\ m\_triangleVerticesA;}
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ m\_triangleInfoMap;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_connectivity_processor_a5d5f11a5ad2bc3b3bfad6882b42e18de}{processTriangle}}(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00057\ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{comment}{//skip\ self-\/collisions}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_partIdA\ ==\ partId)\ \&\&\ (m\_triangleIndexA\ ==\ triangleIndex))}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{comment}{//skip\ duplicates\ (disabled\ for\ now)}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ ((m\_partIdA\ <=\ partId)\ \&\&\ (m\_triangleIndexA\ <=\ triangleIndex))}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ return;}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{comment}{//search\ for\ shared\ vertices\ and\ edges}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numshared\ =\ 0;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sharedVertsA[3]\ =\ \{-\/1,\ -\/1,\ -\/1\};}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sharedVertsB[3]\ =\ \{-\/1,\ -\/1,\ -\/1\};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ btScalar\ crossBSqr\ =\ ((triangle[1]\ -\/\ triangle[0]).cross(triangle[2]\ -\/\ triangle[0])).length2();}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (crossBSqr\ <\ m\_triangleInfoMap-\/>m\_equalVertexThreshold)}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ btScalar\ crossASqr\ =\ ((m\_triangleVerticesA[1]\ -\/\ m\_triangleVerticesA[0]).cross(m\_triangleVerticesA[2]\ -\/\ m\_triangleVerticesA[0])).length2();}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (crossASqr\ <\ m\_triangleInfoMap-\/>m\_equalVertexThreshold)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}triangle\ A[0]\ \ \ =\ \ \ (\%f,\%f,\%f)\(\backslash\)ntriangle\ A[1]\ \ \ =\ \ \ (\%f,\%f,\%f)\(\backslash\)ntriangle\ A[2]\ \ \ =\ \ \ (\%f,\%f,\%f)\(\backslash\)n"{}},}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleVerticesA[0].getX(),m\_triangleVerticesA[0].getY(),m\_triangleVerticesA[0].getZ(),}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleVerticesA[1].getX(),m\_triangleVerticesA[1].getY(),m\_triangleVerticesA[1].getZ(),}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleVerticesA[2].getX(),m\_triangleVerticesA[2].getY(),m\_triangleVerticesA[2].getZ());}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}partId=\%d,\ triangleIndex=\%d\(\backslash\)n"{}},partId,triangleIndex);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}triangle\ B[0]\ \ \ =\ \ \ (\%f,\%f,\%f)\(\backslash\)ntriangle\ B[1]\ \ \ =\ \ \ (\%f,\%f,\%f)\(\backslash\)ntriangle\ B[2]\ \ \ =\ \ \ (\%f,\%f,\%f)\(\backslash\)n"{}},}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ triangle[0].getX(),triangle[0].getY(),triangle[0].getZ(),}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ triangle[1].getX(),triangle[1].getY(),triangle[1].getZ(),}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ triangle[2].getX(),triangle[2].getY(),triangle[2].getZ());}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_triangleVerticesA[i]\ -\/\ triangle[j]).length2()\ <\ m\_triangleInfoMap-\/>\mbox{\hyperlink{structbt_triangle_info_map_aa980d33e5be082442a128f0ba2efb064}{m\_equalVertexThreshold}})}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sharedVertsA[numshared]\ =\ i;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sharedVertsB[numshared]\ =\ j;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numshared++;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numshared\ >=\ 3)}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numshared\ >=\ 3)}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (numshared)}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//shared\ vertex}}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//shared\ edge}}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//we\ need\ to\ make\ sure\ the\ edge\ is\ in\ the\ order\ V2V0\ and\ not\ V0V2\ so\ that\ the\ signs\ are\ correct}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sharedVertsA[0]\ ==\ 0\ \&\&\ sharedVertsA[1]\ ==\ 2)}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sharedVertsA[0]\ =\ 2;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sharedVertsA[1]\ =\ 0;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ tmp\ =\ sharedVertsB[1];}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sharedVertsB[1]\ =\ sharedVertsB[0];}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sharedVertsB[0]\ =\ tmp;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ hash\ =\ btGetHash(m\_partIdA,\ m\_triangleIndexA);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info}{btTriangleInfo}}*\ info\ =\ m\_triangleInfoMap-\/>find(hash);}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!info)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info}{btTriangleInfo}}\ tmp;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleInfoMap-\/>insert(hash,\ tmp);}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info\ =\ m\_triangleInfoMap-\/>find(hash);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sumvertsA\ =\ sharedVertsA[0]\ +\ sharedVertsA[1];}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ otherIndexA\ =\ 3\ -\/\ sumvertsA;}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge(m\_triangleVerticesA[sharedVertsA[1]]\ -\/\ m\_triangleVerticesA[sharedVertsA[0]]);}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTriangleShape\ tA(m\_triangleVerticesA[0],\ m\_triangleVerticesA[1],\ m\_triangleVerticesA[2]);}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ otherIndexB\ =\ 3\ -\/\ (sharedVertsB[0]\ +\ sharedVertsB[1]);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTriangleShape\ tB(triangle[sharedVertsB[1]],\ triangle[sharedVertsB[0]],\ triangle[otherIndexB]);}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btTriangleShape\ tB(triangle[0],triangle[1],triangle[2]);}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalA;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalB;}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tA.calcNormal(normalA);}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tB.calcNormal(normalB);}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edge.normalize();}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edgeCrossA\ =\ edge.cross(normalA).normalize();}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ tmp\ =\ m\_triangleVerticesA[otherIndexA]\ -\/\ m\_triangleVerticesA[sharedVertsA[0]];}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (edgeCrossA.dot(tmp)\ <\ 0)}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgeCrossA\ *=\ -\/1;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edgeCrossB\ =\ edge.cross(normalB).normalize();}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ tmp\ =\ triangle[otherIndexB]\ -\/\ triangle[sharedVertsB[0]];}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (edgeCrossB.dot(tmp)\ <\ 0)}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgeCrossB\ *=\ -\/1;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ angle2\ =\ 0;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ ang4\ =\ 0.f;}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ calculatedEdge\ =\ edgeCrossA.cross(edgeCrossB);}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ len2\ =\ calculatedEdge.length2();}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ correctedAngle(0);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btVector3\ calculatedNormalB\ =\ normalA;}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isConvex\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len2\ <\ m\_triangleInfoMap-\/>m\_planarEpsilon)}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ angle2\ =\ 0.f;}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ang4\ =\ 0.f;}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ calculatedEdge.normalize();}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ calculatedNormalA\ =\ calculatedEdge.cross(edgeCrossA);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ calculatedNormalA.normalize();}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ angle2\ =\ btGetAngle(calculatedNormalA,\ edgeCrossA,\ edgeCrossB);}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ang4\ =\ SIMD\_PI\ -\/\ angle2;}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dotA\ =\ normalA.dot(edgeCrossB);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isConvex\ =\ (dotA\ <\ 0.);}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ correctedAngle\ =\ isConvex\ ?\ ang4\ :\ -\/ang4;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//alternatively\ use}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btVector3\ calculatedNormalB2\ =\ quatRotate(orn,normalA);}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (sumvertsA)}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge\ =\ m\_triangleVerticesA[0]\ -\/\ m\_triangleVerticesA[1];}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ orn(edge,\ -\/correctedAngle);}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ computedNormalB\ =\ quatRotate(orn,\ normalA);}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ bla\ =\ computedNormalB.dot(normalB);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bla\ <\ 0)}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computedNormalB\ *=\ -\/1;}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_flags\ |=\ TRI\_INFO\_V0V1\_SWAP\_NORMALB;}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((computedNormalB\ -\/\ normalB).length()\ >\ 0.0001)}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}warning:\ normals\ not\ identical\(\backslash\)n"{}});}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00232\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_edgeV0V1Angle\ =\ -\/correctedAngle;}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isConvex)}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_flags\ |=\ TRI\_INFO\_V0V1\_CONVEX;}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge\ =\ m\_triangleVerticesA[2]\ -\/\ m\_triangleVerticesA[0];}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ orn(edge,\ -\/correctedAngle);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ computedNormalB\ =\ quatRotate(orn,\ normalA);}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (computedNormalB.dot(normalB)\ <\ 0)}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computedNormalB\ *=\ -\/1;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_flags\ |=\ TRI\_INFO\_V2V0\_SWAP\_NORMALB;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((computedNormalB\ -\/\ normalB).length()\ >\ 0.0001)}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}warning:\ normals\ not\ identical\(\backslash\)n"{}});}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00256\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_edgeV2V0Angle\ =\ -\/correctedAngle;}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isConvex)}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_flags\ |=\ TRI\_INFO\_V2V0\_CONVEX;}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 3:}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge\ =\ m\_triangleVerticesA[1]\ -\/\ m\_triangleVerticesA[2];}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ orn(edge,\ -\/correctedAngle);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ computedNormalB\ =\ quatRotate(orn,\ normalA);}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (computedNormalB.dot(normalB)\ <\ 0)}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_flags\ |=\ TRI\_INFO\_V1V2\_SWAP\_NORMALB;}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computedNormalB\ *=\ -\/1;}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00272\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((computedNormalB\ -\/\ normalB).length()\ >\ 0.0001)}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}warning:\ normals\ not\ identical\(\backslash\)n"{}});}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_edgeV1V2Angle\ =\ -\/correctedAngle;}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isConvex)}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_flags\ |=\ TRI\_INFO\_V1V2\_CONVEX;}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ printf("{}warning:\ duplicate\ triangle\(\backslash\)n"{});}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00293\ \ \ \ \ \}}
+\DoxyCodeLine{00294\ \};}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_process_all_triangles_heightfield}{b3ProcessAllTrianglesHeightfield}}:\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}}}
+\DoxyCodeLine{00298\ \{}
+\DoxyCodeLine{00299\ \ \ \ \ btHeightfieldTerrainShape*\ m\_heightfieldShape;}
+\DoxyCodeLine{00300\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ m\_triangleInfoMap;}
+\DoxyCodeLine{00301\ \ \ \ \ }
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \mbox{\hyperlink{structb3_process_all_triangles_heightfield}{b3ProcessAllTrianglesHeightfield}}(btHeightfieldTerrainShape*\ heightFieldShape,\ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ triangleInfoMap)}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ :m\_heightfieldShape(heightFieldShape),}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ m\_triangleInfoMap(triangleInfoMap)}
+\DoxyCodeLine{00306\ \ \ \ \ \{}
+\DoxyCodeLine{00307\ \ \ \ \ \}}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processTriangle(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00309\ \ \ \ \ \{}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_connectivity_processor}{btConnectivityProcessor}}\ connectivityProcessor;}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ connectivityProcessor.m\_partIdA\ =\ partId;}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ connectivityProcessor.m\_triangleIndexA\ =\ triangleIndex;}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ connectivityProcessor.m\_triangleVerticesA\ =\ triangle;}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ connectivityProcessor.m\_triangleInfoMap\ =\ m\_triangleInfoMap;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ btVector3\ aabbMin,\ aabbMax;}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ aabbMin.setValue(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ aabbMax.setValue(btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ aabbMin.setMin(triangle[0]);}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ aabbMax.setMax(triangle[0]);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ aabbMin.setMin(triangle[1]);}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ aabbMax.setMax(triangle[1]);}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ aabbMin.setMin(triangle[2]);}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ aabbMax.setMax(triangle[2]);}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ m\_heightfieldShape-\/>processAllTriangles(\&connectivityProcessor,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00326\ \ \ \ \ \}}
+\DoxyCodeLine{00327\ \};}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{keywordtype}{void}\ btGenerateInternalEdgeInfo(btBvhTriangleMeshShape*\ trimeshShape,\ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ triangleInfoMap)}
+\DoxyCodeLine{00332\ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{comment}{//the\ user\ pointer\ shouldn't\ already\ be\ used\ for\ other\ purposes,\ we\ intend\ to\ store\ connectivity\ info\ there!}}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keywordflow}{if}\ (trimeshShape-\/>getTriangleInfoMap())}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ trimeshShape-\/>setTriangleInfoMap(triangleInfoMap);}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \ \ \ \ btStridingMeshInterface*\ meshInterface\ =\ trimeshShape-\/>getMeshInterface();}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ meshScaling\ =\ meshInterface-\/>getScaling();}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ partId\ =\ 0;\ partId\ <\ meshInterface-\/>getNumSubParts();\ partId++)}
+\DoxyCodeLine{00343\ \ \ \ \ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ vertexbase\ =\ 0;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numverts\ =\ 0;}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ PHY\_ScalarType\ type\ =\ PHY\_INTEGER;}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ stride\ =\ 0;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ indexbase\ =\ 0;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ indexstride\ =\ 0;}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numfaces\ =\ 0;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ PHY\_ScalarType\ indicestype\ =\ PHY\_INTEGER;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \textcolor{comment}{//PHY\_ScalarType\ indexType=0;}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ btVector3\ triangleVerts[3];}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ meshInterface-\/>getLockedReadOnlyVertexIndexBase(\&vertexbase,\ numverts,\ type,\ stride,\ \&indexbase,\ indexstride,\ numfaces,\ indicestype,\ partId);}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ btVector3\ aabbMin,\ aabbMax;}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ triangleIndex\ =\ 0;\ triangleIndex\ <\ numfaces;\ triangleIndex++)}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*\ gfxbase\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}*)(indexbase\ +\ triangleIndex\ *\ indexstride);}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 2;\ j\ >=\ 0;\ j-\/-\/)}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ graphicsindex;}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (indicestype)\ \{}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_INTEGER:\ graphicsindex\ =\ gfxbase[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_SHORT:\ graphicsindex\ =\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*)gfxbase)[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PHY\_UCHAR:\ graphicsindex\ =\ ((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)gfxbase)[j];\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ btAssert(0);}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type\ ==\ PHY\_FLOAT)}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}*\ graphicsbase\ =\ (\textcolor{keywordtype}{float}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangleVerts[j]\ =\ btVector3(}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ graphicsbase[0]\ *\ meshScaling.getX(),}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ graphicsbase[1]\ *\ meshScaling.getY(),}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ graphicsbase[2]\ *\ meshScaling.getZ());}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}*\ graphicsbase\ =\ (\textcolor{keywordtype}{double}*)(vertexbase\ +\ graphicsindex\ *\ stride);}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangleVerts[j]\ =\ btVector3(btScalar(graphicsbase[0]\ *\ meshScaling.getX()),\ btScalar(graphicsbase[1]\ *\ meshScaling.getY()),\ btScalar(graphicsbase[2]\ *\ meshScaling.getZ()));}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMin.setValue(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMax.setValue(btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMin.setMin(triangleVerts[0]);}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMax.setMax(triangleVerts[0]);}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMin.setMin(triangleVerts[1]);}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMax.setMax(triangleVerts[1]);}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMin.setMin(triangleVerts[2]);}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ aabbMax.setMax(triangleVerts[2]);}
+\DoxyCodeLine{00393\ }
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_connectivity_processor}{btConnectivityProcessor}}\ connectivityProcessor;}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ connectivityProcessor.m\_partIdA\ =\ partId;}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ connectivityProcessor.m\_triangleIndexA\ =\ triangleIndex;}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ connectivityProcessor.m\_triangleVerticesA\ =\ \&triangleVerts[0];}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ connectivityProcessor.m\_triangleInfoMap\ =\ triangleInfoMap;}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ trimeshShape-\/>processAllTriangles(\&connectivityProcessor,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00402\ \ \ \ \ \}}
+\DoxyCodeLine{00403\ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00406\ \textcolor{keywordtype}{void}\ btGenerateInternalEdgeInfo(btHeightfieldTerrainShape*\ heightfieldShape,\ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ triangleInfoMap)}
+\DoxyCodeLine{00407\ \{}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{comment}{//the\ user\ pointer\ shouldn't\ already\ be\ used\ for\ other\ purposes,\ we\ intend\ to\ store\ connectivity\ info\ there!}}
+\DoxyCodeLine{00410\ \ \ \ \ \textcolor{keywordflow}{if}\ (heightfieldShape-\/>getTriangleInfoMap())}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00413\ \ \ \ \ heightfieldShape-\/>setTriangleInfoMap(triangleInfoMap);}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \ \ \textcolor{comment}{//get\ all\ the\ triangles\ of\ the\ heightfield}}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \ \ \ \ btVector3\ aabbMin,\ aabbMax;}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00419\ \ \ \ \ aabbMax.setValue(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00420\ \ \ \ \ aabbMin.setValue(btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00421\ }
+\DoxyCodeLine{00422\ \ \ \ \ \mbox{\hyperlink{structb3_process_all_triangles_heightfield}{b3ProcessAllTrianglesHeightfield}}\ processHeightfield(heightfieldShape,\ triangleInfoMap);}
+\DoxyCodeLine{00423\ \ \ \ \ heightfieldShape-\/>processAllTriangles(\&processHeightfield,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00424\ }
+\DoxyCodeLine{00425\ \}}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \textcolor{comment}{//\ Given\ a\ point\ and\ a\ line\ segment\ (defined\ by\ two\ points),\ compute\ the\ closest\ point}}
+\DoxyCodeLine{00428\ \textcolor{comment}{//\ in\ the\ line.\ \ Cap\ the\ point\ at\ the\ endpoints\ of\ the\ line\ segment.}}
+\DoxyCodeLine{00429\ \textcolor{keywordtype}{void}\ btNearestPointInLineSegment(\textcolor{keyword}{const}\ btVector3\&\ point,\ \textcolor{keyword}{const}\ btVector3\&\ line0,\ \textcolor{keyword}{const}\ btVector3\&\ line1,\ btVector3\&\ nearestPoint)}
+\DoxyCodeLine{00430\ \{}
+\DoxyCodeLine{00431\ \ \ \ \ btVector3\ lineDelta\ =\ line1\ -\/\ line0;}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \ \ \ \ \textcolor{comment}{//\ Handle\ degenerate\ lines}}
+\DoxyCodeLine{00434\ \ \ \ \ \textcolor{keywordflow}{if}\ (lineDelta.fuzzyZero())}
+\DoxyCodeLine{00435\ \ \ \ \ \{}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ nearestPoint\ =\ line0;}
+\DoxyCodeLine{00437\ \ \ \ \ \}}
+\DoxyCodeLine{00438\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00439\ \ \ \ \ \{}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ btScalar\ delta\ =\ (point\ -\/\ line0).dot(lineDelta)\ /\ (lineDelta).dot(lineDelta);}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clamp\ the\ point\ to\ conform\ to\ the\ segment's\ endpoints}}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (delta\ <\ 0)}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ delta\ =\ 0;}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (delta\ >\ 1)}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ delta\ =\ 1;}
+\DoxyCodeLine{00447\ }
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ nearestPoint\ =\ line0\ +\ lineDelta\ *\ delta;}
+\DoxyCodeLine{00449\ \ \ \ \ \}}
+\DoxyCodeLine{00450\ \}}
+\DoxyCodeLine{00451\ }
+\DoxyCodeLine{00452\ \textcolor{keywordtype}{bool}\ btClampNormal(\textcolor{keyword}{const}\ btVector3\&\ edge,\ \textcolor{keyword}{const}\ btVector3\&\ tri\_normal\_org,\ \textcolor{keyword}{const}\ btVector3\&\ localContactNormalOnB,\ btScalar\ correctedEdgeAngle,\ btVector3\&\ clampedLocalNormal)}
+\DoxyCodeLine{00453\ \{}
+\DoxyCodeLine{00454\ \ \ \ \ btVector3\ tri\_normal\ =\ tri\_normal\_org;}
+\DoxyCodeLine{00455\ \ \ \ \ \textcolor{comment}{//we\ only\ have\ a\ local\ triangle\ normal,\ not\ a\ local\ contact\ normal\ -\/>\ only\ normal\ in\ world\ space...}}
+\DoxyCodeLine{00456\ \ \ \ \ \textcolor{comment}{//either\ compute\ the\ current\ angle\ all\ in\ local\ space,\ or\ all\ in\ world\ space}}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \ \ \ \ btVector3\ edgeCross\ =\ edge.cross(tri\_normal).normalize();}
+\DoxyCodeLine{00459\ \ \ \ \ btScalar\ curAngle\ =\ btGetAngle(edgeCross,\ tri\_normal,\ localContactNormalOnB);}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00461\ \ \ \ \ \textcolor{keywordflow}{if}\ (correctedEdgeAngle\ <\ 0)}
+\DoxyCodeLine{00462\ \ \ \ \ \{}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (curAngle\ <\ correctedEdgeAngle)}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ diffAngle\ =\ correctedEdgeAngle\ -\/\ curAngle;}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ \mbox{\hyperlink{group__gtx__quaternion_gadbb992b52cef49dd3b11966e34260d17}{rotation}}(edge,\ diffAngle);}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ clampedLocalNormal\ =\ btMatrix3x3(rotation)\ *\ localContactNormalOnB;}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00470\ \ \ \ \ \}}
+\DoxyCodeLine{00471\ }
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keywordflow}{if}\ (correctedEdgeAngle\ >=\ 0)}
+\DoxyCodeLine{00473\ \ \ \ \ \{}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (curAngle\ >\ correctedEdgeAngle)}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ diffAngle\ =\ correctedEdgeAngle\ -\/\ curAngle;}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ \mbox{\hyperlink{group__gtx__quaternion_gadbb992b52cef49dd3b11966e34260d17}{rotation}}(edge,\ diffAngle);}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ clampedLocalNormal\ =\ btMatrix3x3(rotation)\ *\ localContactNormalOnB;}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00481\ \ \ \ \ \}}
+\DoxyCodeLine{00482\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00483\ \}}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00486\ \textcolor{keywordtype}{void}\ btAdjustInternalEdgeContacts(\mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObj0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObj1Wrap,\ \textcolor{keywordtype}{int}\ partId0,\ \textcolor{keywordtype}{int}\ index0,\ \textcolor{keywordtype}{int}\ normalAdjustFlags)}
+\DoxyCodeLine{00487\ \{}
+\DoxyCodeLine{00488\ \ \ \ \ \textcolor{comment}{//btAssert(colObj0-\/>getCollisionShape()-\/>getShapeType()\ ==\ TRIANGLE\_SHAPE\_PROXYTYPE);}}
+\DoxyCodeLine{00489\ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj0Wrap-\/>getCollisionShape()-\/>getShapeType()\ !=\ TRIANGLE\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00491\ }
+\DoxyCodeLine{00492\ \ \ \ \ }
+\DoxyCodeLine{00493\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*\ triangleInfoMapPtr\ =\ 0;}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj0Wrap-\/>getCollisionObject()-\/>getCollisionShape()-\/>getShapeType()\ ==\ TERRAIN\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{00496\ \ \ \ \ \{}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ btHeightfieldTerrainShape*\ heightfield\ =\ (btHeightfieldTerrainShape*)colObj0Wrap-\/>getCollisionObject()-\/>getCollisionShape();}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ triangleInfoMapPtr\ =\ heightfield-\/>getTriangleInfoMap();}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \textcolor{comment}{//\#define\ USE\_HEIGHTFIELD\_TRIANGLES}}
+\DoxyCodeLine{00501\ \textcolor{preprocessor}{\#ifdef\ USE\_HEIGHTFIELD\_TRIANGLES}}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ btVector3\ newNormal\ =\ btVector3(0,\ 0,\ 1);}
+\DoxyCodeLine{00503\ }
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTriangleShape*\ tri\_shape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btTriangleShape*\textcolor{keyword}{>}(colObj0Wrap-\/>getCollisionShape());}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ btVector3\ tri\_normal;}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ tri\_shape-\/>calcNormal(tri\_normal);}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ newNormal\ =\ tri\_normal;}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_distance1\ =\ cp.m\_distance1\ *\ newNormal.dot(cp.m\_normalWorldOnB);}}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ cp.m\_normalWorldOnB\ =\ newNormal;}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reproject\ collision\ point\ along\ normal.\ (what\ about\ cp.m\_distance1?)}}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ cp.m\_positionWorldOnB\ =\ cp.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ -\/\ cp.m\_normalWorldOnB\ *\ cp.m\_distance1;}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ cp.m\_localPointB\ =\ colObj0Wrap-\/>getWorldTransform().invXform(cp.m\_positionWorldOnB);}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00514\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00515\ \ \ \ \ \}}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ }
+\DoxyCodeLine{00518\ \ \ \ \ btBvhTriangleMeshShape*\ trimesh\ =\ 0;}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj0Wrap-\/>getCollisionObject()-\/>getCollisionShape()-\/>getShapeType()\ ==\ SCALED\_TRIANGLE\_MESH\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{00521\ \ \ \ \ \{}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ trimesh\ =\ ((btScaledBvhTriangleMeshShape*)colObj0Wrap-\/>getCollisionObject()-\/>getCollisionShape())-\/>getChildShape();}
+\DoxyCodeLine{00523\ \ \ \ \ \}}
+\DoxyCodeLine{00524\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00525\ \ \ \ \ \{}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj0Wrap-\/>getCollisionObject()-\/>getCollisionShape()-\/>getShapeType()\ ==\ TRIANGLE\_MESH\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ trimesh\ =\ (btBvhTriangleMeshShape*)colObj0Wrap-\/>getCollisionObject()-\/>getCollisionShape();}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00530\ \ \ \ \ \}}
+\DoxyCodeLine{00531\ \ \ \ \ \textcolor{keywordflow}{if}\ (trimesh)}
+\DoxyCodeLine{00532\ \ \ \ \ \{}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ triangleInfoMapPtr\ =\ (\mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}*)trimesh-\/>getTriangleInfoMap();}
+\DoxyCodeLine{00534\ \ \ \ \ \}}
+\DoxyCodeLine{00535\ \ \ \ \ }
+\DoxyCodeLine{00536\ \ \ \ \ }
+\DoxyCodeLine{00537\ \ \ \ \ \textcolor{keywordflow}{if}\ (!triangleInfoMapPtr)}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00539\ }
+\DoxyCodeLine{00540\ \ \ \ \ \textcolor{keywordtype}{int}\ hash\ =\ btGetHash(partId0,\ index0);}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info}{btTriangleInfo}}*\ info\ =\ triangleInfoMapPtr-\/>find(hash);}
+\DoxyCodeLine{00543\ \ \ \ \ \textcolor{keywordflow}{if}\ (!info)}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \ \ \ \ btScalar\ frontFacing\ =\ (normalAdjustFlags\ \&\ BT\_TRIANGLE\_CONVEX\_BACKFACE\_MODE)\ ==\ 0\ ?\ 1.f\ :\ -\/1.f;}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keyword}{const}\ btTriangleShape*\ tri\_shape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btTriangleShape*\textcolor{keyword}{>}(colObj0Wrap-\/>getCollisionShape());}
+\DoxyCodeLine{00549\ \ \ \ \ btVector3\ v0,\ v1,\ v2;}
+\DoxyCodeLine{00550\ \ \ \ \ tri\_shape-\/>getVertex(0,\ v0);}
+\DoxyCodeLine{00551\ \ \ \ \ tri\_shape-\/>getVertex(1,\ v1);}
+\DoxyCodeLine{00552\ \ \ \ \ tri\_shape-\/>getVertex(2,\ v2);}
+\DoxyCodeLine{00553\ }
+\DoxyCodeLine{00554\ \ \ \ \ \textcolor{comment}{//btVector3\ center\ =\ (v0+v1+v2)*btScalar(1./3.);}}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00556\ \ \ \ \ btVector3\ red(1,\ 0,\ 0),\ green(0,\ 1,\ 0),\ blue(0,\ 0,\ 1),\ white(1,\ 1,\ 1),\ black(0,\ 0,\ 0);}
+\DoxyCodeLine{00557\ \ \ \ \ btVector3\ tri\_normal;}
+\DoxyCodeLine{00558\ \ \ \ \ tri\_shape-\/>calcNormal(tri\_normal);}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \ \ \ \ \textcolor{comment}{//btScalar\ dot\ =\ tri\_normal.dot(cp.m\_normalWorldOnB);}}
+\DoxyCodeLine{00561\ \ \ \ \ btVector3\ nearest;}
+\DoxyCodeLine{00562\ \ \ \ \ btNearestPointInLineSegment(cp.m\_localPointB,\ v0,\ v1,\ nearest);}
+\DoxyCodeLine{00563\ }
+\DoxyCodeLine{00564\ \ \ \ \ btVector3\ contact\ =\ cp.m\_localPointB;}
+\DoxyCodeLine{00565\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00566\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ tr\ =\ colObj0-\/>getWorldTransform();}
+\DoxyCodeLine{00567\ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ cp.m\_localPointB,\ red);}
+\DoxyCodeLine{00568\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ \ \ \ \ \textcolor{keywordtype}{bool}\ isNearEdge\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00571\ }
+\DoxyCodeLine{00572\ \ \ \ \ \textcolor{keywordtype}{int}\ numConcaveEdgeHits\ =\ 0;}
+\DoxyCodeLine{00573\ \ \ \ \ \textcolor{keywordtype}{int}\ numConvexEdgeHits\ =\ 0;}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00575\ \ \ \ \ btVector3\ localContactNormalOnB\ =\ colObj0Wrap-\/>getWorldTransform().getBasis().transpose()\ *\ cp.m\_normalWorldOnB;}
+\DoxyCodeLine{00576\ \ \ \ \ localContactNormalOnB.normalize();\ \ \textcolor{comment}{//is\ this\ necessary?}}
+\DoxyCodeLine{00577\ }
+\DoxyCodeLine{00578\ \ \ \ \ \textcolor{comment}{//\ Get\ closest\ edge}}
+\DoxyCodeLine{00579\ \ \ \ \ \textcolor{keywordtype}{int}\ bestedge\ =\ -\/1;}
+\DoxyCodeLine{00580\ \ \ \ \ btScalar\ disttobestedge\ =\ BT\_LARGE\_FLOAT;}
+\DoxyCodeLine{00581\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00582\ \ \ \ \ \textcolor{comment}{//\ Edge\ 0\ -\/>\ 1}}
+\DoxyCodeLine{00583\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(info-\/>m\_edgeV0V1Angle)\ <\ triangleInfoMapPtr-\/>\mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}})}
+\DoxyCodeLine{00584\ \ \ \ \ \{}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ btVector3\ nearest;}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ btNearestPointInLineSegment(cp.m\_localPointB,\ v0,\ v1,\ nearest);}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ btScalar\ len\ =\ (contact\ -\/\ nearest).length();}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ disttobestedge)}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ bestedge\ =\ 0;}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ disttobestedge\ =\ len;}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00594\ \ \ \ \ \}}
+\DoxyCodeLine{00595\ \ \ \ \ \textcolor{comment}{//\ Edge\ 1\ -\/>\ 2}}
+\DoxyCodeLine{00596\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(info-\/>m\_edgeV1V2Angle)\ <\ triangleInfoMapPtr-\/>\mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}})}
+\DoxyCodeLine{00597\ \ \ \ \ \{}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ btVector3\ nearest;}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ btNearestPointInLineSegment(cp.m\_localPointB,\ v1,\ v2,\ nearest);}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ btScalar\ len\ =\ (contact\ -\/\ nearest).length();}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ disttobestedge)}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ bestedge\ =\ 1;}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ disttobestedge\ =\ len;}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00607\ \ \ \ \ \}}
+\DoxyCodeLine{00608\ \ \ \ \ \textcolor{comment}{//\ Edge\ 2\ -\/>\ 0}}
+\DoxyCodeLine{00609\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(info-\/>m\_edgeV2V0Angle)\ <\ triangleInfoMapPtr-\/>\mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}})}
+\DoxyCodeLine{00610\ \ \ \ \ \{}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ btVector3\ nearest;}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ btNearestPointInLineSegment(cp.m\_localPointB,\ v2,\ v0,\ nearest);}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ btScalar\ len\ =\ (contact\ -\/\ nearest).length();}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ disttobestedge)}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ bestedge\ =\ 2;}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ disttobestedge\ =\ len;}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00620\ \ \ \ \ \}}
+\DoxyCodeLine{00621\ }
+\DoxyCodeLine{00622\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00623\ \ \ \ \ btVector3\ upfix\ =\ tri\_normal\ *\ btVector3(0.1f,\ 0.1f,\ 0.1f);}
+\DoxyCodeLine{00624\ \ \ \ \ btDebugDrawLine(tr\ *\ v0\ +\ upfix,\ tr\ *\ v1\ +\ upfix,\ red);}
+\DoxyCodeLine{00625\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00626\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(info-\/>m\_edgeV0V1Angle)\ <\ triangleInfoMapPtr-\/>\mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}})}
+\DoxyCodeLine{00627\ \ \ \ \ \{}
+\DoxyCodeLine{00628\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ contact,\ tr\ *\ (contact\ +\ cp.m\_normalWorldOnB\ *\ 10),\ black);}
+\DoxyCodeLine{00630\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ btScalar\ len\ =\ (contact\ -\/\ nearest).length();}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ triangleInfoMapPtr-\/>m\_edgeDistanceThreshold)}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bestedge\ ==\ 0)}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge(v0\ -\/\ v1);}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isNearEdge\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00637\ }
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (info-\/>m\_edgeV0V1Angle\ ==\ btScalar(0))}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConcaveEdgeHits++;}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isEdgeConvex\ =\ (info-\/>m\_flags\ \&\ TRI\_INFO\_V0V1\_CONVEX);}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ swapFactor\ =\ isEdgeConvex\ ?\ btScalar(1)\ :\ btScalar(-\/1);}
+\DoxyCodeLine{00646\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ (nearest\ +\ swapFactor\ *\ tri\_normal\ *\ 10),\ white);}
+\DoxyCodeLine{00648\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00649\ }
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ nA\ =\ swapFactor\ *\ tri\_normal;}
+\DoxyCodeLine{00651\ }
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ orn(edge,\ info-\/>m\_edgeV0V1Angle);}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ computedNormalB\ =\ quatRotate(orn,\ tri\_normal);}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (info-\/>m\_flags\ \&\ TRI\_INFO\_V0V1\_SWAP\_NORMALB)}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computedNormalB\ *=\ -\/1;}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ nB\ =\ swapFactor\ *\ computedNormalB;}
+\DoxyCodeLine{00657\ }
+\DoxyCodeLine{00658\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ NdotA\ =\ localContactNormalOnB.dot(nA);}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ NdotB\ =\ localContactNormalOnB.dot(nB);}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ backFacingNormal\ =\ (NdotA\ <\ triangleInfoMapPtr-\/>m\_convexEpsilon)\ \&\&\ (NdotB\ <\ triangleInfoMapPtr-\/>m\_convexEpsilon);}
+\DoxyCodeLine{00661\ }
+\DoxyCodeLine{00662\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(cp.getPositionWorldOnB(),\ cp.getPositionWorldOnB()\ +\ tr.getBasis()\ *\ (nB\ *\ 20),\ red);}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00666\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00667\ }
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (backFacingNormal)}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConcaveEdgeHits++;}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConvexEdgeHits++;}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ clampedLocalNormal;}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isClamped\ =\ btClampNormal(edge,\ swapFactor\ *\ tri\_normal,\ localContactNormalOnB,\ info-\/>m\_edgeV0V1Angle,\ clampedLocalNormal);}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isClamped)}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((normalAdjustFlags\ \&\ BT\_TRIANGLE\_CONVEX\_DOUBLE\_SIDED)\ !=\ 0)\ ||\ (clampedLocalNormal.dot(frontFacing\ *\ tri\_normal)\ >\ 0))}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ newNormal\ =\ colObj0Wrap-\/>getWorldTransform().getBasis()\ *\ clampedLocalNormal;}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_distance1\ =\ cp.m\_distance1\ *\ newNormal.dot(cp.m\_normalWorldOnB);}}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_normalWorldOnB\ =\ newNormal;}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reproject\ collision\ point\ along\ normal.\ (what\ about\ cp.m\_distance1?)}}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_positionWorldOnB\ =\ cp.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ -\/\ cp.m\_normalWorldOnB\ *\ cp.m\_distance1;}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_localPointB\ =\ colObj0Wrap-\/>getWorldTransform().invXform(cp.m\_positionWorldOnB);}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00692\ \ \ \ \ \}}
+\DoxyCodeLine{00693\ }
+\DoxyCodeLine{00694\ \ \ \ \ btNearestPointInLineSegment(contact,\ v1,\ v2,\ nearest);}
+\DoxyCodeLine{00695\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00696\ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ cp.m\_localPointB,\ green);}
+\DoxyCodeLine{00697\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00698\ }
+\DoxyCodeLine{00699\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00700\ \ \ \ \ btDebugDrawLine(tr\ *\ v1\ +\ upfix,\ tr\ *\ v2\ +\ upfix,\ green);}
+\DoxyCodeLine{00701\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00702\ }
+\DoxyCodeLine{00703\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(info-\/>m\_edgeV1V2Angle)\ <\ triangleInfoMapPtr-\/>\mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}})}
+\DoxyCodeLine{00704\ \ \ \ \ \{}
+\DoxyCodeLine{00705\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00706\ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ contact,\ tr\ *\ (contact\ +\ cp.m\_normalWorldOnB\ *\ 10),\ black);}
+\DoxyCodeLine{00707\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00708\ }
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ btScalar\ len\ =\ (contact\ -\/\ nearest).length();}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ triangleInfoMapPtr-\/>m\_edgeDistanceThreshold)}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bestedge\ ==\ 1)}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isNearEdge\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00714\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ (nearest\ +\ tri\_normal\ *\ 10),\ white);}
+\DoxyCodeLine{00716\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00717\ }
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge(v1\ -\/\ v2);}
+\DoxyCodeLine{00719\ }
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isNearEdge\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00721\ }
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (info-\/>m\_edgeV1V2Angle\ ==\ btScalar(0))}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConcaveEdgeHits++;}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isEdgeConvex\ =\ (info-\/>m\_flags\ \&\ TRI\_INFO\_V1V2\_CONVEX)\ !=\ 0;}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ swapFactor\ =\ isEdgeConvex\ ?\ btScalar(1)\ :\ btScalar(-\/1);}
+\DoxyCodeLine{00730\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ (nearest\ +\ swapFactor\ *\ tri\_normal\ *\ 10),\ white);}
+\DoxyCodeLine{00732\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00733\ }
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ nA\ =\ swapFactor\ *\ tri\_normal;}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ orn(edge,\ info-\/>m\_edgeV1V2Angle);}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ computedNormalB\ =\ quatRotate(orn,\ tri\_normal);}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (info-\/>m\_flags\ \&\ TRI\_INFO\_V1V2\_SWAP\_NORMALB)}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computedNormalB\ *=\ -\/1;}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ nB\ =\ swapFactor\ *\ computedNormalB;}
+\DoxyCodeLine{00741\ }
+\DoxyCodeLine{00742\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(cp.getPositionWorldOnB(),\ cp.getPositionWorldOnB()\ +\ tr.getBasis()\ *\ (nB\ *\ 20),\ red);}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00746\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00747\ }
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ NdotA\ =\ localContactNormalOnB.dot(nA);}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ NdotB\ =\ localContactNormalOnB.dot(nB);}
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ backFacingNormal\ =\ (NdotA\ <\ triangleInfoMapPtr-\/>m\_convexEpsilon)\ \&\&\ (NdotB\ <\ triangleInfoMapPtr-\/>m\_convexEpsilon);}
+\DoxyCodeLine{00751\ }
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (backFacingNormal)}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConcaveEdgeHits++;}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConvexEdgeHits++;}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ localContactNormalOnB\ =\ colObj0Wrap-\/>getWorldTransform().getBasis().transpose()\ *\ cp.m\_normalWorldOnB;}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ clampedLocalNormal;}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isClamped\ =\ btClampNormal(edge,\ swapFactor\ *\ tri\_normal,\ localContactNormalOnB,\ info-\/>m\_edgeV1V2Angle,\ clampedLocalNormal);}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isClamped)}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((normalAdjustFlags\ \&\ BT\_TRIANGLE\_CONVEX\_DOUBLE\_SIDED)\ !=\ 0)\ ||\ (clampedLocalNormal.dot(frontFacing\ *\ tri\_normal)\ >\ 0))}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ newNormal\ =\ colObj0Wrap-\/>getWorldTransform().getBasis()\ *\ clampedLocalNormal;}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_distance1\ =\ cp.m\_distance1\ *\ newNormal.dot(cp.m\_normalWorldOnB);}}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_normalWorldOnB\ =\ newNormal;}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reproject\ collision\ point\ along\ normal.}}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_positionWorldOnB\ =\ cp.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ -\/\ cp.m\_normalWorldOnB\ *\ cp.m\_distance1;}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_localPointB\ =\ colObj0Wrap-\/>getWorldTransform().invXform(cp.m\_positionWorldOnB);}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00776\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00777\ \ \ \ \ \}}
+\DoxyCodeLine{00778\ }
+\DoxyCodeLine{00779\ \ \ \ \ btNearestPointInLineSegment(contact,\ v2,\ v0,\ nearest);}
+\DoxyCodeLine{00780\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00781\ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ cp.m\_localPointB,\ blue);}
+\DoxyCodeLine{00782\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00783\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00784\ \ \ \ \ btDebugDrawLine(tr\ *\ v2\ +\ upfix,\ tr\ *\ v0\ +\ upfix,\ blue);}
+\DoxyCodeLine{00785\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(info-\/>m\_edgeV2V0Angle)\ <\ triangleInfoMapPtr-\/>\mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}})}
+\DoxyCodeLine{00788\ \ \ \ \ \{}
+\DoxyCodeLine{00789\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ contact,\ tr\ *\ (contact\ +\ cp.m\_normalWorldOnB\ *\ 10),\ black);}
+\DoxyCodeLine{00791\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ btScalar\ len\ =\ (contact\ -\/\ nearest).length();}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ triangleInfoMapPtr-\/>m\_edgeDistanceThreshold)}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bestedge\ ==\ 2)}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isNearEdge\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00798\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ (nearest\ +\ tri\_normal\ *\ 10),\ white);}
+\DoxyCodeLine{00800\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00801\ }
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge(v2\ -\/\ v0);}
+\DoxyCodeLine{00803\ }
+\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (info-\/>m\_edgeV2V0Angle\ ==\ btScalar(0))}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConcaveEdgeHits++;}
+\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isEdgeConvex\ =\ (info-\/>m\_flags\ \&\ TRI\_INFO\_V2V0\_CONVEX)\ !=\ 0;}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ swapFactor\ =\ isEdgeConvex\ ?\ btScalar(1)\ :\ btScalar(-\/1);}
+\DoxyCodeLine{00812\ \textcolor{preprocessor}{\#ifdef\ BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(tr\ *\ nearest,\ tr\ *\ (nearest\ +\ swapFactor\ *\ tri\_normal\ *\ 10),\ white);}
+\DoxyCodeLine{00814\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_INTERNAL\_EDGE\_DEBUG\_DRAW}}
+\DoxyCodeLine{00815\ }
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ nA\ =\ swapFactor\ *\ tri\_normal;}
+\DoxyCodeLine{00817\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ orn(edge,\ info-\/>m\_edgeV2V0Angle);}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ computedNormalB\ =\ quatRotate(orn,\ tri\_normal);}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (info-\/>m\_flags\ \&\ TRI\_INFO\_V2V0\_SWAP\_NORMALB)}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computedNormalB\ *=\ -\/1;}
+\DoxyCodeLine{00821\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ nB\ =\ swapFactor\ *\ computedNormalB;}
+\DoxyCodeLine{00822\ }
+\DoxyCodeLine{00823\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btDebugDrawLine(cp.getPositionWorldOnB(),\ cp.getPositionWorldOnB()\ +\ tr.getBasis()\ *\ (nB\ *\ 20),\ red);}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00827\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00828\ }
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ NdotA\ =\ localContactNormalOnB.dot(nA);}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ NdotB\ =\ localContactNormalOnB.dot(nB);}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ backFacingNormal\ =\ (NdotA\ <\ triangleInfoMapPtr-\/>m\_convexEpsilon)\ \&\&\ (NdotB\ <\ triangleInfoMapPtr-\/>m\_convexEpsilon);}
+\DoxyCodeLine{00832\ }
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (backFacingNormal)}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConcaveEdgeHits++;}
+\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numConvexEdgeHits++;}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ printf("{}hitting\ convex\ edge\(\backslash\)n"{});}}
+\DoxyCodeLine{00841\ }
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ localContactNormalOnB\ =\ colObj0Wrap-\/>getWorldTransform().getBasis().transpose()\ *\ cp.m\_normalWorldOnB;}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ clampedLocalNormal;}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isClamped\ =\ btClampNormal(edge,\ swapFactor\ *\ tri\_normal,\ localContactNormalOnB,\ info-\/>m\_edgeV2V0Angle,\ clampedLocalNormal);}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isClamped)}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((normalAdjustFlags\ \&\ BT\_TRIANGLE\_CONVEX\_DOUBLE\_SIDED)\ !=\ 0)\ ||\ (clampedLocalNormal.dot(frontFacing\ *\ tri\_normal)\ >\ 0))}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ newNormal\ =\ colObj0Wrap-\/>getWorldTransform().getBasis()\ *\ clampedLocalNormal;}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_distance1\ =\ cp.m\_distance1\ *\ newNormal.dot(cp.m\_normalWorldOnB);}}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_normalWorldOnB\ =\ newNormal;}
+\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reproject\ collision\ point\ along\ normal.}}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_positionWorldOnB\ =\ cp.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ -\/\ cp.m\_normalWorldOnB\ *\ cp.m\_distance1;}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_localPointB\ =\ colObj0Wrap-\/>getWorldTransform().invXform(cp.m\_positionWorldOnB);}
+\DoxyCodeLine{00855\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00858\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00859\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00860\ \ \ \ \ \}}
+\DoxyCodeLine{00861\ }
+\DoxyCodeLine{00862\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00863\ \ \ \ \ \{}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ btVector3\ color(0,\ 1,\ 1);}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ btDebugDrawLine(cp.getPositionWorldOnB(),\ cp.getPositionWorldOnB()\ +\ cp.m\_normalWorldOnB\ *\ 10,\ color);}
+\DoxyCodeLine{00866\ \ \ \ \ \}}
+\DoxyCodeLine{00867\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_INTERNAL\_EDGE}}
+\DoxyCodeLine{00868\ }
+\DoxyCodeLine{00869\ \ \ \ \ \textcolor{keywordflow}{if}\ (isNearEdge)}
+\DoxyCodeLine{00870\ \ \ \ \ \{}
+\DoxyCodeLine{00871\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numConcaveEdgeHits\ >\ 0)}
+\DoxyCodeLine{00872\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00873\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((normalAdjustFlags\ \&\ BT\_TRIANGLE\_CONCAVE\_DOUBLE\_SIDED)\ !=\ 0)}
+\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00875\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fix\ tri\_normal\ so\ it\ pointing\ the\ same\ direction\ as\ the\ current\ local\ contact\ normal}}
+\DoxyCodeLine{00876\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tri\_normal.dot(localContactNormalOnB)\ <\ 0)}
+\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00878\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tri\_normal\ *=\ -\/1;}
+\DoxyCodeLine{00879\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_normalWorldOnB\ =\ colObj0Wrap-\/>getWorldTransform().getBasis()\ *\ tri\_normal;}
+\DoxyCodeLine{00881\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00882\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00883\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00884\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ newNormal\ =\ tri\_normal\ *\ frontFacing;}
+\DoxyCodeLine{00885\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ the\ tri\_normal\ is\ pointing\ opposite\ direction\ as\ the\ current\ local\ contact\ normal,\ skip\ it}}
+\DoxyCodeLine{00886\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ d\ =\ newNormal.dot(localContactNormalOnB);}
+\DoxyCodeLine{00887\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ 0)}
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00889\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//modify\ the\ normal\ to\ be\ the\ triangle\ normal\ (or\ backfacing\ normal)}}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_normalWorldOnB\ =\ colObj0Wrap-\/>getWorldTransform().getBasis()\ *\ newNormal;}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00894\ }
+\DoxyCodeLine{00895\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reproject\ collision\ point\ along\ normal.}}
+\DoxyCodeLine{00896\ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_positionWorldOnB\ =\ cp.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ -\/\ cp.m\_normalWorldOnB\ *\ cp.m\_distance1;}
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ \ \ \ \ cp.m\_localPointB\ =\ colObj0Wrap-\/>getWorldTransform().invXform(cp.m\_positionWorldOnB);}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00899\ \ \ \ \ \}}
+\DoxyCodeLine{00900\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,129 @@
+\doxysection{b3\+Bvh\+Traversal.\+h}
+\hypertarget{b3_bvh_traversal_8h_source}{}\label{b3_bvh_traversal_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3BvhTraversal.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3BvhTraversal.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Int4.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ work-\/in-\/progress}}
+\DoxyCodeLine{00011\ \textcolor{keywordtype}{void}\ b3BvhTraversal(\_\_global\ \textcolor{keyword}{const}\ b3Int4*\ pairs,}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ rigidBodies,}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_collidable}{b3Collidable}}*\ collidables,}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \mbox{\hyperlink{structb3_aabb}{b3Aabb}}*\ aabbs,}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ b3Int4*\ concavePairsOut,}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{int}*\ numConcavePairsOut,}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ b3BvhSubtreeInfo*\ subtreeHeadersRoot,}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ b3QuantizedBvhNode*\ quantizedNodesRoot,}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_bvh_info}{b3BvhInfo}}*\ bvhInfos,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numPairs,}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ maxNumConcavePairsCapacity,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id})}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{int}\ bodyIndexA\ =\ pairs[id].x;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ bodyIndexB\ =\ pairs[id].y;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{int}\ collidableIndexA\ =\ rigidBodies[bodyIndexA].m\_collidableIdx;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ collidableIndexB\ =\ rigidBodies[bodyIndexB].m\_collidableIdx;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//once\ the\ broadphase\ avoids\ static-\/static\ pairs,\ we\ can\ remove\ this\ test}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordflow}{if}\ ((rigidBodies[bodyIndexA].m\_invMass\ ==\ 0)\ \&\&\ (rigidBodies[bodyIndexB].m\_invMass\ ==\ 0))}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{if}\ (collidables[collidableIndexA].m\_shapeType\ !=\ SHAPE\_CONCAVE\_TRIMESH)}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{int}\ shapeTypeB\ =\ collidables[collidableIndexB].m\_shapeType;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordflow}{if}\ (shapeTypeB\ !=\ SHAPE\_CONVEX\_HULL\ \&\&}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ shapeTypeB\ !=\ SHAPE\_SPHERE\ \&\&}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ shapeTypeB\ !=\ SHAPE\_COMPOUND\_OF\_CONVEX\_HULLS)}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{structb3_bvh_info}{b3BvhInfo}}\ bvhInfo\ =\ bvhInfos[collidables[collidableIndexA].m\_numChildShapes];}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ b3Float4\ bvhAabbMin\ =\ bvhInfo.m\_aabbMin;}
+\DoxyCodeLine{00048\ \ \ \ \ b3Float4\ bvhAabbMax\ =\ bvhInfo.m\_aabbMax;}
+\DoxyCodeLine{00049\ \ \ \ \ b3Float4\ bvhQuantization\ =\ bvhInfo.m\_quantization;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{int}\ numSubtreeHeaders\ =\ bvhInfo.m\_numSubTrees;}
+\DoxyCodeLine{00051\ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_bvh_subtree_info_data}{b3BvhSubtreeInfoData}}*\ subtreeHeaders\ =\ \&subtreeHeadersRoot[bvhInfo.m\_subTreeOffset];}
+\DoxyCodeLine{00052\ \ \ \ \ \_\_global\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData}}*\ quantizedNodes\ =\ \&quantizedNodesRoot[bvhInfo.m\_nodeOffset];}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ quantizedQueryAabbMin[3];}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ quantizedQueryAabbMax[3];}
+\DoxyCodeLine{00056\ \ \ \ \ b3QuantizeWithClamp(quantizedQueryAabbMin,\ aabbs[bodyIndexB].m\_minVec,\ \textcolor{keyword}{false},\ bvhAabbMin,\ bvhAabbMax,\ bvhQuantization);}
+\DoxyCodeLine{00057\ \ \ \ \ b3QuantizeWithClamp(quantizedQueryAabbMax,\ aabbs[bodyIndexB].m\_maxVec,\ \textcolor{keyword}{true},\ bvhAabbMin,\ bvhAabbMax,\ bvhQuantization);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numSubtreeHeaders;\ i++)}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb3_bvh_subtree_info_data}{b3BvhSubtreeInfoData}}\ subtree\ =\ subtreeHeaders[i];}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ overlap\ =\ b3TestQuantizedAabbAgainstQuantizedAabbSlow(quantizedQueryAabbMin,\ quantizedQueryAabbMax,\ subtree.m\_quantizedAabbMin,\ subtree.m\_quantizedAabbMax);}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (overlap\ !=\ 0)}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ startNodeIndex\ =\ subtree.m\_rootNodeIndex;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ endNodeIndex\ =\ subtree.m\_rootNodeIndex\ +\ subtree.m\_subtreeSize;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ curIndex\ =\ startNodeIndex;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ escapeIndex;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ isLeafNode;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ aabbOverlap;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curIndex\ <\ endNodeIndex)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb3_quantized_bvh_node_data}{b3QuantizedBvhNodeData}}\ rootNode\ =\ quantizedNodes[curIndex];}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ aabbOverlap\ =\ b3TestQuantizedAabbAgainstQuantizedAabbSlow(quantizedQueryAabbMin,\ quantizedQueryAabbMax,\ rootNode.m\_quantizedAabbMin,\ rootNode.m\_quantizedAabbMax);}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isLeafNode\ =\ b3IsLeaf(\&rootNode);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbOverlap)}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isLeafNode)}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ triangleIndex\ =\ b3GetTriangleIndex(\&rootNode);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (shapeTypeB\ ==\ SHAPE\_COMPOUND\_OF\_CONVEX\_HULLS)}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numChildrenB\ =\ collidables[collidableIndexB].m\_numChildShapes;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pairIdx\ =\ b3AtomicAdd(numConcavePairsOut,\ numChildrenB);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ b\ =\ 0;\ b\ <\ numChildrenB;\ b++)}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((pairIdx\ +\ b)\ <\ maxNumConcavePairsCapacity)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ childShapeIndexB\ =\ collidables[collidableIndexB].m\_shapeIndex\ +\ b;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Int4\ newPair\ =\ b3MakeInt4(bodyIndexA,\ bodyIndexB,\ triangleIndex,\ childShapeIndexB);}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ concavePairsOut[pairIdx\ +\ b]\ =\ newPair;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pairIdx\ =\ b3AtomicInc(numConcavePairsOut);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pairIdx\ <\ maxNumConcavePairsCapacity)}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Int4\ newPair\ =\ b3MakeInt4(bodyIndexA,\ bodyIndexB,\ triangleIndex,\ 0);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ concavePairsOut[pairIdx]\ =\ newPair;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curIndex++;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isLeafNode)}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curIndex++;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ escapeIndex\ =\ b3GetEscapeIndex(\&rootNode);}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curIndex\ +=\ escapeIndex;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ \}}
+
+\end{DoxyCode}

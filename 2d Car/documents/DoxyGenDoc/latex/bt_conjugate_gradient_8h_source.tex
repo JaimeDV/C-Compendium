@@ -1,0 +1,123 @@
+\doxysection{bt\+Conjugate\+Gradient.\+h}
+\hypertarget{bt_conjugate_gradient_8h_source}{}\label{bt_conjugate_gradient_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btConjugateGradient.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btConjugateGradient.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_CONJUGATE\_GRADIENT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_CONJUGATE\_GRADIENT\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}btKrylovSolver.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ MatrixX>}
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_conjugate_gradient}{btConjugateGradient}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_krylov_solver}{btKrylovSolver}}<MatrixX>}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_krylov_solver}{btKrylovSolver<MatrixX>}}\ \mbox{\hyperlink{classbt_krylov_solver}{Base}};}
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\ r,\ p,\ z,\ temp;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{classbt_conjugate_gradient}{btConjugateGradient}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ max\_it\_in)}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classbt_krylov_solver}{btKrylovSolver<MatrixX>}}(max\_it\_in,\ SIMD\_EPSILON)}
+\DoxyCodeLine{00029\ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_conjugate_gradient}{\string~btConjugateGradient}}()\ \{\}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ return\ the\ number\ of\ iterations\ taken}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{int}\ solve(MatrixX\&\ A,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ x,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ b,\ \textcolor{keywordtype}{bool}\ verbose\ =\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}CGSolve"{}});}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ btAssert(x.size()\ ==\ b.size());}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ reinitialize(b);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ temp\ =\ b;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ A.project(temp);}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ p\ =\ temp;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ A.precondition(p,\ z);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ btScalar\ d0\ =\ this-\/>dot(z,\ temp);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ d0\ =\ btMin(btScalar(1),\ d0);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ r\ =\ b\ -\/\ A\ *\ x\ -\/-\/with\ assigned\ dof\ zeroed\ out}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ A.multiply(x,\ temp);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ r\ =\ this-\/>sub(b,\ temp);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ A.project(r);}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ z\ =\ M\string^(-\/1)\ *\ r}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ A.precondition(r,\ z);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ A.project(z);}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ btScalar\ r\_dot\_z\ =\ this-\/>dot(z,\ r);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\_dot\_z\ <=\ Base::m\_tolerance\ *\ d0)}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (verbose)}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Iteration\ =\ 0"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Two\ norm\ of\ the\ residual\ =\ "{}}\ <<\ r\_dot\_z\ <<\ std::endl;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ p\ =\ z;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ btScalar\ r\_dot\_z\_new\ =\ r\_dot\_z;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ 1;\ k\ <=\ Base::m\_maxIterations;\ k++)}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ temp\ =\ A*p}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ A.multiply(p,\ temp);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ A.project(temp);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (this-\/>dot(p,\ temp)\ <\ 0)}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (verbose)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Encountered\ negative\ direction\ in\ CG!"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (k\ ==\ 1)}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x\ =\ b;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ k;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ alpha\ =\ r\string^T\ *\ z\ /\ (p\string^T\ *\ A\ *\ p)}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ alpha\ =\ r\_dot\_z\_new\ /\ this-\/>dot(p,\ temp);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ x\ +=\ alpha\ *\ p;}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>multAndAddTo(alpha,\ p,\ x);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ r\ -\/=\ alpha\ *\ temp;}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>multAndAddTo(-\/alpha,\ temp,\ r);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ z\ =\ M\string^(-\/1)\ *\ r}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ A.precondition(r,\ z);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ r\_dot\_z\ =\ r\_dot\_z\_new;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ r\_dot\_z\_new\ =\ this-\/>dot(r,\ z);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\_dot\_z\_new\ <\ Base::m\_tolerance\ *\ d0)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (verbose)}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}ConjugateGradient\ iterations\ "{}}\ <<\ k\ <<\ \textcolor{stringliteral}{"{}\ residual\ =\ "{}}\ <<\ r\_dot\_z\_new\ <<\ std::endl;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ k;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ beta\ =\ r\_dot\_z\_new\ /\ r\_dot\_z;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ p\ =\ this-\/>multAndAdd(beta,\ p,\ z);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (verbose)}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}ConjugateGradient\ max\ iterations\ reached\ "{}}\ <<\ Base::m\_maxIterations\ <<\ \textcolor{stringliteral}{"{}\ error\ =\ "{}}\ <<\ r\_dot\_z\_new\ <<\ std::endl;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Base::m\_maxIterations;}
+\DoxyCodeLine{00107\ \ \ \ \ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{void}\ reinitialize(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ b)}
+\DoxyCodeLine{00110\ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ r.resize(b.size());}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ p.resize(b.size());}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ z.resize(b.size());}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ temp.resize(b.size());}
+\DoxyCodeLine{00115\ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \};}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btConjugateGradient\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

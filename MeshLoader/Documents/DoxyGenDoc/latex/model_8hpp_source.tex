@@ -1,0 +1,61 @@
+\doxysection{model.\+hpp}
+\hypertarget{model_8hpp_source}{}\label{model_8hpp_source}\index{pruebas-\/c/Practica Graficos/Code/Headers/model.hpp@{pruebas-\/c/Practica Graficos/Code/Headers/model.hpp}}
+\mbox{\hyperlink{model_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_mesh_8hpp}{Mesh.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_model}{Model}}:\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_node}{Node}}\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00011\ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ vector<Mesh\ *>\ meshes;\textcolor{comment}{//the\ amount\ of\ separated\ meshes\ that\ compose\ a\ model.}}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ modelPath;\ \textcolor{comment}{//the\ path\ to\ the\ obj\ file\ containing\ the\ model}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classargb_1_1_color___buffer}{Color\_Buffer}}\ \&\ color\_buffer;\textcolor{comment}{//reference\ to\ the\ color\ buffer,\ that\ stores\ the\ vertex\ info}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmath_1_1_rasterizer}{Rasterizer<\ Color\_Buffer\ >}}\&\ rasterizer;\textcolor{comment}{//reference\ to\ the\ rasterizer,\ that\ handles\ drawing\ the\ colorbuffer\ info\ to\ pixels}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ width;\textcolor{comment}{//Width\ of\ the\ viewport}}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ height;\textcolor{comment}{//height\ of\ the\ viewport}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ rotationSpeed=0;\textcolor{comment}{//speed\ at\ whitc\ the\ model\ rotates\ around\ the\ y\ axis\ }}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_model_a9d0951800b1f4c1aee14b4eca99e1116}{\string~Model}}()}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{classmisi_1_1_mesh}{Mesh}}*\ mesh\ :\ meshes)}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ mesh;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_model_a13f259474a140f85bc0563f70704c8c5}{Model}}(std::string\ modelPath,\ \textcolor{keywordtype}{unsigned}\ width,\ \textcolor{keywordtype}{unsigned}\ height,\ \mbox{\hyperlink{classargb_1_1_color___buffer}{Color\_Buffer}}\&\ color\_buffer,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmath_1_1_rasterizer}{Rasterizer<\ Color\_Buffer\ >}}\&\ rasterizer);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_model_a13f259474a140f85bc0563f70704c8c5}{Model}}(std::string\ modelPath,\ \textcolor{keywordtype}{unsigned}\ width,\ \textcolor{keywordtype}{unsigned}\ height,\ \textcolor{keywordtype}{float}\ angle,\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{namespacemath_a52dea24b484cbfe9c32d1497861195ca}{scale}},}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemath_ad66d71e8f34df992b8540b96f9c71332}{math::Vector3f}}\ position,\ \mbox{\hyperlink{classargb_1_1_color___buffer}{Color\_Buffer}}\&\ color\_buffer,\mbox{\hyperlink{classmath_1_1_rasterizer}{Rasterizer<\ Color\_Buffer\ >}}\&\ rasterizer);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_model_a52a7c5c0349acf323d0cc80c28702595}{ReadModel}}();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_model_adeede206ad79143df93a9940cfceafc3}{SetRotationSpeed}}(\textcolor{keywordtype}{float}\ value)}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rotationSpeed\ =\ value;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_model_acdcc4d49e58d4b4006f08e2c5783ff52}{AddCamera}}(\mbox{\hyperlink{classmisi_1_1_camera}{Camera}}*\ camera)}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ modelPtr\ :\ meshes)}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ modelPtr-\/>AddCamera(camera);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_model_a2d778e68bdfaee31a4aad9838d3384d5}{Render}}();}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_model_a1c874765700cd4ed2b29ea7f9938e891}{Update}}();}
+\DoxyCodeLine{00065\ \ \ \ \ \};}
+\DoxyCodeLine{00066\ \}}
+
+\end{DoxyCode}

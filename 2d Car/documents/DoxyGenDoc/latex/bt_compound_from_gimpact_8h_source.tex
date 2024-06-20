@@ -1,0 +1,111 @@
+\doxysection{bt\+Compound\+From\+Gimpact.\+h}
+\hypertarget{bt_compound_from_gimpact_8h_source}{}\label{bt_compound_from_gimpact_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btCompoundFromGimpact.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btCompoundFromGimpact.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ BT\_COMPOUND\_FROM\_GIMPACT}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ BT\_COMPOUND\_FROM\_GIMPACT}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCompoundShape.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{bt_g_impact_shape_8h}{btGImpactShape.h}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00009\ btCompoundFromGimpactShape\ :\ public\ btCompoundShape}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00012\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~btCompoundFromGimpactShape()}
+\DoxyCodeLine{00015\ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*delete\ all\ the\ btBU\_Simplex1to4\ ChildShapes*/}}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_children.size();\ i++)}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ m\_children[i].m\_childShape;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00021\ \ \ \ \ \}}
+\DoxyCodeLine{00022\ \};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_my_callback}{MyCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_raycast_callback}{btTriangleRaycastCallback}}}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_ignorePart;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_ignoreTriangleIndex;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{struct_my_callback}{MyCallback}}(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keywordtype}{int}\ ignorePart,\ \textcolor{keywordtype}{int}\ ignoreTriangleIndex)}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classbt_triangle_raycast_callback}{btTriangleRaycastCallback}}(from,\ to),}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ m\_ignorePart(ignorePart),}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ m\_ignoreTriangleIndex(ignoreTriangleIndex)}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ reportHit(\textcolor{keyword}{const}\ btVector3\&\ hitNormalLocal,\ btScalar\ hitFraction,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (partId\ !=\ m\_ignorePart\ ||\ triangleIndex\ !=\ m\_ignoreTriangleIndex)}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hitFraction\ <\ m\_hitFraction)}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ hitFraction;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_hitFraction;}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_my_internal_triangle_index_callback}{MyInternalTriangleIndexCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_internal_triangle_index_callback}{btInternalTriangleIndexCallback}}}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_g_impact_mesh_shape}{btGImpactMeshShape}}*\ m\_gimpactShape;}
+\DoxyCodeLine{00049\ \ \ \ \ btCompoundShape*\ m\_colShape;}
+\DoxyCodeLine{00050\ \ \ \ \ btScalar\ m\_depth;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{struct_my_internal_triangle_index_callback}{MyInternalTriangleIndexCallback}}(btCompoundShape*\ colShape,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_g_impact_mesh_shape}{btGImpactMeshShape}}*\ meshShape,\ btScalar\ depth)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ :\ m\_colShape(colShape),}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ m\_gimpactShape(meshShape),}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ m\_depth(depth)}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ internalProcessTriangleIndex(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ btVector3\ scale\ =\ m\_gimpactShape-\/>getLocalScaling();}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ btVector3\ v0\ =\ triangle[0]\ *\ scale;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ btVector3\ v1\ =\ triangle[1]\ *\ scale;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ btVector3\ v2\ =\ triangle[2]\ *\ scale;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ btVector3\ centroid\ =\ (v0\ +\ v1\ +\ v2)\ /\ 3;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ btVector3\ normal\ =\ (v1\ -\/\ v0).cross(v2\ -\/\ v0);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ normal.normalize();}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ btVector3\ rayFrom\ =\ centroid;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ btVector3\ rayTo\ =\ centroid\ -\/\ normal\ *\ m\_depth;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_my_callback}{MyCallback}}\ cb(rayFrom,\ rayTo,\ partId,\ triangleIndex);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ m\_gimpactShape-\/>\mbox{\hyperlink{classbt_g_impact_mesh_shape_ab7221f209f9d10d2f1eb80cca5aee55d}{processAllTrianglesRay}}(\&cb,\ rayFrom,\ rayTo);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cb.m\_hitFraction\ <\ 1)}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ rayTo.setInterpolate3(cb.m\_from,\ cb.m\_to,\ cb.m\_hitFraction);}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//rayTo\ =\ cb.m\_from;}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//rayTo\ =\ rayTo.lerp(cb.m\_to,cb.m\_hitFraction);}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//gDebugDraw.drawLine(tr(centroid),tr(centroid+normal),btVector3(1,0,0));}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ btBU\_Simplex1to4*\ tet\ =\ \textcolor{keyword}{new}\ btBU\_Simplex1to4(v0,\ v1,\ v2,\ rayTo);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ btTransform\ ident;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ ident.setIdentity();}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ m\_colShape-\/>addChildShape(ident,\ tet);}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ btCompoundShape*\ btCreateCompoundFromGimpactShape(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_g_impact_mesh_shape}{btGImpactMeshShape}}*\ gimpactMesh,\ btScalar\ depth)}
+\DoxyCodeLine{00091\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ btCompoundShape*\ colShape\ =\ \textcolor{keyword}{new}\ btCompoundFromGimpactShape();}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ btTransform\ tr;}
+\DoxyCodeLine{00095\ \ \ \ \ tr.setIdentity();}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \mbox{\hyperlink{struct_my_internal_triangle_index_callback}{MyInternalTriangleIndexCallback}}\ cb(colShape,\ gimpactMesh,\ depth);}
+\DoxyCodeLine{00098\ \ \ \ \ btVector3\ aabbMin,\ aabbMax;}
+\DoxyCodeLine{00099\ \ \ \ \ gimpactMesh-\/>\mbox{\hyperlink{classbt_g_impact_shape_interface_a03644dc230664957e43ed49b4a319d64}{getAabb}}(tr,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00100\ \ \ \ \ gimpactMesh-\/>getMeshInterface()-\/>InternalProcessAllTriangles(\&cb,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{return}\ colShape;}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_COMPOUND\_FROM\_GIMPACT}}
+
+\end{DoxyCode}

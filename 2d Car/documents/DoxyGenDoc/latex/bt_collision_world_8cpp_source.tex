@@ -1,0 +1,1610 @@
+\doxysection{bt\+Collision\+World.\+cpp}
+\hypertarget{bt_collision_world_8cpp_source}{}\label{bt_collision_world_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionWorld.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionWorld.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btCollisionWorld.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}btCollisionDispatcher.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCollisionShape.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexShape.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkEpaPenetrationDepthSolver.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btSphereShape.h"{}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//for\ raycasting}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"{}}\ \ \ \ \ \ \ \ \textcolor{comment}{//for\ raycasting}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"{}}\ \ \textcolor{comment}{//for\ raycasting}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"{}}\ \ \ \ \ \textcolor{comment}{//for\ raycasting}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCompoundShape.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkConvexCast.h"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btContinuousConvexCollision.h"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"{}}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btDbvt.h"{}}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAabbUtil2.h"{}}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuickprof.h"{}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSerializer.h"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexPolyhedron.h"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"{}}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{//\#define\ DISABLE\_DBVT\_COMPOUNDSHAPE\_RAYCAST\_ACCELERATION}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{//\#define\ USE\_BRUTEFORCE\_RAYBROADPHASE\ 1}}
+\DoxyCodeLine{00043\ \textcolor{comment}{//RECALCULATE\_AABB\ is\ slower,\ but\ benefit\ is\ that\ you\ don't\ need\ to\ call\ 'stepSimulation'\ \ or\ 'updateAabbs'\ before\ using\ a\ rayTest}}
+\DoxyCodeLine{00044\ \textcolor{comment}{//\#define\ RECALCULATE\_AABB\_RAYCAST\ 1}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//When\ the\ user\ doesn't\ provide\ dispatcher\ or\ broadphase,\ create\ basic\ versions\ (and\ delete\ them\ in\ destructor)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionDispatcher.h"{}}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btSimpleBroadphase.h"{}}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionConfiguration.h"{}}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{//for\ debug\ rendering}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btBoxShape.h"{}}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCapsuleShape.h"{}}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCompoundShape.h"{}}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConeShape.h"{}}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexTriangleMeshShape.h"{}}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCylinderShape.h"{}}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btMultiSphereShape.h"{}}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btPolyhedralConvexShape.h"{}}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btSphereShape.h"{}}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btTriangleCallback.h"{}}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btTriangleMeshShape.h"{}}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btStaticPlaneShape.h"{}}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \mbox{\hyperlink{classbt_collision_world_a6d2c3ec40c17296308c2b229ae3962ea}{btCollisionWorld::btCollisionWorld}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ \mbox{\hyperlink{classbt_broadphase_interface}{btBroadphaseInterface}}*\ pairCache,\ \mbox{\hyperlink{classbt_collision_configuration}{btCollisionConfiguration}}*\ collisionConfiguration)}
+\DoxyCodeLine{00068\ \ \ \ \ :\ m\_dispatcher1(dispatcher),}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ m\_broadphasePairCache(pairCache),}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ m\_debugDrawer(0),}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ m\_forceUpdateAllAabbs(true)}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ btCollisionWorld::\string~btCollisionWorld()}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//clean\ up\ remaining\ objects}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ m\_collisionObjects[i];}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ btBroadphaseProxy*\ bp\ =\ collisionObject-\/>getBroadphaseHandle();}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bp)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ only\ clear\ the\ cached\ algorithms}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ getBroadphase()-\/>getOverlappingPairCache()-\/>cleanProxyFromPairs(bp,\ m\_dispatcher1);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ getBroadphase()-\/>destroyProxy(bp,\ m\_dispatcher1);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>setBroadphaseHandle(0);}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{void}\ btCollisionWorld::refreshBroadphaseProxy(btCollisionObject*\ collisionObject)}
+\DoxyCodeLine{00097\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionObject-\/>getBroadphaseHandle())}
+\DoxyCodeLine{00099\ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ collisionFilterGroup\ =\ collisionObject-\/>getBroadphaseHandle()-\/>m\_collisionFilterGroup;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ collisionFilterMask\ =\ collisionObject-\/>getBroadphaseHandle()-\/>m\_collisionFilterMask;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ getBroadphase()-\/>destroyProxy(collisionObject-\/>getBroadphaseHandle(),\ getDispatcher());}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{comment}{//calculate\ new\ AABB}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ btTransform\ trans\ =\ collisionObject-\/>getWorldTransform();}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ btVector3\ minAabb;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ btVector3\ maxAabb;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape()-\/>getAabb(trans,\ minAabb,\ maxAabb);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type\ =\ collisionObject-\/>getCollisionShape()-\/>getShapeType();}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ collisionObject-\/>setBroadphaseHandle(getBroadphase()-\/>createProxy(}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ minAabb,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ maxAabb,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ type,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ collisionFilterGroup,}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ collisionFilterMask,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatcher1));}
+\DoxyCodeLine{00121\ \ \ \ \ \}}
+\DoxyCodeLine{00122\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{void}\ btCollisionWorld::addCollisionObject(btCollisionObject*\ collisionObject,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask)}
+\DoxyCodeLine{00125\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ btAssert(collisionObject);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{comment}{//check\ that\ the\ object\ isn't\ already\ added}}
+\DoxyCodeLine{00129\ \ \ \ \ btAssert(m\_collisionObjects.findLinearSearch(collisionObject)\ ==\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00130\ \ \ \ \ btAssert(collisionObject-\/>getWorldArrayIndex()\ ==\ -\/1);\ \ \textcolor{comment}{//\ do\ not\ add\ the\ same\ object\ to\ more\ than\ one\ collision\ world}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ collisionObject-\/>setWorldArrayIndex(m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00133\ \ \ \ \ m\_collisionObjects.push\_back(collisionObject);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{//calculate\ new\ AABB}}
+\DoxyCodeLine{00136\ \ \ \ \ btTransform\ trans\ =\ collisionObject-\/>getWorldTransform();}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ btVector3\ minAabb;}
+\DoxyCodeLine{00139\ \ \ \ \ btVector3\ maxAabb;}
+\DoxyCodeLine{00140\ \ \ \ \ collisionObject-\/>getCollisionShape()-\/>getAabb(trans,\ minAabb,\ maxAabb);}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{int}\ type\ =\ collisionObject-\/>getCollisionShape()-\/>getShapeType();}
+\DoxyCodeLine{00143\ \ \ \ \ collisionObject-\/>setBroadphaseHandle(getBroadphase()-\/>createProxy(}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ minAabb,}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ maxAabb,}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ type,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ collisionFilterGroup,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ collisionFilterMask,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ m\_dispatcher1));}
+\DoxyCodeLine{00151\ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{void}\ btCollisionWorld::updateSingleAabb(btCollisionObject*\ colObj)}
+\DoxyCodeLine{00154\ \{}
+\DoxyCodeLine{00155\ \ \ \ \ btVector3\ minAabb,\ maxAabb;}
+\DoxyCodeLine{00156\ \ \ \ \ colObj-\/>getCollisionShape()-\/>getAabb(colObj-\/>getWorldTransform(),\ minAabb,\ maxAabb);}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{comment}{//need\ to\ increase\ the\ aabb\ for\ contact\ thresholds}}
+\DoxyCodeLine{00158\ \ \ \ \ btVector3\ contactThreshold(gContactBreakingThreshold,\ gContactBreakingThreshold,\ gContactBreakingThreshold);}
+\DoxyCodeLine{00159\ \ \ \ \ minAabb\ -\/=\ contactThreshold;}
+\DoxyCodeLine{00160\ \ \ \ \ maxAabb\ +=\ contactThreshold;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordflow}{if}\ (getDispatchInfo().m\_useContinuous\ \&\&\ colObj-\/>getInternalType()\ ==\ btCollisionObject::CO\_RIGID\_BODY\ \&\&\ !colObj-\/>isStaticOrKinematicObject())}
+\DoxyCodeLine{00163\ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ btVector3\ minAabb2,\ maxAabb2;}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ colObj-\/>getCollisionShape()-\/>getAabb(colObj-\/>getInterpolationWorldTransform(),\ minAabb2,\ maxAabb2);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ minAabb2\ -\/=\ contactThreshold;}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ maxAabb2\ +=\ contactThreshold;}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ minAabb.setMin(minAabb2);}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ maxAabb.setMax(maxAabb2);}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \mbox{\hyperlink{classbt_broadphase_interface}{btBroadphaseInterface}}*\ bp\ =\ (\mbox{\hyperlink{classbt_broadphase_interface}{btBroadphaseInterface}}*)m\_broadphasePairCache;}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{//moving\ objects\ should\ be\ moderately\ sized,\ probably\ something\ wrong\ if\ not}}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj-\/>isStaticObject()\ ||\ ((maxAabb\ -\/\ minAabb).length2()\ <\ btScalar(1e12)))}
+\DoxyCodeLine{00176\ \ \ \ \ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ bp-\/>setAabb(colObj-\/>getBroadphaseHandle(),\ minAabb,\ maxAabb,\ m\_dispatcher1);}
+\DoxyCodeLine{00178\ \ \ \ \ \}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00180\ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{comment}{//something\ went\ wrong,\ investigate}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{comment}{//this\ assert\ is\ unwanted\ in\ 3D\ modelers\ (danger\ of\ loosing\ work)}}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ colObj-\/>setActivationState(DISABLE\_SIMULATION);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ reportMe\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (reportMe\ \&\&\ m\_debugDrawer)}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ reportMe\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ m\_debugDrawer-\/>reportErrorWarning(\textcolor{stringliteral}{"{}Overflow\ in\ AABB,\ object\ removed\ from\ simulation"{}});}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ m\_debugDrawer-\/>reportErrorWarning(\textcolor{stringliteral}{"{}If\ you\ can\ reproduce\ this,\ please\ email\ bugs@continuousphysics.com\(\backslash\)n"{}});}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ m\_debugDrawer-\/>reportErrorWarning(\textcolor{stringliteral}{"{}Please\ include\ above\ information,\ your\ Platform,\ version\ of\ OS.\(\backslash\)n"{}});}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ m\_debugDrawer-\/>reportErrorWarning(\textcolor{stringliteral}{"{}Thanks.\(\backslash\)n"{}});}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \textcolor{keywordtype}{void}\ btCollisionWorld::updateAabbs()}
+\DoxyCodeLine{00198\ \{}
+\DoxyCodeLine{00199\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}updateAabbs"{}});}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ btTransform\ predictedTrans;}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00203\ \ \ \ \ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj\ =\ m\_collisionObjects[i];}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ btAssert(colObj-\/>getWorldArrayIndex()\ ==\ i);}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ update\ aabb\ of\ active\ objects}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classbt_collision_world_a91b110fc2501b965cdcaa2a6e1d89999}{m\_forceUpdateAllAabbs}}\ ||\ colObj-\/>isActive())}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ updateSingleAabb(colObj);}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ \}}
+\DoxyCodeLine{00213\ \}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_afb32fb7ecb40aa6247fd3df18ba81098}{btCollisionWorld::computeOverlappingPairs}}()}
+\DoxyCodeLine{00216\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}calculateOverlappingPairs"{}});}
+\DoxyCodeLine{00218\ \ \ \ \ m\_broadphasePairCache-\/>\mbox{\hyperlink{classbt_broadphase_interface_a27e29cb6fd31e5fe626e7ba973e67ddb}{calculateOverlappingPairs}}(m\_dispatcher1);}
+\DoxyCodeLine{00219\ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \textcolor{keywordtype}{void}\ btCollisionWorld::performDiscreteCollisionDetection()}
+\DoxyCodeLine{00222\ \{}
+\DoxyCodeLine{00223\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}performDiscreteCollisionDetection"{}});}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo\ =\ getDispatchInfo();}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ updateAabbs();}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_afb32fb7ecb40aa6247fd3df18ba81098}{computeOverlappingPairs}}();}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher\ =\ getDispatcher();}
+\DoxyCodeLine{00232\ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}dispatchAllCollisionPairs"{}});}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dispatcher)}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ dispatcher-\/>dispatchAllCollisionPairs(m\_broadphasePairCache-\/>getOverlappingPairCache(),\ dispatchInfo,\ m\_dispatcher1);}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \textcolor{keywordtype}{void}\ btCollisionWorld::removeCollisionObject(btCollisionObject*\ collisionObject)}
+\DoxyCodeLine{00240\ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{comment}{//bool\ removeFromBroadphase\ =\ false;}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ btBroadphaseProxy*\ bp\ =\ collisionObject-\/>getBroadphaseHandle();}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bp)}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ only\ clear\ the\ cached\ algorithms}}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ getBroadphase()-\/>getOverlappingPairCache()-\/>cleanProxyFromPairs(bp,\ m\_dispatcher1);}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ getBroadphase()-\/>destroyProxy(bp,\ m\_dispatcher1);}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>setBroadphaseHandle(0);}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00254\ \ \ \ \ \}}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{keywordtype}{int}\ iObj\ =\ collisionObject-\/>getWorldArrayIndex();}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{comment}{//\ \ \ \ btAssert(iObj\ >=\ 0\ \&\&\ iObj\ <\ m\_collisionObjects.size());\ //\ trying\ to\ remove\ an\ object\ that\ was\ never\ added\ or\ already\ removed\ previously?}}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keywordflow}{if}\ (iObj\ >=\ 0\ \&\&\ iObj\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{00259\ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ btAssert(collisionObject\ ==\ m\_collisionObjects[iObj]);}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ m\_collisionObjects.swap(iObj,\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ m\_collisionObjects.pop\_back();}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (iObj\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ m\_collisionObjects[iObj]-\/>setWorldArrayIndex(iObj);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00267\ \ \ \ \ \}}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00269\ \ \ \ \ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ slow\ linear\ search}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{comment}{//swapremove}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ m\_collisionObjects.remove(collisionObject);}
+\DoxyCodeLine{00273\ \ \ \ \ \}}
+\DoxyCodeLine{00274\ \ \ \ \ collisionObject-\/>setWorldArrayIndex(-\/1);}
+\DoxyCodeLine{00275\ \}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_aca2a9413508b4a2449fe83ff93ea564e}{btCollisionWorld::rayTestSingle}}(\textcolor{keyword}{const}\ btTransform\&\ rayFromTrans,\ \textcolor{keyword}{const}\ btTransform\&\ rayToTrans,}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject,}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ collisionShape,}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform,}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{00282\ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ colObWrap(0,\ collisionShape,\ collisionObject,\ colObjWorldTransform,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00284\ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_a84bbeea09de9dc5c68e49826e58f7114}{btCollisionWorld::rayTestSingleInternal}}(rayFromTrans,\ rayToTrans,\ \&colObWrap,\ resultCallback);}
+\DoxyCodeLine{00285\ \}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_a84bbeea09de9dc5c68e49826e58f7114}{btCollisionWorld::rayTestSingleInternal}}(\textcolor{keyword}{const}\ btTransform\&\ rayFromTrans,\ \textcolor{keyword}{const}\ btTransform\&\ rayToTrans,}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ collisionObjectWrap,}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{00290\ \{}
+\DoxyCodeLine{00291\ \ \ \ \ btSphereShape\ pointShape(btScalar(0.0));}
+\DoxyCodeLine{00292\ \ \ \ \ pointShape.setMargin(0.f);}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ castShape\ =\ \&pointShape;}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ collisionShape\ =\ collisionObjectWrap-\/>getCollisionShape();}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform\ =\ collisionObjectWrap-\/>getWorldTransform();}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>isConvex())}
+\DoxyCodeLine{00298\ \ \ \ \ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ BT\_PROFILE("{}rayTestConvex"{});}}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{btConvexCast::CastResult}}\ castResult;}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ castResult.m\_fraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ btConvexShape*\ convexShape\ =\ (btConvexShape*)collisionShape;}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ btVoronoiSimplexSolver\ simplexSolver;}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_subsimplex_convex_cast}{btSubsimplexConvexCast}}\ subSimplexConvexCaster(castShape,\ convexShape,\ \&simplexSolver);}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_gjk_convex_cast}{btGjkConvexCast}}\ gjkConvexCaster(castShape,\ convexShape,\ \&simplexSolver);}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btContinuousConvexCollision\ convexCaster(castShape,convexShape,\&simplexSolver,0);}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_convex_cast}{btConvexCast}}*\ convexCasterPtr\ =\ 0;}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \textcolor{comment}{//use\ kF\_UseSubSimplexConvexCastRaytest\ by\ default}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultCallback.m\_flags\ \&\ btTriangleRaycastCallback::kF\_UseGjkConvexCastRaytest)}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ convexCasterPtr\ =\ \&gjkConvexCaster;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ convexCasterPtr\ =\ \&subSimplexConvexCaster;}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_convex_cast}{btConvexCast}}\&\ convexCaster\ =\ *convexCasterPtr;}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (convexCaster.\mbox{\hyperlink{classbt_convex_cast_abaf0f25a8cccfcafdaabada83c8d2bfb}{calcTimeOfImpact}}(rayFromTrans,\ rayToTrans,\ colObjWorldTransform,\ colObjWorldTransform,\ castResult))}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ hit}}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_normal.length2()\ >\ btScalar(0.0001))}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_fraction\ <\ resultCallback.m\_closestHitFraction)}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//todo:\ figure\ out\ what\ this\ is\ about.\ When\ is\ rayFromTest.getBasis()\ not\ identity?}}
+\DoxyCodeLine{00328\ \textcolor{preprocessor}{\#ifdef\ USE\_SUBSIMPLEX\_CONVEX\_CAST}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//rotate\ normal\ into\ worldspace}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal\ =\ rayFromTrans.getBasis()\ *\ castResult.m\_normal;}
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//USE\_SUBSIMPLEX\_CONVEX\_CAST}}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal.normalize();}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_ray_result}{btCollisionWorld::LocalRayResult}}\ localRayResult(}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObjectWrap-\/>getCollisionObject(),}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal,}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_fraction);}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback.addSingleResult(localRayResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00345\ \ \ \ \ \}}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00347\ \ \ \ \ \{}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>isConcave())}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ConvexCast::CastResult}}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }BridgeTriangleRaycastCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_raycast_callback}{btTriangleRaycastCallback}}}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}*\ m\_resultCallback;}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ m\_collisionObject;}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConcaveShape*\ m\_triangleMesh;}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ m\_colObjWorldTransform;}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleRaycastCallback(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}*\ resultCallback,\ \textcolor{keyword}{const}\ btCollisionObject*\ collisionObject,\ \textcolor{keyword}{const}\ btConcaveShape*\ triangleMesh,\ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform)\ :\ \ \textcolor{comment}{//@BP\ Mod}}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_triangle_raycast_callback}{btTriangleRaycastCallback}}(from,\ to,\ resultCallback-\/>m\_flags),}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback),}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_collisionObject(collisionObject),}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleMesh(triangleMesh),}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_colObjWorldTransform(colObjWorldTransform)}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ reportHit(\textcolor{keyword}{const}\ btVector3\&\ hitNormalLocal,\ btScalar\ hitFraction,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_shape_info}{btCollisionWorld::LocalShapeInfo}}\ shapeInfo;}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_shapePart\ =\ partId;}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_triangleIndex\ =\ triangleIndex;}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ hitNormalWorld\ =\ m\_colObjWorldTransform.getBasis()\ *\ hitNormalLocal;}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_ray_result}{btCollisionWorld::LocalRayResult}}\ rayResult(m\_collisionObject,}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&shapeInfo,}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitNormalWorld,}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitFraction);}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resultCallback-\/>addSingleResult(rayResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ worldTocollisionObject\ =\ colObjWorldTransform.inverse();}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayFromLocal\ =\ worldTocollisionObject\ *\ rayFromTrans.getOrigin();}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayToLocal\ =\ worldTocollisionObject\ *\ rayToTrans.getOrigin();}
+\DoxyCodeLine{00390\ }
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ BT\_PROFILE("{}rayTestConcave"{});}}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>getShapeType()\ ==\ TRIANGLE\_MESH\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btBvhTriangleMeshShape*\ triangleMesh\ =\ (btBvhTriangleMeshShape*)collisionShape;}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleRaycastCallback\ rcb(rayFromLocal,\ rayToLocal,\ \&resultCallback,\ collisionObjectWrap-\/>getCollisionObject(),\ triangleMesh,\ colObjWorldTransform);}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rcb.m\_hitFraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangleMesh-\/>performRaycast(\&rcb,\ rayFromLocal,\ rayToLocal);}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (collisionShape-\/>getShapeType()\ ==\ SCALED\_TRIANGLE\_MESH\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScaledBvhTriangleMeshShape*\ scaledTriangleMesh\ =\ (btScaledBvhTriangleMeshShape*)collisionShape;}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btBvhTriangleMeshShape*\ triangleMesh\ =\ (btBvhTriangleMeshShape*)scaledTriangleMesh-\/>getChildShape();}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//scale\ the\ ray\ positions}}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ scale\ =\ scaledTriangleMesh-\/>getLocalScaling();}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayFromLocalScaled\ =\ rayFromLocal\ /\ scale;}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayToLocalScaled\ =\ rayToLocal\ /\ scale;}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//perform\ raycast\ in\ the\ underlying\ btBvhTriangleMeshShape}}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleRaycastCallback\ rcb(rayFromLocalScaled,\ rayToLocalScaled,\ \&resultCallback,\ collisionObjectWrap-\/>getCollisionObject(),\ triangleMesh,\ colObjWorldTransform);}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rcb.m\_hitFraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangleMesh-\/>performRaycast(\&rcb,\ rayFromLocalScaled,\ rayToLocalScaled);}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (((resultCallback.m\_flags\&btTriangleRaycastCallback::kF\_DisableHeightfieldAccelerator)==0)\ }
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ collisionShape-\/>getShapeType()\ ==\ TERRAIN\_SHAPE\_PROXYTYPE\ }
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btHeightfieldTerrainShape*\ heightField\ =\ (btHeightfieldTerrainShape*)collisionShape;}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ worldTocollisionObject\ =\ colObjWorldTransform.inverse();}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayFromLocal\ =\ worldTocollisionObject\ *\ rayFromTrans.getOrigin();}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayToLocal\ =\ worldTocollisionObject\ *\ rayToTrans.getOrigin();}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleRaycastCallback\ rcb(rayFromLocal,\ rayToLocal,\ \&resultCallback,\ collisionObjectWrap-\/>getCollisionObject(),\ heightField,\ colObjWorldTransform);}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rcb.m\_hitFraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ heightField-\/>performRaycast(\&rcb,\ rayFromLocal,\ rayToLocal);}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//generic\ (slower)\ case}}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btConcaveShape*\ concaveShape\ =\ (btConcaveShape*)collisionShape;}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ worldTocollisionObject\ =\ colObjWorldTransform.inverse();}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayFromLocal\ =\ worldTocollisionObject\ *\ rayFromTrans.getOrigin();}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayToLocal\ =\ worldTocollisionObject\ *\ rayToTrans.getOrigin();}
+\DoxyCodeLine{00440\ }
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ConvexCast::CastResult}}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }BridgeTriangleRaycastCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_raycast_callback}{btTriangleRaycastCallback}}}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}*\ m\_resultCallback;}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ m\_collisionObject;}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btConcaveShape*\ m\_triangleMesh;}
+\DoxyCodeLine{00448\ }
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ m\_colObjWorldTransform;}
+\DoxyCodeLine{00450\ }
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleRaycastCallback(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}*\ resultCallback,\ \textcolor{keyword}{const}\ btCollisionObject*\ collisionObject,\ btConcaveShape*\ triangleMesh,\ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform)\ :\ \ \textcolor{comment}{//@BP\ Mod}}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_triangle_raycast_callback}{btTriangleRaycastCallback}}(from,\ to,\ resultCallback-\/>m\_flags),}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback),}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_collisionObject(collisionObject),}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleMesh(triangleMesh),}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_colObjWorldTransform(colObjWorldTransform)}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ reportHit(\textcolor{keyword}{const}\ btVector3\&\ hitNormalLocal,\ btScalar\ hitFraction,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_shape_info}{btCollisionWorld::LocalShapeInfo}}\ shapeInfo;}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_shapePart\ =\ partId;}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_triangleIndex\ =\ triangleIndex;}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ hitNormalWorld\ =\ m\_colObjWorldTransform.getBasis()\ *\ hitNormalLocal;}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_ray_result}{btCollisionWorld::LocalRayResult}}\ rayResult(m\_collisionObject,}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&shapeInfo,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitNormalWorld,}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitFraction);}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resultCallback-\/>addSingleResult(rayResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00478\ }
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleRaycastCallback\ rcb(rayFromLocal,\ rayToLocal,\ \&resultCallback,\ collisionObjectWrap-\/>getCollisionObject(),\ concaveShape,\ colObjWorldTransform);}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rcb.m\_hitFraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00481\ }
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayAabbMinLocal\ =\ rayFromLocal;}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayAabbMinLocal.setMin(rayToLocal);}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayAabbMaxLocal\ =\ rayFromLocal;}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayAabbMaxLocal.setMax(rayToLocal);}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ concaveShape-\/>processAllTriangles(\&rcb,\ rayAabbMinLocal,\ rayAabbMaxLocal);}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ BT\_PROFILE("{}rayTestCompound"{});}}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>isCompound())}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }LocalInfoAdder2\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}*\ m\_userCallback;}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_i;}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LocalInfoAdder2(\textcolor{keywordtype}{int}\ i,\ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}*\ user)}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_userCallback(user),\ m\_i(i)}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_closestHitFraction\ =\ m\_userCallback-\/>m\_closestHitFraction;}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_flags\ =\ m\_userCallback-\/>m\_flags;}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ needsCollision(btBroadphaseProxy*\ p)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00507\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userCallback-\/>needsCollision(p);}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00510\ }
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ addSingleResult(\mbox{\hyperlink{structbt_collision_world_1_1_local_ray_result}{btCollisionWorld::LocalRayResult}}\&\ r,\ \textcolor{keywordtype}{bool}\ b)}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_shape_info}{btCollisionWorld::LocalShapeInfo}}\ shapeInfo;}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_shapePart\ =\ -\/1;}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_triangleIndex\ =\ m\_i;}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r.m\_localShapeInfo\ ==\ NULL)}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r.m\_localShapeInfo\ =\ \&shapeInfo;}
+\DoxyCodeLine{00518\ }
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ result\ =\ m\_userCallback-\/>addSingleResult(r,\ b);}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_closestHitFraction\ =\ m\_userCallback-\/>m\_closestHitFraction;}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00524\ }
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }RayTester\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ m\_collisionObject;}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ m\_compoundShape;}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ m\_colObjWorldTransform;}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ m\_rayFromTrans;}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ m\_rayToTrans;}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}\&\ m\_resultCallback;}
+\DoxyCodeLine{00533\ }
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RayTester(\textcolor{keyword}{const}\ btCollisionObject*\ collisionObject,}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape,}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform,}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ rayFromTrans,}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ rayToTrans,}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}\&\ resultCallback)\ :\ m\_collisionObject(collisionObject),}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_compoundShape(compoundShape),}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_colObjWorldTransform(colObjWorldTransform),}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayFromTrans(rayFromTrans),}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayToTrans(rayToTrans),}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback)}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ProcessLeaf(\textcolor{keywordtype}{int}\ i)}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ childCollisionShape\ =\ m\_compoundShape-\/>getChildShape(i);}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ childTrans\ =\ m\_compoundShape-\/>getChildTransform(i);}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childWorldTrans\ =\ m\_colObjWorldTransform\ *\ childTrans;}
+\DoxyCodeLine{00553\ }
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ tmpOb(0,\ childCollisionShape,\ m\_collisionObject,\ childWorldTrans,\ -\/1,\ i);}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ replace\ collision\ shape\ so\ that\ callback\ can\ determine\ the\ triangle}}
+\DoxyCodeLine{00556\ }
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LocalInfoAdder2\ my\_cb(i,\ \&m\_resultCallback);}
+\DoxyCodeLine{00558\ }
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayTestSingleInternal(}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayFromTrans,}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayToTrans,}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&tmpOb,}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ my\_cb);}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf)}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProcessLeaf(leaf-\/>dataAsInt);}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00571\ }
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(collisionShape);}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}*\ dbvt\ =\ compoundShape-\/>getDynamicAabbTree();}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RayTester\ rayCB(}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObjectWrap-\/>getCollisionObject(),}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ compoundShape,}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObjWorldTransform,}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayFromTrans,}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayToTrans,}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback);}
+\DoxyCodeLine{00582\ \textcolor{preprocessor}{\#ifndef\ DISABLE\_DBVT\_COMPOUNDSHAPE\_RAYCAST\_ACCELERATION}}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dbvt)}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ localRayFrom\ =\ colObjWorldTransform.inverseTimes(rayFromTrans).getOrigin();}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ localRayTo\ =\ colObjWorldTransform.inverseTimes(rayToTrans).getOrigin();}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_a8e316ee3bc9bd7b7354086c0c558cfb5}{btDbvt::rayTest}}(dbvt-\/>m\_root,\ localRayFrom,\ localRayTo,\ rayCB);}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00590\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DISABLE\_DBVT\_COMPOUNDSHAPE\_RAYCAST\_ACCELERATION}}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0,\ n\ =\ compoundShape-\/>getNumChildShapes();\ i\ <\ n;\ ++i)}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayCB.ProcessLeaf(i);}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00599\ \ \ \ \ \}}
+\DoxyCodeLine{00600\ \}}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00602\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_aa63de55ff9451a80c8c825cafd64d9ba}{btCollisionWorld::objectQuerySingle}}(\textcolor{keyword}{const}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ convexFromTrans,\ \textcolor{keyword}{const}\ btTransform\&\ convexToTrans,}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject,}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ collisionShape,}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform,}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{ConvexResultCallback}}\&\ resultCallback,\ btScalar\ allowedPenetration)}
+\DoxyCodeLine{00607\ \{}
+\DoxyCodeLine{00608\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ tmpOb(0,\ collisionShape,\ collisionObject,\ colObjWorldTransform,\ -\/1,\ -\/1);}
+\DoxyCodeLine{00609\ \ \ \ \ btCollisionWorld::objectQuerySingleInternal(castShape,\ convexFromTrans,\ convexToTrans,\ \&tmpOb,\ resultCallback,\ allowedPenetration);}
+\DoxyCodeLine{00610\ \}}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \textcolor{keywordtype}{void}\ btCollisionWorld::objectQuerySingleInternal(\textcolor{keyword}{const}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ convexFromTrans,\ \textcolor{keyword}{const}\ btTransform\&\ convexToTrans,}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObjWrap,}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ConvexResultCallback\&\ resultCallback,\ btScalar\ allowedPenetration)}
+\DoxyCodeLine{00615\ \{}
+\DoxyCodeLine{00616\ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ collisionShape\ =\ colObjWrap-\/>getCollisionShape();}
+\DoxyCodeLine{00617\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform\ =\ colObjWrap-\/>getWorldTransform();}
+\DoxyCodeLine{00618\ }
+\DoxyCodeLine{00619\ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>isConvex())}
+\DoxyCodeLine{00620\ \ \ \ \ \{}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \textcolor{comment}{//BT\_PROFILE("{}convexSweepConvex"{});}}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{btConvexCast::CastResult}}\ castResult;}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ castResult.m\_allowedPenetration\ =\ allowedPenetration;}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ castResult.m\_fraction\ =\ resultCallback.m\_closestHitFraction;\ \ \textcolor{comment}{//btScalar(1.);//??}}
+\DoxyCodeLine{00625\ }
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ btConvexShape*\ convexShape\ =\ (btConvexShape*)collisionShape;}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ btVoronoiSimplexSolver\ simplexSolver;}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_gjk_epa_penetration_depth_solver}{btGjkEpaPenetrationDepthSolver}}\ gjkEpaPenetrationSolver;}
+\DoxyCodeLine{00629\ }
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_continuous_convex_collision}{btContinuousConvexCollision}}\ convexCaster1(castShape,\ convexShape,\ \&simplexSolver,\ \&gjkEpaPenetrationSolver);}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btGjkConvexCast\ convexCaster2(castShape,convexShape,\&simplexSolver);}}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btSubsimplexConvexCast\ convexCaster3(castShape,convexShape,\&simplexSolver);}}
+\DoxyCodeLine{00633\ }
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_convex_cast}{btConvexCast}}*\ castPtr\ =\ \&convexCaster1;}
+\DoxyCodeLine{00635\ }
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castPtr-\/>\mbox{\hyperlink{classbt_convex_cast_abaf0f25a8cccfcafdaabada83c8d2bfb}{calcTimeOfImpact}}(convexFromTrans,\ convexToTrans,\ colObjWorldTransform,\ colObjWorldTransform,\ castResult))}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ hit}}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_normal.length2()\ >\ btScalar(0.0001))}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_fraction\ <\ resultCallback.m\_closestHitFraction)}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal.normalize();}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_convex_result}{btCollisionWorld::LocalConvexResult}}\ localConvexResult(}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObjWrap-\/>getCollisionObject(),}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,}
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal,}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_hitPoint,}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_fraction);}
+\DoxyCodeLine{00650\ }
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback.addSingleResult(localConvexResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00656\ \ \ \ \ \}}
+\DoxyCodeLine{00657\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00658\ \ \ \ \ \{}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>isConcave())}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>getShapeType()\ ==\ TRIANGLE\_MESH\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//BT\_PROFILE("{}convexSweepbtBvhTriangleMesh"{});}}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btBvhTriangleMeshShape*\ triangleMesh\ =\ (btBvhTriangleMeshShape*)collisionShape;}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ worldTocollisionObject\ =\ colObjWorldTransform.inverse();}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ convexFromLocal\ =\ worldTocollisionObject\ *\ convexFromTrans.getOrigin();}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ convexToLocal\ =\ worldTocollisionObject\ *\ convexToTrans.getOrigin();}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ rotation\ of\ box\ in\ local\ mesh\ space\ =\ MeshRotation\string^-\/1\ *\ ConvexToRotation}}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ rotationXform\ =\ btTransform(worldTocollisionObject.getBasis()\ *\ convexToTrans.getBasis());}
+\DoxyCodeLine{00670\ }
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ConvexCast::CastResult}}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }BridgeTriangleConvexcastCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_convexcast_callback}{btTriangleConvexcastCallback}}}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}*\ m\_resultCallback;}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ m\_collisionObject;}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTriangleMeshShape*\ m\_triangleMesh;}
+\DoxyCodeLine{00677\ }
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleConvexcastCallback(\textcolor{keyword}{const}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ from,\ \textcolor{keyword}{const}\ btTransform\&\ to,}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}*\ resultCallback,\ \textcolor{keyword}{const}\ btCollisionObject*\ collisionObject,\ btTriangleMeshShape*\ triangleMesh,\ \textcolor{keyword}{const}\ btTransform\&\ triangleToWorld)\ :\ \mbox{\hyperlink{classbt_triangle_convexcast_callback}{btTriangleConvexcastCallback}}(castShape,\ from,\ to,\ triangleToWorld,\ triangleMesh-\/>getMargin()),}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback),}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_collisionObject(collisionObject),}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleMesh(triangleMesh)}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ reportHit(\textcolor{keyword}{const}\ btVector3\&\ hitNormalLocal,\ \textcolor{keyword}{const}\ btVector3\&\ hitPointLocal,\ btScalar\ hitFraction,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_shape_info}{btCollisionWorld::LocalShapeInfo}}\ shapeInfo;}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_shapePart\ =\ partId;}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_triangleIndex\ =\ triangleIndex;}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hitFraction\ <=\ m\_resultCallback-\/>m\_closestHitFraction)}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_convex_result}{btCollisionWorld::LocalConvexResult}}\ convexResult(m\_collisionObject,}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&shapeInfo,}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitNormalLocal,}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitPointLocal,}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitFraction);}
+\DoxyCodeLine{00698\ }
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00700\ }
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resultCallback-\/>addSingleResult(convexResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ hitFraction;}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00706\ }
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleConvexcastCallback\ tccb(castShape,\ convexFromTrans,\ convexToTrans,\ \&resultCallback,\ colObjWrap-\/>getCollisionObject(),\ triangleMesh,\ colObjWorldTransform);}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tccb.m\_hitFraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tccb.m\_allowedPenetration\ =\ allowedPenetration;}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ boxMinLocal,\ boxMaxLocal;}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castShape-\/>getAabb(rotationXform,\ boxMinLocal,\ boxMaxLocal);}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangleMesh-\/>performConvexcast(\&tccb,\ convexFromLocal,\ convexToLocal,\ boxMinLocal,\ boxMaxLocal);}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>getShapeType()\ ==\ STATIC\_PLANE\_PROXYTYPE)}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{btConvexCast::CastResult}}\ castResult;}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_allowedPenetration\ =\ allowedPenetration;}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_fraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btStaticPlaneShape*\ planeShape\ =\ (btStaticPlaneShape*)collisionShape;}
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_continuous_convex_collision}{btContinuousConvexCollision}}\ convexCaster1(castShape,\ planeShape);}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_convex_cast}{btConvexCast}}*\ castPtr\ =\ \&convexCaster1;}
+\DoxyCodeLine{00724\ }
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castPtr-\/>\mbox{\hyperlink{classbt_convex_cast_abaf0f25a8cccfcafdaabada83c8d2bfb}{calcTimeOfImpact}}(convexFromTrans,\ convexToTrans,\ colObjWorldTransform,\ colObjWorldTransform,\ castResult))}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ hit}}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_normal.length2()\ >\ btScalar(0.0001))}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (castResult.m\_fraction\ <\ resultCallback.m\_closestHitFraction)}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal.normalize();}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_convex_result}{btCollisionWorld::LocalConvexResult}}\ localConvexResult(}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObjWrap-\/>getCollisionObject(),}
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_normal,}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_hitPoint,}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castResult.m\_fraction);}
+\DoxyCodeLine{00739\ }
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback.addSingleResult(localConvexResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//BT\_PROFILE("{}convexSweepConcave"{});}}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btConcaveShape*\ concaveShape\ =\ (btConcaveShape*)collisionShape;}
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ worldTocollisionObject\ =\ colObjWorldTransform.inverse();}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ convexFromLocal\ =\ worldTocollisionObject\ *\ convexFromTrans.getOrigin();}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ convexToLocal\ =\ worldTocollisionObject\ *\ convexToTrans.getOrigin();}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ rotation\ of\ box\ in\ local\ mesh\ space\ =\ MeshRotation\string^-\/1\ *\ ConvexToRotation}}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ rotationXform\ =\ btTransform(worldTocollisionObject.getBasis()\ *\ convexToTrans.getBasis());}
+\DoxyCodeLine{00755\ }
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ConvexCast::CastResult}}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }BridgeTriangleConvexcastCallback\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_convexcast_callback}{btTriangleConvexcastCallback}}}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}*\ m\_resultCallback;}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionObject*\ m\_collisionObject;}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btConcaveShape*\ m\_triangleMesh;}
+\DoxyCodeLine{00762\ }
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleConvexcastCallback(\textcolor{keyword}{const}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ from,\ \textcolor{keyword}{const}\ btTransform\&\ to,}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}*\ resultCallback,\ \textcolor{keyword}{const}\ btCollisionObject*\ collisionObject,\ btConcaveShape*\ triangleMesh,\ \textcolor{keyword}{const}\ btTransform\&\ triangleToWorld)\ :\ \mbox{\hyperlink{classbt_triangle_convexcast_callback}{btTriangleConvexcastCallback}}(castShape,\ from,\ to,\ triangleToWorld,\ triangleMesh-\/>getMargin()),}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback),}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_collisionObject(collisionObject),}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangleMesh(triangleMesh)}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00770\ }
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ reportHit(\textcolor{keyword}{const}\ btVector3\&\ hitNormalLocal,\ \textcolor{keyword}{const}\ btVector3\&\ hitPointLocal,\ btScalar\ hitFraction,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_shape_info}{btCollisionWorld::LocalShapeInfo}}\ shapeInfo;}
+\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_shapePart\ =\ partId;}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_triangleIndex\ =\ triangleIndex;}
+\DoxyCodeLine{00776\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hitFraction\ <=\ m\_resultCallback-\/>m\_closestHitFraction)}
+\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_convex_result}{btCollisionWorld::LocalConvexResult}}\ convexResult(m\_collisionObject,}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&shapeInfo,}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitNormalLocal,}
+\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitPointLocal,}
+\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hitFraction);}
+\DoxyCodeLine{00783\ }
+\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00785\ }
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_resultCallback-\/>addSingleResult(convexResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ hitFraction;}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00791\ }
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BridgeTriangleConvexcastCallback\ tccb(castShape,\ convexFromTrans,\ convexToTrans,\ \&resultCallback,\ colObjWrap-\/>getCollisionObject(),\ concaveShape,\ colObjWorldTransform);}
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tccb.m\_hitFraction\ =\ resultCallback.m\_closestHitFraction;}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tccb.m\_allowedPenetration\ =\ allowedPenetration;}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ boxMinLocal,\ boxMaxLocal;}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castShape-\/>getAabb(rotationXform,\ boxMinLocal,\ boxMaxLocal);}
+\DoxyCodeLine{00797\ }
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayAabbMinLocal\ =\ convexFromLocal;}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayAabbMinLocal.setMin(convexToLocal);}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayAabbMaxLocal\ =\ convexFromLocal;}
+\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayAabbMaxLocal.setMax(convexToLocal);}
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayAabbMinLocal\ +=\ boxMinLocal;}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rayAabbMaxLocal\ +=\ boxMaxLocal;}
+\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ concaveShape-\/>processAllTriangles(\&tccb,\ rayAabbMinLocal,\ rayAabbMaxLocal);}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>isCompound())}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_compound_leaf_callback}{btCompoundLeafCallback}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_compound_leaf_callback}{btCompoundLeafCallback}}(}
+\DoxyCodeLine{00815\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObjWrap,}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ castShape,}
+\DoxyCodeLine{00817\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ convexFromTrans,}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ convexToTrans,}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ allowedPenetration,}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape,}
+\DoxyCodeLine{00821\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform,}
+\DoxyCodeLine{00822\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ConvexResultCallback\&\ resultCallback)}
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_colObjWrap(colObjWrap),}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_castShape(castShape),}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_convexFromTrans(convexFromTrans),}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_convexToTrans(convexToTrans),}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allowedPenetration(allowedPenetration),}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_compoundShape(compoundShape),}
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_colObjWorldTransform(colObjWorldTransform),}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback)}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00833\ }
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_colObjWrap;}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ m\_castShape;}
+\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ m\_convexFromTrans;}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ m\_convexToTrans;}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ m\_allowedPenetration;}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ m\_compoundShape;}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ m\_colObjWorldTransform;}
+\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ConvexResultCallback\&\ m\_resultCallback;}
+\DoxyCodeLine{00842\ }
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ProcessChild(\textcolor{keywordtype}{int}\ index,\ \textcolor{keyword}{const}\ btTransform\&\ childTrans,\ \textcolor{keyword}{const}\ btCollisionShape*\ childCollisionShape)}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childWorldTrans\ =\ m\_colObjWorldTransform\ *\ childTrans;}
+\DoxyCodeLine{00847\ }
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }LocalInfoAdder\ :\ \textcolor{keyword}{public}\ ConvexResultCallback}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ConvexResultCallback*\ m\_userCallback;}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_i;}
+\DoxyCodeLine{00852\ }
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LocalInfoAdder(\textcolor{keywordtype}{int}\ i,\ ConvexResultCallback*\ user)}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_userCallback(user),\ m\_i(i)}
+\DoxyCodeLine{00855\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_closestHitFraction\ =\ m\_userCallback-\/>m\_closestHitFraction;}
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00858\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ needsCollision(btBroadphaseProxy*\ p)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00859\ \textcolor{keyword}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00860\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userCallback-\/>needsCollision(p);}
+\DoxyCodeLine{00861\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00862\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ addSingleResult(\mbox{\hyperlink{structbt_collision_world_1_1_local_convex_result}{btCollisionWorld::LocalConvexResult}}\&\ r,\ \textcolor{keywordtype}{bool}\ b)}
+\DoxyCodeLine{00863\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_shape_info}{btCollisionWorld::LocalShapeInfo}}\ shapeInfo;}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_shapePart\ =\ -\/1;}
+\DoxyCodeLine{00866\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_triangleIndex\ =\ m\_i;}
+\DoxyCodeLine{00867\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r.m\_localShapeInfo\ ==\ NULL)}
+\DoxyCodeLine{00868\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r.m\_localShapeInfo\ =\ \&shapeInfo;}
+\DoxyCodeLine{00869\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ result\ =\ m\_userCallback-\/>addSingleResult(r,\ b);}
+\DoxyCodeLine{00870\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_closestHitFraction\ =\ m\_userCallback-\/>m\_closestHitFraction;}
+\DoxyCodeLine{00871\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00872\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00873\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00874\ }
+\DoxyCodeLine{00875\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LocalInfoAdder\ my\_cb(index,\ \&m\_resultCallback);}
+\DoxyCodeLine{00876\ }
+\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ tmpObj(m\_colObjWrap,\ childCollisionShape,\ m\_colObjWrap-\/>getCollisionObject(),\ childWorldTrans,\ -\/1,\ index);}
+\DoxyCodeLine{00878\ }
+\DoxyCodeLine{00879\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ objectQuerySingleInternal(m\_castShape,\ m\_convexFromTrans,\ m\_convexToTrans,\ \&tmpObj,\ my\_cb,\ m\_allowedPenetration);}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00881\ }
+\DoxyCodeLine{00882\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf)}
+\DoxyCodeLine{00883\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00884\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Processing\ leaf\ node}}
+\DoxyCodeLine{00885\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ leaf-\/>dataAsInt;}
+\DoxyCodeLine{00886\ }
+\DoxyCodeLine{00887\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childTrans\ =\ m\_compoundShape-\/>getChildTransform(index);}
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ childCollisionShape\ =\ m\_compoundShape-\/>getChildShape(index);}
+\DoxyCodeLine{00889\ }
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProcessChild(index,\ childTrans,\ childCollisionShape);}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00893\ }
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}convexSweepCompound"{}});}
+\DoxyCodeLine{00895\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(collisionShape);}
+\DoxyCodeLine{00896\ }
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ fromLocalAabbMin,\ fromLocalAabbMax;}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ toLocalAabbMin,\ toLocalAabbMax;}
+\DoxyCodeLine{00899\ }
+\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castShape-\/>getAabb(colObjWorldTransform.inverse()\ *\ convexFromTrans,\ fromLocalAabbMin,\ fromLocalAabbMax);}
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ castShape-\/>getAabb(colObjWorldTransform.inverse()\ *\ convexToTrans,\ toLocalAabbMin,\ toLocalAabbMax);}
+\DoxyCodeLine{00902\ }
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fromLocalAabbMin.setMin(toLocalAabbMin);}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fromLocalAabbMax.setMax(toLocalAabbMax);}
+\DoxyCodeLine{00905\ }
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_compound_leaf_callback}{btCompoundLeafCallback}}\ callback(colObjWrap,\ castShape,\ convexFromTrans,\ convexToTrans,}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allowedPenetration,\ compoundShape,\ colObjWorldTransform,\ resultCallback);}
+\DoxyCodeLine{00908\ }
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}*\ tree\ =\ compoundShape-\/>getDynamicAabbTree();}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tree)}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ATTRIBUTE\_ALIGNED16(\mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}})\ bounds\ =\ btDbvtVolume::FromMM(fromLocalAabbMin,\ fromLocalAabbMax);}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tree-\/>collideTV(tree-\/>m\_root,\ bounds,\ callback);}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00917\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ compoundShape-\/>getNumChildShapes();\ i++)}
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ childCollisionShape\ =\ compoundShape-\/>getChildShape(i);}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childTrans\ =\ compoundShape-\/>getChildTransform(i);}
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback.ProcessChild(i,\ childTrans,\ childCollisionShape);}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00924\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00926\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00927\ \ \ \ \ \}}
+\DoxyCodeLine{00928\ \}}
+\DoxyCodeLine{00929\ }
+\DoxyCodeLine{00930\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_single_ray_callback}{btSingleRayCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}}
+\DoxyCodeLine{00931\ \{}
+\DoxyCodeLine{00932\ \ \ \ \ btVector3\ m\_rayFromWorld;}
+\DoxyCodeLine{00933\ \ \ \ \ btVector3\ m\_rayToWorld;}
+\DoxyCodeLine{00934\ \ \ \ \ btTransform\ m\_rayFromTrans;}
+\DoxyCodeLine{00935\ \ \ \ \ btTransform\ m\_rayToTrans;}
+\DoxyCodeLine{00936\ \ \ \ \ btVector3\ m\_hitNormal;}
+\DoxyCodeLine{00937\ }
+\DoxyCodeLine{00938\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ m\_world;}
+\DoxyCodeLine{00939\ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}\&\ m\_resultCallback;}
+\DoxyCodeLine{00940\ }
+\DoxyCodeLine{00941\ \ \ \ \ \mbox{\hyperlink{structbt_single_ray_callback_a5d29d3242de87c3f298dd3d924bd24fd}{btSingleRayCallback}}(\textcolor{keyword}{const}\ btVector3\&\ rayFromWorld,\ \textcolor{keyword}{const}\ btVector3\&\ rayToWorld,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ world,\ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{00942\ \ \ \ \ \ \ \ \ :\ m\_rayFromWorld(rayFromWorld),}
+\DoxyCodeLine{00943\ \ \ \ \ \ \ \ \ \ \ m\_rayToWorld(rayToWorld),}
+\DoxyCodeLine{00944\ \ \ \ \ \ \ \ \ \ \ m\_world(world),}
+\DoxyCodeLine{00945\ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback)}
+\DoxyCodeLine{00946\ \ \ \ \ \{}
+\DoxyCodeLine{00947\ \ \ \ \ \ \ \ \ m\_rayFromTrans.setIdentity();}
+\DoxyCodeLine{00948\ \ \ \ \ \ \ \ \ m\_rayFromTrans.setOrigin(m\_rayFromWorld);}
+\DoxyCodeLine{00949\ \ \ \ \ \ \ \ \ m\_rayToTrans.setIdentity();}
+\DoxyCodeLine{00950\ \ \ \ \ \ \ \ \ m\_rayToTrans.setOrigin(m\_rayToWorld);}
+\DoxyCodeLine{00951\ }
+\DoxyCodeLine{00952\ \ \ \ \ \ \ \ \ btVector3\ rayDir\ =\ (rayToWorld\ -\/\ rayFromWorld);}
+\DoxyCodeLine{00953\ }
+\DoxyCodeLine{00954\ \ \ \ \ \ \ \ \ rayDir.normalize();}
+\DoxyCodeLine{00956\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[0]\ =\ rayDir[0]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[0];}
+\DoxyCodeLine{00957\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[1]\ =\ rayDir[1]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[1];}
+\DoxyCodeLine{00958\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[2]\ =\ rayDir[2]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[2];}
+\DoxyCodeLine{00959\ \ \ \ \ \ \ \ \ m\_signs[0]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[0]\ <\ 0.0;}
+\DoxyCodeLine{00960\ \ \ \ \ \ \ \ \ m\_signs[1]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[1]\ <\ 0.0;}
+\DoxyCodeLine{00961\ \ \ \ \ \ \ \ \ m\_signs[2]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[2]\ <\ 0.0;}
+\DoxyCodeLine{00962\ }
+\DoxyCodeLine{00963\ \ \ \ \ \ \ \ \ m\_lambda\_max\ =\ rayDir.dot(m\_rayToWorld\ -\/\ m\_rayFromWorld);}
+\DoxyCodeLine{00964\ \ \ \ \ \}}
+\DoxyCodeLine{00965\ }
+\DoxyCodeLine{00966\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structbt_single_ray_callback_a4e0dc3a4a2d92c6a838895c9add2a5c2}{process}}(\textcolor{keyword}{const}\ btBroadphaseProxy*\ proxy)}
+\DoxyCodeLine{00967\ \ \ \ \ \{}
+\DoxyCodeLine{00969\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultCallback.m\_closestHitFraction\ ==\ btScalar(0.f))}
+\DoxyCodeLine{00970\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00971\ }
+\DoxyCodeLine{00972\ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ (btCollisionObject*)proxy-\/>m\_clientObject;}
+\DoxyCodeLine{00973\ }
+\DoxyCodeLine{00974\ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ perform\ raycast\ if\ filterMask\ matches}}
+\DoxyCodeLine{00975\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultCallback.needsCollision(collisionObject-\/>getBroadphaseHandle()))}
+\DoxyCodeLine{00976\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00977\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//RigidcollisionObject*\ collisionObject\ =\ ctrl-\/>GetRigidcollisionObject();}}
+\DoxyCodeLine{00978\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btVector3\ collisionObjectAabbMin,collisionObjectAabbMax;}}
+\DoxyCodeLine{00979\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00980\ \textcolor{preprocessor}{\#ifdef\ RECALCULATE\_AABB}}
+\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ collisionObjectAabbMin,collisionObjectAabbMax;}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape()-\/>getAabb(collisionObject-\/>getWorldTransform(),collisionObjectAabbMin,collisionObjectAabbMax);}
+\DoxyCodeLine{00983\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//getBroadphase()-\/>getAabb(collisionObject-\/>getBroadphaseHandle(),collisionObjectAabbMin,collisionObjectAabbMax);}}
+\DoxyCodeLine{00985\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ collisionObjectAabbMin\ =\ collisionObject-\/>getBroadphaseHandle()-\/>m\_aabbMin;}
+\DoxyCodeLine{00986\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ collisionObjectAabbMax\ =\ collisionObject-\/>getBroadphaseHandle()-\/>m\_aabbMax;}
+\DoxyCodeLine{00987\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00988\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00989\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btScalar\ hitLambda\ =\ m\_resultCallback.m\_closestHitFraction;}}
+\DoxyCodeLine{00990\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//culling\ already\ done\ by\ broadphase}}
+\DoxyCodeLine{00991\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ (btRayAabb(m\_rayFromWorld,m\_rayToWorld,collisionObjectAabbMin,collisionObjectAabbMax,hitLambda,m\_hitNormal))}}
+\DoxyCodeLine{00992\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00993\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_world-\/>\mbox{\hyperlink{classbt_collision_world_aca2a9413508b4a2449fe83ff93ea564e}{rayTestSingle}}(m\_rayFromTrans,\ m\_rayToTrans,}
+\DoxyCodeLine{00994\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{00995\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape(),}
+\DoxyCodeLine{00996\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getWorldTransform(),}
+\DoxyCodeLine{00997\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback);}
+\DoxyCodeLine{00998\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00999\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01000\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01001\ \ \ \ \ \}}
+\DoxyCodeLine{01002\ \};}
+\DoxyCodeLine{01003\ }
+\DoxyCodeLine{01004\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_a01fb1f5ff8a93c11f0c6837d225ae4b7}{btCollisionWorld::rayTest}}(\textcolor{keyword}{const}\ btVector3\&\ rayFromWorld,\ \textcolor{keyword}{const}\ btVector3\&\ rayToWorld,\ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{RayResultCallback}}\&\ resultCallback)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01005\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01006\ \ \ \ \ \textcolor{comment}{//BT\_PROFILE("{}rayTest"{});}}
+\DoxyCodeLine{01009\ \ \ \ \ \mbox{\hyperlink{structbt_single_ray_callback}{btSingleRayCallback}}\ rayCB(rayFromWorld,\ rayToWorld,\ \textcolor{keyword}{this},\ resultCallback);}
+\DoxyCodeLine{01010\ }
+\DoxyCodeLine{01011\ \textcolor{preprocessor}{\#ifndef\ USE\_BRUTEFORCE\_RAYBROADPHASE}}
+\DoxyCodeLine{01012\ \ \ \ \ m\_broadphasePairCache-\/>rayTest(rayFromWorld,\ rayToWorld,\ rayCB);}
+\DoxyCodeLine{01013\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01014\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ this-\/>getNumCollisionObjects();\ i++)}
+\DoxyCodeLine{01015\ \ \ \ \ \{}
+\DoxyCodeLine{01016\ \ \ \ \ \ \ \ \ rayCB.\mbox{\hyperlink{structbt_single_ray_callback_a4e0dc3a4a2d92c6a838895c9add2a5c2}{process}}(m\_collisionObjects[i]-\/>getBroadphaseHandle());}
+\DoxyCodeLine{01017\ \ \ \ \ \}}
+\DoxyCodeLine{01018\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//USE\_BRUTEFORCE\_RAYBROADPHASE}}
+\DoxyCodeLine{01019\ \}}
+\DoxyCodeLine{01020\ }
+\DoxyCodeLine{01021\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_single_sweep_callback}{btSingleSweepCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}}
+\DoxyCodeLine{01022\ \{}
+\DoxyCodeLine{01023\ \ \ \ \ btTransform\ m\_convexFromTrans;}
+\DoxyCodeLine{01024\ \ \ \ \ btTransform\ m\_convexToTrans;}
+\DoxyCodeLine{01025\ \ \ \ \ btVector3\ m\_hitNormal;}
+\DoxyCodeLine{01026\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ m\_world;}
+\DoxyCodeLine{01027\ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}\&\ m\_resultCallback;}
+\DoxyCodeLine{01028\ \ \ \ \ btScalar\ m\_allowedCcdPenetration;}
+\DoxyCodeLine{01029\ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ m\_castShape;}
+\DoxyCodeLine{01030\ }
+\DoxyCodeLine{01031\ \ \ \ \ \mbox{\hyperlink{structbt_single_sweep_callback_adb99242209085f3562005a5a0c088793}{btSingleSweepCallback}}(\textcolor{keyword}{const}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ convexFromTrans,\ \textcolor{keyword}{const}\ btTransform\&\ convexToTrans,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ world,\ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{btCollisionWorld::ConvexResultCallback}}\&\ resultCallback,\ btScalar\ allowedPenetration)}
+\DoxyCodeLine{01032\ \ \ \ \ \ \ \ \ :\ m\_convexFromTrans(convexFromTrans),}
+\DoxyCodeLine{01033\ \ \ \ \ \ \ \ \ \ \ m\_convexToTrans(convexToTrans),}
+\DoxyCodeLine{01034\ \ \ \ \ \ \ \ \ \ \ m\_world(world),}
+\DoxyCodeLine{01035\ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback),}
+\DoxyCodeLine{01036\ \ \ \ \ \ \ \ \ \ \ m\_allowedCcdPenetration(allowedPenetration),}
+\DoxyCodeLine{01037\ \ \ \ \ \ \ \ \ \ \ m\_castShape(castShape)}
+\DoxyCodeLine{01038\ \ \ \ \ \{}
+\DoxyCodeLine{01039\ \ \ \ \ \ \ \ \ btVector3\ unnormalizedRayDir\ =\ (m\_convexToTrans.getOrigin()\ -\/\ m\_convexFromTrans.getOrigin());}
+\DoxyCodeLine{01040\ \ \ \ \ \ \ \ \ btVector3\ rayDir\ =\ unnormalizedRayDir.fuzzyZero()\ ?\ btVector3(btScalar(0.0),\ btScalar(0.0),\ btScalar(0.0))\ :\ unnormalizedRayDir.normalized();}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[0]\ =\ rayDir[0]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[0];}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[1]\ =\ rayDir[1]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[1];}
+\DoxyCodeLine{01044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[2]\ =\ rayDir[2]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[2];}
+\DoxyCodeLine{01045\ \ \ \ \ \ \ \ \ m\_signs[0]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[0]\ <\ 0.0;}
+\DoxyCodeLine{01046\ \ \ \ \ \ \ \ \ m\_signs[1]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[1]\ <\ 0.0;}
+\DoxyCodeLine{01047\ \ \ \ \ \ \ \ \ m\_signs[2]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[2]\ <\ 0.0;}
+\DoxyCodeLine{01048\ }
+\DoxyCodeLine{01049\ \ \ \ \ \ \ \ \ m\_lambda\_max\ =\ rayDir.dot(unnormalizedRayDir);}
+\DoxyCodeLine{01050\ \ \ \ \ \}}
+\DoxyCodeLine{01051\ }
+\DoxyCodeLine{01052\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structbt_single_sweep_callback_a38b90d239e96c18b3843435976b598fc}{process}}(\textcolor{keyword}{const}\ btBroadphaseProxy*\ proxy)}
+\DoxyCodeLine{01053\ \ \ \ \ \{}
+\DoxyCodeLine{01055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultCallback.m\_closestHitFraction\ ==\ btScalar(0.f))}
+\DoxyCodeLine{01056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01057\ }
+\DoxyCodeLine{01058\ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ (btCollisionObject*)proxy-\/>m\_clientObject;}
+\DoxyCodeLine{01059\ }
+\DoxyCodeLine{01060\ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ perform\ raycast\ if\ filterMask\ matches}}
+\DoxyCodeLine{01061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultCallback.needsCollision(collisionObject-\/>getBroadphaseHandle()))}
+\DoxyCodeLine{01062\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//RigidcollisionObject*\ collisionObject\ =\ ctrl-\/>GetRigidcollisionObject();}}
+\DoxyCodeLine{01064\ \ \ \ \ \ \ \ \ \ \ \ \ m\_world-\/>\mbox{\hyperlink{classbt_collision_world_aa63de55ff9451a80c8c825cafd64d9ba}{objectQuerySingle}}(m\_castShape,\ m\_convexFromTrans,\ m\_convexToTrans,}
+\DoxyCodeLine{01065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{01066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape(),}
+\DoxyCodeLine{01067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getWorldTransform(),}
+\DoxyCodeLine{01068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback,}
+\DoxyCodeLine{01069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allowedCcdPenetration);}
+\DoxyCodeLine{01070\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01071\ }
+\DoxyCodeLine{01072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01073\ \ \ \ \ \}}
+\DoxyCodeLine{01074\ \};}
+\DoxyCodeLine{01075\ }
+\DoxyCodeLine{01076\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_a8dcdf201fe1c98c633682cf3845d237f}{btCollisionWorld::convexSweepTest}}(\textcolor{keyword}{const}\ btConvexShape*\ castShape,\ \textcolor{keyword}{const}\ btTransform\&\ convexFromWorld,\ \textcolor{keyword}{const}\ btTransform\&\ convexToWorld,\ \mbox{\hyperlink{structbt_collision_world_1_1_convex_result_callback}{ConvexResultCallback}}\&\ resultCallback,\ btScalar\ allowedCcdPenetration)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01077\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01078\ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}convexSweepTest"{}});}
+\DoxyCodeLine{01082\ }
+\DoxyCodeLine{01083\ \ \ \ \ btTransform\ convexFromTrans,\ convexToTrans;}
+\DoxyCodeLine{01084\ \ \ \ \ convexFromTrans\ =\ convexFromWorld;}
+\DoxyCodeLine{01085\ \ \ \ \ convexToTrans\ =\ convexToWorld;}
+\DoxyCodeLine{01086\ \ \ \ \ btVector3\ castShapeAabbMin,\ castShapeAabbMax;}
+\DoxyCodeLine{01087\ \ \ \ \ \textcolor{comment}{/*\ Compute\ AABB\ that\ encompasses\ angular\ movement\ */}}
+\DoxyCodeLine{01088\ \ \ \ \ \{}
+\DoxyCodeLine{01089\ \ \ \ \ \ \ \ \ btVector3\ linVel,\ angVel;}
+\DoxyCodeLine{01090\ \ \ \ \ \ \ \ \ btTransformUtil::calculateVelocity(convexFromTrans,\ convexToTrans,\ 1.0f,\ linVel,\ angVel);}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ btVector3\ zeroLinVel;}
+\DoxyCodeLine{01092\ \ \ \ \ \ \ \ \ zeroLinVel.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ btTransform\ R;}
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ R.setIdentity();}
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ R.setRotation(convexFromTrans.getRotation());}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ castShape-\/>calculateTemporalAabb(R,\ zeroLinVel,\ angVel,\ 1.0f,\ castShapeAabbMin,\ castShapeAabbMax);}
+\DoxyCodeLine{01097\ \ \ \ \ \}}
+\DoxyCodeLine{01098\ }
+\DoxyCodeLine{01099\ \textcolor{preprocessor}{\#ifndef\ USE\_BRUTEFORCE\_RAYBROADPHASE}}
+\DoxyCodeLine{01100\ }
+\DoxyCodeLine{01101\ \ \ \ \ \mbox{\hyperlink{structbt_single_sweep_callback}{btSingleSweepCallback}}\ convexCB(castShape,\ convexFromWorld,\ convexToWorld,\ \textcolor{keyword}{this},\ resultCallback,\ allowedCcdPenetration);}
+\DoxyCodeLine{01102\ }
+\DoxyCodeLine{01103\ \ \ \ \ m\_broadphasePairCache-\/>rayTest(convexFromTrans.getOrigin(),\ convexToTrans.getOrigin(),\ convexCB,\ castShapeAabbMin,\ castShapeAabbMax);}
+\DoxyCodeLine{01104\ }
+\DoxyCodeLine{01105\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01107\ \ \ \ \ \textcolor{comment}{//\ do\ a\ ray-\/shape\ query\ using\ convexCaster\ (CCD)}}
+\DoxyCodeLine{01108\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{01109\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{01110\ \ \ \ \ \{}
+\DoxyCodeLine{01111\ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ m\_collisionObjects[i];}
+\DoxyCodeLine{01112\ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ perform\ raycast\ if\ filterMask\ matches}}
+\DoxyCodeLine{01113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultCallback.needsCollision(collisionObject-\/>getBroadphaseHandle()))}
+\DoxyCodeLine{01114\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//RigidcollisionObject*\ collisionObject\ =\ ctrl-\/>GetRigidcollisionObject();}}
+\DoxyCodeLine{01116\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ collisionObjectAabbMin,\ collisionObjectAabbMax;}
+\DoxyCodeLine{01117\ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape()-\/>getAabb(collisionObject-\/>getWorldTransform(),\ collisionObjectAabbMin,\ collisionObjectAabbMax);}
+\DoxyCodeLine{01118\ \ \ \ \ \ \ \ \ \ \ \ \ AabbExpand(collisionObjectAabbMin,\ collisionObjectAabbMax,\ castShapeAabbMin,\ castShapeAabbMax);}
+\DoxyCodeLine{01119\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ hitLambda\ =\ btScalar(1.);\ \ \textcolor{comment}{//could\ use\ resultCallback.m\_closestHitFraction,\ but\ needs\ testing}}
+\DoxyCodeLine{01120\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ hitNormal;}
+\DoxyCodeLine{01121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btRayAabb(convexFromWorld.getOrigin(),\ convexToWorld.getOrigin(),\ collisionObjectAabbMin,\ collisionObjectAabbMax,\ hitLambda,\ hitNormal))}
+\DoxyCodeLine{01122\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_aa63de55ff9451a80c8c825cafd64d9ba}{objectQuerySingle}}(castShape,\ convexFromTrans,\ convexToTrans,}
+\DoxyCodeLine{01124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{01125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape(),}
+\DoxyCodeLine{01126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getWorldTransform(),}
+\DoxyCodeLine{01127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback,}
+\DoxyCodeLine{01128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allowedCcdPenetration);}
+\DoxyCodeLine{01129\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01130\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01131\ \ \ \ \ \}}
+\DoxyCodeLine{01132\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//USE\_BRUTEFORCE\_RAYBROADPHASE}}
+\DoxyCodeLine{01133\ \}}
+\DoxyCodeLine{01134\ }
+\DoxyCodeLine{01135\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_bridged_manifold_result}{btBridgedManifoldResult}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}}
+\DoxyCodeLine{01136\ \{}
+\DoxyCodeLine{01137\ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{btCollisionWorld::ContactResultCallback}}\&\ m\_resultCallback;}
+\DoxyCodeLine{01138\ }
+\DoxyCodeLine{01139\ \ \ \ \ \mbox{\hyperlink{structbt_bridged_manifold_result}{btBridgedManifoldResult}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ obj0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ obj1Wrap,\ \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{btCollisionWorld::ContactResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{01140\ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}(obj0Wrap,\ obj1Wrap),}
+\DoxyCodeLine{01141\ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback)}
+\DoxyCodeLine{01142\ \ \ \ \ \{}
+\DoxyCodeLine{01143\ \ \ \ \ \}}
+\DoxyCodeLine{01144\ }
+\DoxyCodeLine{01145\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addContactPoint(\textcolor{keyword}{const}\ btVector3\&\ normalOnBInWorld,\ \textcolor{keyword}{const}\ btVector3\&\ pointInWorld,\ btScalar\ depth)}
+\DoxyCodeLine{01146\ \ \ \ \ \{}
+\DoxyCodeLine{01147\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isSwapped\ =\ m\_manifoldPtr-\/>getBody0()\ !=\ m\_body0Wrap-\/>getCollisionObject();}
+\DoxyCodeLine{01148\ \ \ \ \ \ \ \ \ btVector3\ pointA\ =\ pointInWorld\ +\ normalOnBInWorld\ *\ depth;}
+\DoxyCodeLine{01149\ \ \ \ \ \ \ \ \ btVector3\ localA;}
+\DoxyCodeLine{01150\ \ \ \ \ \ \ \ \ btVector3\ localB;}
+\DoxyCodeLine{01151\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isSwapped)}
+\DoxyCodeLine{01152\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01153\ \ \ \ \ \ \ \ \ \ \ \ \ localA\ =\ m\_body1Wrap-\/>getCollisionObject()-\/>getWorldTransform().invXform(pointA);}
+\DoxyCodeLine{01154\ \ \ \ \ \ \ \ \ \ \ \ \ localB\ =\ m\_body0Wrap-\/>getCollisionObject()-\/>getWorldTransform().invXform(pointInWorld);}
+\DoxyCodeLine{01155\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01156\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01157\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01158\ \ \ \ \ \ \ \ \ \ \ \ \ localA\ =\ m\_body0Wrap-\/>getCollisionObject()-\/>getWorldTransform().invXform(pointA);}
+\DoxyCodeLine{01159\ \ \ \ \ \ \ \ \ \ \ \ \ localB\ =\ m\_body1Wrap-\/>getCollisionObject()-\/>getWorldTransform().invXform(pointInWorld);}
+\DoxyCodeLine{01160\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01161\ }
+\DoxyCodeLine{01162\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\ newPt(localA,\ localB,\ normalOnBInWorld,\ depth);}
+\DoxyCodeLine{01163\ \ \ \ \ \ \ \ \ newPt.\mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}}\ =\ pointA;}
+\DoxyCodeLine{01164\ \ \ \ \ \ \ \ \ newPt.m\_positionWorldOnB\ =\ pointInWorld;}
+\DoxyCodeLine{01165\ }
+\DoxyCodeLine{01166\ \ \ \ \ \ \ \ \ \textcolor{comment}{//BP\ mod,\ store\ contact\ triangles.}}
+\DoxyCodeLine{01167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isSwapped)}
+\DoxyCodeLine{01168\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01169\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_partId0\ =\ m\_partId1;}
+\DoxyCodeLine{01170\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_partId1\ =\ m\_partId0;}
+\DoxyCodeLine{01171\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_index0\ =\ m\_index1;}
+\DoxyCodeLine{01172\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_index1\ =\ m\_index0;}
+\DoxyCodeLine{01173\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01174\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01175\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01176\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_partId0\ =\ m\_partId0;}
+\DoxyCodeLine{01177\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_partId1\ =\ m\_partId1;}
+\DoxyCodeLine{01178\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_index0\ =\ m\_index0;}
+\DoxyCodeLine{01179\ \ \ \ \ \ \ \ \ \ \ \ \ newPt.m\_index1\ =\ m\_index1;}
+\DoxyCodeLine{01180\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01181\ }
+\DoxyCodeLine{01182\ \ \ \ \ \ \ \ \ \textcolor{comment}{//experimental\ feature\ info,\ for\ per-\/triangle\ material\ etc.}}
+\DoxyCodeLine{01183\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ obj0Wrap\ =\ isSwapped\ ?\ m\_body1Wrap\ :\ m\_body0Wrap;}
+\DoxyCodeLine{01184\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ obj1Wrap\ =\ isSwapped\ ?\ m\_body0Wrap\ :\ m\_body1Wrap;}
+\DoxyCodeLine{01185\ \ \ \ \ \ \ \ \ m\_resultCallback.addSingleResult(newPt,\ obj0Wrap,\ newPt.m\_partId0,\ newPt.m\_index0,\ obj1Wrap,\ newPt.m\_partId1,\ newPt.m\_index1);}
+\DoxyCodeLine{01186\ \ \ \ \ \}}
+\DoxyCodeLine{01187\ \};}
+\DoxyCodeLine{01188\ }
+\DoxyCodeLine{01189\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_single_contact_callback}{btSingleContactCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_broadphase_aabb_callback}{btBroadphaseAabbCallback}}}
+\DoxyCodeLine{01190\ \{}
+\DoxyCodeLine{01191\ \ \ \ \ btCollisionObject*\ m\_collisionObject;}
+\DoxyCodeLine{01192\ \ \ \ \ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ m\_world;}
+\DoxyCodeLine{01193\ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{btCollisionWorld::ContactResultCallback}}\&\ m\_resultCallback;}
+\DoxyCodeLine{01194\ }
+\DoxyCodeLine{01195\ \ \ \ \ \mbox{\hyperlink{structbt_single_contact_callback}{btSingleContactCallback}}(btCollisionObject*\ collisionObject,\ \mbox{\hyperlink{classbt_collision_world}{btCollisionWorld}}*\ world,\ \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{btCollisionWorld::ContactResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{01196\ \ \ \ \ \ \ \ \ :\ m\_collisionObject(collisionObject),}
+\DoxyCodeLine{01197\ \ \ \ \ \ \ \ \ \ \ m\_world(world),}
+\DoxyCodeLine{01198\ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback)}
+\DoxyCodeLine{01199\ \ \ \ \ \{}
+\DoxyCodeLine{01200\ \ \ \ \ \}}
+\DoxyCodeLine{01201\ }
+\DoxyCodeLine{01202\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ process(\textcolor{keyword}{const}\ btBroadphaseProxy*\ proxy)}
+\DoxyCodeLine{01203\ \ \ \ \ \{}
+\DoxyCodeLine{01204\ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ (btCollisionObject*)proxy-\/>m\_clientObject;}
+\DoxyCodeLine{01205\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionObject\ ==\ m\_collisionObject)}
+\DoxyCodeLine{01206\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01207\ }
+\DoxyCodeLine{01208\ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ perform\ raycast\ if\ filterMask\ matches}}
+\DoxyCodeLine{01209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultCallback.needsCollision(collisionObject-\/>getBroadphaseHandle()))}
+\DoxyCodeLine{01210\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01211\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ ob0(0,\ m\_collisionObject-\/>getCollisionShape(),\ m\_collisionObject,\ m\_collisionObject-\/>getWorldTransform(),\ -\/1,\ -\/1);}
+\DoxyCodeLine{01212\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ ob1(0,\ collisionObject-\/>getCollisionShape(),\ collisionObject,\ collisionObject-\/>getWorldTransform(),\ -\/1,\ -\/1);}
+\DoxyCodeLine{01213\ }
+\DoxyCodeLine{01214\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}*\ algorithm\ =\ m\_world-\/>getDispatcher()-\/>findAlgorithm(\&ob0,\ \&ob1,\ 0,\ BT\_CLOSEST\_POINT\_ALGORITHMS);}
+\DoxyCodeLine{01215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (algorithm)}
+\DoxyCodeLine{01216\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_bridged_manifold_result}{btBridgedManifoldResult}}\ contactPointResult(\&ob0,\ \&ob1,\ m\_resultCallback);}
+\DoxyCodeLine{01218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//discrete\ collision\ detection\ query}}
+\DoxyCodeLine{01219\ }
+\DoxyCodeLine{01220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ algorithm-\/>processCollision(\&ob0,\ \&ob1,\ m\_world-\/>getDispatchInfo(),\ \&contactPointResult);}
+\DoxyCodeLine{01221\ }
+\DoxyCodeLine{01222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ algorithm-\/>\string~btCollisionAlgorithm();}
+\DoxyCodeLine{01223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_world-\/>getDispatcher()-\/>freeCollisionAlgorithm(algorithm);}
+\DoxyCodeLine{01224\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01225\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01227\ \ \ \ \ \}}
+\DoxyCodeLine{01228\ \};}
+\DoxyCodeLine{01229\ }
+\DoxyCodeLine{01232\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_ae1d167b53de82d4f97a47118f8480999}{btCollisionWorld::contactTest}}(btCollisionObject*\ colObj,\ \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{ContactResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{01233\ \{}
+\DoxyCodeLine{01234\ \ \ \ \ btVector3\ aabbMin,\ aabbMax;}
+\DoxyCodeLine{01235\ \ \ \ \ colObj-\/>getCollisionShape()-\/>getAabb(colObj-\/>getWorldTransform(),\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{01236\ \ \ \ \ \mbox{\hyperlink{structbt_single_contact_callback}{btSingleContactCallback}}\ contactCB(colObj,\ \textcolor{keyword}{this},\ resultCallback);}
+\DoxyCodeLine{01237\ }
+\DoxyCodeLine{01238\ \ \ \ \ m\_broadphasePairCache-\/>aabbTest(aabbMin,\ aabbMax,\ contactCB);}
+\DoxyCodeLine{01239\ \}}
+\DoxyCodeLine{01240\ }
+\DoxyCodeLine{01243\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_aabbec542dcd348041db6d07b36a640c8}{btCollisionWorld::contactPairTest}}(btCollisionObject*\ colObjA,\ btCollisionObject*\ colObjB,\ \mbox{\hyperlink{structbt_collision_world_1_1_contact_result_callback}{ContactResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{01244\ \{}
+\DoxyCodeLine{01245\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ obA(0,\ colObjA-\/>getCollisionShape(),\ colObjA,\ colObjA-\/>getWorldTransform(),\ -\/1,\ -\/1);}
+\DoxyCodeLine{01246\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ obB(0,\ colObjB-\/>getCollisionShape(),\ colObjB,\ colObjB-\/>getWorldTransform(),\ -\/1,\ -\/1);}
+\DoxyCodeLine{01247\ }
+\DoxyCodeLine{01248\ \ \ \ \ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}*\ algorithm\ =\ getDispatcher()-\/>findAlgorithm(\&obA,\ \&obB,\ 0,\ BT\_CLOSEST\_POINT\_ALGORITHMS);}
+\DoxyCodeLine{01249\ \ \ \ \ \textcolor{keywordflow}{if}\ (algorithm)}
+\DoxyCodeLine{01250\ \ \ \ \ \{}
+\DoxyCodeLine{01251\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_bridged_manifold_result}{btBridgedManifoldResult}}\ contactPointResult(\&obA,\ \&obB,\ resultCallback);}
+\DoxyCodeLine{01252\ \ \ \ \ \ \ \ \ contactPointResult.m\_closestPointDistanceThreshold\ =\ resultCallback.m\_closestDistanceThreshold;}
+\DoxyCodeLine{01253\ \ \ \ \ \ \ \ \ \textcolor{comment}{//discrete\ collision\ detection\ query}}
+\DoxyCodeLine{01254\ \ \ \ \ \ \ \ \ algorithm-\/>processCollision(\&obA,\ \&obB,\ getDispatchInfo(),\ \&contactPointResult);}
+\DoxyCodeLine{01255\ }
+\DoxyCodeLine{01256\ \ \ \ \ \ \ \ \ algorithm-\/>\string~btCollisionAlgorithm();}
+\DoxyCodeLine{01257\ \ \ \ \ \ \ \ \ getDispatcher()-\/>freeCollisionAlgorithm(algorithm);}
+\DoxyCodeLine{01258\ \ \ \ \ \}}
+\DoxyCodeLine{01259\ \}}
+\DoxyCodeLine{01260\ }
+\DoxyCodeLine{01261\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_debug_drawcallback}{DebugDrawcallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_triangle_callback}{btTriangleCallback}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_internal_triangle_index_callback}{btInternalTriangleIndexCallback}}}
+\DoxyCodeLine{01262\ \{}
+\DoxyCodeLine{01263\ \ \ \ \ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ m\_debugDrawer;}
+\DoxyCodeLine{01264\ \ \ \ \ btVector3\ m\_color;}
+\DoxyCodeLine{01265\ \ \ \ \ btTransform\ m\_worldTrans;}
+\DoxyCodeLine{01266\ }
+\DoxyCodeLine{01267\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{01268\ \ \ \ \ \mbox{\hyperlink{class_debug_drawcallback}{DebugDrawcallback}}(\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer,\ \textcolor{keyword}{const}\ btTransform\&\ worldTrans,\ \textcolor{keyword}{const}\ btVector3\&\ color)\ :\ m\_debugDrawer(debugDrawer),}
+\DoxyCodeLine{01269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_color(color),}
+\DoxyCodeLine{01270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_worldTrans(worldTrans)}
+\DoxyCodeLine{01271\ \ \ \ \ \{}
+\DoxyCodeLine{01272\ \ \ \ \ \}}
+\DoxyCodeLine{01273\ }
+\DoxyCodeLine{01274\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ internalProcessTriangleIndex(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{01275\ \ \ \ \ \{}
+\DoxyCodeLine{01276\ \ \ \ \ \ \ \ \ processTriangle(triangle,\ partId,\ triangleIndex);}
+\DoxyCodeLine{01277\ \ \ \ \ \}}
+\DoxyCodeLine{01278\ }
+\DoxyCodeLine{01279\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ processTriangle(btVector3*\ triangle,\ \textcolor{keywordtype}{int}\ partId,\ \textcolor{keywordtype}{int}\ triangleIndex)}
+\DoxyCodeLine{01280\ \ \ \ \ \{}
+\DoxyCodeLine{01281\ \ \ \ \ \ \ \ \ (void)partId;}
+\DoxyCodeLine{01282\ \ \ \ \ \ \ \ \ (void)triangleIndex;}
+\DoxyCodeLine{01283\ }
+\DoxyCodeLine{01284\ \ \ \ \ \ \ \ \ btVector3\ wv0,\ wv1,\ wv2;}
+\DoxyCodeLine{01285\ \ \ \ \ \ \ \ \ wv0\ =\ m\_worldTrans\ *\ triangle[0];}
+\DoxyCodeLine{01286\ \ \ \ \ \ \ \ \ wv1\ =\ m\_worldTrans\ *\ triangle[1];}
+\DoxyCodeLine{01287\ \ \ \ \ \ \ \ \ wv2\ =\ m\_worldTrans\ *\ triangle[2];}
+\DoxyCodeLine{01288\ \ \ \ \ \ \ \ \ btVector3\ center\ =\ (wv0\ +\ wv1\ +\ wv2)\ *\ btScalar(1.\ /\ 3.);}
+\DoxyCodeLine{01289\ }
+\DoxyCodeLine{01290\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_debugDrawer-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawNormals)}
+\DoxyCodeLine{01291\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01292\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normal\ =\ (wv1\ -\/\ wv0).cross(wv2\ -\/\ wv0);}
+\DoxyCodeLine{01293\ \ \ \ \ \ \ \ \ \ \ \ \ normal.normalize();}
+\DoxyCodeLine{01294\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalColor(1,\ 1,\ 0);}
+\DoxyCodeLine{01295\ \ \ \ \ \ \ \ \ \ \ \ \ m\_debugDrawer-\/>drawLine(center,\ center\ +\ normal,\ normalColor);}
+\DoxyCodeLine{01296\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01297\ \ \ \ \ \ \ \ \ m\_debugDrawer-\/>drawTriangle(wv0,\ wv1,\ wv2,\ m\_color,\ 1.0);}
+\DoxyCodeLine{01298\ \ \ \ \ \}}
+\DoxyCodeLine{01299\ \};}
+\DoxyCodeLine{01300\ }
+\DoxyCodeLine{01301\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_ac1ca6489c220005798069152c3df0d08}{btCollisionWorld::debugDrawObject}}(\textcolor{keyword}{const}\ btTransform\&\ worldTransform,\ \textcolor{keyword}{const}\ btCollisionShape*\ shape,\ \textcolor{keyword}{const}\ btVector3\&\ color)}
+\DoxyCodeLine{01302\ \{}
+\DoxyCodeLine{01303\ \ \ \ \ \textcolor{comment}{//\ Draw\ a\ small\ simplex\ at\ the\ center\ of\ the\ object}}
+\DoxyCodeLine{01304\ \ \ \ \ \textcolor{keywordflow}{if}\ (getDebugDrawer()\ \&\&\ getDebugDrawer()-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawFrames)}
+\DoxyCodeLine{01305\ \ \ \ \ \{}
+\DoxyCodeLine{01306\ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawTransform(worldTransform,\ .1);}
+\DoxyCodeLine{01307\ \ \ \ \ \}}
+\DoxyCodeLine{01308\ }
+\DoxyCodeLine{01309\ \ \ \ \ \textcolor{keywordflow}{if}\ (shape-\/>getShapeType()\ ==\ COMPOUND\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{01310\ \ \ \ \ \{}
+\DoxyCodeLine{01311\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01312\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ compoundShape-\/>getNumChildShapes()\ -\/\ 1;\ i\ >=\ 0;\ i-\/-\/)}
+\DoxyCodeLine{01313\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01314\ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childTrans\ =\ compoundShape-\/>getChildTransform(i);}
+\DoxyCodeLine{01315\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ colShape\ =\ compoundShape-\/>getChildShape(i);}
+\DoxyCodeLine{01316\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_ac1ca6489c220005798069152c3df0d08}{debugDrawObject}}(worldTransform\ *\ childTrans,\ colShape,\ color);}
+\DoxyCodeLine{01317\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01318\ \ \ \ \ \}}
+\DoxyCodeLine{01319\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01320\ \ \ \ \ \{}
+\DoxyCodeLine{01321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (shape-\/>getShapeType())}
+\DoxyCodeLine{01322\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01323\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BOX\_SHAPE\_PROXYTYPE:}
+\DoxyCodeLine{01324\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btBoxShape*\ boxShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btBoxShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ halfExtents\ =\ boxShape-\/>getHalfExtentsWithMargin();}
+\DoxyCodeLine{01327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawBox(-\/halfExtents,\ halfExtents,\ worldTransform,\ color);}
+\DoxyCodeLine{01328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01329\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01330\ }
+\DoxyCodeLine{01331\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ SPHERE\_SHAPE\_PROXYTYPE:}
+\DoxyCodeLine{01332\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSphereShape*\ sphereShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btSphereShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ radius\ =\ sphereShape-\/>getMargin();\ \ \textcolor{comment}{//radius\ doesn't\ include\ the\ margin,\ so\ draw\ with\ margin}}
+\DoxyCodeLine{01335\ }
+\DoxyCodeLine{01336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawSphere(radius,\ worldTransform,\ color);}
+\DoxyCodeLine{01337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01338\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01339\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ MULTI\_SPHERE\_SHAPE\_PROXYTYPE:}
+\DoxyCodeLine{01340\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMultiSphereShape*\ multiSphereShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btMultiSphereShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01342\ }
+\DoxyCodeLine{01343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ childTransform;}
+\DoxyCodeLine{01344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ childTransform.setIdentity();}
+\DoxyCodeLine{01345\ }
+\DoxyCodeLine{01346\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ multiSphereShape-\/>getSphereCount()\ -\/\ 1;\ i\ >=\ 0;\ i-\/-\/)}
+\DoxyCodeLine{01347\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01348\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ childTransform.setOrigin(multiSphereShape-\/>getSpherePosition(i));}
+\DoxyCodeLine{01349\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawSphere(multiSphereShape-\/>getSphereRadius(i),\ worldTransform\ *\ childTransform,\ color);}
+\DoxyCodeLine{01350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01351\ }
+\DoxyCodeLine{01352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01353\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01354\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ CAPSULE\_SHAPE\_PROXYTYPE:}
+\DoxyCodeLine{01355\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCapsuleShape*\ capsuleShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCapsuleShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01357\ }
+\DoxyCodeLine{01358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ radius\ =\ capsuleShape-\/>getRadius();}
+\DoxyCodeLine{01359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ halfHeight\ =\ capsuleShape-\/>getHalfHeight();}
+\DoxyCodeLine{01360\ }
+\DoxyCodeLine{01361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis\ =\ capsuleShape-\/>getUpAxis();}
+\DoxyCodeLine{01362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawCapsule(radius,\ halfHeight,\ upAxis,\ worldTransform,\ color);}
+\DoxyCodeLine{01363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01364\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01365\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ CONE\_SHAPE\_PROXYTYPE:}
+\DoxyCodeLine{01366\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConeShape*\ coneShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btConeShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ radius\ =\ coneShape-\/>getRadius();\ \ \textcolor{comment}{//+coneShape-\/>getMargin();}}
+\DoxyCodeLine{01369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ height\ =\ coneShape-\/>getHeight();\ \ \textcolor{comment}{//+coneShape-\/>getMargin();}}
+\DoxyCodeLine{01370\ }
+\DoxyCodeLine{01371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis\ =\ coneShape-\/>getConeUpIndex();}
+\DoxyCodeLine{01372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawCone(radius,\ height,\ upAxis,\ worldTransform,\ color);}
+\DoxyCodeLine{01373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01374\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01375\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ CYLINDER\_SHAPE\_PROXYTYPE:}
+\DoxyCodeLine{01376\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCylinderShape*\ cylinder\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCylinderShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ upAxis\ =\ cylinder-\/>getUpAxis();}
+\DoxyCodeLine{01379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ radius\ =\ cylinder-\/>getRadius();}
+\DoxyCodeLine{01380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ halfHeight\ =\ cylinder-\/>getHalfExtentsWithMargin()[upAxis];}
+\DoxyCodeLine{01381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawCylinder(radius,\ halfHeight,\ upAxis,\ worldTransform,\ color);}
+\DoxyCodeLine{01382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01383\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01384\ }
+\DoxyCodeLine{01385\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ STATIC\_PLANE\_PROXYTYPE:}
+\DoxyCodeLine{01386\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btStaticPlaneShape*\ staticPlaneShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btStaticPlaneShape*\textcolor{keyword}{>}(shape);}
+\DoxyCodeLine{01388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ planeConst\ =\ staticPlaneShape-\/>getPlaneConstant();}
+\DoxyCodeLine{01389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ planeNormal\ =\ staticPlaneShape-\/>getPlaneNormal();}
+\DoxyCodeLine{01390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawPlane(planeNormal,\ planeConst,\ worldTransform,\ color);}
+\DoxyCodeLine{01391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01392\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01393\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{01394\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (shape-\/>isPolyhedral())}
+\DoxyCodeLine{01397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btPolyhedralConvexShape*\ polyshape\ =\ (btPolyhedralConvexShape*)shape;}
+\DoxyCodeLine{01399\ }
+\DoxyCodeLine{01400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{01401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (polyshape-\/>getConvexPolyhedron())}
+\DoxyCodeLine{01402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btConvexPolyhedron*\ poly\ =\ polyshape-\/>getConvexPolyhedron();}
+\DoxyCodeLine{01404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ poly-\/>m\_faces.size();\ i++)}
+\DoxyCodeLine{01405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ centroid(0,\ 0,\ 0);}
+\DoxyCodeLine{01407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numVerts\ =\ poly-\/>m\_faces[i].m\_indices.size();}
+\DoxyCodeLine{01408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numVerts)}
+\DoxyCodeLine{01409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lastV\ =\ poly-\/>m\_faces[i].m\_indices[numVerts\ -\/\ 1];}
+\DoxyCodeLine{01411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ v\ =\ 0;\ v\ <\ poly-\/>m\_faces[i].m\_indices.size();\ v++)}
+\DoxyCodeLine{01412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ curVert\ =\ poly-\/>m\_faces[i].m\_indices[v];}
+\DoxyCodeLine{01414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ centroid\ +=\ poly-\/>m\_vertices[curVert];}
+\DoxyCodeLine{01415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawLine(worldTransform\ *\ poly-\/>m\_vertices[lastV],\ worldTransform\ *\ poly-\/>m\_vertices[curVert],\ color);}
+\DoxyCodeLine{01416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lastV\ =\ curVert;}
+\DoxyCodeLine{01417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ centroid\ *=\ btScalar(1.f)\ /\ btScalar(numVerts);}
+\DoxyCodeLine{01420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getDebugDrawer()-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawNormals)}
+\DoxyCodeLine{01421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalColor(1,\ 1,\ 0);}
+\DoxyCodeLine{01423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ faceNormal(poly-\/>m\_faces[i].m\_plane[0],\ poly-\/>m\_faces[i].m\_plane[1],\ poly-\/>m\_faces[i].m\_plane[2]);}
+\DoxyCodeLine{01424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawLine(worldTransform\ *\ centroid,\ worldTransform\ *\ (centroid\ +\ faceNormal),\ normalColor);}
+\DoxyCodeLine{01425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01426\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01427\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ polyshape-\/>getNumEdges();\ i++)}
+\DoxyCodeLine{01431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ a,\ b;}
+\DoxyCodeLine{01433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ polyshape-\/>getEdge(i,\ a,\ b);}
+\DoxyCodeLine{01434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ wa\ =\ worldTransform\ *\ a;}
+\DoxyCodeLine{01435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ wb\ =\ worldTransform\ *\ b;}
+\DoxyCodeLine{01436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawLine(wa,\ wb,\ color);}
+\DoxyCodeLine{01437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01440\ }
+\DoxyCodeLine{01441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (shape-\/>isConcave())}
+\DoxyCodeLine{01442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btConcaveShape*\ concaveMesh\ =\ (btConcaveShape*)shape;}
+\DoxyCodeLine{01444\ }
+\DoxyCodeLine{01446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ aabbMax(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{01447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ aabbMin(btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{01448\ }
+\DoxyCodeLine{01449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_debug_drawcallback}{DebugDrawcallback}}\ drawCallback(getDebugDrawer(),\ worldTransform,\ color);}
+\DoxyCodeLine{01450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ concaveMesh-\/>processAllTriangles(\&drawCallback,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{01451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01452\ }
+\DoxyCodeLine{01453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (shape-\/>getShapeType()\ ==\ CONVEX\_TRIANGLEMESH\_SHAPE\_PROXYTYPE)}
+\DoxyCodeLine{01454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btConvexTriangleMeshShape*\ convexMesh\ =\ (btConvexTriangleMeshShape*)shape;}
+\DoxyCodeLine{01456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//todo:\ pass\ camera\ for\ some\ culling}}
+\DoxyCodeLine{01457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ aabbMax(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{01458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ aabbMin(btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{01459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//DebugDrawcallback\ drawCallback;}}
+\DoxyCodeLine{01460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_debug_drawcallback}{DebugDrawcallback}}\ drawCallback(getDebugDrawer(),\ worldTransform,\ color);}
+\DoxyCodeLine{01461\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ convexMesh-\/>getMeshInterface()-\/>InternalProcessAllTriangles(\&drawCallback,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{01462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01463\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01464\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01465\ \ \ \ \ \}}
+\DoxyCodeLine{01466\ \}}
+\DoxyCodeLine{01467\ }
+\DoxyCodeLine{01468\ \textcolor{keywordtype}{void}\ btCollisionWorld::debugDrawWorld()}
+\DoxyCodeLine{01469\ \{}
+\DoxyCodeLine{01470\ \ \ \ \ \textcolor{keywordflow}{if}\ (getDebugDrawer())}
+\DoxyCodeLine{01471\ \ \ \ \ \{}
+\DoxyCodeLine{01472\ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>clearLines();}
+\DoxyCodeLine{01473\ }
+\DoxyCodeLine{01474\ \ \ \ \ \ \ \ \ btIDebugDraw::DefaultColors\ defaultColors\ =\ getDebugDrawer()-\/>getDefaultColors();}
+\DoxyCodeLine{01475\ }
+\DoxyCodeLine{01476\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getDebugDrawer()-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawContactPoints)}
+\DoxyCodeLine{01477\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01478\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getDispatcher())}
+\DoxyCodeLine{01479\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numManifolds\ =\ getDispatcher()-\/>getNumManifolds();}
+\DoxyCodeLine{01481\ }
+\DoxyCodeLine{01482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numManifolds;\ i++)}
+\DoxyCodeLine{01483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btPersistentManifold*\ contactManifold\ =\ getDispatcher()-\/>getManifoldByIndexInternal(i);}
+\DoxyCodeLine{01485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btCollisionObject*\ obA\ =\ static\_cast<btCollisionObject*>(contactManifold-\/>getBody0());}}
+\DoxyCodeLine{01486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btCollisionObject*\ obB\ =\ static\_cast<btCollisionObject*>(contactManifold-\/>getBody1());}}
+\DoxyCodeLine{01487\ }
+\DoxyCodeLine{01488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numContacts\ =\ contactManifold-\/>getNumContacts();}
+\DoxyCodeLine{01489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ numContacts;\ j++)}
+\DoxyCodeLine{01490\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}\&\ cp\ =\ contactManifold-\/>getContactPoint(j);}
+\DoxyCodeLine{01492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getDebugDrawer()-\/>drawContactPoint(cp.m\_positionWorldOnB,\ cp.m\_normalWorldOnB,\ cp.getDistance(),\ cp.getLifeTime(),\ defaultColors.m\_contactPoint);}
+\DoxyCodeLine{01493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01495\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01496\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01497\ }
+\DoxyCodeLine{01498\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((getDebugDrawer()-\/>getDebugMode()\ \&\ (btIDebugDraw::DBG\_DrawWireframe\ |\ btIDebugDraw::DBG\_DrawAabb)))}
+\DoxyCodeLine{01499\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01500\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{01501\ }
+\DoxyCodeLine{01502\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{01503\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj\ =\ m\_collisionObjects[i];}
+\DoxyCodeLine{01505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((colObj-\/>getCollisionFlags()\ \&\ btCollisionObject::CF\_DISABLE\_VISUALIZE\_OBJECT)\ ==\ 0)}
+\DoxyCodeLine{01506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getDebugDrawer()\ \&\&\ (getDebugDrawer()-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawWireframe))}
+\DoxyCodeLine{01508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ color(btScalar(0.4),\ btScalar(0.4),\ btScalar(0.4));}
+\DoxyCodeLine{01510\ }
+\DoxyCodeLine{01511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (colObj-\/>getActivationState())}
+\DoxyCodeLine{01512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ ACTIVE\_TAG:}
+\DoxyCodeLine{01514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ color\ =\ defaultColors.m\_activeObject;}
+\DoxyCodeLine{01515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ ISLAND\_SLEEPING:}
+\DoxyCodeLine{01517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ color\ =\ defaultColors.m\_deactivatedObject;}
+\DoxyCodeLine{01518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ WANTS\_DEACTIVATION:}
+\DoxyCodeLine{01520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ color\ =\ defaultColors.m\_wantsDeactivationObject;}
+\DoxyCodeLine{01521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ DISABLE\_DEACTIVATION:}
+\DoxyCodeLine{01523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ color\ =\ defaultColors.m\_disabledDeactivationObject;}
+\DoxyCodeLine{01524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ DISABLE\_SIMULATION:}
+\DoxyCodeLine{01526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ color\ =\ defaultColors.m\_disabledSimulationObject;}
+\DoxyCodeLine{01527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{01529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ color\ =\ btVector3(btScalar(.3),\ btScalar(0.3),\ btScalar(0.3));}
+\DoxyCodeLine{01531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{01533\ }
+\DoxyCodeLine{01534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObj-\/>getCustomDebugColor(color);}
+\DoxyCodeLine{01535\ }
+\DoxyCodeLine{01536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_ac1ca6489c220005798069152c3df0d08}{debugDrawObject}}(colObj-\/>getWorldTransform(),\ colObj-\/>getCollisionShape(),\ color);}
+\DoxyCodeLine{01537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_debugDrawer\ \&\&\ (m\_debugDrawer-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawAabb))}
+\DoxyCodeLine{01539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ minAabb,\ maxAabb;}
+\DoxyCodeLine{01541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ colorvec\ =\ defaultColors.m\_aabb;}
+\DoxyCodeLine{01542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObj-\/>getCollisionShape()-\/>getAabb(colObj-\/>getWorldTransform(),\ minAabb,\ maxAabb);}
+\DoxyCodeLine{01543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ contactThreshold(gContactBreakingThreshold,\ gContactBreakingThreshold,\ gContactBreakingThreshold);}
+\DoxyCodeLine{01544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minAabb\ -\/=\ contactThreshold;}
+\DoxyCodeLine{01545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxAabb\ +=\ contactThreshold;}
+\DoxyCodeLine{01546\ }
+\DoxyCodeLine{01547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ minAabb2,\ maxAabb2;}
+\DoxyCodeLine{01548\ }
+\DoxyCodeLine{01549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getDispatchInfo().m\_useContinuous\ \&\&\ colObj-\/>getInternalType()\ ==\ btCollisionObject::CO\_RIGID\_BODY\ \&\&\ !colObj-\/>isStaticOrKinematicObject())}
+\DoxyCodeLine{01550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colObj-\/>getCollisionShape()-\/>getAabb(colObj-\/>getInterpolationWorldTransform(),\ minAabb2,\ maxAabb2);}
+\DoxyCodeLine{01552\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minAabb2\ -\/=\ contactThreshold;}
+\DoxyCodeLine{01553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxAabb2\ +=\ contactThreshold;}
+\DoxyCodeLine{01554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minAabb.setMin(minAabb2);}
+\DoxyCodeLine{01555\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxAabb.setMax(maxAabb2);}
+\DoxyCodeLine{01556\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01557\ }
+\DoxyCodeLine{01558\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_debugDrawer-\/>drawAabb(minAabb,\ maxAabb,\ colorvec);}
+\DoxyCodeLine{01559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01561\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01562\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01563\ \ \ \ \ \}}
+\DoxyCodeLine{01564\ \}}
+\DoxyCodeLine{01565\ }
+\DoxyCodeLine{01566\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_aeed5861d66035fa72f40e27b04bdc056}{btCollisionWorld::serializeCollisionObjects}}(\mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)}
+\DoxyCodeLine{01567\ \{}
+\DoxyCodeLine{01568\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{01569\ }
+\DoxyCodeLine{01571\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashPtr,\ btCollisionShape*>}}\ serializedShapes;}
+\DoxyCodeLine{01572\ }
+\DoxyCodeLine{01573\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{01574\ \ \ \ \ \{}
+\DoxyCodeLine{01575\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj\ =\ m\_collisionObjects[i];}
+\DoxyCodeLine{01576\ \ \ \ \ \ \ \ \ btCollisionShape*\ shape\ =\ colObj-\/>getCollisionShape();}
+\DoxyCodeLine{01577\ }
+\DoxyCodeLine{01578\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!serializedShapes.find(shape))}
+\DoxyCodeLine{01579\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01580\ \ \ \ \ \ \ \ \ \ \ \ \ serializedShapes.insert(shape,\ shape);}
+\DoxyCodeLine{01581\ \ \ \ \ \ \ \ \ \ \ \ \ shape-\/>serializeSingleShape(serializer);}
+\DoxyCodeLine{01582\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01583\ \ \ \ \ \}}
+\DoxyCodeLine{01584\ }
+\DoxyCodeLine{01585\ \ \ \ \ \textcolor{comment}{//serialize\ all\ collision\ objects}}
+\DoxyCodeLine{01586\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_collisionObjects.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{01587\ \ \ \ \ \{}
+\DoxyCodeLine{01588\ \ \ \ \ \ \ \ \ btCollisionObject*\ colObj\ =\ m\_collisionObjects[i];}
+\DoxyCodeLine{01589\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (colObj-\/>getInternalType()\ ==\ btCollisionObject::CO\_COLLISION\_OBJECT)}
+\DoxyCodeLine{01590\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01591\ \ \ \ \ \ \ \ \ \ \ \ \ colObj-\/>serializeSingleObject(serializer);}
+\DoxyCodeLine{01592\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01593\ \ \ \ \ \}}
+\DoxyCodeLine{01594\ \}}
+\DoxyCodeLine{01595\ }
+\DoxyCodeLine{01596\ \textcolor{keywordtype}{void}\ btCollisionWorld::serializeContactManifolds(\mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)}
+\DoxyCodeLine{01597\ \{}
+\DoxyCodeLine{01598\ \ \ \ \ \textcolor{keywordflow}{if}\ (serializer-\/>getSerializationFlags()\ \&\ BT\_SERIALIZE\_CONTACT\_MANIFOLDS)}
+\DoxyCodeLine{01599\ \ \ \ \ \{}
+\DoxyCodeLine{01600\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numManifolds\ =\ getDispatcher()-\/>getNumManifolds();}
+\DoxyCodeLine{01601\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numManifolds;\ i++)}
+\DoxyCodeLine{01602\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01603\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btPersistentManifold*\ manifold\ =\ getDispatcher()-\/>getInternalManifoldPointer()[i];}
+\DoxyCodeLine{01604\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//don't\ serialize\ empty\ manifolds,\ they\ just\ take\ space}}
+\DoxyCodeLine{01605\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//(may\ have\ to\ do\ it\ anyway\ if\ it\ destroys\ determinism)}}
+\DoxyCodeLine{01606\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (manifold-\/>getNumContacts()\ ==\ 0)}
+\DoxyCodeLine{01607\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{01608\ }
+\DoxyCodeLine{01609\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(manifold-\/>calculateSerializeBufferSize(),\ 1);}
+\DoxyCodeLine{01610\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ structType\ =\ manifold-\/>serialize(manifold,\ chunk-\/>m\_oldPtr,\ serializer);}
+\DoxyCodeLine{01611\ \ \ \ \ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ structType,\ BT\_CONTACTMANIFOLD\_CODE,\ (\textcolor{keywordtype}{void}*)manifold);}
+\DoxyCodeLine{01612\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01613\ \ \ \ \ \}}
+\DoxyCodeLine{01614\ \}}
+\DoxyCodeLine{01615\ }
+\DoxyCodeLine{01616\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_collision_world_a152b79ca83fdb13ed7f1cc86ac214f66}{btCollisionWorld::serialize}}(\mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)}
+\DoxyCodeLine{01617\ \{}
+\DoxyCodeLine{01618\ \ \ \ \ serializer-\/>startSerialization();}
+\DoxyCodeLine{01619\ }
+\DoxyCodeLine{01620\ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_aeed5861d66035fa72f40e27b04bdc056}{serializeCollisionObjects}}(serializer);}
+\DoxyCodeLine{01621\ }
+\DoxyCodeLine{01622\ \ \ \ \ serializeContactManifolds(serializer);}
+\DoxyCodeLine{01623\ }
+\DoxyCodeLine{01624\ \ \ \ \ serializer-\/>finishSerialization();}
+\DoxyCodeLine{01625\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,27 @@
+var classbt_g_impact_shape_interface =
+[
+    [ "calcLocalAABB", "classbt_g_impact_shape_interface.html#a1712a4613e20aa9249514dcd97f0a086", null ],
+    [ "childrenHasTransform", "classbt_g_impact_shape_interface.html#a9ea24ba36990721e4f55851afc421e06", null ],
+    [ "getAabb", "classbt_g_impact_shape_interface.html#a03644dc230664957e43ed49b4a319d64", null ],
+    [ "getBoxSet", "classbt_g_impact_shape_interface.html#aec3e92d60734c14aae75127d9600ee93", null ],
+    [ "getChildAabb", "classbt_g_impact_shape_interface.html#a1e01c9d3c05ee9d38219d5bf92fc0f41", null ],
+    [ "getChildShape", "classbt_g_impact_shape_interface.html#a801c8d6303fad06a29710b81f0ed928a", null ],
+    [ "getChildShape", "classbt_g_impact_shape_interface.html#a09947acf8c3ebf98df93bd985db804f9", null ],
+    [ "getChildTransform", "classbt_g_impact_shape_interface.html#ac06b1f597e2b628bf1e0523ab1c62d08", null ],
+    [ "getGImpactShapeType", "classbt_g_impact_shape_interface.html#a25cacbe448997e3f8ec99cb2d4952859", null ],
+    [ "getLocalBox", "classbt_g_impact_shape_interface.html#a3085204d518100c120402a0aae6ec525", null ],
+    [ "getNumChildShapes", "classbt_g_impact_shape_interface.html#aa145ed4669ce202e97d1a9e1081b3560", null ],
+    [ "getPrimitiveManager", "classbt_g_impact_shape_interface.html#a86b5d13d22482700f517e0a43ff435b9", null ],
+    [ "getPrimitiveTriangle", "classbt_g_impact_shape_interface.html#a13d9c190157bb9b0087cdbcdf940f4ac", null ],
+    [ "hasBoxSet", "classbt_g_impact_shape_interface.html#af8cc682e76969583dc5636079081e63c", null ],
+    [ "lockChildShapes", "classbt_g_impact_shape_interface.html#a365c563e95c59eed2ebf2487dcfc11b4", null ],
+    [ "needsRetrieveTetrahedrons", "classbt_g_impact_shape_interface.html#ad3f86cd0b7d0bbfd272fd6e815e17485", null ],
+    [ "needsRetrieveTriangles", "classbt_g_impact_shape_interface.html#a62093ef330529ac27df9538313ece90a", null ],
+    [ "postUpdate", "classbt_g_impact_shape_interface.html#ac430754948ac92d6f70b81e88416c96a", null ],
+    [ "processAllTriangles", "classbt_g_impact_shape_interface.html#ae1dc14b29f49fc0262be72dbe9d7b75b", null ],
+    [ "processAllTrianglesRay", "classbt_g_impact_shape_interface.html#af67273183582c6696169ee4ae5d6cf37", null ],
+    [ "rayTest", "classbt_g_impact_shape_interface.html#afed230ba546b551d8c9b585d227f8d5e", null ],
+    [ "setChildTransform", "classbt_g_impact_shape_interface.html#a83392f97bd7dfeb71ccdce6913a465b0", null ],
+    [ "setLocalScaling", "classbt_g_impact_shape_interface.html#adec0bd43cd0105b1d0dc172bc7db50d8", null ],
+    [ "updateBound", "classbt_g_impact_shape_interface.html#acb26c2d7a2aecabd06b996b72b848492", null ]
+];

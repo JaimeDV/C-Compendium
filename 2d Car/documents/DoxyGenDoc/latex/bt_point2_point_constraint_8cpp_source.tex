@@ -1,0 +1,207 @@
+\doxysection{bt\+Point2\+Point\+Constraint.\+cpp}
+\hypertarget{bt_point2_point_constraint_8cpp_source}{}\label{bt_point2_point_constraint_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btPoint2PointConstraint.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <new>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ btPoint2PointConstraint::btPoint2PointConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbB,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInA,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInB)}
+\DoxyCodeLine{00021\ \ \ \ \ :\ btTypedConstraint(POINT2POINT\_CONSTRAINT\_TYPE,\ rbA,\ rbB),\ m\_pivotInA(pivotInA),\ m\_pivotInB(pivotInB),\ m\_flags(0),\ m\_useSolveConstraintObsolete(false)}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ btPoint2PointConstraint::btPoint2PointConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInA)}
+\DoxyCodeLine{00026\ \ \ \ \ :\ btTypedConstraint(POINT2POINT\_CONSTRAINT\_TYPE,\ rbA),\ m\_pivotInA(pivotInA),\ m\_pivotInB(rbA.getCenterOfMassTransform()(pivotInA)),\ m\_flags(0),\ m\_useSolveConstraintObsolete(false)}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ btPoint2PointConstraint::buildJacobian()}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ m\_appliedImpulse\ =\ btScalar(0.);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ btVector3\ normal(0,\ 0,\ 0);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ normal[i]\ =\ 1;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\&m\_jac[i])\ btJacobianEntry(}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbA.getCenterOfMassTransform().getBasis().transpose(),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbB.getCenterOfMassTransform().getBasis().transpose(),}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbA.getCenterOfMassTransform()\ *\ m\_pivotInA\ -\/\ m\_rbA.getCenterOfMassPosition(),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbB.getCenterOfMassTransform()\ *\ m\_pivotInB\ -\/\ m\_rbB.getCenterOfMassPosition(),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ normal,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbA.getInvInertiaDiagLocal(),}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbA.getInvMass(),}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbB.getInvInertiaDiagLocal(),}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rbB.getInvMass());}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ normal[i]\ =\ 0;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ btPoint2PointConstraint::getInfo1(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}*\ info)}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ getInfo1NonVirtual(info);}
+\DoxyCodeLine{00059\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ btPoint2PointConstraint::getInfo1NonVirtual(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}*\ info)}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_useSolveConstraintObsolete)}
+\DoxyCodeLine{00064\ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ info-\/>m\_numConstraintRows\ =\ 0;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ info-\/>nub\ =\ 0;}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ info-\/>m\_numConstraintRows\ =\ 3;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ info-\/>nub\ =\ 3;}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ btPoint2PointConstraint::getInfo2(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}*\ info)}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ getInfo2NonVirtual(info,\ m\_rbA.getCenterOfMassTransform(),\ m\_rbB.getCenterOfMassTransform());}
+\DoxyCodeLine{00078\ \}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ btPoint2PointConstraint::getInfo2NonVirtual(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}*\ info,\ \textcolor{keyword}{const}\ btTransform\&\ body0\_trans,\ \textcolor{keyword}{const}\ btTransform\&\ body1\_trans)}
+\DoxyCodeLine{00081\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ btAssert(!m\_useSolveConstraintObsolete);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//retrieve\ matrices}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//\ anchor\ points\ in\ global\ coordinates\ with\ respect\ to\ body\ PORs.}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{//\ set\ jacobian}}
+\DoxyCodeLine{00089\ \ \ \ \ info-\/>m\_J1linearAxis[0]\ =\ 1;}
+\DoxyCodeLine{00090\ \ \ \ \ info-\/>m\_J1linearAxis[info-\/>rowskip\ +\ 1]\ =\ 1;}
+\DoxyCodeLine{00091\ \ \ \ \ info-\/>m\_J1linearAxis[2\ *\ info-\/>rowskip\ +\ 2]\ =\ 1;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ btVector3\ a1\ =\ body0\_trans.getBasis()\ *\ getPivotInA();}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ btVector3*\ angular0\ =\ (btVector3*)(info-\/>m\_J1angularAxis);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ btVector3*\ angular1\ =\ (btVector3*)(info-\/>m\_J1angularAxis\ +\ info-\/>rowskip);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ btVector3*\ angular2\ =\ (btVector3*)(info-\/>m\_J1angularAxis\ +\ 2\ *\ info-\/>rowskip);}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ btVector3\ a1neg\ =\ -\/a1;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ a1neg.getSkewSymmetricMatrix(angular0,\ angular1,\ angular2);}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ info-\/>m\_J2linearAxis[0]\ =\ -\/1;}
+\DoxyCodeLine{00103\ \ \ \ \ info-\/>m\_J2linearAxis[info-\/>rowskip\ +\ 1]\ =\ -\/1;}
+\DoxyCodeLine{00104\ \ \ \ \ info-\/>m\_J2linearAxis[2\ *\ info-\/>rowskip\ +\ 2]\ =\ -\/1;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ btVector3\ a2\ =\ body1\_trans.getBasis()\ *\ getPivotInB();}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ btVector3\ a2n\ =\ -\/a2;}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ btVector3*\ angular0\ =\ (btVector3*)(info-\/>m\_J2angularAxis);}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ btVector3*\ angular1\ =\ (btVector3*)(info-\/>m\_J2angularAxis\ +\ info-\/>rowskip);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ btVector3*\ angular2\ =\ (btVector3*)(info-\/>m\_J2angularAxis\ +\ 2\ *\ info-\/>rowskip);}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ a2.getSkewSymmetricMatrix(angular0,\ angular1,\ angular2);}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{comment}{//\ set\ right\ hand\ side}}
+\DoxyCodeLine{00117\ \ \ \ \ btScalar\ currERP\ =\ (m\_flags\ \&\ BT\_P2P\_FLAGS\_ERP)\ ?\ m\_erp\ :\ info-\/>erp;}
+\DoxyCodeLine{00118\ \ \ \ \ btScalar\ k\ =\ info-\/>fps\ *\ currERP;}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{int}\ j;}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00121\ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ info-\/>m\_constraintError[j\ *\ info-\/>rowskip]\ =\ k\ *\ (a2[j]\ +\ body1\_trans.getOrigin()[j]\ -\/\ a1[j]\ -\/\ body0\_trans.getOrigin()[j]);}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}info-\/>m\_constraintError[\%d]=\%f\(\backslash\)n"{},j,info-\/>m\_constraintError[j]);}}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_flags\ \&\ BT\_P2P\_FLAGS\_CFM)}
+\DoxyCodeLine{00126\ \ \ \ \ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>cfm[j\ *\ info-\/>rowskip]\ =\ m\_cfm;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ btScalar\ impulseClamp\ =\ m\_setting.m\_impulseClamp;\ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00135\ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_setting.m\_impulseClamp\ >\ 0)}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_lowerLimit[j\ *\ info-\/>rowskip]\ =\ -\/impulseClamp;}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ info-\/>m\_upperLimit[j\ *\ info-\/>rowskip]\ =\ impulseClamp;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ \ \ \ \ info-\/>m\_damping\ =\ m\_setting.m\_damping;}
+\DoxyCodeLine{00143\ \}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ btPoint2PointConstraint::updateRHS(btScalar\ timeStep)}
+\DoxyCodeLine{00146\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ (void)timeStep;}
+\DoxyCodeLine{00148\ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{void}\ btPoint2PointConstraint::setParam(\textcolor{keywordtype}{int}\ num,\ btScalar\ value,\ \textcolor{keywordtype}{int}\ axis)}
+\DoxyCodeLine{00153\ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordflow}{if}\ (axis\ !=\ -\/1)}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ btAssertConstrParams(0);}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00159\ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (num)}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_ERP:}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_STOP\_ERP:}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_erp\ =\ value;}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_flags\ |=\ BT\_P2P\_FLAGS\_ERP;}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_CFM:}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_STOP\_CFM:}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_cfm\ =\ value;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_flags\ |=\ BT\_P2P\_FLAGS\_CFM;}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssertConstrParams(0);}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00179\ btScalar\ btPoint2PointConstraint::getParam(\textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{int}\ axis)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00180\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00181\ \ \ \ \ btScalar\ retVal(SIMD\_INFINITY);}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordflow}{if}\ (axis\ !=\ -\/1)}
+\DoxyCodeLine{00183\ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ btAssertConstrParams(0);}
+\DoxyCodeLine{00185\ \ \ \ \ \}}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00187\ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (num)}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_ERP:}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_STOP\_ERP:}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssertConstrParams(m\_flags\ \&\ BT\_P2P\_FLAGS\_ERP);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ retVal\ =\ m\_erp;}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_CFM:}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BT\_CONSTRAINT\_STOP\_CFM:}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssertConstrParams(m\_flags\ \&\ BT\_P2P\_FLAGS\_CFM);}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ retVal\ =\ m\_cfm;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssertConstrParams(0);}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordflow}{return}\ retVal;}
+\DoxyCodeLine{00205\ \}}
+
+\end{DoxyCode}

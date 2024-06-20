@@ -1,0 +1,475 @@
+\doxysection{bt\+Hinge\+Constraint.\+h}
+\hypertarget{bt_hinge_constraint_8h_source}{}\label{bt_hinge_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btHingeConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btHingeConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*\ Hinge\ Constraint\ by\ Dirk\ Gregorius.\ Limits\ added\ by\ Marcus\ Hennix\ at\ Starbreeze\ Studios\ */}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifndef\ BT\_HINGECONSTRAINT\_H}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ BT\_HINGECONSTRAINT\_H}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ \_BT\_USE\_CENTER\_LIMIT\_\ 1}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}btJacobianEntry.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}btTypedConstraint.h"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ btHingeConstraintData\ btHingeConstraintDoubleData2\ \ }\textcolor{comment}{//rename\ to\ 2\ for\ backwards\ compatibility,\ so\ we\ can\ still\ load\ the\ 'btHingeConstraintDoubleData'\ version}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ btHingeConstraintDataName\ "{}btHingeConstraintDoubleData2"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ btHingeConstraintData\ btHingeConstraintFloatData}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ btHingeConstraintDataName\ "{}btHingeConstraintFloatData"{}}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{enum}\ btHingeFlags}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ BT\_HINGE\_FLAGS\_CFM\_STOP\ =\ 1,}
+\DoxyCodeLine{00040\ \ \ \ \ BT\_HINGE\_FLAGS\_ERP\_STOP\ =\ 2,}
+\DoxyCodeLine{00041\ \ \ \ \ BT\_HINGE\_FLAGS\_CFM\_NORM\ =\ 4,}
+\DoxyCodeLine{00042\ \ \ \ \ BT\_HINGE\_FLAGS\_ERP\_NORM\ =\ 8}
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00047\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00048\ btHingeConstraint\ :\ public\ btTypedConstraint}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#ifdef\ IN\_PARALLELL\_SOLVER}}
+\DoxyCodeLine{00051\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00053\ \ \ \ \ btJacobianEntry\ m\_jac[3];\ \ \ \ \ \textcolor{comment}{//3\ orthogonal\ linear\ constraints}}
+\DoxyCodeLine{00054\ \ \ \ \ btJacobianEntry\ m\_jacAng[3];\ \ \textcolor{comment}{//2\ orthogonal\ angular\ constraints+\ 1\ for\ limit/motor}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ btTransform\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00057\ \ \ \ \ btTransform\ m\_rbBFrame;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ m\_motorTargetVelocity;}
+\DoxyCodeLine{00060\ \ \ \ \ btScalar\ m\_maxMotorImpulse;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classbt_angular_limit}{btAngularLimit}}\ m\_limit;}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00065\ \ \ \ \ btScalar\ m\_lowerLimit;}
+\DoxyCodeLine{00066\ \ \ \ \ btScalar\ m\_upperLimit;}
+\DoxyCodeLine{00067\ \ \ \ \ btScalar\ m\_limitSign;}
+\DoxyCodeLine{00068\ \ \ \ \ btScalar\ m\_correction;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ btScalar\ m\_limitSoftness;}
+\DoxyCodeLine{00071\ \ \ \ \ btScalar\ m\_biasFactor;}
+\DoxyCodeLine{00072\ \ \ \ \ btScalar\ m\_relaxationFactor;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_solveLimit;}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ btScalar\ m\_kHinge;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ btScalar\ m\_accLimitImpulse;}
+\DoxyCodeLine{00080\ \ \ \ \ btScalar\ m\_hingeAngle;}
+\DoxyCodeLine{00081\ \ \ \ \ btScalar\ m\_referenceSign;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_angularOnly;}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableAngularMotor;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useSolveConstraintObsolete;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useReferenceFrameA;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ btScalar\ m\_accMotorImpulse;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_flags;}
+\DoxyCodeLine{00092\ \ \ \ \ btScalar\ m\_normalCFM;}
+\DoxyCodeLine{00093\ \ \ \ \ btScalar\ m\_normalERP;}
+\DoxyCodeLine{00094\ \ \ \ \ btScalar\ m\_stopCFM;}
+\DoxyCodeLine{00095\ \ \ \ \ btScalar\ m\_stopERP;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00098\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ btHingeConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInA,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInB,\ \textcolor{keyword}{const}\ btVector3\&\ axisInA,\ \textcolor{keyword}{const}\ btVector3\&\ axisInB,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ btHingeConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInA,\ \textcolor{keyword}{const}\ btVector3\&\ axisInA,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ btHingeConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ rbAFrame,\ \textcolor{keyword}{const}\ btTransform\&\ rbBFrame,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ btHingeConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \textcolor{keyword}{const}\ btTransform\&\ rbAFrame,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ buildJacobian();}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo1(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}\ *\ info);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo1NonVirtual(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}\ *\ info);}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo2(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo2NonVirtual(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ angVelA,\ \textcolor{keyword}{const}\ btVector3\&\ angVelB);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo2Internal(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ angVelA,\ \textcolor{keyword}{const}\ btVector3\&\ angVelB);}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo2InternalUsingFrameOffset(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ angVelA,\ \textcolor{keyword}{const}\ btVector3\&\ angVelB);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{void}\ updateRHS(btScalar\ timeStep);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ getRigidBodyA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00124\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbA;}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ getRigidBodyB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00128\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbB;}
+\DoxyCodeLine{00130\ \ \ \ \ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ getRigidBodyA()}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbA;}
+\DoxyCodeLine{00135\ \ \ \ \ \}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ getRigidBodyB()}
+\DoxyCodeLine{00138\ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbB;}
+\DoxyCodeLine{00140\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ btTransform\&\ getFrameOffsetA()}
+\DoxyCodeLine{00143\ \ \ \ \ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbAFrame;}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ btTransform\&\ getFrameOffsetB()}
+\DoxyCodeLine{00148\ \ \ \ \ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_rbBFrame;}
+\DoxyCodeLine{00150\ \ \ \ \ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{void}\ setFrames(\textcolor{keyword}{const}\ btTransform\&\ frameA,\ \textcolor{keyword}{const}\ btTransform\&\ frameB);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{void}\ setAngularOnly(\textcolor{keywordtype}{bool}\ angularOnly)}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ m\_angularOnly\ =\ angularOnly;}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{void}\ enableAngularMotor(\textcolor{keywordtype}{bool}\ enableMotor,\ btScalar\ targetVelocity,\ btScalar\ maxMotorImpulse)}
+\DoxyCodeLine{00160\ \ \ \ \ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ m\_enableAngularMotor\ =\ enableMotor;}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ m\_motorTargetVelocity\ =\ targetVelocity;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ m\_maxMotorImpulse\ =\ maxMotorImpulse;}
+\DoxyCodeLine{00164\ \ \ \ \ \}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{//\ extra\ motor\ API,\ including\ ability\ to\ set\ a\ target\ rotation\ (as\ opposed\ to\ angular\ velocity)}}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{comment}{//\ note:\ setMotorTarget\ sets\ angular\ velocity\ under\ the\ hood,\ so\ you\ must\ call\ it\ every\ tick\ to}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ maintain\ a\ given\ angular\ target.}}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{void}\ enableMotor(\textcolor{keywordtype}{bool}\ enableMotor)\ \{\ m\_enableAngularMotor\ =\ enableMotor;\ \}}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxMotorImpulse(btScalar\ maxMotorImpulse)\ \{\ m\_maxMotorImpulse\ =\ maxMotorImpulse;\ \}}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{void}\ setMotorTargetVelocity(btScalar\ motorTargetVelocity)\ \{\ m\_motorTargetVelocity\ =\ motorTargetVelocity;\ \}}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{void}\ setMotorTarget(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\&\ qAinB,\ btScalar\ dt);\ \ \textcolor{comment}{//\ qAinB\ is\ rotation\ of\ body\ A\ wrt\ body\ B.}}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{void}\ setMotorTarget(btScalar\ targetAngle,\ btScalar\ dt);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordtype}{void}\ setLimit(btScalar\ low,\ btScalar\ high,\ btScalar\ \_softness\ =\ 0.9f,\ btScalar\ \_biasFactor\ =\ 0.3f,\ btScalar\ \_relaxationFactor\ =\ 1.0f)}
+\DoxyCodeLine{00176\ \ \ \ \ \{}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ m\_limit.\mbox{\hyperlink{classbt_angular_limit_aae9e0c21886c2f98f9ad1928bf024b3f}{set}}(low,\ high,\ \_softness,\ \_biasFactor,\ \_relaxationFactor);}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ m\_lowerLimit\ =\ btNormalizeAngle(low);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ m\_upperLimit\ =\ btNormalizeAngle(high);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ m\_limitSoftness\ =\ \_softness;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ m\_biasFactor\ =\ \_biasFactor;}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ m\_relaxationFactor\ =\ \_relaxationFactor;}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00186\ \ \ \ \ \}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \ \ btScalar\ getLimitSoftness()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00189\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.\mbox{\hyperlink{classbt_angular_limit_a53fcf2522b1988022f21e0ef2cde1b4c}{getSoftness}}();}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limitSoftness;}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ btScalar\ getLimitBiasFactor()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00198\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.\mbox{\hyperlink{classbt_angular_limit_a2ba4c0092e8fd39cdf09113b6aedd740}{getBiasFactor}}();}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_biasFactor;}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00204\ \ \ \ \ \}}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ btScalar\ getLimitRelaxationFactor()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00207\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.\mbox{\hyperlink{classbt_angular_limit_adce9b76f4e9c815806e6bf7ab8928194}{getRelaxationFactor}}();}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_relaxationFactor;}
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00213\ \ \ \ \ \}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordtype}{void}\ setAxis(btVector3\ \&\ axisInA)}
+\DoxyCodeLine{00216\ \ \ \ \ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ btVector3\ rbAxisA1,\ rbAxisA2;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ btPlaneSpace1(axisInA,\ rbAxisA1,\ rbAxisA2);}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ btVector3\ pivotInA\ =\ m\_rbAFrame.getOrigin();}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ m\_rbAFrame.getOrigin()\ =\ pivotInA;}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ m\_rbAFrame.getBasis().setValue(rbAxisA1.getX(),\ rbAxisA2.getX(),\ axisInA.getX(),}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rbAxisA1.getY(),\ rbAxisA2.getY(),\ axisInA.getY(),}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rbAxisA1.getZ(),\ rbAxisA2.getZ(),\ axisInA.getZ());}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ btVector3\ axisInB\ =\ m\_rbA.getCenterOfMassTransform().getBasis()\ *\ axisInA;}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_quaternion}{btQuaternion}}\ rotationArc\ =\ shortestArcQuat(axisInA,\ axisInB);}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ btVector3\ rbAxisB1\ =\ quatRotate(rotationArc,\ rbAxisA1);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ btVector3\ rbAxisB2\ =\ axisInB.cross(rbAxisB1);}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ m\_rbBFrame.getOrigin()\ =\ m\_rbB.getCenterOfMassTransform().inverse()(m\_rbA.getCenterOfMassTransform()(pivotInA));}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ m\_rbBFrame.getBasis().setValue(rbAxisB1.getX(),\ rbAxisB2.getX(),\ axisInB.getX(),}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rbAxisB1.getY(),\ rbAxisB2.getY(),\ axisInB.getY(),}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rbAxisB1.getZ(),\ rbAxisB2.getZ(),\ axisInB.getZ());}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ m\_rbBFrame.getBasis()\ =\ m\_rbB.getCenterOfMassTransform().getBasis().inverse()\ *\ m\_rbBFrame.getBasis();}
+\DoxyCodeLine{00237\ \ \ \ \ \}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{bool}\ hasLimit()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00240\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.\mbox{\hyperlink{classbt_angular_limit_acce7e5c554ebebbdf15e572dcd0bb2f9}{getHalfRange}}()\ >\ 0;}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_lowerLimit\ <=\ m\_upperLimit;}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00246\ \ \ \ \ \}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ btScalar\ getLowerLimit()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00249\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.getLow();}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_lowerLimit;}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00255\ \ \ \ \ \}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ btScalar\ getUpperLimit()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00258\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.getHigh();}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_upperLimit;}
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00264\ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00267\ \ \ \ \ btScalar\ getHingeAngle();}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ btScalar\ getHingeAngle(\textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB);}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordtype}{void}\ testLimit(\textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB);}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getAFrame()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_rbAFrame;\ \};}
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getBFrame()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_rbBFrame;\ \};}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \ \ \ \ btTransform\&\ getAFrame()\ \{\ \textcolor{keywordflow}{return}\ m\_rbAFrame;\ \};}
+\DoxyCodeLine{00277\ \ \ \ \ btTransform\&\ getBFrame()\ \{\ \textcolor{keywordflow}{return}\ m\_rbBFrame;\ \};}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getSolveLimit()}
+\DoxyCodeLine{00280\ \ \ \ \ \{}
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.\mbox{\hyperlink{classbt_angular_limit_a034951d30c7aa18f0e0ed7f2673175ee}{isLimit}}();}
+\DoxyCodeLine{00283\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_solveLimit;}
+\DoxyCodeLine{00285\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00286\ \ \ \ \ \}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keyword}{inline}\ btScalar\ getLimitSign()}
+\DoxyCodeLine{00289\ \ \ \ \ \{}
+\DoxyCodeLine{00290\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limit.\mbox{\hyperlink{classbt_angular_limit_a862f3e44e3effe07b68ba5da11085fa5}{getSign}}();}
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_limitSign;}
+\DoxyCodeLine{00294\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00295\ \ \ \ \ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ getAngularOnly()}
+\DoxyCodeLine{00298\ \ \ \ \ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_angularOnly;}
+\DoxyCodeLine{00300\ \ \ \ \ \}}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ getEnableAngularMotor()}
+\DoxyCodeLine{00302\ \ \ \ \ \{}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_enableAngularMotor;}
+\DoxyCodeLine{00304\ \ \ \ \ \}}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keyword}{inline}\ btScalar\ getMotorTargetVelocity()}
+\DoxyCodeLine{00306\ \ \ \ \ \{}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_motorTargetVelocity;}
+\DoxyCodeLine{00308\ \ \ \ \ \}}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keyword}{inline}\ btScalar\ getMaxMotorImpulse()}
+\DoxyCodeLine{00310\ \ \ \ \ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_maxMotorImpulse;}
+\DoxyCodeLine{00312\ \ \ \ \ \}}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{comment}{//\ access\ for\ UseFrameOffset}}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{bool}\ getUseFrameOffset()\ \{\ \textcolor{keywordflow}{return}\ m\_useOffsetForConstraintFrame;\ \}}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseFrameOffset(\textcolor{keywordtype}{bool}\ frameOffsetOnOff)\ \{\ m\_useOffsetForConstraintFrame\ =\ frameOffsetOnOff;\ \}}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{comment}{//\ access\ for\ UseReferenceFrameA}}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordtype}{bool}\ getUseReferenceFrameA()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_useReferenceFrameA;\ \}}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseReferenceFrameA(\textcolor{keywordtype}{bool}\ useReferenceFrameA)\ \{\ m\_useReferenceFrameA\ =\ useReferenceFrameA;\ \}}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setParam(\textcolor{keywordtype}{int}\ num,\ btScalar\ value,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1);}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ getParam(\textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getFlags()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00327\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_flags;}
+\DoxyCodeLine{00329\ \ \ \ \ \}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{classbt_rigid_body_a4f293343334b9736a6e7c41455abd46b}{serialize}}(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00335\ \};}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \textcolor{comment}{//only\ for\ backward\ compatibility}}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#ifdef\ BT\_BACKWARDS\_COMPATIBLE\_SERIALIZATION}}
+\DoxyCodeLine{00340\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_hinge_constraint_double_data}{btHingeConstraintDoubleData}}}
+\DoxyCodeLine{00341\ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_data}{btTypedConstraintData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00343\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00344\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbBFrame;}
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useReferenceFrameA;}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_angularOnly;}
+\DoxyCodeLine{00347\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_enableAngularMotor;}
+\DoxyCodeLine{00348\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_motorTargetVelocity;}
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxMotorImpulse;}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_lowerLimit;}
+\DoxyCodeLine{00352\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_upperLimit;}
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_limitSoftness;}
+\DoxyCodeLine{00354\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_biasFactor;}
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_relaxationFactor;}
+\DoxyCodeLine{00356\ \};}
+\DoxyCodeLine{00357\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_BACKWARDS\_COMPATIBLE\_SERIALIZATION}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00360\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00361\ btHingeAccumulatedAngleConstraint\ :\ public\ btHingeConstraint}
+\DoxyCodeLine{00362\ \{}
+\DoxyCodeLine{00363\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00364\ \ \ \ \ btScalar\ m\_accumulatedAngle;}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00367\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \ btHingeAccumulatedAngleConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInA,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInB,\ \textcolor{keyword}{const}\ btVector3\&\ axisInA,\ \textcolor{keyword}{const}\ btVector3\&\ axisInB,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ :\ btHingeConstraint(rbA,\ rbB,\ pivotInA,\ pivotInB,\ axisInA,\ axisInB,\ useReferenceFrameA)}
+\DoxyCodeLine{00371\ \ \ \ \ \{}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ m\_accumulatedAngle\ =\ getHingeAngle();}
+\DoxyCodeLine{00373\ \ \ \ \ \}}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ btHingeAccumulatedAngleConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \textcolor{keyword}{const}\ btVector3\&\ pivotInA,\ \textcolor{keyword}{const}\ btVector3\&\ axisInA,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ :\ btHingeConstraint(rbA,\ pivotInA,\ axisInA,\ useReferenceFrameA)}
+\DoxyCodeLine{00377\ \ \ \ \ \{}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ m\_accumulatedAngle\ =\ getHingeAngle();}
+\DoxyCodeLine{00379\ \ \ \ \ \}}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ \ \ btHingeAccumulatedAngleConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ rbAFrame,\ \textcolor{keyword}{const}\ btTransform\&\ rbBFrame,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ :\ btHingeConstraint(rbA,\ rbB,\ rbAFrame,\ rbBFrame,\ useReferenceFrameA)}
+\DoxyCodeLine{00383\ \ \ \ \ \{}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ m\_accumulatedAngle\ =\ getHingeAngle();}
+\DoxyCodeLine{00385\ \ \ \ \ \}}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \ \ \ \ btHingeAccumulatedAngleConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \textcolor{keyword}{const}\ btTransform\&\ rbAFrame,\ \textcolor{keywordtype}{bool}\ useReferenceFrameA\ =\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ :\ btHingeConstraint(rbA,\ rbAFrame,\ useReferenceFrameA)}
+\DoxyCodeLine{00389\ \ \ \ \ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ m\_accumulatedAngle\ =\ getHingeAngle();}
+\DoxyCodeLine{00391\ \ \ \ \ \}}
+\DoxyCodeLine{00392\ \ \ \ \ btScalar\ getAccumulatedHingeAngle();}
+\DoxyCodeLine{00393\ \ \ \ \ \textcolor{keywordtype}{void}\ setAccumulatedHingeAngle(btScalar\ accAngle);}
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo1(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}\ *\ info);}
+\DoxyCodeLine{00395\ \};}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_hinge_constraint_float_data}{btHingeConstraintFloatData}}}
+\DoxyCodeLine{00398\ \{}
+\DoxyCodeLine{00399\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_data}{btTypedConstraintData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00400\ \ \ \ \ \mbox{\hyperlink{structbt_transform_float_data}{btTransformFloatData}}\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00401\ \ \ \ \ \mbox{\hyperlink{structbt_transform_float_data}{btTransformFloatData}}\ m\_rbBFrame;}
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useReferenceFrameA;}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_angularOnly;}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_enableAngularMotor;}
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_motorTargetVelocity;}
+\DoxyCodeLine{00407\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxMotorImpulse;}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_lowerLimit;}
+\DoxyCodeLine{00410\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_upperLimit;}
+\DoxyCodeLine{00411\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_limitSoftness;}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_biasFactor;}
+\DoxyCodeLine{00413\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_relaxationFactor;}
+\DoxyCodeLine{00414\ \};}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00417\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_hinge_constraint_double_data2}{btHingeConstraintDoubleData2}}}
+\DoxyCodeLine{00418\ \{}
+\DoxyCodeLine{00419\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_double_data}{btTypedConstraintDoubleData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00420\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00421\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbBFrame;}
+\DoxyCodeLine{00422\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useReferenceFrameA;}
+\DoxyCodeLine{00423\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_angularOnly;}
+\DoxyCodeLine{00424\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_enableAngularMotor;}
+\DoxyCodeLine{00425\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_motorTargetVelocity;}
+\DoxyCodeLine{00426\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_maxMotorImpulse;}
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00428\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_lowerLimit;}
+\DoxyCodeLine{00429\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_upperLimit;}
+\DoxyCodeLine{00430\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_limitSoftness;}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_biasFactor;}
+\DoxyCodeLine{00432\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_relaxationFactor;}
+\DoxyCodeLine{00433\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_padding1[4];}
+\DoxyCodeLine{00434\ \};}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btHingeConstraint::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00437\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00438\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(btHingeConstraintData);}
+\DoxyCodeLine{00439\ \}}
+\DoxyCodeLine{00440\ }
+\DoxyCodeLine{00442\ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btHingeConstraint::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00443\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00444\ \ \ \ \ btHingeConstraintData*\ hingeData\ =\ (btHingeConstraintData*)dataBuffer;}
+\DoxyCodeLine{00445\ \ \ \ \ btTypedConstraint::serialize(\&hingeData-\/>m\_typeConstraintData,\ serializer);}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \ \ m\_rbAFrame.serialize(hingeData-\/>m\_rbAFrame);}
+\DoxyCodeLine{00448\ \ \ \ \ m\_rbBFrame.serialize(hingeData-\/>m\_rbBFrame);}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ \ \ hingeData-\/>m\_angularOnly\ =\ m\_angularOnly;}
+\DoxyCodeLine{00451\ \ \ \ \ hingeData-\/>m\_enableAngularMotor\ =\ m\_enableAngularMotor;}
+\DoxyCodeLine{00452\ \ \ \ \ hingeData-\/>m\_maxMotorImpulse\ =\ float(m\_maxMotorImpulse);}
+\DoxyCodeLine{00453\ \ \ \ \ hingeData-\/>m\_motorTargetVelocity\ =\ float(m\_motorTargetVelocity);}
+\DoxyCodeLine{00454\ \ \ \ \ hingeData-\/>m\_useReferenceFrameA\ =\ m\_useReferenceFrameA;}
+\DoxyCodeLine{00455\ \textcolor{preprocessor}{\#ifdef\ \_BT\_USE\_CENTER\_LIMIT\_}}
+\DoxyCodeLine{00456\ \ \ \ \ hingeData-\/>m\_lowerLimit\ =\ float(m\_limit.getLow());}
+\DoxyCodeLine{00457\ \ \ \ \ hingeData-\/>m\_upperLimit\ =\ float(m\_limit.getHigh());}
+\DoxyCodeLine{00458\ \ \ \ \ hingeData-\/>m\_limitSoftness\ =\ float(m\_limit.\mbox{\hyperlink{classbt_angular_limit_a53fcf2522b1988022f21e0ef2cde1b4c}{getSoftness}}());}
+\DoxyCodeLine{00459\ \ \ \ \ hingeData-\/>m\_biasFactor\ =\ float(m\_limit.\mbox{\hyperlink{classbt_angular_limit_a2ba4c0092e8fd39cdf09113b6aedd740}{getBiasFactor}}());}
+\DoxyCodeLine{00460\ \ \ \ \ hingeData-\/>m\_relaxationFactor\ =\ float(m\_limit.\mbox{\hyperlink{classbt_angular_limit_adce9b76f4e9c815806e6bf7ab8928194}{getRelaxationFactor}}());}
+\DoxyCodeLine{00461\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00462\ \ \ \ \ hingeData-\/>m\_lowerLimit\ =\ float(m\_lowerLimit);}
+\DoxyCodeLine{00463\ \ \ \ \ hingeData-\/>m\_upperLimit\ =\ float(m\_upperLimit);}
+\DoxyCodeLine{00464\ \ \ \ \ hingeData-\/>m\_limitSoftness\ =\ float(m\_limitSoftness);}
+\DoxyCodeLine{00465\ \ \ \ \ hingeData-\/>m\_biasFactor\ =\ float(m\_biasFactor);}
+\DoxyCodeLine{00466\ \ \ \ \ hingeData-\/>m\_relaxationFactor\ =\ float(m\_relaxationFactor);}
+\DoxyCodeLine{00467\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \ \ \ \ \textcolor{comment}{//\ Fill\ padding\ with\ zeros\ to\ appease\ msan.}}
+\DoxyCodeLine{00470\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00471\ \ \ \ \ hingeData-\/>m\_padding1[0]\ =\ 0;}
+\DoxyCodeLine{00472\ \ \ \ \ hingeData-\/>m\_padding1[1]\ =\ 0;}
+\DoxyCodeLine{00473\ \ \ \ \ hingeData-\/>m\_padding1[2]\ =\ 0;}
+\DoxyCodeLine{00474\ \ \ \ \ hingeData-\/>m\_padding1[3]\ =\ 0;}
+\DoxyCodeLine{00475\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \ \ \ \ \textcolor{keywordflow}{return}\ btHingeConstraintDataName;}
+\DoxyCodeLine{00478\ \}}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_HINGECONSTRAINT\_H}}
+
+\end{DoxyCode}

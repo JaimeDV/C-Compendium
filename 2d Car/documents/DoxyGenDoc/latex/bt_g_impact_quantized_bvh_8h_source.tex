@@ -1,0 +1,278 @@
+\doxysection{bt\+GImpact\+Quantized\+Bvh.\+h}
+\hypertarget{bt_g_impact_quantized_bvh_8h_source}{}\label{bt_g_impact_quantized_bvh_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btGImpactQuantizedBvh.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btGImpactQuantizedBvh.h}}
+\mbox{\hyperlink{bt_g_impact_quantized_bvh_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ GIM\_QUANTIZED\_SET\_H\_INCLUDED}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ GIM\_QUANTIZED\_SET\_H\_INCLUDED}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00008\ \textcolor{comment}{This\ source\ file\ is\ part\ of\ GIMPACT\ Library.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{}}
+\DoxyCodeLine{00010\ \textcolor{comment}{For\ the\ latest\ info,\ see\ http://gimpact.sourceforge.net/}}
+\DoxyCodeLine{00011\ \textcolor{comment}{}}
+\DoxyCodeLine{00012\ \textcolor{comment}{Copyright\ (c)\ 2007\ Francisco\ Leon\ Najera.\ C.C.\ 80087371.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{email:\ projectileman@yahoo.com}}
+\DoxyCodeLine{00014\ \textcolor{comment}{}}
+\DoxyCodeLine{00015\ \textcolor{comment}{}}
+\DoxyCodeLine{00016\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00019\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00021\ \textcolor{comment}{}}
+\DoxyCodeLine{00022\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}btGImpactBvh.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{bt_quantization_8h}{btQuantization.h}}"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}btGImpactQuantizedBvhStructs.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___q_u_a_n_t_i_z_e_d___b_v_h___n_o_d_e___a_r_r_a_y}{GIM\_QUANTIZED\_BVH\_NODE\_ARRAY}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray}}<BT\_QUANTIZED\_BVH\_NODE>}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_quantized_bvh_tree}{btQuantizedBvhTree}}}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_num\_nodes;}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___q_u_a_n_t_i_z_e_d___b_v_h___n_o_d_e___a_r_r_a_y}{GIM\_QUANTIZED\_BVH\_NODE\_ARRAY}}\ m\_node\_array;}
+\DoxyCodeLine{00041\ \ \ \ \ btAABB\ m\_global\_bound;}
+\DoxyCodeLine{00042\ \ \ \ \ btVector3\ m\_bvhQuantization;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ calc\_quantization(\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\_BVH\_DATA\_ARRAY}}\&\ primitive\_boxes,\ btScalar\ boundMargin\ =\ btScalar(1.0));}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ \_sort\_and\_calc\_splitting\_index(}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\_BVH\_DATA\_ARRAY}}\&\ primitive\_boxes,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ startIndex,\ \textcolor{keywordtype}{int}\ endIndex,\ \textcolor{keywordtype}{int}\ splitAxis);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ \_calc\_splitting\_axis(\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\_BVH\_DATA\_ARRAY}}\&\ primitive\_boxes,\ \textcolor{keywordtype}{int}\ startIndex,\ \textcolor{keywordtype}{int}\ endIndex);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ \_build\_sub\_tree(\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\_BVH\_DATA\_ARRAY}}\&\ primitive\_boxes,\ \textcolor{keywordtype}{int}\ startIndex,\ \textcolor{keywordtype}{int}\ endIndex);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00056\ \ \ \ \ \mbox{\hyperlink{classbt_quantized_bvh_tree}{btQuantizedBvhTree}}()}
+\DoxyCodeLine{00057\ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ m\_num\_nodes\ =\ 0;}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_quantized_bvh_tree_aa2229fd3e3e2004cdf8151437535e936}{build\_tree}}(\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\_BVH\_DATA\_ARRAY}}\&\ primitive\_boxes);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ quantizePoint(}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ quantizedpoint,\ \textcolor{keyword}{const}\ btVector3\&\ point)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00067\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ bt\_quantize\_clamp(quantizedpoint,\ point,\ m\_global\_bound.m\_min,\ m\_global\_bound.m\_max,\ m\_bvhQuantization);}
+\DoxyCodeLine{00069\ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ testQuantizedBoxOverlapp(}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ node\_index,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ quantizedMin,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}*\ quantizedMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00074\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[node\_index].testQuantizedBoxOverlapp(quantizedMin,\ quantizedMax);}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ clearNodes()}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ m\_node\_array.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ m\_num\_nodes\ =\ 0;}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_quantized_bvh_tree_ad7a4d4402d47e0c7dadda291e5a0f969}{getNodeCount}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00086\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_num\_nodes;}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00091\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_quantized_bvh_tree_a0bd0a4504cc0b61551234c411637fcf0}{isLeafNode}}(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00092\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].isLeafNode();}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getNodeData(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00097\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].getDataIndex();}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getNodeBound(\textcolor{keywordtype}{int}\ nodeindex,\ btAABB\&\ bound)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00102\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ bound.m\_min\ =\ bt\_unquantize(}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ m\_node\_array[nodeindex].m\_quantizedAabbMin,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ m\_global\_bound.m\_min,\ m\_bvhQuantization);}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ bound.m\_max\ =\ bt\_unquantize(}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ m\_node\_array[nodeindex].m\_quantizedAabbMax,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ m\_global\_bound.m\_min,\ m\_bvhQuantization);}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setNodeBound(\textcolor{keywordtype}{int}\ nodeindex,\ \textcolor{keyword}{const}\ btAABB\&\ bound)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ bt\_quantize\_clamp(m\_node\_array[nodeindex].m\_quantizedAabbMin,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bound.m\_min,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_global\_bound.m\_min,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_global\_bound.m\_max,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_bvhQuantization);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ bt\_quantize\_clamp(m\_node\_array[nodeindex].m\_quantizedAabbMax,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bound.m\_max,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_global\_bound.m\_min,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_global\_bound.m\_max,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_bvhQuantization);}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getLeftNode(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00128\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ nodeindex\ +\ 1;}
+\DoxyCodeLine{00130\ \ \ \ \ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getRightNode(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00133\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_node\_array[nodeindex\ +\ 1].\mbox{\hyperlink{classbt_quantized_bvh_tree_a0bd0a4504cc0b61551234c411637fcf0}{isLeafNode}}())\ \textcolor{keywordflow}{return}\ nodeindex\ +\ 2;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ nodeindex\ +\ 1\ +\ m\_node\_array[nodeindex\ +\ 1].getEscapeIndex();}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getEscapeNodeIndex(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00139\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].getEscapeIndex();}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ BT\_QUANTIZED\_BVH\_NODE*\ get\_node\_pointer(\textcolor{keywordtype}{int}\ index\ =\ 0)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00144\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_node\_array[index];}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00149\ \};}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00156\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_g_impact_quantized_bvh}{btGImpactQuantizedBvh}}}
+\DoxyCodeLine{00157\ \{}
+\DoxyCodeLine{00158\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00159\ \ \ \ \ \mbox{\hyperlink{classbt_quantized_bvh_tree}{btQuantizedBvhTree}}\ m\_box\_tree;}
+\DoxyCodeLine{00160\ \ \ \ \ \mbox{\hyperlink{classbt_primitive_manager_base}{btPrimitiveManagerBase}}*\ m\_primitive\_manager;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{comment}{//stackless\ refit}}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{void}\ refit();}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00168\ \ \ \ \ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a3adf6c64b003214564e045326e4fabb7}{btGImpactQuantizedBvh}}()}
+\DoxyCodeLine{00169\ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ m\_primitive\_manager\ =\ NULL;}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00174\ \ \ \ \ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a567d06bf430c21fe4887f1b996bb6ba4}{btGImpactQuantizedBvh}}(\mbox{\hyperlink{classbt_primitive_manager_base}{btPrimitiveManagerBase}}*\ primitive\_manager)}
+\DoxyCodeLine{00175\ \ \ \ \ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ m\_primitive\_manager\ =\ primitive\_manager;}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ SIMD\_FORCE\_INLINE\ btAABB\ getGlobalBox()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00180\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ btAABB\ totalbox;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ getNodeBound(0,\ totalbox);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ totalbox;}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setPrimitiveManager(\mbox{\hyperlink{classbt_primitive_manager_base}{btPrimitiveManagerBase}}*\ primitive\_manager)}
+\DoxyCodeLine{00187\ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ m\_primitive\_manager\ =\ primitive\_manager;}
+\DoxyCodeLine{00189\ \ \ \ \ \}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ SIMD\_FORCE\_INLINE\ \mbox{\hyperlink{classbt_primitive_manager_base}{btPrimitiveManagerBase}}*\ getPrimitiveManager()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00192\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_primitive\_manager;}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00200\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a71665f5245b8f7de1c54f107ef262cd0}{update}}()}
+\DoxyCodeLine{00201\ \ \ \ \ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ refit();}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a2f061fbf0c6d8a81438861be4add7968}{buildSet}}();}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a4d2e0f3b36bf101f99b413632d6409a5}{boxQuery}}(\textcolor{keyword}{const}\ btAABB\&\ box,\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ collided\_results)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00212\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a9f3bfa448f70606b8afd81a53b889111}{boxQueryTrans}}(\textcolor{keyword}{const}\ btAABB\&\ box,}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ transform,\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ collided\_results)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00214\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ btAABB\ transbox\ =\ box;}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ transbox.appy\_transform(transform);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a4d2e0f3b36bf101f99b413632d6409a5}{boxQuery}}(transbox,\ collided\_results);}
+\DoxyCodeLine{00218\ \ \ \ \ \}}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a0a97a57a30a5f014154e417f16390460}{rayQuery}}(}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ ray\_dir,\ \textcolor{keyword}{const}\ btVector3\&\ ray\_origin,}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ collided\_results)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00226\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a8468aba36949815e4d1e81f0fa51d5bb}{hasHierarchy}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00227\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00229\ \ \ \ \ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00232\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a7cafcae1aff83ec6bcfe066f85956dda}{isTrimesh}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00233\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_primitive\_manager-\/>\mbox{\hyperlink{classbt_primitive_manager_base_a7dce7dd350286219d9adddefa20394f9}{is\_trimesh}}();}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00238\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a7d64ae990f07eab20cc43f87712db935}{getNodeCount}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00239\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.\mbox{\hyperlink{classbt_quantized_bvh_tree_ad7a4d4402d47e0c7dadda291e5a0f969}{getNodeCount}}();}
+\DoxyCodeLine{00241\ \ \ \ \ \}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00244\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh_a71171abb6f0c3b674ee885fc39aed215}{isLeafNode}}(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00245\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.\mbox{\hyperlink{classbt_quantized_bvh_tree_a0bd0a4504cc0b61551234c411637fcf0}{isLeafNode}}(nodeindex);}
+\DoxyCodeLine{00247\ \ \ \ \ \}}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getNodeData(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00250\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getNodeData(nodeindex);}
+\DoxyCodeLine{00252\ \ \ \ \ \}}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getNodeBound(\textcolor{keywordtype}{int}\ nodeindex,\ btAABB\&\ bound)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00255\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ m\_box\_tree.getNodeBound(nodeindex,\ bound);}
+\DoxyCodeLine{00257\ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setNodeBound(\textcolor{keywordtype}{int}\ nodeindex,\ \textcolor{keyword}{const}\ btAABB\&\ bound)}
+\DoxyCodeLine{00260\ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ m\_box\_tree.setNodeBound(nodeindex,\ bound);}
+\DoxyCodeLine{00262\ \ \ \ \ \}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getLeftNode(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00265\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getLeftNode(nodeindex);}
+\DoxyCodeLine{00267\ \ \ \ \ \}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getRightNode(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00270\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getRightNode(nodeindex);}
+\DoxyCodeLine{00272\ \ \ \ \ \}}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getEscapeNodeIndex(\textcolor{keywordtype}{int}\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00275\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getEscapeNodeIndex(nodeindex);}
+\DoxyCodeLine{00277\ \ \ \ \ \}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getNodeTriangle(\textcolor{keywordtype}{int}\ nodeindex,\ \mbox{\hyperlink{classbt_primitive_triangle}{btPrimitiveTriangle}}\&\ triangle)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00280\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ m\_primitive\_manager-\/>\mbox{\hyperlink{classbt_primitive_manager_base_a2eb95b960e4259da38c5ee4ac080fdf7}{get\_primitive\_triangle}}(getNodeData(nodeindex),\ triangle);}
+\DoxyCodeLine{00282\ \ \ \ \ \}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ BT\_QUANTIZED\_BVH\_NODE*\ get\_node\_pointer(\textcolor{keywordtype}{int}\ index\ =\ 0)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00285\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.get\_node\_pointer(index);}
+\DoxyCodeLine{00287\ \ \ \ \ \}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \textcolor{preprocessor}{\#ifdef\ TRI\_COLLISION\_PROFILING}}
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{float}\ getAverageTreeCollisionTime();}
+\DoxyCodeLine{00291\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//TRI\_COLLISION\_PROFILING}}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ find\_collision(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh}{btGImpactQuantizedBvh}}*\ boxset1,\ \textcolor{keyword}{const}\ btTransform\&\ trans1,}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_g_impact_quantized_bvh}{btGImpactQuantizedBvh}}*\ boxset2,\ \textcolor{keyword}{const}\ btTransform\&\ trans2,}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_pair_set}{btPairSet}}\&\ collision\_pairs);}
+\DoxyCodeLine{00296\ \};}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GIM\_BOXPRUNING\_H\_INCLUDED}}
+
+\end{DoxyCode}

@@ -1,0 +1,580 @@
+\doxysection{matrix\+\_\+transform.\+inl}
+\hypertarget{libraries_2opengl-toolkit_2headers_2glm_2gtc_2matrix__transform_8inl_source}{}\label{libraries_2opengl-toolkit_2headers_2glm_2gtc_2matrix__transform_8inl_source}\index{libraries/opengl-\/toolkit/headers/glm/gtc/matrix\_transform.inl@{libraries/opengl-\/toolkit/headers/glm/gtc/matrix\_transform.inl}}
+\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2gtc_2matrix__transform_8inl}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2geometric_8hpp}{../geometric.hpp}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2trigonometric_8hpp}{../trigonometric.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2matrix_8hpp}{../matrix.hpp}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglm}{glm}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00011\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__transform_ga67d8473d6b293d1bb2b4eaf249795cab}{translate}}(\mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}},\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}})}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}});}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ Result[3]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[0]\ *\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}[0]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[1]\ *\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}[1]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[2]\ *\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}[2]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[3];}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00016\ \ \ \ \ \}}
+\DoxyCodeLine{00017\ \ \ \ \ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__transform_ga42613eb0c7deb5f5188fc159df6c8950}{rotate}}(\mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a9e06c1f76a20fed54ca742cd25cb02c4}{angle}},\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}})}
+\DoxyCodeLine{00020\ \ \ \ \ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a9e06c1f76a20fed54ca742cd25cb02c4}{angle}};}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{cos}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}});}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{sin}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}});}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}(\mbox{\hyperlink{group__core__func__geometric_ga5c6c1379961d4589035a390856f2d66c}{normalize}}(\mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}));}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ temp((T(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}});}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Rotate(\mbox{\hyperlink{namespaceglm_a807df837905ec286f806a536af03b57fa7460b08b0733649cfac04d88cb7bc3c3}{uninitialize}});}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ Rotate[0][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ +\ temp[0]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[0];}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ Rotate[0][1]\ =\ temp[0]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[1]\ +\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[2];}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ Rotate[0][2]\ =\ temp[0]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[2]\ -\/\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[1];}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ Rotate[1][0]\ =\ temp[1]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[0]\ -\/\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[2];}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ Rotate[1][1]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ +\ temp[1]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[1];}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ Rotate[1][2]\ =\ temp[1]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[2]\ +\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[0];}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ Rotate[2][0]\ =\ temp[2]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[0]\ +\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[1];}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ Rotate[2][1]\ =\ temp[2]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[1]\ -\/\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[0];}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ Rotate[2][2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ +\ temp[2]\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}[2];}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result(\mbox{\hyperlink{namespaceglm_a807df837905ec286f806a536af03b57fa7460b08b0733649cfac04d88cb7bc3c3}{uninitialize}});}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ Result[0]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[0]\ *\ Rotate[0][0]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[1]\ *\ Rotate[0][1]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[2]\ *\ Rotate[0][2];}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ Result[1]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[0]\ *\ Rotate[1][0]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[1]\ *\ Rotate[1][1]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[2]\ *\ Rotate[1][2];}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ Result[2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[0]\ *\ Rotate[2][0]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[1]\ *\ Rotate[2][1]\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[2]\ *\ Rotate[2][2];}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ Result[3]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[3];}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{namespaceglm_ad9722cdcbc4eb66d51a81ba24e50eab9}{rotate\_slow}}(\mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a9e06c1f76a20fed54ca742cd25cb02c4}{angle}},\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}})}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a9e06c1f76a20fed54ca742cd25cb02c4}{angle}};}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{cos}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}});}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{sin}}(\mbox{\hyperlink{glad_8h_ac8729153468b5dcf13f971b21d84d4e5}{a}});}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}\ =\ \mbox{\hyperlink{group__core__func__geometric_ga5c6c1379961d4589035a390856f2d66c}{normalize}}(\mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}});}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ +\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ \ \ \ \ \ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}}\ \ \ \ \ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}};}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ Result[0][1]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}}\ +\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}};}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ Result[0][2]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}};}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ Result[0][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ Result[1][0]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}};}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ +\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}};}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ Result[1][2]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}}\ +\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}};}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ Result[1][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ Result[2][0]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}}\ +\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}};}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ Result[2][1]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}};}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}}\ +\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a1f2d7f8147412c43ba2303a56f97ee73}{c}})\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}}\ *\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a33809116048db7caf55162a670dec598}{z}};}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ Result[3]\ =\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}(0,\ 0,\ 0,\ 1);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}\ *\ Result;}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a281421b881aa7a1266842b73a3bc7655}{scale}}(\mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}},\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}})}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result(\mbox{\hyperlink{namespaceglm_a807df837905ec286f806a536af03b57fa7460b08b0733649cfac04d88cb7bc3c3}{uninitialize}});}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ Result[0]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[0]\ *\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}[0];}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ Result[1]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[1]\ *\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}[1];}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ Result[2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[2]\ *\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}[2];}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ Result[3]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}[3];}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{namespaceglm_a50a56bb0808aee15340bfc838e3cf92e}{scale\_slow}}(\mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}},\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}})}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result(T(1));}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}.x;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}.y;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \mbox{\hyperlink{glad_8h_a55f85da29bf761fde63cc95d26300230}{v}}.z;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_af593500c283bf1a787a6f947f503a5c2}{m}}\ *\ Result;}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaa8568ef1d14d6654becb860ed6163817}{ortho}}}
+\DoxyCodeLine{00101\ \ \ \ \ (}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}}
+\DoxyCodeLine{00105\ \ \ \ \ )}
+\DoxyCodeLine{00106\ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_COORDINATE\_SYSTEM\ ==\ GLM\_LEFT\_HANDED}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga8dd6ed0963b92e610448163d12f20dc7}{orthoLH}}(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gafb9a54c12086283da25e5e4b48b755a9}{orthoRH}}(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00115\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga8dd6ed0963b92e610448163d12f20dc7}{orthoLH}}}
+\DoxyCodeLine{00116\ \ \ \ \ (}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}}
+\DoxyCodeLine{00120\ \ \ \ \ )}
+\DoxyCodeLine{00121\ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(1);}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ Result[3][0]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ Result[3][1]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}}\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00140\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gafb9a54c12086283da25e5e4b48b755a9}{orthoRH}}}
+\DoxyCodeLine{00141\ \ \ \ \ (}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}}
+\DoxyCodeLine{00145\ \ \ \ \ )}
+\DoxyCodeLine{00146\ \ \ \ \ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(1);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ Result[3][0]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ Result[3][1]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}}\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00165\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaa8568ef1d14d6654becb860ed6163817}{ortho}}}
+\DoxyCodeLine{00166\ \ \ \ \ (}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}}
+\DoxyCodeLine{00169\ \ \ \ \ )}
+\DoxyCodeLine{00170\ \ \ \ \ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1));}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ Result[2][2]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ Result[3][0]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ Result[3][1]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00178\ \ \ \ \ \}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00181\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaf2b9bdfe77c910ce3ae07c1a386d110e}{frustum}}}
+\DoxyCodeLine{00182\ \ \ \ \ (}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ T\ nearVal,\ T\ farVal}
+\DoxyCodeLine{00186\ \ \ \ \ )}
+\DoxyCodeLine{00187\ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_COORDINATE\_SYSTEM\ ==\ GLM\_LEFT\_HANDED}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaf040a59a5112c06be7579fee2b05bc6f}{frustumLH}}(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},\ nearVal,\ farVal);}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaa881f9ebd1a43e2d032c9a524faf0e7b}{frustumRH}}(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},\ nearVal,\ farVal);}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00193\ \ \ \ \ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00196\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaf040a59a5112c06be7579fee2b05bc6f}{frustumLH}}}
+\DoxyCodeLine{00197\ \ \ \ \ (}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ T\ nearVal,\ T\ farVal}
+\DoxyCodeLine{00201\ \ \ \ \ )}
+\DoxyCodeLine{00202\ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(0);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ nearVal)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ nearVal)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ Result[2][0]\ =\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ Result[2][1]\ =\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ farVal\ /\ (farVal\ -\/\ nearVal);}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/(farVal\ *\ nearVal)\ /\ (farVal\ -\/\ nearVal);}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ (farVal\ +\ nearVal)\ /\ (farVal\ -\/\ nearVal);}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ farVal\ *\ nearVal)\ /\ (farVal\ -\/\ nearVal);}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00219\ \ \ \ \ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00222\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaa881f9ebd1a43e2d032c9a524faf0e7b}{frustumRH}}}
+\DoxyCodeLine{00223\ \ \ \ \ (}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}},}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}},}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ T\ nearVal,\ T\ farVal}
+\DoxyCodeLine{00227\ \ \ \ \ )}
+\DoxyCodeLine{00228\ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(0);}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ nearVal)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ nearVal)\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ Result[2][0]\ =\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ Result[2][1]\ =\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(-\/1);}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ farVal\ /\ (nearVal\ -\/\ farVal);}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/(farVal\ *\ nearVal)\ /\ (farVal\ -\/\ nearVal);}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ -\/\ (farVal\ +\ nearVal)\ /\ (farVal\ -\/\ nearVal);}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ farVal\ *\ nearVal)\ /\ (farVal\ -\/\ nearVal);}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00245\ \ \ \ \ \}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00248\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga9e13be491fd69a438c8fda440cf0156e}{perspective}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}})}
+\DoxyCodeLine{00249\ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_COORDINATE\_SYSTEM\ ==\ GLM\_LEFT\_HANDED}}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga8b7f443c7e30e879fc98fcf1b922d958}{perspectiveLH}}(fovy,\ aspect,\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga0786f78f02365fc789c6a4cd809bd441}{perspectiveRH}}(fovy,\ aspect,\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00255\ \ \ \ \ \}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00258\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga0786f78f02365fc789c6a4cd809bd441}{perspectiveRH}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}})}
+\DoxyCodeLine{00259\ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{group__core__func__common_ga439e60a72eadecfeda2df5449c613a64}{abs}}(aspect\ -\/\ std::numeric\_limits<T>::epsilon())\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ tanHalfFovy\ =\ \mbox{\hyperlink{group__core__func__trigonometric_gae5727eacf7692c197af6298b6d4ad922}{tan}}(fovy\ /\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2));}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ (aspect\ *\ tanHalfFovy);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ (tanHalfFovy);}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00272\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00278\ \ \ \ \ \}}
+\DoxyCodeLine{00279\ \ \ \ \ }
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00281\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga8b7f443c7e30e879fc98fcf1b922d958}{perspectiveLH}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}})}
+\DoxyCodeLine{00282\ \ \ \ \ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{group__core__func__common_ga439e60a72eadecfeda2df5449c613a64}{abs}}(aspect\ -\/\ std::numeric\_limits<T>::epsilon())\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ tanHalfFovy\ =\ \mbox{\hyperlink{group__core__func__trigonometric_gae5727eacf7692c197af6298b6d4ad922}{tan}}(fovy\ /\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2));}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ (aspect\ *\ tanHalfFovy);}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)\ /\ (tanHalfFovy);}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00295\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00298\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00301\ \ \ \ \ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00304\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga44ce1914c556baee3db105b3867bd46a}{perspectiveFov}}(T\ fov,\ T\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}},\ T\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}})}
+\DoxyCodeLine{00305\ \ \ \ \ \{}
+\DoxyCodeLine{00306\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_COORDINATE\_SYSTEM\ ==\ GLM\_LEFT\_HANDED}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaf1e5e6d8303f1462e892e0884b66f9fa}{perspectiveFovLH}}(fov,\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}},\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gab6c38e30fff812659e1486322f78535f}{perspectiveFovRH}}(fov,\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}},\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00310\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00311\ \ \ \ \ \}}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00314\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gab6c38e30fff812659e1486322f78535f}{perspectiveFovRH}}(T\ fov,\ T\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}},\ T\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}})}
+\DoxyCodeLine{00315\ \ \ \ \ \{}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ assert(fov\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00319\ \ \ \ \ }
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ rad\ =\ fov;}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_afa0fb1b5e976920c0abeff2dca3ed774}{h}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{glm::cos}}(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5)\ *\ rad)\ /\ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{glm::sin}}(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5)\ *\ rad);}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_afa0fb1b5e976920c0abeff2dca3ed774}{h}}\ *\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}}\ /\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}};\ }
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}};}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_afa0fb1b5e976920c0abeff2dca3ed774}{h}};}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}});}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ -\/\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00338\ \ \ \ \ \}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00341\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaf1e5e6d8303f1462e892e0884b66f9fa}{perspectiveFovLH}}(T\ fov,\ T\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}},\ T\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}})}
+\DoxyCodeLine{00342\ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ assert(fov\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00346\ \ \ \ \ }
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ rad\ =\ fov;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_afa0fb1b5e976920c0abeff2dca3ed774}{h}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{glm::cos}}(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5)\ *\ rad)\ /\ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{glm::sin}}(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5)\ *\ rad);}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_afa0fb1b5e976920c0abeff2dca3ed774}{h}}\ *\ \mbox{\hyperlink{glad_8h_aa352f2804b9902ac30769c00dde75d5f}{height}}\ /\ \mbox{\hyperlink{glad_8h_a9a82cf3caff84cabc4598e2619faac17}{width}};\ }
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \mbox{\hyperlink{glad_8h_afb1b07e1b25035d41d60fb2c03d507e6}{w}};}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_afa0fb1b5e976920c0abeff2dca3ed774}{h}};}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00359\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ Result[2][2]\ =\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ +\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a18a2583fe65967bceff8903e2769f8e2}{zFar}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00362\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00365\ \ \ \ \ \}}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00368\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_ga8f955f37bab966fa8d6a5375da30860b}{infinitePerspective}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})}
+\DoxyCodeLine{00369\ \ \ \ \ \{}
+\DoxyCodeLine{00370\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_COORDINATE\_SYSTEM\ ==\ GLM\_LEFT\_HANDED}}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaddd559a69ffbcffde8e7a54a9dc3afc5}{infinitePerspectiveLH}}(fovy,\ aspect,\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00372\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gadacc69d138327905cd73554e3d75377c}{infinitePerspectiveRH}}(fovy,\ aspect,\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}});}
+\DoxyCodeLine{00374\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00375\ \ \ \ \ \}}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00378\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gadacc69d138327905cd73554e3d75377c}{infinitePerspectiveRH}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})}
+\DoxyCodeLine{00379\ \ \ \ \ \{}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_gae5727eacf7692c197af6298b6d4ad922}{tan}}(fovy\ /\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2))\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}};}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}}\ =\ -\/\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ *\ aspect;}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ *\ aspect;}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}}\ =\ -\/\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}};}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}};}
+\DoxyCodeLine{00385\ }
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ Result[2][2]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}};}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00393\ \ \ \ \ \}}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00396\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gaddd559a69ffbcffde8e7a54a9dc3afc5}{infinitePerspectiveLH}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})}
+\DoxyCodeLine{00397\ \ \ \ \ \{}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_gae5727eacf7692c197af6298b6d4ad922}{tan}}(fovy\ /\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2))\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}};}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}}\ =\ -\/\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ *\ aspect;}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ *\ aspect;}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}}\ =\ -\/\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}};}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}};}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(T(0));}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}};}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00411\ \ \ \ \ \}}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00413\ \ \ \ \ \textcolor{comment}{//\ Infinite\ projection\ matrix:\ http://www.terathon.com/gdc07\_lengyel.pdf}}
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00415\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gad608a11980b3a1311dcde0cdda5a28da}{tweakedInfinitePerspective}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ T\ ep)}
+\DoxyCodeLine{00416\ \ \ \ \ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ =\ \mbox{\hyperlink{group__core__func__trigonometric_gae5727eacf7692c197af6298b6d4ad922}{tan}}(fovy\ /\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2))\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}};\ }
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}}\ =\ -\/\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ *\ aspect;}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}}\ *\ aspect;}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}}\ =\ -\/\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}};}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ =\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a73b00379db2c7ac5e30a3aa2954a50ee}{range}};}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ffadbbacc6b89cf6218bc43b384d3fe}{right}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a6358510bdde486b81c7951ee5c470ee4}{left}});}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})\ /\ (\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a5ab323daeacf8dfdb8f91132fecdca23}{top}}\ -\/\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_abb624ded9ef662ce48c0c0ff27d35aaf}{bottom}});}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ Result[2][2]\ =\ ep\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ Result[2][3]\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(-\/1);}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ Result[3][2]\ =\ (ep\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2))\ *\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}};}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00430\ \ \ \ \ \}}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00432\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00433\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ defaultp>}}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gad608a11980b3a1311dcde0cdda5a28da}{tweakedInfinitePerspective}}(T\ fovy,\ T\ aspect,\ T\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}})}
+\DoxyCodeLine{00434\ \ \ \ \ \{}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__clip__space_gad608a11980b3a1311dcde0cdda5a28da}{tweakedInfinitePerspective}}(fovy,\ aspect,\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a12d99226e590bbaaf0be69169eeb4834}{zNear}},\ epsilon<T>());}
+\DoxyCodeLine{00436\ \ \ \ \ \}}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keyword}{typename}\ U,\ precision\ P>}
+\DoxyCodeLine{00439\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__projection_ga478b351626e39c8e33e042ea8d1f418e}{project}}}
+\DoxyCodeLine{00440\ \ \ \ \ (}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a0c0d4701a6c89f4f7f0640715d27ab26}{obj}},}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ model,}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}},}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<U,\ P>}}\ \textcolor{keyword}{const}\ \&\ viewport}
+\DoxyCodeLine{00445\ \ \ \ \ )}
+\DoxyCodeLine{00446\ \ \ \ \ \{}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}\ tmp\ =\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a0c0d4701a6c89f4f7f0640715d27ab26}{obj}},\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1));}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ tmp\ =\ model\ *\ tmp;}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ tmp\ =\ \mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}}\ *\ tmp;}
+\DoxyCodeLine{00450\ }
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ tmp\ /=\ tmp.\mbox{\hyperlink{structglm_1_1tvec4_a2a6f7d33e64cf0b38ec82403be5073e4}{w}};}
+\DoxyCodeLine{00452\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ tmp.\mbox{\hyperlink{structglm_1_1tvec4_a7998eea40494693ac46e2772fa20e6f2}{x}}\ =\ tmp.\mbox{\hyperlink{structglm_1_1tvec4_a7998eea40494693ac46e2772fa20e6f2}{x}}\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5)\ +\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5);}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ tmp.\mbox{\hyperlink{structglm_1_1tvec4_ac2e96cd66dfa6d44c4b0e0f15897500a}{y}}\ =\ tmp.\mbox{\hyperlink{structglm_1_1tvec4_ac2e96cd66dfa6d44c4b0e0f15897500a}{y}}\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5)\ +\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5);}
+\DoxyCodeLine{00455\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ tmp\ =\ tmp\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5)\ +\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0.5);}
+\DoxyCodeLine{00457\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ tmp[0]\ =\ tmp[0]\ *\ T(viewport[2])\ +\ T(viewport[0]);}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ tmp[1]\ =\ tmp[1]\ *\ T(viewport[3])\ +\ T(viewport[1]);}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}(tmp);}
+\DoxyCodeLine{00462\ \ \ \ \ \}}
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keyword}{typename}\ U,\ precision\ P>}
+\DoxyCodeLine{00465\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__projection_gaefa35b1dbf52941052a5a3aadc298106}{unProject}}}
+\DoxyCodeLine{00466\ \ \ \ \ (}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ win,}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ model,}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}},}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<U,\ P>}}\ \textcolor{keyword}{const}\ \&\ viewport}
+\DoxyCodeLine{00471\ \ \ \ \ )}
+\DoxyCodeLine{00472\ \ \ \ \ \{}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Inverse\ =\ \mbox{\hyperlink{group__core__func__matrix_gace61e11fc177491beeca0c6971e2f3fc}{inverse}}(\mbox{\hyperlink{group__gtx__projection_ga58384b7170801dd513de46f87c7fb00e}{proj}}\ *\ model);}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}\ tmp\ =\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}(win,\ T(1));}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ tmp.\mbox{\hyperlink{structglm_1_1tvec4_a7998eea40494693ac46e2772fa20e6f2}{x}}\ =\ (tmp.\mbox{\hyperlink{structglm_1_1tvec4_a7998eea40494693ac46e2772fa20e6f2}{x}}\ -\/\ T(viewport[0]))\ /\ T(viewport[2]);}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ tmp.\mbox{\hyperlink{structglm_1_1tvec4_ac2e96cd66dfa6d44c4b0e0f15897500a}{y}}\ =\ (tmp.\mbox{\hyperlink{structglm_1_1tvec4_ac2e96cd66dfa6d44c4b0e0f15897500a}{y}}\ -\/\ T(viewport[1]))\ /\ T(viewport[3]);}
+\DoxyCodeLine{00478\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_DEPTH\_CLIP\_SPACE\ ==\ GLM\_DEPTH\_ZERO\_TO\_ONE}}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ tmp.\mbox{\hyperlink{structglm_1_1tvec4_a7998eea40494693ac46e2772fa20e6f2}{x}}\ =\ tmp.\mbox{\hyperlink{structglm_1_1tvec4_a7998eea40494693ac46e2772fa20e6f2}{x}}\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ tmp.\mbox{\hyperlink{structglm_1_1tvec4_ac2e96cd66dfa6d44c4b0e0f15897500a}{y}}\ =\ tmp.\mbox{\hyperlink{structglm_1_1tvec4_ac2e96cd66dfa6d44c4b0e0f15897500a}{y}}\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00481\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ tmp\ =\ tmp\ *\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1);}
+\DoxyCodeLine{00483\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<T,\ P>}}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a0c0d4701a6c89f4f7f0640715d27ab26}{obj}}\ =\ Inverse\ *\ tmp;}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a0c0d4701a6c89f4f7f0640715d27ab26}{obj}}\ /=\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a0c0d4701a6c89f4f7f0640715d27ab26}{obj}}.\mbox{\hyperlink{structglm_1_1tvec4_a2a6f7d33e64cf0b38ec82403be5073e4}{w}};}
+\DoxyCodeLine{00487\ }
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}(\mbox{\hyperlink{_s_d_l__opengl__glext_8h_a0c0d4701a6c89f4f7f0640715d27ab26}{obj}});}
+\DoxyCodeLine{00489\ \ \ \ \ \}}
+\DoxyCodeLine{00490\ }
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P,\ \textcolor{keyword}{typename}\ U>}
+\DoxyCodeLine{00492\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__projection_ga0f93e1b7ea6887f31b643ce5099b1173}{pickMatrix}}(\mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ center,\ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ delta,\ \mbox{\hyperlink{structglm_1_1tvec4}{tvec4<U,\ P>}}\ \textcolor{keyword}{const}\ \&\ viewport)}
+\DoxyCodeLine{00493\ \ \ \ \ \{}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ assert(delta.\mbox{\hyperlink{structglm_1_1tvec2_a129beaa64d75bb5414e164abd743ffc1}{x}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0)\ \&\&\ delta.\mbox{\hyperlink{structglm_1_1tvec2_a880f479f7348ba7fca07365711484d00}{y}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1));}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!(delta.\mbox{\hyperlink{structglm_1_1tvec2_a129beaa64d75bb5414e164abd743ffc1}{x}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0)\ \&\&\ delta.\mbox{\hyperlink{structglm_1_1tvec2_a880f479f7348ba7fca07365711484d00}{y}}\ >\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0)))}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;\ \textcolor{comment}{//\ Error}}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ Temp(}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(viewport[2])\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ (center.\mbox{\hyperlink{structglm_1_1tvec2_a129beaa64d75bb5414e164abd743ffc1}{x}}\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(viewport[0])))\ /\ delta.\mbox{\hyperlink{structglm_1_1tvec2_a129beaa64d75bb5414e164abd743ffc1}{x}},}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(viewport[3])\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(2)\ *\ (center.\mbox{\hyperlink{structglm_1_1tvec2_a880f479f7348ba7fca07365711484d00}{y}}\ -\/\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(viewport[1])))\ /\ delta.\mbox{\hyperlink{structglm_1_1tvec2_a880f479f7348ba7fca07365711484d00}{y}},}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(0));}
+\DoxyCodeLine{00504\ }
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Translate\ and\ scale\ the\ picked\ region\ to\ the\ entire\ window}}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ Result\ =\ \mbox{\hyperlink{group__ext__matrix__transform_ga67d8473d6b293d1bb2b4eaf249795cab}{translate}}(Result,\ Temp);}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_s_d_l__opengl__glext_8h_a281421b881aa7a1266842b73a3bc7655}{scale}}(Result,\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}(\textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(viewport[2])\ /\ delta.\mbox{\hyperlink{structglm_1_1tvec2_a129beaa64d75bb5414e164abd743ffc1}{x}},\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(viewport[3])\ /\ delta.\mbox{\hyperlink{structglm_1_1tvec2_a880f479f7348ba7fca07365711484d00}{y}},\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(1)));}
+\DoxyCodeLine{00508\ \ \ \ \ \}}
+\DoxyCodeLine{00509\ }
+\DoxyCodeLine{00510\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00511\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__transform_ga894735fbf8f3d25628c127712d0285f7}{lookAt}}(\mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ eye,\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ center,\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ up)}
+\DoxyCodeLine{00512\ \ \ \ \ \{}
+\DoxyCodeLine{00513\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ if\ GLM\_COORDINATE\_SYSTEM\ ==\ GLM\_LEFT\_HANDED}}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_gab2850421652778eeef6830e4fb1ea346}{lookAtLH}}(eye,\ center,\ up);}
+\DoxyCodeLine{00515\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__ext__matrix__transform_ga55e33da75ea7e0f877059cc6f181cd2b}{lookAtRH}}(eye,\ center,\ up);}
+\DoxyCodeLine{00517\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ endif}}
+\DoxyCodeLine{00518\ \ \ \ \ \}}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00521\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__transform_ga55e33da75ea7e0f877059cc6f181cd2b}{lookAtRH}}}
+\DoxyCodeLine{00522\ \ \ \ \ (}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ eye,}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ center,}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ up}
+\DoxyCodeLine{00526\ \ \ \ \ )}
+\DoxyCodeLine{00527\ \ \ \ \ \{}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}(\mbox{\hyperlink{group__core__func__geometric_ga5c6c1379961d4589035a390856f2d66c}{normalize}}(center\ -\/\ eye));}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}(\mbox{\hyperlink{group__core__func__geometric_ga5c6c1379961d4589035a390856f2d66c}{normalize}}(\mbox{\hyperlink{group__core__func__geometric_gaa9583340130a6b700eced5b100c5ccaa}{cross}}(\mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}},\ up)));}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ u(\mbox{\hyperlink{group__core__func__geometric_gaa9583340130a6b700eced5b100c5ccaa}{cross}}(\mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}},\ \mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}));}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result(1);}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}.x;}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ Result[1][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}.y;}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ Result[2][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}.z;}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ Result[0][1]\ =\ u.\mbox{\hyperlink{structglm_1_1tvec3_a84f2c27604bd6ab7f256e3912fb8a79d}{x}};}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ u.\mbox{\hyperlink{structglm_1_1tvec3_a3969b512749f01b1afd7d60f32f50c94}{y}};}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ Result[2][1]\ =\ u.\mbox{\hyperlink{structglm_1_1tvec3_aa105b56701c38430e9ac732d4f41925a}{z}};}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ Result[0][2]\ =-\/\mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}.x;}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ Result[1][2]\ =-\/\mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}.y;}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ Result[2][2]\ =-\/\mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}.z;}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ Result[3][0]\ =-\/\mbox{\hyperlink{namespaceglm_a40370edb74dec9048258c063b9c091c9}{dot}}(\mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}},\ eye);}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ Result[3][1]\ =-\/\mbox{\hyperlink{namespaceglm_a40370edb74dec9048258c063b9c091c9}{dot}}(u,\ eye);}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ Result[3][2]\ =\ \mbox{\hyperlink{namespaceglm_a40370edb74dec9048258c063b9c091c9}{dot}}(\mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}},\ eye);}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00546\ \ \ \ \ \}}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00549\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ \mbox{\hyperlink{group__ext__matrix__transform_gab2850421652778eeef6830e4fb1ea346}{lookAtLH}}}
+\DoxyCodeLine{00550\ \ \ \ \ (}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ eye,}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ center,}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ up}
+\DoxyCodeLine{00554\ \ \ \ \ )}
+\DoxyCodeLine{00555\ \ \ \ \ \{}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}(\mbox{\hyperlink{group__core__func__geometric_ga5c6c1379961d4589035a390856f2d66c}{normalize}}(center\ -\/\ eye));}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}(\mbox{\hyperlink{group__core__func__geometric_ga5c6c1379961d4589035a390856f2d66c}{normalize}}(\mbox{\hyperlink{group__core__func__geometric_gaa9583340130a6b700eced5b100c5ccaa}{cross}}(up,\ \mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}})));}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ u(\mbox{\hyperlink{group__core__func__geometric_gaa9583340130a6b700eced5b100c5ccaa}{cross}}(\mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}},\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}));}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tmat4x4}{tmat4x4<T,\ P>}}\ Result(1);}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ Result[0][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}.x;}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ Result[1][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}.y;}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ Result[2][0]\ =\ \mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}}.z;}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ Result[0][1]\ =\ u.\mbox{\hyperlink{structglm_1_1tvec3_a84f2c27604bd6ab7f256e3912fb8a79d}{x}};}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ Result[1][1]\ =\ u.\mbox{\hyperlink{structglm_1_1tvec3_a3969b512749f01b1afd7d60f32f50c94}{y}};}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ Result[2][1]\ =\ u.\mbox{\hyperlink{structglm_1_1tvec3_aa105b56701c38430e9ac732d4f41925a}{z}};}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ Result[0][2]\ =\ \mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}.x;}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ Result[1][2]\ =\ \mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}.y;}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ Result[2][2]\ =\ \mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}}.z;}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ Result[3][0]\ =\ -\/\mbox{\hyperlink{namespaceglm_a40370edb74dec9048258c063b9c091c9}{dot}}(\mbox{\hyperlink{_s_d_l__opengl_8h_a4af680a6c683f88ed67b76f207f2e6e4}{s}},\ eye);}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ Result[3][1]\ =\ -\/\mbox{\hyperlink{namespaceglm_a40370edb74dec9048258c063b9c091c9}{dot}}(u,\ eye);}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ Result[3][2]\ =\ -\/\mbox{\hyperlink{namespaceglm_a40370edb74dec9048258c063b9c091c9}{dot}}(\mbox{\hyperlink{glad_8h_a7a611b28eaed9ea8dda79c38887b3f0e}{f}},\ eye);}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Result;}
+\DoxyCodeLine{00574\ \ \ \ \ \}}
+\DoxyCodeLine{00575\ \}\textcolor{comment}{//namespace\ glm}}
+
+\end{DoxyCode}

@@ -1,0 +1,168 @@
+\doxysection{bt\+Deformable\+Mouse\+Picking\+Force.\+h}
+\hypertarget{bt_deformable_mouse_picking_force_8h_source}{}\label{bt_deformable_mouse_picking_force_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableMousePickingForce.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableMousePickingForce.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_MOUSE\_PICKING\_FORCE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_MOUSE\_PICKING\_FORCE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btDeformableLagrangianForce.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_mouse_picking_force}{btDeformableMousePickingForce}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_lagrangian_force}{btDeformableLagrangianForce}}}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ If\ true,\ the\ damping\ force\ will\ be\ in\ the\ direction\ of\ the\ spring}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{//\ If\ false,\ the\ damping\ force\ will\ be\ in\ the\ direction\ of\ the\ velocity}}
+\DoxyCodeLine{00025\ \ \ \ \ btScalar\ m\_elasticStiffness,\ m\_dampingStiffness;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}\&\ m\_face;}
+\DoxyCodeLine{00027\ \ \ \ \ btVector3\ m\_mouse\_pos;}
+\DoxyCodeLine{00028\ \ \ \ \ btScalar\ m\_maxForce;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_mouse_picking_force}{btDeformableMousePickingForce}}(btScalar\ k,\ btScalar\ d,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}\&\ face,\ \textcolor{keyword}{const}\ btVector3\&\ mouse\_pos,\ btScalar\ maxForce\ =\ 0.3)\ :\ m\_elasticStiffness(k),\ m\_dampingStiffness(d),\ m\_face(face),\ m\_mouse\_pos(mouse\_pos),\ m\_maxForce(maxForce)}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledForces(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00037\ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ addScaledDampingForce(scale,\ force);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ addScaledElasticForce(scale,\ force);}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledExplicitForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00043\ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ addScaledElasticForce(scale,\ force);}
+\DoxyCodeLine{00045\ \ \ \ \ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledDampingForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00048\ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ v\_diff\ =\ m\_face.m\_n[i]-\/>m\_v;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ scaled\_force\ =\ scale\ *\ m\_dampingStiffness\ *\ v\_diff;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_face.m\_n[i]-\/>m\_x\ -\/\ m\_mouse\_pos).norm()\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\ =\ (m\_face.m\_n[i]-\/>m\_x\ -\/\ m\_mouse\_pos).normalized();}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_force\ =\ scale\ *\ m\_dampingStiffness\ *\ v\_diff.dot(dir)\ *\ dir;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ force[m\_face.m\_n[i]-\/>index]\ -\/=\ scaled\_force;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00060\ \ \ \ \ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledElasticForce(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force)}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ btScalar\ scaled\_stiffness\ =\ scale\ *\ m\_elasticStiffness;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\ =\ (m\_face.m\_n[i]-\/>m\_q\ -\/\ m\_mouse\_pos);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ scaled\_force\ =\ scaled\_stiffness\ *\ dir;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (scaled\_force.safeNorm()\ >\ m\_maxForce)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_force.safeNormalize();}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_force\ *=\ m\_maxForce;}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ force[m\_face.m\_n[i]-\/>index]\ -\/=\ scaled\_force;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledDampingForceDifferential(btScalar\ scale,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dv,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ df)}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ btScalar\ scaled\_k\_damp\ =\ m\_dampingStiffness\ *\ scale;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ local\_scaled\_df\ =\ scaled\_k\_damp\ *\ dv[m\_face.m\_n[i]-\/>index];}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_face.m\_n[i]-\/>m\_x\ -\/\ m\_mouse\_pos).norm()\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\ =\ (m\_face.m\_n[i]-\/>m\_x\ -\/\ m\_mouse\_pos).normalized();}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ local\_scaled\_df\ =\ scaled\_k\_damp\ *\ dv[m\_face.m\_n[i]-\/>index].dot(dir)\ *\ dir;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ df[m\_face.m\_n[i]-\/>index]\ -\/=\ local\_scaled\_df;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ buildDampingForceDifferentialDiagonal(btScalar\ scale,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ diagA)\ \{\}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{double}\ totalElasticEnergy(btScalar\ dt)}
+\DoxyCodeLine{00096\ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ energy\ =\ 0;}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\ =\ (m\_face.m\_n[i]-\/>m\_q\ -\/\ m\_mouse\_pos);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ scaled\_force\ =\ m\_elasticStiffness\ *\ dir;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (scaled\_force.safeNorm()\ >\ m\_maxForce)}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_force.safeNormalize();}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_force\ *=\ m\_maxForce;}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ energy\ +=\ 0.5\ *\ scaled\_force.dot(dir);}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ energy;}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{double}\ totalDampingEnergy(btScalar\ dt)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ energy\ =\ 0;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ v\_diff\ =\ m\_face.m\_n[i]-\/>m\_v;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ scaled\_force\ =\ m\_dampingStiffness\ *\ v\_diff;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_face.m\_n[i]-\/>m\_x\ -\/\ m\_mouse\_pos).norm()\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\ =\ (m\_face.m\_n[i]-\/>m\_x\ -\/\ m\_mouse\_pos).normalized();}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_force\ =\ m\_dampingStiffness\ *\ v\_diff.dot(dir)\ *\ dir;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ energy\ -\/=\ scaled\_force.dot(m\_face.m\_n[i]-\/>m\_v)\ /\ dt;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ energy;}
+\DoxyCodeLine{00127\ \ \ \ \ \}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addScaledElasticForceDifferential(btScalar\ scale,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dx,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ df)}
+\DoxyCodeLine{00130\ \ \ \ \ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ btScalar\ scaled\_stiffness\ =\ scale\ *\ m\_elasticStiffness;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\ =\ (m\_face.m\_n[i]-\/>m\_q\ -\/\ m\_mouse\_pos);}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dir\_norm\ =\ dir.norm();}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dir\_normalized\ =\ (dir\_norm\ >\ SIMD\_EPSILON)\ ?\ dir.normalized()\ :\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id}\ =\ m\_face.m\_n[i]-\/>index;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dx\_diff\ =\ dx[id];}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ r\ =\ 0;\ \ \textcolor{comment}{//\ rest\ length\ is\ 0\ for\ picking\ spring}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ scaled\_df\ =\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dir\_norm\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_df\ -\/=\ scaled\_stiffness\ *\ dir\_normalized.dot(dx\_diff)\ *\ dir\_normalized;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_df\ +=\ scaled\_stiffness\ *\ dir\_normalized.dot(dx\_diff)\ *\ ((dir\_norm\ -\/\ r)\ /\ dir\_norm)\ *\ dir\_normalized;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scaled\_df\ -\/=\ scaled\_stiffness\ *\ ((dir\_norm\ -\/\ r)\ /\ dir\_norm)\ *\ dx\_diff;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ df[id]\ +=\ scaled\_df;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00149\ \ \ \ \ \}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{void}\ setMousePos(\textcolor{keyword}{const}\ btVector3\&\ p)}
+\DoxyCodeLine{00152\ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ m\_mouse\_pos\ =\ p;}
+\DoxyCodeLine{00154\ \ \ \ \ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{virtual}\ btDeformableLagrangianForceType\ getForceType()}
+\DoxyCodeLine{00157\ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_MOUSE\_PICKING\_FORCE;}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ \};}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btMassSpring\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,208 @@
+\doxysection{IDLinear\+Math\+Interface.\+hpp}
+\hypertarget{_i_d_linear_math_interface_8hpp_source}{}\label{_i_d_linear_math_interface_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletInverseDynamics/details/IDLinearMathInterface.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletInverseDynamics/details/IDLinearMathInterface.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ IDLINEARMATHINTERFACE\_HPP\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ IDLINEARMATHINTERFACE\_HPP\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}../IDConfig.hpp"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}../../LinearMath/btMatrix3x3.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}../../LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}../../LinearMath/btMatrixX.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ BT\_ID\_HAVE\_MAT3X}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{namespace\ }btInverseDynamics}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }vec3;}
+\DoxyCodeLine{00016\ \textcolor{keyword}{class\ }vecx;}
+\DoxyCodeLine{00017\ \textcolor{keyword}{class\ }mat33;}
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structbt_matrix_x}{btMatrixX<idScalar>}}\ matxx;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_inverse_dynamics_1_1vec3}{vec3}}\ :\ \textcolor{keyword}{public}\ btVector3}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00023\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vec3}{vec3}}()\ :\ btVector3()\ \{\}}
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vec3}{vec3}}(\textcolor{keyword}{const}\ btVector3\&\ btv)\ \{\ *\textcolor{keyword}{this}\ =\ btv;\ \}}
+\DoxyCodeLine{00025\ \ \ \ \ idScalar\&\ operator()(\textcolor{keywordtype}{int}\ i)\ \{\ \textcolor{keywordflow}{return}\ (*\textcolor{keyword}{this})[i];\ \}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{const}\ idScalar\&\ operator()(\textcolor{keywordtype}{int}\ i)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (*\textcolor{keyword}{this})[i];\ \}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ size()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ 3;\ \}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vec3}{vec3}}\&\ operator=(\textcolor{keyword}{const}\ btVector3\&\ rhs)}
+\DoxyCodeLine{00029\ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ *\textcolor{keyword}{static\_cast<}btVector3*\textcolor{keyword}{>}(\textcolor{keyword}{this})\ =\ rhs;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00032\ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\ :\ \textcolor{keyword}{public}\ btMatrix3x3}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}()\ :\ btMatrix3x3()\ \{\}}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}(\textcolor{keyword}{const}\ btMatrix3x3\&\ btm)\ \{\ *\textcolor{keyword}{this}\ =\ btm;\ \}}
+\DoxyCodeLine{00040\ \ \ \ \ idScalar\&\ operator()(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)\ \{\ \textcolor{keywordflow}{return}\ (*\textcolor{keyword}{this})[i][j];\ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{const}\ idScalar\&\ operator()(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (*\textcolor{keyword}{this})[i][j];\ \}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\&\ operator=(\textcolor{keyword}{const}\ btMatrix3x3\&\ rhs)}
+\DoxyCodeLine{00043\ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ *\textcolor{keyword}{static\_cast<}btMatrix3x3*\textcolor{keyword}{>}(\textcolor{keyword}{this})\ =\ rhs;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00046\ \ \ \ \ \}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\ operator*(\textcolor{keyword}{const}\ idScalar\&\ s,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\&\ a);}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\ operator/(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\&\ a,\ \textcolor{keyword}{const}\ idScalar\&\ s);}
+\DoxyCodeLine{00049\ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\ operator/(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat33}{mat33}}\&\ a,\ \textcolor{keyword}{const}\ idScalar\&\ s)\ \{\ \textcolor{keywordflow}{return}\ a\ *\ (1.0\ /\ s);\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{inline}\ mat33\ operator*(\textcolor{keyword}{const}\ idScalar\&\ s,\ \textcolor{keyword}{const}\ mat33\&\ a)\ \{\ \textcolor{keywordflow}{return}\ a\ *\ s;\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_vector_x}{btVectorX}}<idScalar>}
+\DoxyCodeLine{00056\ \{}
+\DoxyCodeLine{00057\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}(\textcolor{keywordtype}{int}\ size)\ :\ \mbox{\hyperlink{structbt_vector_x}{btVectorX<idScalar>}}(size)\ \{\}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_vector_x}{btVectorX<idScalar>}}\&\ rhs)}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ *\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structbt_vector_x}{btVectorX<idScalar>}}*\textcolor{keyword}{>}(\textcolor{keyword}{this})\ =\ rhs;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ idScalar\&\ operator()(\textcolor{keywordtype}{int}\ i)\ \{\ \textcolor{keywordflow}{return}\ (*\textcolor{keyword}{this})[i];\ \}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{const}\ idScalar\&\ operator()(\textcolor{keywordtype}{int}\ i)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (*\textcolor{keyword}{this})[i];\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ operator*(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ a,\ \textcolor{keyword}{const}\ idScalar\&\ s);}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ operator*(\textcolor{keyword}{const}\ idScalar\&\ s,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ a);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ operator+(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ b);}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ operator-\/(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ b);}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ operator/(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ a,\ \textcolor{keyword}{const}\ idScalar\&\ s);}
+\DoxyCodeLine{00074\ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ operator*(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ a,\ \textcolor{keyword}{const}\ idScalar\&\ s)}
+\DoxyCodeLine{00077\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\ result(a.size());}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ result.size();\ i++)}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ result(i)\ =\ a(i)\ *\ s;}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00084\ \}}
+\DoxyCodeLine{00085\ \textcolor{keyword}{inline}\ vecx\ operator*(\textcolor{keyword}{const}\ idScalar\&\ s,\ \textcolor{keyword}{const}\ vecx\&\ a)\ \{\ \textcolor{keywordflow}{return}\ a\ *\ s;\ \}}
+\DoxyCodeLine{00086\ \textcolor{keyword}{inline}\ vecx\ operator+(\textcolor{keyword}{const}\ vecx\&\ a,\ \textcolor{keyword}{const}\ vecx\&\ b)}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ vecx\ result(a.size());}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{comment}{//\ TODO:\ error\ handling\ for\ a.size()\ !=\ b.size()??}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.size()\ !=\ b.size())}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ bt\_id\_error\_message(\textcolor{stringliteral}{"{}size\ missmatch.\ a.size()=\ \%d,\ b.size()=\ \%d\(\backslash\)n"{}},\ a.size(),\ b.size());}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ abort();}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ a.size();\ i++)}
+\DoxyCodeLine{00096\ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ result(i)\ =\ a(i)\ +\ b(i);}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00101\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{inline}\ vecx\ operator-\/(\textcolor{keyword}{const}\ vecx\&\ a,\ \textcolor{keyword}{const}\ vecx\&\ b)}
+\DoxyCodeLine{00104\ \{}
+\DoxyCodeLine{00105\ \ \ \ \ vecx\ result(a.size());}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//\ TODO:\ error\ handling\ for\ a.size()\ !=\ b.size()??}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.size()\ !=\ b.size())}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ bt\_id\_error\_message(\textcolor{stringliteral}{"{}size\ missmatch.\ a.size()=\ \%d,\ b.size()=\ \%d\(\backslash\)n"{}},\ a.size(),\ b.size());}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ abort();}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ a.size();\ i++)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ result(i)\ =\ a(i)\ -\/\ b(i);}
+\DoxyCodeLine{00115\ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00117\ \}}
+\DoxyCodeLine{00118\ \textcolor{keyword}{inline}\ vecx\ operator/(\textcolor{keyword}{const}\ vecx\&\ a,\ \textcolor{keyword}{const}\ idScalar\&\ s)}
+\DoxyCodeLine{00119\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ vecx\ result(a.size());}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ result.size();\ i++)}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ result(i)\ =\ a(i)\ /\ s;}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00127\ \}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{comment}{//\ use\ btMatrixX\ to\ implement\ 3xX\ matrix}}
+\DoxyCodeLine{00130\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_inverse_dynamics_1_1mat3x}{mat3x}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1matxx}{matxx}}}
+\DoxyCodeLine{00131\ \{}
+\DoxyCodeLine{00132\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00133\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat3x}{mat3x}}()\ \{\}}
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat3x}{mat3x}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat3x}{mat3x}}\&\ rhs)}
+\DoxyCodeLine{00135\ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ matxx::resize(rhs.rows(),\ rhs.cols());}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ *\textcolor{keyword}{this}\ =\ rhs;}
+\DoxyCodeLine{00138\ \ \ \ \ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat3x}{mat3x}}(\textcolor{keywordtype}{int}\ rows,\ \textcolor{keywordtype}{int}\ cols)\ :\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1matxx}{matxx}}(3,\ cols)}
+\DoxyCodeLine{00140\ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{void}\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat3x}{mat3x}}\&\ rhs)}
+\DoxyCodeLine{00143\ \ \ \ \ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_cols\ !=\ rhs.m\_cols)}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ bt\_id\_error\_message(\textcolor{stringliteral}{"{}size\ missmatch,\ cols=\ \%d\ but\ rhs.cols=\ \%d\(\backslash\)n"{}},\ cols(),\ rhs.cols());}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ abort();}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ rows();\ i++)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ 0;\ k\ <\ cols();\ k++)}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setElem(i,\ k,\ rhs(i,\ k));}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{void}\ setZero()}
+\DoxyCodeLine{00158\ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ matxx::setZero();}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ \};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vec3}{vec3}}\ operator*(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1mat3x}{mat3x}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vecx}{vecx}}\&\ b)}
+\DoxyCodeLine{00164\ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \mbox{\hyperlink{classbt_inverse_dynamics_1_1vec3}{vec3}}\ result;}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.cols()\ !=\ b.size())}
+\DoxyCodeLine{00167\ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ bt\_id\_error\_message(\textcolor{stringliteral}{"{}size\ missmatch.\ a.cols()=\ \%d,\ b.size()=\ \%d\(\backslash\)n"{}},\ a.cols(),\ b.size());}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ abort();}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \ \ \ \ result(0)\ =\ 0.0;}
+\DoxyCodeLine{00172\ \ \ \ \ result(1)\ =\ 0.0;}
+\DoxyCodeLine{00173\ \ \ \ \ result(2)\ =\ 0.0;}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ b.size();\ i++)}
+\DoxyCodeLine{00175\ \ \ \ \ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ 0;\ k\ <\ 3;\ k++)}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ result(k)\ +=\ a(k,\ i)\ *\ b(i);}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00180\ \ \ \ \ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00182\ \}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ resize(mat3x\&\ m,\ idArrayIdx\ size)}
+\DoxyCodeLine{00185\ \{}
+\DoxyCodeLine{00186\ \ \ \ \ m.resize(3,\ size);}
+\DoxyCodeLine{00187\ \ \ \ \ m.setZero();}
+\DoxyCodeLine{00188\ \}}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ setMatxxElem(\textcolor{keyword}{const}\ idArrayIdx\ row,\ \textcolor{keyword}{const}\ idArrayIdx\ col,\ \textcolor{keyword}{const}\ idScalar\ val,\ matxx*\ m)}
+\DoxyCodeLine{00191\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ m-\/>setElem(row,\ col,\ val);}
+\DoxyCodeLine{00193\ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ setMat3xElem(\textcolor{keyword}{const}\ idArrayIdx\ row,\ \textcolor{keyword}{const}\ idArrayIdx\ col,\ \textcolor{keyword}{const}\ idScalar\ val,\ mat3x*\ m)}
+\DoxyCodeLine{00196\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ m-\/>setElem(row,\ col,\ val);}
+\DoxyCodeLine{00198\ \}}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \}\ \ \textcolor{comment}{//\ namespace\ btInverseDynamics}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ IDLINEARMATHINTERFACE\_HPP\_}}
+
+\end{DoxyCode}

@@ -1,0 +1,96 @@
+\doxysection{b3\+Float4.\+h}
+\hypertarget{b3_float4_8h_source}{}\label{b3_float4_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/shared/b3Float4.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/shared/b3Float4.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ B3\_FLOAT4\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ B3\_FLOAT4\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3PlatformDefinitions.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Vector3.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ b3Float4\ b3Vector3}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ b3Float4ConstArg\ const\ b3Vector3\&}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ b3Dot3F4\ b3Dot}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ b3Cross3\ b3Cross}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ b3MakeFloat4\ b3MakeVector3}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{inline}\ b3Vector3\ b3Normalized(\textcolor{keyword}{const}\ b3Vector3\&\ vec)}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordflow}{return}\ vec.normalized();}
+\DoxyCodeLine{00016\ \}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{inline}\ b3Float4\ b3FastNormalized3(b3Float4ConstArg\ v)}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordflow}{return}\ v.normalized();}
+\DoxyCodeLine{00021\ \}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{inline}\ b3Float4\ b3MaxFloat4(\textcolor{keyword}{const}\ b3Float4\&\ a,\ \textcolor{keyword}{const}\ b3Float4\&\ b)}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ b3Float4\ tmp\ =\ a;}
+\DoxyCodeLine{00026\ \ \ \ \ tmp.setMax(b);}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ \textcolor{keyword}{inline}\ b3Float4\ b3MinFloat4(\textcolor{keyword}{const}\ b3Float4\&\ a,\ \textcolor{keyword}{const}\ b3Float4\&\ b)}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ b3Float4\ tmp\ =\ a;}
+\DoxyCodeLine{00032\ \ \ \ \ tmp.setMin(b);}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{00034\ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00037\ \textcolor{keyword}{typedef}\ float4\ b3Float4;}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ b3Float4ConstArg\ const\ b3Float4}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ b3MakeFloat4\ (float4)}}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{float}\ b3Dot3F4(b3Float4ConstArg\ v0,\ b3Float4ConstArg\ v1)}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ float4\ a1\ =\ b3MakeFloat4(v0.xyz,\ 0.f);}
+\DoxyCodeLine{00043\ \ \ \ \ float4\ b1\ =\ b3MakeFloat4(v1.xyz,\ 0.f);}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{return}\ dot(a1,\ b1);}
+\DoxyCodeLine{00045\ \}}
+\DoxyCodeLine{00046\ b3Float4\ b3Cross3(b3Float4ConstArg\ v0,\ b3Float4ConstArg\ v1)}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ float4\ a1\ =\ b3MakeFloat4(v0.xyz,\ 0.f);}
+\DoxyCodeLine{00049\ \ \ \ \ float4\ b1\ =\ b3MakeFloat4(v1.xyz,\ 0.f);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{return}\ cross(a1,\ b1);}
+\DoxyCodeLine{00051\ \}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ b3MinFloat4\ min}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ b3MaxFloat4\ max}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ b3Normalized(a)\ normalize(a)}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ b3IsAlmostZero(b3Float4ConstArg\ v)}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{if}\ (b3Fabs(v.x)\ >\ 1e-\/6\ ||\ b3Fabs(v.y)\ >\ 1e-\/6\ ||\ b3Fabs(v.z)\ >\ 1e-\/6)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ b3MaxDot(b3Float4ConstArg\ vec,\ \_\_global\ \textcolor{keyword}{const}\ b3Float4*\ vecArray,\ \textcolor{keywordtype}{int}\ vecLen,\ \textcolor{keywordtype}{float}*\ dotOut)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{float}\ maxDot\ =\ -\/B3\_INFINITY;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ 0;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ ptIndex\ =\ -\/1;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ vecLen;\ i++)}
+\DoxyCodeLine{00072\ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ dot\ =\ b3Dot3F4(vecArray[i],\ vec);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ >\ maxDot)}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ maxDot\ =\ dot;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ ptIndex\ =\ i;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ b3Assert(ptIndex\ >=\ 0);}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptIndex\ <\ 0)}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ ptIndex\ =\ 0;}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \ \ \ \ *dotOut\ =\ maxDot;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{return}\ ptIndex;}
+\DoxyCodeLine{00088\ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_FLOAT4\_H}}
+
+\end{DoxyCode}

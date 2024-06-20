@@ -1,0 +1,91 @@
+\doxysection{bt\+Bvh\+Tree Class Reference}
+\hypertarget{classbt_bvh_tree}{}\label{classbt_bvh_tree}\index{btBvhTree@{btBvhTree}}
+
+
+Basic Box tree structure.  
+
+
+
+
+{\ttfamily \#include $<$bt\+GImpact\+Bvh.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\textbf{ }\par
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classbt_bvh_tree_aed589b2985838c6268597f4f64a96c46}{build\+\_\+tree}} (\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\+\_\+\+BVH\+\_\+\+DATA\+\_\+\+ARRAY}} \&primitive\+\_\+boxes)
+\begin{DoxyCompactList}\small\item\em stackless build tree \end{DoxyCompactList}\item 
+\Hypertarget{classbt_bvh_tree_ad9963d9620aad83024c3d01d7c08a341}\label{classbt_bvh_tree_ad9963d9620aad83024c3d01d7c08a341} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries clear\+Nodes} ()
+\item 
+\Hypertarget{classbt_bvh_tree_a08d1a83b6d252b96cfc2a8d512c54c7e}\label{classbt_bvh_tree_a08d1a83b6d252b96cfc2a8d512c54c7e} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Node\+Count} () const
+\begin{DoxyCompactList}\small\item\em node count \end{DoxyCompactList}\item 
+\Hypertarget{classbt_bvh_tree_a8394787a60291cad85bcf1afc4d94874}\label{classbt_bvh_tree_a8394787a60291cad85bcf1afc4d94874} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE bool {\bfseries is\+Leaf\+Node} (int nodeindex) const
+\begin{DoxyCompactList}\small\item\em tells if the node is a leaf \end{DoxyCompactList}\item 
+\Hypertarget{classbt_bvh_tree_ac0813921b278d9891d0e05b49abfd68c}\label{classbt_bvh_tree_ac0813921b278d9891d0e05b49abfd68c} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Node\+Data} (int nodeindex) const
+\item 
+\Hypertarget{classbt_bvh_tree_acdd8214ed29b797fb3a45d654f53c9e1}\label{classbt_bvh_tree_acdd8214ed29b797fb3a45d654f53c9e1} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries get\+Node\+Bound} (int nodeindex, bt\+AABB \&bound) const
+\item 
+\Hypertarget{classbt_bvh_tree_a789e785f88d84a857ca1931ff85a4b7d}\label{classbt_bvh_tree_a789e785f88d84a857ca1931ff85a4b7d} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries set\+Node\+Bound} (int nodeindex, const bt\+AABB \&bound)
+\item 
+\Hypertarget{classbt_bvh_tree_ac46b4e7e39ead78998d89a7e89cf910d}\label{classbt_bvh_tree_ac46b4e7e39ead78998d89a7e89cf910d} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Left\+Node} (int nodeindex) const
+\item 
+\Hypertarget{classbt_bvh_tree_a3ba8fe7e16650e9b3c0625549ae9020d}\label{classbt_bvh_tree_a3ba8fe7e16650e9b3c0625549ae9020d} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Right\+Node} (int nodeindex) const
+\item 
+\Hypertarget{classbt_bvh_tree_a8f06e5e1697b5b72a18222881aabd071}\label{classbt_bvh_tree_a8f06e5e1697b5b72a18222881aabd071} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE int {\bfseries get\+Escape\+Node\+Index} (int nodeindex) const
+\item 
+\Hypertarget{classbt_bvh_tree_a5a6dd3a359ea68ed50743e18da358bb9}\label{classbt_bvh_tree_a5a6dd3a359ea68ed50743e18da358bb9} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE const \mbox{\hyperlink{class_g_i_m___b_v_h___t_r_e_e___n_o_d_e}{GIM\+\_\+\+BVH\+\_\+\+TREE\+\_\+\+NODE}} \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+node\+\_\+pointer} (int index=0) const
+\end{DoxyCompactItemize}
+
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_bvh_tree_adab83b12f4b402cfb5993229464bb5bf}\label{classbt_bvh_tree_adab83b12f4b402cfb5993229464bb5bf} 
+int {\bfseries \+\_\+sort\+\_\+and\+\_\+calc\+\_\+splitting\+\_\+index} (\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\+\_\+\+BVH\+\_\+\+DATA\+\_\+\+ARRAY}} \&primitive\+\_\+boxes, int start\+Index, int end\+Index, int split\+Axis)
+\item 
+\Hypertarget{classbt_bvh_tree_a0a4c7b8aac4746d61db57943813897ae}\label{classbt_bvh_tree_a0a4c7b8aac4746d61db57943813897ae} 
+int {\bfseries \+\_\+calc\+\_\+splitting\+\_\+axis} (\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\+\_\+\+BVH\+\_\+\+DATA\+\_\+\+ARRAY}} \&primitive\+\_\+boxes, int start\+Index, int end\+Index)
+\item 
+\Hypertarget{classbt_bvh_tree_a04dbb29969ae7bdedc06d650b5f35932}\label{classbt_bvh_tree_a04dbb29969ae7bdedc06d650b5f35932} 
+void {\bfseries \+\_\+build\+\_\+sub\+\_\+tree} (\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\+\_\+\+BVH\+\_\+\+DATA\+\_\+\+ARRAY}} \&primitive\+\_\+boxes, int start\+Index, int end\+Index)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_bvh_tree_a2d08e4099671e71c48786c26f7cd554a}\label{classbt_bvh_tree_a2d08e4099671e71c48786c26f7cd554a} 
+int {\bfseries m\+\_\+num\+\_\+nodes}
+\item 
+\Hypertarget{classbt_bvh_tree_a0b90eb3e890f84648f7c3b7ca52fefb7}\label{classbt_bvh_tree_a0b90eb3e890f84648f7c3b7ca52fefb7} 
+\mbox{\hyperlink{class_g_i_m___b_v_h___t_r_e_e___n_o_d_e___a_r_r_a_y}{GIM\+\_\+\+BVH\+\_\+\+TREE\+\_\+\+NODE\+\_\+\+ARRAY}} {\bfseries m\+\_\+node\+\_\+array}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Basic Box tree structure. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_bvh_tree_aed589b2985838c6268597f4f64a96c46}\label{classbt_bvh_tree_aed589b2985838c6268597f4f64a96c46} 
+\index{btBvhTree@{btBvhTree}!build\_tree@{build\_tree}}
+\index{build\_tree@{build\_tree}!btBvhTree@{btBvhTree}}
+\doxysubsubsection{\texorpdfstring{build\_tree()}{build\_tree()}}
+{\footnotesize\ttfamily void bt\+Bvh\+Tree\+::build\+\_\+tree (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_g_i_m___b_v_h___d_a_t_a___a_r_r_a_y}{GIM\+\_\+\+BVH\+\_\+\+DATA\+\_\+\+ARRAY}} \&}]{primitive\+\_\+boxes }\end{DoxyParamCaption})}
+
+
+
+stackless build tree 
+
+prototype functions for box tree management 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Gimpact/bt\+GImpact\+Bvh.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Gimpact/bt\+GImpact\+Bvh.\+cpp\end{DoxyCompactItemize}

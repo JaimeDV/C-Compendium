@@ -1,0 +1,68 @@
+\doxysection{b3\+Cpu\+Rigid\+Body\+Pipeline.\+h}
+\hypertarget{b3_cpu_rigid_body_pipeline_8h_source}{}\label{b3_cpu_rigid_body_pipeline_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Dynamics/b3CpuRigidBodyPipeline.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Dynamics/b3CpuRigidBodyPipeline.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Copyright\ (c)\ 2013\ Advanced\ Micro\ Devices,\ Inc.\ \ }}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00007\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00009\ \textcolor{comment}{}}
+\DoxyCodeLine{00010\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//Originally\ written\ by\ Erwin\ Coumans}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ B3\_CPU\_RIGIDBODY\_PIPELINE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ B3\_CPU\_RIGIDBODY\_PIPELINE\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3AlignedObjectArray.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_cpu_rigid_body_pipeline}{b3CpuRigidBodyPipeline}}}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_cpu_rigid_body_pipeline_internal_data}{b3CpuRigidBodyPipelineInternalData}}*\ m\_data;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ allocateCollidable();}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classb3_cpu_rigid_body_pipeline}{b3CpuRigidBodyPipeline}}(\textcolor{keyword}{class}\ \mbox{\hyperlink{classb3_cpu_narrow_phase}{b3CpuNarrowPhase}}*\ narrowphase,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_dynamic_bvh_broadphase}{b3DynamicBvhBroadphase}}*\ broadphaseDbvt,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_config}{b3Config}}\&\ config);}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_cpu_rigid_body_pipeline}{\string~b3CpuRigidBodyPipeline}}();}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ stepSimulation(\textcolor{keywordtype}{float}\ deltaTime);}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ integrate(\textcolor{keywordtype}{float}\ timeStep);}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ updateAabbWorldSpace();}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ computeOverlappingPairs();}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ computeContactPoints();}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveContactConstraints();}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{int}\ registerConvexPolyhedron(\textcolor{keyword}{class}\ b3ConvexUtility*\ convex);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ registerPhysicsInstance(\textcolor{keywordtype}{float}\ mass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ position,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ orientation,\ \textcolor{keywordtype}{int}\ collisionShapeIndex,\ \textcolor{keywordtype}{int}\ userData);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ writeAllInstancesToGpu();}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ copyConstraintsToHost();}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ setGravity(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ grav);}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{int}\ createPoint2PointConstraint(\textcolor{keywordtype}{int}\ bodyA,\ \textcolor{keywordtype}{int}\ bodyB,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ pivotInA,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ pivotInB,\ \textcolor{keywordtype}{float}\ breakingThreshold);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ createFixedConstraint(\textcolor{keywordtype}{int}\ bodyA,\ \textcolor{keywordtype}{int}\ bodyB,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ pivotInA,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ pivotInB,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ relTargetAB,\ \textcolor{keywordtype}{float}\ breakingThreshold);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ removeConstraintByUid(\textcolor{keywordtype}{int}\ uid);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{void}\ addConstraint(\textcolor{keyword}{class}\ b3TypedConstraint*\ constraint);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ removeConstraint(b3TypedConstraint*\ constraint);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ castRays(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3RayInfo>}}\&\ rays,\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3RayHit>}}\&\ hitResults);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ getBodyBuffer()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumBodies()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00060\ \};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_CPU\_RIGIDBODY\_PIPELINE\_H}}
+
+\end{DoxyCode}

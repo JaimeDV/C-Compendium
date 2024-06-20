@@ -1,0 +1,317 @@
+\doxysection{bt\+Deformable\+Multi\+Body\+Dynamics\+World.\+h}
+\hypertarget{bt_deformable_multi_body_dynamics_world_8h_source}{}\label{bt_deformable_multi_body_dynamics_world_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableMultiBodyDynamicsWorld.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableMultiBodyDynamicsWorld.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DEFORMABLE\_MULTIBODY\_DYNAMICS\_WORLD\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DEFORMABLE\_MULTIBODY\_DYNAMICS\_WORLD\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btSoftMultiBodyDynamicsWorld.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btDeformableLagrangianForce.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btDeformableMassSpringForce.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}btDeformableBodySolver.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}btDeformableMultiBodyConstraintSolver.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}btSoftBodyHelpers.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btSimulationIslandManager.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{btSoftBodyArray}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_lagrangian_force}{btDeformableLagrangianForce}};}
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_multi_body_inplace_solver_island_callback}{MultiBodyInplaceSolverIslandCallback}};}
+\DoxyCodeLine{00032\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_deformable_body_inplace_solver_island_callback}{DeformableBodyInplaceSolverIslandCallback}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }btDeformableMultiBodyConstraintSolver;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{btSoftBodyArray}};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world}{btDeformableMultiBodyDynamicsWorld}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_multi_body_dynamics_world}{btMultiBodyDynamicsWorld}}}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}}*\ m\_deformableBodySolver;}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btSoftBodyArray}}\ m\_softBodies;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_drawFlags;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_drawNodeTree;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_drawFaceTree;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_drawClusterTree;}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_world_info}{btSoftBodyWorldInfo}}\ m\_sbi;}
+\DoxyCodeLine{00048\ \ \ \ \ btScalar\ m\_internalTime;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_ccdIterations;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_implicit;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_lineSearch;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useProjection;}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{struct_deformable_body_inplace_solver_island_callback}{DeformableBodyInplaceSolverIslandCallback}}*\ m\_solverDeformableBodyIslandCallback;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{typedef}\ void\ (*btSolverCallback)(btScalar\ time,\ \mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world}{btDeformableMultiBodyDynamicsWorld}}*\ world);}
+\DoxyCodeLine{00056\ \ \ \ \ btSolverCallback\ m\_solverCallback;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world_a8764c316680d9049d7b8ee11ed408de6}{internalSingleStepSimulation}}(btScalar\ timeStep);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ integrateTransforms(btScalar\ timeStep);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ positionCorrection(btScalar\ timeStep);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ solveConstraints(btScalar\ timeStep);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ updateActivationState(btScalar\ timeStep);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ clearGravity();}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world}{btDeformableMultiBodyDynamicsWorld}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ \mbox{\hyperlink{classbt_broadphase_interface}{btBroadphaseInterface}}*\ pairCache,\ btDeformableMultiBodyConstraintSolver*\ constraintSolver,\ \mbox{\hyperlink{classbt_collision_configuration}{btCollisionConfiguration}}*\ collisionConfiguration,\ \mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}}*\ deformableBodySolver\ =\ 0);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ stepSimulation(btScalar\ timeStep,\ \textcolor{keywordtype}{int}\ maxSubSteps\ =\ 1,\ btScalar\ fixedTimeStep\ =\ btScalar(1.)\ /\ btScalar(60.));}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ debugDrawWorld();}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{void}\ setSolverCallback(btSolverCallback\ cb)}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ m\_solverCallback\ =\ cb;}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world}{\string~btDeformableMultiBodyDynamicsWorld}}();}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_multi_body_dynamics_world}{btMultiBodyDynamicsWorld}}*\ getMultiBodyDynamicsWorld()}
+\DoxyCodeLine{00086\ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{classbt_multi_body_dynamics_world}{btMultiBodyDynamicsWorld}}*)(\textcolor{keyword}{this});}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_multi_body_dynamics_world}{btMultiBodyDynamicsWorld}}*\ getMultiBodyDynamicsWorld()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_multi_body_dynamics_world}{btMultiBodyDynamicsWorld}}*)(\textcolor{keyword}{this});}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ btDynamicsWorldType\ getWorldType()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_DEFORMABLE\_MULTIBODY\_DYNAMICS\_WORLD;}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ predictUnconstraintMotion(btScalar\ timeStep);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ addSoftBody(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ body,\ \textcolor{keywordtype}{int}\ collisionFilterGroup\ =\ btBroadphaseProxy::DefaultFilter,\ \textcolor{keywordtype}{int}\ collisionFilterMask\ =\ btBroadphaseProxy::AllFilter);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btSoftBodyArray}}\&\ getSoftBodyArray()}
+\DoxyCodeLine{00105\ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_softBodies;}
+\DoxyCodeLine{00107\ \ \ \ \ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btSoftBodyArray}}\&\ getSoftBodyArray()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00110\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_softBodies;}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_world_info}{btSoftBodyWorldInfo}}\&\ getWorldInfo()}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_sbi;}
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_world_info}{btSoftBodyWorldInfo}}\&\ getWorldInfo()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00120\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_sbi;}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{void}\ reinitialize(btScalar\ timeStep);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{void}\ applyRigidBodyGravity(btScalar\ timeStep);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ beforeSolverCallbacks(btScalar\ timeStep);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ afterSolverCallbacks(btScalar\ timeStep);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{void}\ addForce(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb,\ \mbox{\hyperlink{classbt_deformable_lagrangian_force}{btDeformableLagrangianForce}}*\ force);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ removeForce(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb,\ \mbox{\hyperlink{classbt_deformable_lagrangian_force}{btDeformableLagrangianForce}}*\ force);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ removeSoftBodyForce(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{void}\ removeSoftBody(\mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ body);}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{void}\ removeCollisionObject(btCollisionObject*\ collisionObject);}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{int}\ getDrawFlags()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (m\_drawFlags);\ \}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{void}\ setDrawFlags(\textcolor{keywordtype}{int}\ f)\ \{\ m\_drawFlags\ =\ f;\ \}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{void}\ setupConstraints();}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ performDeformableCollisionDetection();}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{void}\ solveMultiBodyConstraints();}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{void}\ solveContactConstraints();}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{void}\ sortConstraints();}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{void}\ softBodySelfCollision();}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{void}\ setImplicit(\textcolor{keywordtype}{bool}\ implicit)}
+\DoxyCodeLine{00158\ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ m\_implicit\ =\ implicit;}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{void}\ setLineSearch(\textcolor{keywordtype}{bool}\ lineSearch)}
+\DoxyCodeLine{00163\ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ m\_lineSearch\ =\ lineSearch;}
+\DoxyCodeLine{00165\ \ \ \ \ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseProjection(\textcolor{keywordtype}{bool}\ useProjection)}
+\DoxyCodeLine{00168\ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ m\_useProjection\ =\ useProjection;}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{void}\ applyRepulsionForce(btScalar\ timeStep);}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{void}\ performGeometricCollisions(btScalar\ timeStep);}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_deformable_multi_body_dynamics_world_1_1bt_deformable_single_ray_callback}{btDeformableSingleRayCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}}
+\DoxyCodeLine{00177\ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ btVector3\ m\_rayFromWorld;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ btVector3\ m\_rayToWorld;}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ btTransform\ m\_rayFromTrans;}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ btTransform\ m\_rayToTrans;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ btVector3\ m\_hitNormal;}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world}{btDeformableMultiBodyDynamicsWorld}}*\ m\_world;}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}\&\ m\_resultCallback;}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_deformable_multi_body_dynamics_world_1_1bt_deformable_single_ray_callback_a0cb3c6f5aff4bcfa1f68f06ddad4b498}{btDeformableSingleRayCallback}}(\textcolor{keyword}{const}\ btVector3\&\ rayFromWorld,\ \textcolor{keyword}{const}\ btVector3\&\ rayToWorld,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world}{btDeformableMultiBodyDynamicsWorld}}*\ world,\ \mbox{\hyperlink{structbt_collision_world_1_1_ray_result_callback}{btCollisionWorld::RayResultCallback}}\&\ resultCallback)}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ :\ m\_rayFromWorld(rayFromWorld),}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayToWorld(rayToWorld),}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_world(world),}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback(resultCallback)}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayFromTrans.setIdentity();}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayFromTrans.setOrigin(m\_rayFromWorld);}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayToTrans.setIdentity();}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ m\_rayToTrans.setOrigin(m\_rayToWorld);}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayDir\ =\ (rayToWorld\ -\/\ rayFromWorld);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ rayDir.normalize();}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[0]\ =\ rayDir[0]\ ==\ btScalar(0.0)\ ?\ btScalar(1e30)\ :\ btScalar(1.0)\ /\ rayDir[0];}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[1]\ =\ rayDir[1]\ ==\ btScalar(0.0)\ ?\ btScalar(1e30)\ :\ btScalar(1.0)\ /\ rayDir[1];}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[2]\ =\ rayDir[2]\ ==\ btScalar(0.0)\ ?\ btScalar(1e30)\ :\ btScalar(1.0)\ /\ rayDir[2];}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ m\_signs[0]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[0]\ <\ 0.0;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ m\_signs[1]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[1]\ <\ 0.0;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ m\_signs[2]\ =\ \mbox{\hyperlink{structbt_broadphase_ray_callback_a03043069b99348e18f6c386469450145}{m\_rayDirectionInverse}}[2]\ <\ 0.0;}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ m\_lambda\_max\ =\ rayDir.dot(m\_rayToWorld\ -\/\ m\_rayFromWorld);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structbt_deformable_multi_body_dynamics_world_1_1bt_deformable_single_ray_callback_a6772ce26751319eb7acb74107983675f}{process}}(\textcolor{keyword}{const}\ btBroadphaseProxy*\ proxy)}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultCallback.m\_closestHitFraction\ ==\ btScalar(0.f))}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject\ =\ (btCollisionObject*)proxy-\/>m\_clientObject;}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//only\ perform\ raycast\ if\ filterMask\ matches}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultCallback.needsCollision(collisionObject-\/>getBroadphaseHandle()))}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//RigidcollisionObject*\ collisionObject\ =\ ctrl-\/>GetRigidcollisionObject();}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btVector3\ collisionObjectAabbMin,collisionObjectAabbMax;}}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#ifdef\ RECALCULATE\_AABB}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ collisionObjectAabbMin,collisionObjectAabbMax;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape()-\/>getAabb(collisionObject-\/>getWorldTransform(),collisionObjectAabbMin,collisionObjectAabbMax);}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//getBroadphase()-\/>getAabb(collisionObject-\/>getBroadphaseHandle(),collisionObjectAabbMin,collisionObjectAabbMax);}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ collisionObjectAabbMin\ =\ collisionObject-\/>getBroadphaseHandle()-\/>m\_aabbMin;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ collisionObjectAabbMax\ =\ collisionObject-\/>getBroadphaseHandle()-\/>m\_aabbMax;}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btScalar\ hitLambda\ =\ m\_resultCallback.m\_closestHitFraction;}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//culling\ already\ done\ by\ broadphase}}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ (btRayAabb(m\_rayFromWorld,m\_rayToWorld,collisionObjectAabbMin,collisionObjectAabbMax,hitLambda,m\_hitNormal))}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_world-\/>rayTestSingle(m\_rayFromTrans,\ m\_rayToTrans,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject,}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getCollisionShape(),}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collisionObject-\/>getWorldTransform(),}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultCallback);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00248\ \ \ \ \ \};}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_deformable_multi_body_dynamics_world_a73fb29c200cd2aa8a8fde0c050650938}{rayTest}}(\textcolor{keyword}{const}\ btVector3\&\ rayFromWorld,\ \textcolor{keyword}{const}\ btVector3\&\ rayToWorld,\ RayResultCallback\&\ resultCallback)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00251\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}rayTest"{}});}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_deformable_multi_body_dynamics_world_1_1bt_deformable_single_ray_callback}{btDeformableSingleRayCallback}}\ rayCB(rayFromWorld,\ rayToWorld,\ \textcolor{keyword}{this},\ resultCallback);}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#ifndef\ USE\_BRUTEFORCE\_RAYBROADPHASE}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ m\_broadphasePairCache-\/>rayTest(rayFromWorld,\ rayToWorld,\ rayCB);}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ this-\/>getNumCollisionObjects();\ i++)}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ rayCB.\mbox{\hyperlink{structbt_deformable_multi_body_dynamics_world_1_1bt_deformable_single_ray_callback_a6772ce26751319eb7acb74107983675f}{process}}(m\_collisionObjects[i]-\/>getBroadphaseHandle());}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//USE\_BRUTEFORCE\_RAYBROADPHASE}}
+\DoxyCodeLine{00265\ \ \ \ \ \}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keywordtype}{void}\ rayTestSingle(\textcolor{keyword}{const}\ btTransform\&\ rayFromTrans,\ \textcolor{keyword}{const}\ btTransform\&\ rayToTrans,}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btCollisionObject*\ collisionObject,}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ collisionShape,}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ colObjWorldTransform,}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RayResultCallback\&\ resultCallback)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00272\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collisionShape-\/>isSoftBody())}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ softBody\ =\ btSoftBody::upcast(collisionObject);}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (softBody)}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1s_ray_cast}{btSoftBody::sRayCast}}\ softResult;}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (softBody-\/>rayFaceTest(rayFromTrans.getOrigin(),\ rayToTrans.getOrigin(),\ softResult))}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (softResult.\mbox{\hyperlink{structbt_soft_body_1_1s_ray_cast_ac447ec3fddb58db8beb79c1d7c3ad92b}{fraction}}\ <=\ resultCallback.m\_closestHitFraction)}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_shape_info}{btCollisionWorld::LocalShapeInfo}}\ shapeInfo;}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_shapePart\ =\ 0;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shapeInfo.m\_triangleIndex\ =\ softResult.\mbox{\hyperlink{structbt_soft_body_1_1s_ray_cast_ad0f0741cdacfb4171e226f19368f1b69}{index}};}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ get\ the\ normal}}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ rayDir\ =\ rayToTrans.getOrigin()\ -\/\ rayFromTrans.getOrigin();}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normal\ =\ -\/rayDir;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ normal.normalize();}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ normal\ =\ softBody-\/>m\_faces[softResult.\mbox{\hyperlink{structbt_soft_body_1_1s_ray_cast_ad0f0741cdacfb4171e226f19368f1b69}{index}}].m\_normal;}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (normal.dot(rayDir)\ >\ 0)}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ normal\ always\ point\ toward\ origin\ of\ the\ ray}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ normal\ =\ -\/normal;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_world_1_1_local_ray_result}{btCollisionWorld::LocalRayResult}}\ rayResult(collisionObject,}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&shapeInfo,}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ normal,}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ softResult.\mbox{\hyperlink{structbt_soft_body_1_1s_ray_cast_ac447ec3fddb58db8beb79c1d7c3ad92b}{fraction}});}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ normalInWorldSpace\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultCallback.addSingleResult(rayResult,\ normalInWorldSpace);}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_world_aca2a9413508b4a2449fe83ff93ea564e}{btCollisionWorld::rayTestSingle}}(rayFromTrans,\ rayToTrans,\ collisionObject,\ collisionShape,\ colObjWorldTransform,\ resultCallback);}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00313\ \ \ \ \ \}}
+\DoxyCodeLine{00314\ \};}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DEFORMABLE\_MULTIBODY\_DYNAMICS\_WORLD\_H}}
+
+\end{DoxyCode}

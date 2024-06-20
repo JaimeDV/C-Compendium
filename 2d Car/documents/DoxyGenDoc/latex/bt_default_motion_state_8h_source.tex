@@ -1,0 +1,42 @@
+\doxysection{bt\+Default\+Motion\+State.\+h}
+\hypertarget{bt_default_motion_state_8h_source}{}\label{bt_default_motion_state_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btDefaultMotionState.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btDefaultMotionState.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ BT\_DEFAULT\_MOTION\_STATE\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ BT\_DEFAULT\_MOTION\_STATE\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}btMotionState.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00007\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00008\ btDefaultMotionState\ :\ public\ \mbox{\hyperlink{classbt_motion_state}{btMotionState}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ btTransform\ m\_graphicsWorldTrans;}
+\DoxyCodeLine{00011\ \ \ \ \ btTransform\ m\_centerOfMassOffset;}
+\DoxyCodeLine{00012\ \ \ \ \ btTransform\ m\_startWorldTrans;}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_userPointer;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ btDefaultMotionState(\textcolor{keyword}{const}\ btTransform\&\ startTrans\ =\ btTransform::getIdentity(),\ \textcolor{keyword}{const}\ btTransform\&\ centerOfMassOffset\ =\ btTransform::getIdentity())}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ :\ m\_graphicsWorldTrans(startTrans),}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ m\_centerOfMassOffset(centerOfMassOffset),}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ m\_startWorldTrans(startTrans),}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ m\_userPointer(0)}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getWorldTransform(btTransform\ \&\ centerOfMassWorldTrans)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00028\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ centerOfMassWorldTrans\ =\ m\_graphicsWorldTrans\ *\ m\_centerOfMassOffset.inverse();}
+\DoxyCodeLine{00030\ \ \ \ \ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setWorldTransform(\textcolor{keyword}{const}\ btTransform\&\ centerOfMassWorldTrans)}
+\DoxyCodeLine{00035\ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ m\_graphicsWorldTrans\ =\ centerOfMassWorldTrans\ *\ m\_centerOfMassOffset;}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DEFAULT\_MOTION\_STATE\_H}}
+
+\end{DoxyCode}

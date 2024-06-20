@@ -1,0 +1,67 @@
+\doxysection{bt\+Deformable\+Multi\+Body\+Constraint\+Solver.\+h}
+\hypertarget{bt_deformable_multi_body_constraint_solver_8h_source}{}\label{bt_deformable_multi_body_constraint_solver_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableMultiBodyConstraintSolver.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableMultiBodyConstraintSolver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DEFORMABLE\_MULTIBODY\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DEFORMABLE\_MULTIBODY\_CONSTRAINT\_SOLVER\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btDeformableBodySolver.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ btDeformableMultiBodyConstraintSolver\ extendsn\ btMultiBodyConstraintSolver\ to\ solve\ for\ the\ contact\ among\ rigid/multibody\ and\ deformable\ bodies.\ Notice\ that\ the\ following\ constraints}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ 1.\ rigid/multibody\ against\ rigid/multibody}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ 2.\ rigid/multibody\ against\ deforamble}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ 3.\ deformable\ against\ deformable}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ 4.\ deformable\ self\ collision}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ 5.\ joint\ constraints}}
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ are\ all\ coupled\ in\ this\ solve.}}
+\DoxyCodeLine{00031\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00032\ btDeformableMultiBodyConstraintSolver\ :\ public\ btMultiBodyConstraintSolver}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}}*\ m\_deformableSolver;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//\ override\ the\ iterations\ method\ to\ include\ deformable/multibody\ contact}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//\ \ \ \ virtual\ btScalar\ solveGroupCacheFriendlyIterations(btCollisionObject**\ bodies,int\ numBodies,btPersistentManifold**\ manifoldPtr,\ int\ numManifolds,btTypedConstraint**\ constraints,int\ numConstraints,const\ btContactSolverInfo\&\ infoGlobal,btIDebugDraw*\ debugDrawer);}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ write\ the\ velocity\ of\ the\ the\ solver\ body\ to\ the\ underlying\ rigid\ body}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{void}\ solverBodyWriteBack(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//\ write\ the\ velocity\ of\ the\ underlying\ rigid\ body\ to\ the\ the\ the\ solver\ body}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ writeToSolverBody(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveGroupCacheFriendlySplitImpulseIterations(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btCollisionObject**\ deformableBodies,\ \textcolor{keywordtype}{int}\ numDeformableBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveDeformableGroupIterations(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btCollisionObject**\ deformableBodies,\ \textcolor{keywordtype}{int}\ numDeformableBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00051\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ setDeformableSolver(\mbox{\hyperlink{classbt_deformable_body_solver}{btDeformableBodySolver}}\ *\ deformableSolver)}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ m\_deformableSolver\ =\ deformableSolver;}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ solveDeformableBodyGroup(btCollisionObject\ *\ *bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btCollisionObject**\ deformableBodies,\ \textcolor{keywordtype}{int}\ numDeformableBodies,\ btPersistentManifold**\ manifold,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ btMultiBodyConstraint**\ multiBodyConstraints,\ \textcolor{keywordtype}{int}\ numMultiBodyConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ info,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher);}
+\DoxyCodeLine{00059\ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ BT\_DEFORMABLE\_MULTIBODY\_CONSTRAINT\_SOLVER\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

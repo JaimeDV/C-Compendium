@@ -1,0 +1,609 @@
+\doxysection{gim\+\_\+box\+\_\+set.\+h}
+\hypertarget{gim__box__set_8h_source}{}\label{gim__box__set_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_box\_set.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_box\_set.h}}
+\mbox{\hyperlink{gim__box__set_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ GIM\_BOX\_SET\_H\_INCLUDED}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ GIM\_BOX\_SET\_H\_INCLUDED}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00008\ \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00009\ \textcolor{comment}{This\ source\ file\ is\ part\ of\ GIMPACT\ Library.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{For\ the\ latest\ info,\ see\ http://gimpact.sourceforge.net/}}
+\DoxyCodeLine{00012\ \textcolor{comment}{}}
+\DoxyCodeLine{00013\ \textcolor{comment}{Copyright\ (c)\ 2006\ Francisco\ Leon\ Najera.\ C.C.\ 80087371.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{email:\ projectileman@yahoo.com}}
+\DoxyCodeLine{00015\ \textcolor{comment}{}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ modify\ it\ under\ the\ terms\ of\ EITHER:}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ (1)\ The\ GNU\ Lesser\ General\ Public\ License\ as\ published\ by\ the\ Free}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ \ \ \ Software\ Foundation;\ either\ version\ 2.1\ of\ the\ License,\ or\ (at}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ \ \ your\ option)\ any\ later\ version.\ The\ text\ of\ the\ GNU\ Lesser}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ \ \ \ \ General\ Public\ License\ is\ included\ with\ this\ library\ in\ the}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ \ \ file\ GIMPACT-\/LICENSE-\/LGPL.TXT.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ (2)\ The\ BSD-\/style\ license\ that\ is\ included\ with\ this\ library\ in}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ \ \ the\ file\ GIMPACT-\/LICENSE-\/BSD.TXT.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ (3)\ The\ zlib/libpng\ license\ that\ is\ included\ with\ this\ library\ in}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ \ \ \ the\ file\ GIMPACT-\/LICENSE-\/ZLIB.TXT.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ See\ the\ files}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ GIMPACT-\/LICENSE-\/LGPL.TXT,\ GIMPACT-\/LICENSE-\/ZLIB.TXT\ and\ GIMPACT-\/LICENSE-\/BSD.TXT\ for\ more\ details.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{}}
+\DoxyCodeLine{00033\ \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00034\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__array_8h}{gim\_array.h}}"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__radixsort_8h}{gim\_radixsort.h}}"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__box__collision_8h}{gim\_box\_collision.h}}"{}}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__tri__collision_8h}{gim\_tri\_collision.h}}"{}}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ "{}gim\_pair.h"{}}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classgim__pair__set}{gim\_pair\_set}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classgim__array}{gim\_array}}<GIM\_PAIR>}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{classgim__pair__set}{gim\_pair\_set}}()\ :\ \mbox{\hyperlink{classgim__array}{gim\_array<GIM\_PAIR>}}(32)}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ push\_pair(GUINT\ index1,\ GUINT\ index2)}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ push\_back(\mbox{\hyperlink{struct_g_i_m___p_a_i_r}{GIM\_PAIR}}(index1,\ index2));}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ push\_pair\_inv(GUINT\ index1,\ GUINT\ index2)}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ push\_back(\mbox{\hyperlink{struct_g_i_m___p_a_i_r}{GIM\_PAIR}}(index2,\ index1));}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___p_r_i_m_i_t_i_v_e___m_a_n_a_g_e_r___p_r_o_t_o_t_y_p_e}{GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE}}}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_g_i_m___p_r_i_m_i_t_i_v_e___m_a_n_a_g_e_r___p_r_o_t_o_t_y_p_e}{\string~GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE}}()\ \{\}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___p_r_i_m_i_t_i_v_e___m_a_n_a_g_e_r___p_r_o_t_o_t_y_p_e_aaad51538aaf2c2652c7e202a9f2d57a5}{is\_trimesh}}()\ =\ 0;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ GUINT\ get\_primitive\_count()\ =\ 0;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ get\_primitive\_box(GUINT\ prim\_index,\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\&\ primbox)\ =\ 0;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ get\_primitive\_triangle(GUINT\ prim\_index,\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}\&\ triangle)\ =\ 0;}
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_g_i_m___a_a_b_b___d_a_t_a}{GIM\_AABB\_DATA}}}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ m\_bound;}
+\DoxyCodeLine{00080\ \ \ \ \ GUINT\ m\_data;}
+\DoxyCodeLine{00081\ \};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e}{GIM\_BOX\_TREE\_NODE}}}
+\DoxyCodeLine{00085\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ m\_bound;}
+\DoxyCodeLine{00087\ \ \ \ \ GUINT\ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a6714d74e7c3f7b51c5fdd06e7b93721a}{m\_left}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00088\ \ \ \ \ GUINT\ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a6ee254a3c0101d107a45ea9add325723}{m\_right}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00089\ \ \ \ \ GUINT\ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a5a112d2bd3fcfb2699964f94d1fcfbcd}{m\_escapeIndex}};\ \ }
+\DoxyCodeLine{00090\ \ \ \ \ GUINT\ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_abba76fb81b6f50d11a0dccec69d0feec}{m\_data}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e}{GIM\_BOX\_TREE\_NODE}}()}
+\DoxyCodeLine{00093\ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a6714d74e7c3f7b51c5fdd06e7b93721a}{m\_left}}\ =\ 0;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a6ee254a3c0101d107a45ea9add325723}{m\_right}}\ =\ 0;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a5a112d2bd3fcfb2699964f94d1fcfbcd}{m\_escapeIndex}}\ =\ 0;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_abba76fb81b6f50d11a0dccec69d0feec}{m\_data}}\ =\ 0;}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ is\_leaf\_node()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00101\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (!\mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a6714d74e7c3f7b51c5fdd06e7b93721a}{m\_left}}\ \&\&\ !\mbox{\hyperlink{struct_g_i_m___b_o_x___t_r_e_e___n_o_d_e_a6ee254a3c0101d107a45ea9add325723}{m\_right}});}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00107\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e}{GIM\_BOX\_TREE}}}
+\DoxyCodeLine{00108\ \{}
+\DoxyCodeLine{00109\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00110\ \ \ \ \ GUINT\ m\_num\_nodes;}
+\DoxyCodeLine{00111\ \ \ \ \ \mbox{\hyperlink{classgim__array}{gim\_array<GIM\_BOX\_TREE\_NODE>}}\ m\_node\_array;}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00114\ \ \ \ \ GUINT\ \_sort\_and\_calc\_splitting\_index(}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classgim__array}{gim\_array<GIM\_AABB\_DATA>}}\&\ primitive\_boxes,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ GUINT\ startIndex,\ GUINT\ endIndex,\ GUINT\ splitAxis);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ GUINT\ \_calc\_splitting\_axis(\mbox{\hyperlink{classgim__array}{gim\_array<GIM\_AABB\_DATA>}}\&\ primitive\_boxes,\ GUINT\ startIndex,\ GUINT\ endIndex);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{void}\ \_build\_sub\_tree(\mbox{\hyperlink{classgim__array}{gim\_array<GIM\_AABB\_DATA>}}\&\ primitive\_boxes,\ GUINT\ startIndex,\ GUINT\ endIndex);}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00123\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e}{GIM\_BOX\_TREE}}()}
+\DoxyCodeLine{00124\ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ m\_num\_nodes\ =\ 0;}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e_af76fa1d2f5e20c8979120fa72cf7575f}{build\_tree}}(\mbox{\hyperlink{classgim__array}{gim\_array<GIM\_AABB\_DATA>}}\&\ primitive\_boxes);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ clearNodes()}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ m\_node\_array.clear();}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ m\_num\_nodes\ =\ 0;}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00139\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e_ae5ee83e6bf9ba2d96cbbb9d7ecc20b40}{getNodeCount}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00140\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_num\_nodes;}
+\DoxyCodeLine{00142\ \ \ \ \ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00145\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e_ac7fc7775379fc52f52eee28a81e22f05}{isLeafNode}}(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00146\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].is\_leaf\_node();}
+\DoxyCodeLine{00148\ \ \ \ \ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getNodeData(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00151\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].\mbox{\hyperlink{classgim__array_aafb886b0fb48bed8c878d8a82dc4099c}{m\_data}};}
+\DoxyCodeLine{00153\ \ \ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getNodeBound(GUINT\ nodeindex,\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\&\ bound)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00156\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ bound\ =\ m\_node\_array[nodeindex].m\_bound;}
+\DoxyCodeLine{00158\ \ \ \ \ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setNodeBound(GUINT\ nodeindex,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\&\ bound)}
+\DoxyCodeLine{00161\ \ \ \ \ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ m\_node\_array[nodeindex].m\_bound\ =\ bound;}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getLeftNodeIndex(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00166\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].m\_left;}
+\DoxyCodeLine{00168\ \ \ \ \ \}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getRightNodeIndex(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00171\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].m\_right;}
+\DoxyCodeLine{00173\ \ \ \ \ \}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getScapeNodeIndex(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00176\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_node\_array[nodeindex].m\_escapeIndex;}
+\DoxyCodeLine{00178\ \ \ \ \ \}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00181\ \};}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00189\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ \_GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE,\ \textcolor{keyword}{typename}\ \_GIM\_BOX\_TREE\_PROTOTYPE>}
+\DoxyCodeLine{00190\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t}{GIM\_BOX\_TREE\_TEMPLATE\_SET}}}
+\DoxyCodeLine{00191\ \{}
+\DoxyCodeLine{00192\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00193\ \ \ \ \ \_GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE\ m\_primitive\_manager;}
+\DoxyCodeLine{00194\ \ \ \ \ \_GIM\_BOX\_TREE\_PROTOTYPE\ m\_box\_tree;}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{comment}{//stackless\ refit}}
+\DoxyCodeLine{00198\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ refit()}
+\DoxyCodeLine{00199\ \ \ \ \ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ GUINT\ nodecount\ =\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a3c7ceb8815be89e7b54c3f0bdd0ff571}{getNodeCount}}();}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (nodecount-\/-\/)}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a2388f9b52409031c7c1eb8144466ccda}{isLeafNode}}(nodecount))}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ leafbox;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_primitive\_manager.get\_primitive\_box(getNodeData(nodecount),\ leafbox);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setNodeBound(nodecount,\ leafbox);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//get\ left\ bound}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GUINT\ childindex\ =\ getLeftNodeIndex(nodecount);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ bound;}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getNodeBound(childindex,\ bound);}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//get\ right\ bound}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ childindex\ =\ getRightNodeIndex(nodecount);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ bound2;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getNodeBound(childindex,\ bound2);}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bound.\mbox{\hyperlink{class_g_i_m___a_a_b_b_a75e41aceb9b1e8f4b90e702dcec19c13}{merge}}(bound2);}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setNodeBound(nodecount,\ bound);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00224\ \ \ \ \ \}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00227\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t}{GIM\_BOX\_TREE\_TEMPLATE\_SET}}()}
+\DoxyCodeLine{00228\ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ SIMD\_FORCE\_INLINE\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ getGlobalBox()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00232\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ totalbox;}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ getNodeBound(0,\ totalbox);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ totalbox;}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setPrimitiveManager(\textcolor{keyword}{const}\ \_GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE\&\ primitive\_manager)}
+\DoxyCodeLine{00239\ \ \ \ \ \{}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ m\_primitive\_manager\ =\ primitive\_manager;}
+\DoxyCodeLine{00241\ \ \ \ \ \}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keyword}{const}\ \_GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE\&\ getPrimitiveManager()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00244\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_primitive\_manager;}
+\DoxyCodeLine{00246\ \ \ \ \ \}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \_GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE\&\ getPrimitiveManager()}
+\DoxyCodeLine{00249\ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_primitive\_manager;}
+\DoxyCodeLine{00251\ \ \ \ \ \}}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00257\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a0f5f2b683e561a4e05d912cb4973dac4}{update}}()}
+\DoxyCodeLine{00258\ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ refit();}
+\DoxyCodeLine{00260\ \ \ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00263\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_aada2fc55c2e11a4aa5c3ae0c852f4950}{buildSet}}()}
+\DoxyCodeLine{00264\ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \textcolor{comment}{//obtain\ primitive\ boxes}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classgim__array}{gim\_array<GIM\_AABB\_DATA>}}\ primitive\_boxes;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ primitive\_boxes.resize(m\_primitive\_manager.get\_primitive\_count(),\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (GUINT\ i\ =\ 0;\ i\ <\ primitive\_boxes.size();\ i++)}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ m\_primitive\_manager.get\_primitive\_box(i,\ primitive\_boxes[i].m\_bound);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ primitive\_boxes[i].\mbox{\hyperlink{classgim__array_aafb886b0fb48bed8c878d8a82dc4099c}{m\_data}}\ =\ i;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ m\_box\_tree.build\_tree(primitive\_boxes);}
+\DoxyCodeLine{00276\ \ \ \ \ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00279\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a275f0e8b4133140f4a53012df5a1aada}{boxQuery}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\&\ box,\ \mbox{\hyperlink{classgim__array}{gim\_array<GUINT>}}\&\ collided\_results)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00280\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ GUINT\ curIndex\ =\ 0;}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ GUINT\ numNodes\ =\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a3c7ceb8815be89e7b54c3f0bdd0ff571}{getNodeCount}}();}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curIndex\ <\ numNodes)}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ bound;}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ getNodeBound(curIndex,\ bound);}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//catch\ bugs\ in\ tree\ data}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ aabbOverlap\ =\ bound.has\_collision(box);}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isleafnode\ =\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a2388f9b52409031c7c1eb8144466ccda}{isLeafNode}}(curIndex);}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isleafnode\ \&\&\ aabbOverlap)}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collided\_results.push\_back(getNodeData(curIndex));}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbOverlap\ ||\ isleafnode)}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//next\ subnode}}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curIndex++;}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//skip\ node}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curIndex\ +=\ getScapeNodeIndex(curIndex);}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collided\_results.size()\ >\ 0)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00312\ \ \ \ \ \}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00315\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a7bbe0306a940c9027362af374ac95c5e}{boxQueryTrans}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\&\ box,}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ transform,\ \mbox{\hyperlink{classgim__array}{gim\_array<GUINT>}}\&\ collided\_results)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00317\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ transbox\ =\ box;}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ transbox.\mbox{\hyperlink{class_g_i_m___a_a_b_b_adeb95bf6a8b4d0281b35adf33fbbfbdc}{appy\_transform}}(transform);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a275f0e8b4133140f4a53012df5a1aada}{boxQuery}}(transbox,\ collided\_results);}
+\DoxyCodeLine{00321\ \ \ \ \ \}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00324\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_ad5eeb69c9aa08a8162b69d6e4531330d}{rayQuery}}(}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ ray\_dir,\ \textcolor{keyword}{const}\ btVector3\&\ ray\_origin,}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classgim__array}{gim\_array<GUINT>}}\&\ collided\_results)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00327\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ GUINT\ curIndex\ =\ 0;}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ GUINT\ numNodes\ =\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a3c7ceb8815be89e7b54c3f0bdd0ff571}{getNodeCount}}();}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curIndex\ <\ numNodes)}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ bound;}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ getNodeBound(curIndex,\ bound);}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//catch\ bugs\ in\ tree\ data}}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ aabbOverlap\ =\ bound.\mbox{\hyperlink{class_g_i_m___a_a_b_b_a1fafc37703d288fd0fe862b861829287}{collide\_ray}}(ray\_origin,\ ray\_dir);}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isleafnode\ =\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a2388f9b52409031c7c1eb8144466ccda}{isLeafNode}}(curIndex);}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isleafnode\ \&\&\ aabbOverlap)}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ collided\_results.push\_back(getNodeData(curIndex));}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbOverlap\ ||\ isleafnode)}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//next\ subnode}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curIndex++;}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//skip\ node}}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curIndex\ +=\ getScapeNodeIndex(curIndex);}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collided\_results.size()\ >\ 0)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00359\ \ \ \ \ \}}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00362\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a24686e0ae5cdde9e7e5eb8bce74e597e}{hasHierarchy}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00363\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00365\ \ \ \ \ \}}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00368\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a58be3bd10ea7c89c369084cbba655bbc}{isTrimesh}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00369\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_primitive\_manager.is\_trimesh();}
+\DoxyCodeLine{00371\ \ \ \ \ \}}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00374\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a3c7ceb8815be89e7b54c3f0bdd0ff571}{getNodeCount}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00375\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getNodeCount();}
+\DoxyCodeLine{00377\ \ \ \ \ \}}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00380\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t_a2388f9b52409031c7c1eb8144466ccda}{isLeafNode}}(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00381\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.isLeafNode(nodeindex);}
+\DoxyCodeLine{00383\ \ \ \ \ \}}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getNodeData(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00386\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getNodeData(nodeindex);}
+\DoxyCodeLine{00388\ \ \ \ \ \}}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getNodeBound(GUINT\ nodeindex,\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\&\ bound)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00391\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ m\_box\_tree.getNodeBound(nodeindex,\ bound);}
+\DoxyCodeLine{00393\ \ \ \ \ \}}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ setNodeBound(GUINT\ nodeindex,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\&\ bound)}
+\DoxyCodeLine{00396\ \ \ \ \ \{}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ m\_box\_tree.setNodeBound(nodeindex,\ bound);}
+\DoxyCodeLine{00398\ \ \ \ \ \}}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getLeftNodeIndex(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00401\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getLeftNodeIndex(nodeindex);}
+\DoxyCodeLine{00403\ \ \ \ \ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getRightNodeIndex(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00406\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getRightNodeIndex(nodeindex);}
+\DoxyCodeLine{00408\ \ \ \ \ \}}
+\DoxyCodeLine{00409\ }
+\DoxyCodeLine{00410\ \ \ \ \ SIMD\_FORCE\_INLINE\ GUINT\ getScapeNodeIndex(GUINT\ nodeindex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00411\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_box\_tree.getScapeNodeIndex(nodeindex);}
+\DoxyCodeLine{00413\ \ \ \ \ \}}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getNodeTriangle(GUINT\ nodeindex,\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}\&\ triangle)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00416\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ m\_primitive\_manager.get\_primitive\_triangle(getNodeData(nodeindex),\ triangle);}
+\DoxyCodeLine{00418\ \ \ \ \ \}}
+\DoxyCodeLine{00419\ \};}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00425\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ \_GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE>}
+\DoxyCodeLine{00426\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___s_e_t}{GIM\_BOX\_TREE\_SET}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_g_i_m___b_o_x___t_r_e_e___t_e_m_p_l_a_t_e___s_e_t}{GIM\_BOX\_TREE\_TEMPLATE\_SET}}<\_GIM\_PRIMITIVE\_MANAGER\_PROTOTYPE,\ GIM\_BOX\_TREE>}
+\DoxyCodeLine{00427\ \{}
+\DoxyCodeLine{00428\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00429\ \};}
+\DoxyCodeLine{00430\ }
+\DoxyCodeLine{00432\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ BOX\_SET\_CLASS0,\ \textcolor{keyword}{typename}\ BOX\_SET\_CLASS1>}
+\DoxyCodeLine{00433\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___t_r_e_e___t_r_e_e___c_o_l_l_i_d_e_r}{GIM\_TREE\_TREE\_COLLIDER}}}
+\DoxyCodeLine{00434\ \{}
+\DoxyCodeLine{00435\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00436\ \ \ \ \ \mbox{\hyperlink{classgim__pair__set}{gim\_pair\_set}}*\ m\_collision\_pairs;}
+\DoxyCodeLine{00437\ \ \ \ \ BOX\_SET\_CLASS0*\ m\_boxset0;}
+\DoxyCodeLine{00438\ \ \ \ \ BOX\_SET\_CLASS1*\ m\_boxset1;}
+\DoxyCodeLine{00439\ \ \ \ \ GUINT\ current\_node0;}
+\DoxyCodeLine{00440\ \ \ \ \ GUINT\ current\_node1;}
+\DoxyCodeLine{00441\ \ \ \ \ \textcolor{keywordtype}{bool}\ node0\_is\_leaf;}
+\DoxyCodeLine{00442\ \ \ \ \ \textcolor{keywordtype}{bool}\ node1\_is\_leaf;}
+\DoxyCodeLine{00443\ \ \ \ \ \textcolor{keywordtype}{bool}\ t0\_is\_trimesh;}
+\DoxyCodeLine{00444\ \ \ \ \ \textcolor{keywordtype}{bool}\ t1\_is\_trimesh;}
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keywordtype}{bool}\ node0\_has\_triangle;}
+\DoxyCodeLine{00446\ \ \ \ \ \textcolor{keywordtype}{bool}\ node1\_has\_triangle;}
+\DoxyCodeLine{00447\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ m\_box0;}
+\DoxyCodeLine{00448\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ m\_box1;}
+\DoxyCodeLine{00449\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___b_o_x___b_o_x___t_r_a_n_s_f_o_r_m___c_a_c_h_e}{GIM\_BOX\_BOX\_TRANSFORM\_CACHE}}\ trans\_cache\_1to0;}
+\DoxyCodeLine{00450\ \ \ \ \ btTransform\ trans\_cache\_0to1;}
+\DoxyCodeLine{00451\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}\ m\_tri0;}
+\DoxyCodeLine{00452\ \ \ \ \ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ m\_tri0\_plane;}
+\DoxyCodeLine{00453\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}\ m\_tri1;}
+\DoxyCodeLine{00454\ \ \ \ \ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ m\_tri1\_plane;}
+\DoxyCodeLine{00455\ }
+\DoxyCodeLine{00456\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00457\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___t_r_e_e___t_r_e_e___c_o_l_l_i_d_e_r}{GIM\_TREE\_TREE\_COLLIDER}}()}
+\DoxyCodeLine{00458\ \ \ \ \ \{}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ current\_node0\ =\ \mbox{\hyperlink{gim__math_8h_addc28e22a02b3d3fdd7f55ff93e634d1}{G\_UINT\_INFINITY}};}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ current\_node1\ =\ \mbox{\hyperlink{gim__math_8h_addc28e22a02b3d3fdd7f55ff93e634d1}{G\_UINT\_INFINITY}};}
+\DoxyCodeLine{00461\ \ \ \ \ \}}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00464\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ retrieve\_node0\_triangle(GUINT\ node0)}
+\DoxyCodeLine{00465\ \ \ \ \ \{}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node0\_has\_triangle)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ m\_boxset0-\/>getNodeTriangle(node0,\ m\_tri0);}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \textcolor{comment}{//transform\ triangle}}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ m\_tri0.m\_vertices[0]\ =\ trans\_cache\_0to1(m\_tri0.m\_vertices[0]);}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ m\_tri0.m\_vertices[1]\ =\ trans\_cache\_0to1(m\_tri0.m\_vertices[1]);}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ m\_tri0.m\_vertices[2]\ =\ trans\_cache\_0to1(m\_tri0.m\_vertices[2]);}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ m\_tri0.get\_plane(m\_tri0\_plane);}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ node0\_has\_triangle\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00475\ \ \ \ \ \}}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ retrieve\_node1\_triangle(GUINT\ node1)}
+\DoxyCodeLine{00478\ \ \ \ \ \{}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node1\_has\_triangle)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ m\_boxset1-\/>getNodeTriangle(node1,\ m\_tri1);}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \textcolor{comment}{//transform\ triangle}}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ m\_tri1.m\_vertices[0]\ =\ trans\_cache\_1to0.transform(m\_tri1.m\_vertices[0]);}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ m\_tri1.m\_vertices[1]\ =\ trans\_cache\_1to0.transform(m\_tri1.m\_vertices[1]);}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ m\_tri1.m\_vertices[2]\ =\ trans\_cache\_1to0.transform(m\_tri1.m\_vertices[2]);}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ m\_tri1.get\_plane(m\_tri1\_plane);}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ node1\_has\_triangle\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00488\ \ \ \ \ \}}
+\DoxyCodeLine{00489\ }
+\DoxyCodeLine{00490\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ retrieve\_node0\_info(GUINT\ node0)}
+\DoxyCodeLine{00491\ \ \ \ \ \{}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node0\ ==\ current\_node0)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ m\_boxset0-\/>getNodeBound(node0,\ m\_box0);}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ node0\_is\_leaf\ =\ m\_boxset0-\/>isLeafNode(node0);}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ node0\_has\_triangle\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ current\_node0\ =\ node0;}
+\DoxyCodeLine{00497\ \ \ \ \ \}}
+\DoxyCodeLine{00498\ }
+\DoxyCodeLine{00499\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ retrieve\_node1\_info(GUINT\ node1)}
+\DoxyCodeLine{00500\ \ \ \ \ \{}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node1\ ==\ current\_node1)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ m\_boxset1-\/>getNodeBound(node1,\ m\_box1);}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ node1\_is\_leaf\ =\ m\_boxset1-\/>isLeafNode(node1);}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ node1\_has\_triangle\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ current\_node1\ =\ node1;}
+\DoxyCodeLine{00506\ \ \ \ \ \}}
+\DoxyCodeLine{00507\ }
+\DoxyCodeLine{00508\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ node\_collision(GUINT\ node0,\ GUINT\ node1)}
+\DoxyCodeLine{00509\ \ \ \ \ \{}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ retrieve\_node0\_info(node0);}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ retrieve\_node1\_info(node1);}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ result\ =\ m\_box0.\mbox{\hyperlink{class_g_i_m___a_a_b_b_af4c6c48e03d316e74e00b2ab261fd125}{overlapping\_trans\_cache}}(m\_box1,\ trans\_cache\_1to0,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!result)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00514\ }
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t0\_is\_trimesh\ \&\&\ node0\_is\_leaf)}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//perform\ primitive\ vs\ box\ collision}}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ retrieve\_node0\_triangle(node0);}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//do\ triangle\ vs\ box\ collision}}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ m\_box1.increment\_margin(m\_tri0.m\_margin);}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ m\_box1.\mbox{\hyperlink{class_g_i_m___a_a_b_b_a4a1ffa196d3981313fccf9e01aa383f9}{collide\_triangle\_exact}}(}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tri0.m\_vertices[0],\ m\_tri0.m\_vertices[1],\ m\_tri0.m\_vertices[2],\ m\_tri0\_plane);}
+\DoxyCodeLine{00524\ }
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ m\_box1.increment\_margin(-\/m\_tri0.m\_margin);}
+\DoxyCodeLine{00526\ }
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!result)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (t1\_is\_trimesh\ \&\&\ node1\_is\_leaf)}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//perform\ primitive\ vs\ box\ collision}}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ retrieve\_node1\_triangle(node1);}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//do\ triangle\ vs\ box\ collision}}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ m\_box0.increment\_margin(m\_tri1.m\_margin);}
+\DoxyCodeLine{00536\ }
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ m\_box0.\mbox{\hyperlink{class_g_i_m___a_a_b_b_a4a1ffa196d3981313fccf9e01aa383f9}{collide\_triangle\_exact}}(}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_tri1.m\_vertices[0],\ m\_tri1.m\_vertices[1],\ m\_tri1.m\_vertices[2],\ m\_tri1\_plane);}
+\DoxyCodeLine{00539\ }
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ m\_box0.increment\_margin(-\/m\_tri1.m\_margin);}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!result)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00546\ \ \ \ \ \}}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \ \ \ \ \textcolor{comment}{//stackless\ collision\ routine}}
+\DoxyCodeLine{00549\ \ \ \ \ \textcolor{keywordtype}{void}\ find\_collision\_pairs()}
+\DoxyCodeLine{00550\ \ \ \ \ \{}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classgim__pair__set}{gim\_pair\_set}}\ stack\_collisions;}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ stack\_collisions.\mbox{\hyperlink{classgim__array_a572f94b5b67d505335150a2dea8a7e3d}{reserve}}(32);}
+\DoxyCodeLine{00553\ }
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ the\ first\ pair}}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(0,\ 0);}
+\DoxyCodeLine{00556\ }
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (stack\_collisions.size())}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//retrieve\ the\ last\ pair\ and\ pop}}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ GUINT\ node0\ =\ stack\_collisions.back().m\_index1;}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ GUINT\ node1\ =\ stack\_collisions.back().m\_index2;}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.pop\_back();}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node\_collision(node0,\ node1))\ \ \textcolor{comment}{//\ a\ collision\ is\ found}}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node0\_is\_leaf)}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node1\_is\_leaf)}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_collision\_pairs-\/>push\_pair(m\_boxset0-\/>getNodeData(node0),\ m\_boxset1-\/>getNodeData(node1));}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ left}}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(node0,\ m\_boxset1-\/>getLeftNodeIndex(node1));}
+\DoxyCodeLine{00575\ }
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ right}}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(node0,\ m\_boxset1-\/>getRightNodeIndex(node1));}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node1\_is\_leaf)}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ left}}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(m\_boxset0-\/>getLeftNodeIndex(node0),\ node1);}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ right}}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(m\_boxset0-\/>getRightNodeIndex(node0),\ node1);}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GUINT\ left0\ =\ m\_boxset0-\/>getLeftNodeIndex(node0);}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GUINT\ right0\ =\ m\_boxset0-\/>getRightNodeIndex(node0);}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GUINT\ left1\ =\ m\_boxset1-\/>getLeftNodeIndex(node1);}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GUINT\ right1\ =\ m\_boxset1-\/>getRightNodeIndex(node1);}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ left}}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(left0,\ left1);}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ right}}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(left0,\ right1);}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ left}}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(right0,\ left1);}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//collide\ right}}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack\_collisions.push\_pair(right0,\ right1);}
+\DoxyCodeLine{00603\ }
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ if\ node1\ is\ not\ a\ leaf}}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \textcolor{comment}{//\ else\ if\ node0\ is\ not\ a\ leaf}}
+\DoxyCodeLine{00606\ }
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ if(node\_collision(node0,node1))}}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \textcolor{comment}{//while(stack\_collisions.size())}}
+\DoxyCodeLine{00609\ \ \ \ \ \}}
+\DoxyCodeLine{00610\ }
+\DoxyCodeLine{00611\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00612\ \ \ \ \ \textcolor{keywordtype}{void}\ find\_collision(BOX\_SET\_CLASS0*\ boxset1,\ \textcolor{keyword}{const}\ btTransform\&\ trans1,}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BOX\_SET\_CLASS1*\ boxset2,\ \textcolor{keyword}{const}\ btTransform\&\ trans2,}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classgim__pair__set}{gim\_pair\_set}}\&\ collision\_pairs,\ \textcolor{keywordtype}{bool}\ complete\_primitive\_tests\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00615\ \ \ \ \ \{}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ m\_collision\_pairs\ =\ \&collision\_pairs;}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ m\_boxset0\ =\ boxset1;}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ m\_boxset1\ =\ boxset2;}
+\DoxyCodeLine{00619\ }
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ trans\_cache\_1to0.\mbox{\hyperlink{class_g_i_m___b_o_x___b_o_x___t_r_a_n_s_f_o_r_m___c_a_c_h_e_abdaefe67a2f2bbf2b89d0ad74fb9a4a5}{calc\_from\_homogenic}}(trans1,\ trans2);}
+\DoxyCodeLine{00621\ }
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ trans\_cache\_0to1\ =\ trans2.inverse();}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ trans\_cache\_0to1\ *=\ trans1;}
+\DoxyCodeLine{00624\ }
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (complete\_primitive\_tests)}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ t0\_is\_trimesh\ =\ boxset1-\/>getPrimitiveManager().is\_trimesh();}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ t1\_is\_trimesh\ =\ boxset2-\/>getPrimitiveManager().is\_trimesh();}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \ \ \ \ t0\_is\_trimesh\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ t1\_is\_trimesh\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00635\ }
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ find\_collision\_pairs();}
+\DoxyCodeLine{00637\ \ \ \ \ \}}
+\DoxyCodeLine{00638\ \};}
+\DoxyCodeLine{00639\ }
+\DoxyCodeLine{00640\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GIM\_BOXPRUNING\_H\_INCLUDED}}
+
+\end{DoxyCode}

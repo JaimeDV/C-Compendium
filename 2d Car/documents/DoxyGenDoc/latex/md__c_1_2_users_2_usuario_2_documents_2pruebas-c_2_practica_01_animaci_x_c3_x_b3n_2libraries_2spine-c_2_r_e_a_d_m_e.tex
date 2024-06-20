@@ -1,0 +1,42 @@
+\chapter{spine-\/c}
+\hypertarget{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e}\index{spine-\/c@{spine-\/c}}
+\label{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md300}%
+\Hypertarget{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md300}%
+ The spine-\/c runtime provides basic functionality to load and manipulate \href{http://esotericsoftware.com}{\texttt{ Spine}} skeletal animation data using ANSI C. It does not perform rendering but can be extended to enable Spine animations for other C-\/based projects, including C++ or Objective-\/C projects.\hypertarget{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md301}{}\doxysection{\texorpdfstring{Licensing}{Licensing}}\label{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md301}
+This Spine Runtime may only be used for personal or internal use, typically to evaluate Spine before purchasing. If you would like to incorporate a Spine Runtime into your applications, distribute software containing a Spine Runtime, or modify a Spine Runtime, then you will need a valid \href{https://esotericsoftware.com/spine-purchase}{\texttt{ Spine license}}. Please see the \href{https://github.com/EsotericSoftware/spine-runtimes/blob/master/LICENSE}{\texttt{ Spine Runtimes Software License}} for detailed information.
+
+The Spine Runtimes are developed with the intent to be used with data exported from Spine. By purchasing Spine, {\ttfamily Section 2} of the \href{https://esotericsoftware.com/files/license.txt}{\texttt{ Spine Software License}} grants the right to create and distribute derivative works of the Spine Runtimes.\hypertarget{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md302}{}\doxysection{\texorpdfstring{Setup}{Setup}}\label{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md302}
+
+\begin{DoxyEnumerate}
+\item Download the Spine Runtimes source using \href{https://help.github.com/articles/set-up-git}{\texttt{ git}} or by downloading it \href{https://github.com/EsotericSoftware/spine-runtimes/archive/master.zip}{\texttt{ as a zip}}.
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Open the {\ttfamily spine-\/c.\+sln} Visual C++ 2010 Express project file. For other IDEs, you will need to create a new project and import the source.
+\end{DoxyEnumerate}
+
+Alternatively, the contents of the {\ttfamily spine-\/c/src} and {\ttfamily spine-\/c/include} directories can be copied into your project. Be sure your header search is configured to find the contents of the {\ttfamily spine-\/c/include} directory. Note that the includes use {\ttfamily spine/\+Xxx.\+h}, so the {\ttfamily spine} directory cannot be omitted when copying the files.
+
+If {\ttfamily SPINE\+\_\+\+SHORT\+\_\+\+NAMES} is defined, the {\ttfamily sp} prefix for all structs and functions is optional. Only use this if the spine-\/c names won\textquotesingle{}t cause a conflict.\hypertarget{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md303}{}\doxysection{\texorpdfstring{Extension}{Extension}}\label{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md303}
+Extending spine-\/c requires implementing three methods\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \+\_\+sp\+Atlas\+Page\+\_\+create\+Texture} Loads a texture and stores it and its size in the {\ttfamily void\texorpdfstring{$\ast$}{*} renderer\+Object}, {\ttfamily width} and {\ttfamily height} fields of an {\ttfamily \doxylink{structsp_atlas_page}{sp\+Atlas\+Page}} struct.
+\item {\ttfamily \+\_\+sp\+Atlas\+Page\+\_\+dispose\+Texture} Disposes of a texture loaded with {\ttfamily \+\_\+sp\+Atlas\+Page\+\_\+create\+Texture}.
+\item {\ttfamily \+\_\+sp\+Util\+\_\+read\+File} Reads a file. If this doesn\textquotesingle{}t need to be customized, {\ttfamily \+\_\+read\+File} is provided which reads a file using {\ttfamily fopen}.
+\end{DoxyItemize}
+
+With these implemented, the spine-\/c API can then be used to load Spine animation data. Rendering is done by enumerating the slots for a skeleton and rendering the attachment for each slot. Each attachment has a {\ttfamily renderer\+Object} field that is set when the attachment is loaded.
+
+For example, {\ttfamily Atlas\+Attachment\+Loader} is typically used to load attachments when using a Spine texture atlas. When {\ttfamily Atlas\+Attachment\+Loader} loads a {\ttfamily Region\+Attachment}, the attachment\textquotesingle{}s {\ttfamily void\texorpdfstring{$\ast$}{*} renderer\+Object} is set to an {\ttfamily Atlas\+Region}. Rendering code can then obtain the {\ttfamily Atlas\+Region} from the attachment, get the {\ttfamily Atlas\+Page} it belongs to, and get the page\textquotesingle{}s {\ttfamily void\texorpdfstring{$\ast$}{*} renderer\+Object}. This is the renderer specific texture object set by {\ttfamily \+\_\+sp\+Atlas\+Page\+\_\+create\+Texture}. Attachment loading can be \href{http://esotericsoftware.com/spine-using-runtimes/\#attachmentloader}{\texttt{ customized}} if not using {\ttfamily Atlas\+Attachment\+Loader} or to provider different renderer specific data.
+
+\href{https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-sfml/src/spine/spine-sfml.cpp\#L39}{\texttt{ spine-\/sfml}} serves as a simple example of extending spine-\/c.
+
+spine-\/c uses an OOP style of programming where each "{}class"{} is made up of a struct and a number of functions prefixed with the struct name. More detals about how this works are available in \href{https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-c/include/spine/extension.h\#L2}{\texttt{ extension.\+h}}. This mechanism allows you to provide your own implementations for {\ttfamily \doxylink{structsp_attachment_loader}{sp\+Attachment\+Loader}}, {\ttfamily \doxylink{structsp_attachment}{sp\+Attachment}} and {\ttfamily \doxylink{structsp_timeline}{sp\+Timeline}}, if necessary.\hypertarget{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md304}{}\doxysection{\texorpdfstring{Runtimes Extending spine-\/c}{Runtimes Extending spine-\/c}}\label{md__c_1_2_users_2_usuario_2_documents_2pruebas-c_2_practica_01_animaci_x_c3_x_b3n_2libraries_2spine-c_2_r_e_a_d_m_e_autotoc_md304}
+
+\begin{DoxyItemize}
+\item \href{https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-cocos2d-iphone}{\texttt{ spine-\/cocos2d-\/iphone}}
+\item \href{https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-cocos2dx}{\texttt{ spine-\/cocos2dx}}
+\item \href{https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-sfml}{\texttt{ spine-\/sfml}}
+\item \href{https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-torque2d}{\texttt{ spine-\/torque2d}} 
+\end{DoxyItemize}

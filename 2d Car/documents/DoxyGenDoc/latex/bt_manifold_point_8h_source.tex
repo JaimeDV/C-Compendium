@@ -1,0 +1,176 @@
+\doxysection{bt\+Manifold\+Point.\+h}
+\hypertarget{bt_manifold_point_8h_source}{}\label{bt_manifold_point_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btManifoldPoint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btManifoldPoint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_MANIFOLD\_CONTACT\_POINT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_MANIFOLD\_CONTACT\_POINT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransformUtil.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#ifdef\ PFX\_USE\_FREE\_VECTORMATH}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}physics\_effects/base\_level/solver/pfx\_constraint\_row.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ sce::PhysicsEffects::PfxConstraintRow\ btConstraintRow;}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ Don't\ change\ following\ order\ of\ parameters}}
+\DoxyCodeLine{00027\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00028\ btConstraintRow}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ btScalar\ m\_normal[3];}
+\DoxyCodeLine{00031\ \ \ \ \ btScalar\ m\_rhs;}
+\DoxyCodeLine{00032\ \ \ \ \ btScalar\ m\_jacDiagInv;}
+\DoxyCodeLine{00033\ \ \ \ \ btScalar\ m\_lowerLimit;}
+\DoxyCodeLine{00034\ \ \ \ \ btScalar\ m\_upperLimit;}
+\DoxyCodeLine{00035\ \ \ \ \ btScalar\ m\_accumImpulse;}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ \textcolor{keyword}{typedef}\ btConstraintRow\ PfxConstraintRow;}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//PFX\_USE\_FREE\_VECTORMATH}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{enum}\ btContactPointFlags}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ BT\_CONTACT\_FLAG\_LATERAL\_FRICTION\_INITIALIZED\ =\ 1,}
+\DoxyCodeLine{00043\ \ \ \ \ BT\_CONTACT\_FLAG\_HAS\_CONTACT\_CFM\ =\ 2,}
+\DoxyCodeLine{00044\ \ \ \ \ BT\_CONTACT\_FLAG\_HAS\_CONTACT\_ERP\ =\ 4,}
+\DoxyCodeLine{00045\ \ \ \ \ BT\_CONTACT\_FLAG\_CONTACT\_STIFFNESS\_DAMPING\ =\ 8,}
+\DoxyCodeLine{00046\ \ \ \ \ BT\_CONTACT\_FLAG\_FRICTION\_ANCHOR\ =\ 16,}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}()}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ :\ m\_userPersistentData(0),}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ m\_contactPointFlags(0),}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ m\_appliedImpulse(0.f),}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ m\_prevRHS(0.f),}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ m\_appliedImpulseLateral1(0.f),}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ m\_appliedImpulseLateral2(0.f),}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ m\_contactMotion1(0.f),}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ m\_contactMotion2(0.f),}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ m\_contactCFM(0.f),}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ m\_contactERP(0.f),}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ m\_frictionCFM(0.f),}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ m\_lifeTime(0)}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{classbt_manifold_point}{btManifoldPoint}}(\textcolor{keyword}{const}\ btVector3\&\ pointA,\ \textcolor{keyword}{const}\ btVector3\&\ pointB,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ normal,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ distance)\ :\ m\_localPointA(pointA),}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_localPointB(pointB),}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_normalWorldOnB(normal),}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_distance1(distance),}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_combinedFriction(btScalar(0.)),}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_combinedRollingFriction(btScalar(0.)),}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_combinedSpinningFriction(btScalar(0.)),}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_combinedRestitution(btScalar(0.)),}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_userPersistentData(0),}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_contactPointFlags(0),}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_appliedImpulse(0.f),}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_prevRHS(0.f),}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_appliedImpulseLateral1(0.f),}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_appliedImpulseLateral2(0.f),}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_contactMotion1(0.f),}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_contactMotion2(0.f),}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_contactCFM(0.f),}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_contactERP(0.f),}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_frictionCFM(0.f),}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_lifeTime(0)}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ btVector3\ m\_localPointA;}
+\DoxyCodeLine{00096\ \ \ \ \ btVector3\ m\_localPointB;}
+\DoxyCodeLine{00097\ \ \ \ \ btVector3\ m\_positionWorldOnB;}
+\DoxyCodeLine{00099\ \ \ \ \ btVector3\ \mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}};}
+\DoxyCodeLine{00100\ \ \ \ \ btVector3\ m\_normalWorldOnB;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ btScalar\ m\_distance1;}
+\DoxyCodeLine{00103\ \ \ \ \ btScalar\ m\_combinedFriction;}
+\DoxyCodeLine{00104\ \ \ \ \ btScalar\ m\_combinedRollingFriction;\ \ \ \textcolor{comment}{//torsional\ friction\ orthogonal\ to\ contact\ normal,\ useful\ to\ make\ spheres\ stop\ rolling\ forever}}
+\DoxyCodeLine{00105\ \ \ \ \ btScalar\ m\_combinedSpinningFriction;\ \ \textcolor{comment}{//torsional\ friction\ around\ contact\ normal,\ useful\ for\ grasping\ objects}}
+\DoxyCodeLine{00106\ \ \ \ \ btScalar\ m\_combinedRestitution;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{comment}{//BP\ mod,\ store\ contact\ triangles.}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_partId0;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_partId1;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_index0;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_index1;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{mutable}\ \textcolor{keywordtype}{void}*\ m\_userPersistentData;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{//bool\ \ \ \ \ \ \ \ \ \ m\_lateralFrictionInitialized;}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_contactPointFlags;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ btScalar\ m\_appliedImpulse;}
+\DoxyCodeLine{00119\ \ \ \ \ btScalar\ m\_prevRHS;}
+\DoxyCodeLine{00120\ \ \ \ \ btScalar\ m\_appliedImpulseLateral1;}
+\DoxyCodeLine{00121\ \ \ \ \ btScalar\ m\_appliedImpulseLateral2;}
+\DoxyCodeLine{00122\ \ \ \ \ btScalar\ m\_contactMotion1;}
+\DoxyCodeLine{00123\ \ \ \ \ btScalar\ m\_contactMotion2;}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ btScalar\ m\_contactCFM;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ btScalar\ m\_combinedContactStiffness1;}
+\DoxyCodeLine{00128\ \ \ \ \ \};}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ btScalar\ m\_contactERP;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ btScalar\ m\_combinedContactDamping1;}
+\DoxyCodeLine{00133\ \ \ \ \ \};}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ btScalar\ m\_frictionCFM;}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_lifeTime;\ \ \textcolor{comment}{//lifetime\ of\ the\ contactpoint\ in\ frames}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ btVector3\ m\_lateralFrictionDir1;}
+\DoxyCodeLine{00140\ \ \ \ \ btVector3\ m\_lateralFrictionDir2;}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ btScalar\ getDistance()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00143\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_distance1;}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{int}\ getLifeTime()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00147\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_lifeTime;}
+\DoxyCodeLine{00149\ \ \ \ \ \}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getPositionWorldOnA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00152\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classbt_manifold_point_a5fd89785a2e081dd658b15af8bedf04b}{m\_positionWorldOnA}};}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ m\_positionWorldOnB\ +\ m\_normalWorldOnB\ *\ m\_distance1;}}
+\DoxyCodeLine{00155\ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getPositionWorldOnB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00158\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_positionWorldOnB;}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{void}\ setDistance(btScalar\ dist)}
+\DoxyCodeLine{00163\ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ m\_distance1\ =\ dist;}
+\DoxyCodeLine{00165\ \ \ \ \ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00168\ \ \ \ \ btScalar\ \mbox{\hyperlink{classbt_manifold_point_af731843210d9d3dace170d457d34c0b8}{getAppliedImpulse}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00169\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_appliedImpulse;}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ \};}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MANIFOLD\_CONTACT\_POINT\_H}}
+
+\end{DoxyCode}

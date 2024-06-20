@@ -1,0 +1,330 @@
+\doxysection{bt\+Simple\+Broadphase.\+cpp}
+\hypertarget{bt_simple_broadphase_8cpp_source}{}\label{bt_simple_broadphase_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btSimpleBroadphase.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btDispatcher.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btMatrix3x3.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAabbUtil2.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <new>}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ btSimpleBroadphase::validate()}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_numHandles;\ i++)}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ i\ +\ 1;\ j\ <\ m\_numHandles;\ j++)}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(\&m\_pHandles[i]\ !=\ \&m\_pHandles[j]);}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ btSimpleBroadphase::btSimpleBroadphase(\textcolor{keywordtype}{int}\ maxProxies,\ \mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ overlappingPairCache)}
+\DoxyCodeLine{00039\ \ \ \ \ :\ m\_pairCache(overlappingPairCache),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ m\_ownsPairCache(false),}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ m\_invalidPair(0)}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{if}\ (!overlappingPairCache)}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(btHashedOverlappingPairCache),\ 16);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ m\_pairCache\ =\ \textcolor{keyword}{new}\ (mem)\ btHashedOverlappingPairCache();}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ m\_ownsPairCache\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ allocate\ handles\ buffer\ and\ put\ all\ handles\ on\ free\ list}}
+\DoxyCodeLine{00051\ \ \ \ \ m\_pHandlesRawPtr\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}})\ *\ maxProxies,\ 16);}
+\DoxyCodeLine{00052\ \ \ \ \ m\_pHandles\ =\ \textcolor{keyword}{new}\ (m\_pHandlesRawPtr)\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}[maxProxies];}
+\DoxyCodeLine{00053\ \ \ \ \ m\_maxHandles\ =\ maxProxies;}
+\DoxyCodeLine{00054\ \ \ \ \ m\_numHandles\ =\ 0;}
+\DoxyCodeLine{00055\ \ \ \ \ m\_firstFreeHandle\ =\ 0;}
+\DoxyCodeLine{00056\ \ \ \ \ m\_LastHandleIndex\ =\ -\/1;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ m\_firstFreeHandle;\ i\ <\ maxProxies;\ i++)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ m\_pHandles[i].SetNextFree(i\ +\ 1);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ m\_pHandles[i].m\_uniqueId\ =\ i\ +\ 2;\ \ \textcolor{comment}{//any\ UID\ will\ do,\ we\ just\ avoid\ too\ trivial\ values\ (0,1)\ for\ debugging\ purposes}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ m\_pHandles[maxProxies\ -\/\ 1].SetNextFree(0);}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ btSimpleBroadphase::\string~btSimpleBroadphase()}
+\DoxyCodeLine{00069\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ btAlignedFree(m\_pHandlesRawPtr);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_ownsPairCache)}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ m\_pairCache-\/>\string~btOverlappingPairCache();}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ btAlignedFree(m\_pairCache);}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ btBroadphaseProxy*\ btSimpleBroadphase::createProxy(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ shapeType,\ \textcolor{keywordtype}{void}*\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00080\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_numHandles\ >=\ m\_maxHandles)}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;\ \ \textcolor{comment}{//should\ never\ happen,\ but\ don't\ let\ the\ game\ crash\ ;-\/)}}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \ \ \ \ btAssert(aabbMin[0]\ <=\ aabbMax[0]\ \&\&\ aabbMin[1]\ <=\ aabbMax[1]\ \&\&\ aabbMin[2]\ <=\ aabbMax[2]);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{int}\ newHandleIndex\ =\ allocHandle();}
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy\ =\ \textcolor{keyword}{new}\ (\&m\_pHandles[newHandleIndex])\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}(aabbMin,\ aabbMax,\ shapeType,\ userPtr,\ collisionFilterGroup,\ collisionFilterMask);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{return}\ proxy;}
+\DoxyCodeLine{00092\ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_removing_overlap_callback}{RemovingOverlapCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_overlap_callback}{btOverlapCallback}}}
+\DoxyCodeLine{00095\ \{}
+\DoxyCodeLine{00096\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ processOverlap(btBroadphasePair\&\ pair)}
+\DoxyCodeLine{00098\ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ (void)pair;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_remove_pair_containing_proxy}{RemovePairContainingProxy}}}
+\DoxyCodeLine{00106\ \{}
+\DoxyCodeLine{00107\ \ \ \ \ btBroadphaseProxy*\ m\_targetProxy;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_remove_pair_containing_proxy}{\string~RemovePairContainingProxy}}()}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ processOverlap(btBroadphasePair\&\ pair)}
+\DoxyCodeLine{00116\ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy0\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\textcolor{keyword}{>}(pair.m\_pProxy0);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy1\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\textcolor{keyword}{>}(pair.m\_pProxy1);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((m\_targetProxy\ ==\ proxy0\ ||\ m\_targetProxy\ ==\ proxy1));}
+\DoxyCodeLine{00121\ \ \ \ \ \};}
+\DoxyCodeLine{00122\ \};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{void}\ btSimpleBroadphase::destroyProxy(btBroadphaseProxy*\ proxyOrg,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)}
+\DoxyCodeLine{00125\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ m\_pairCache-\/>removeOverlappingPairsContainingProxy(proxyOrg,\ dispatcher);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy0\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\textcolor{keyword}{>}(proxyOrg);}
+\DoxyCodeLine{00129\ \ \ \ \ freeHandle(proxy0);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{comment}{//validate();}}
+\DoxyCodeLine{00132\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ btSimpleBroadphase::getAabb(btBroadphaseProxy*\ proxy,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00135\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ sbp\ =\ getSimpleProxyFromProxy(proxy);}
+\DoxyCodeLine{00137\ \ \ \ \ aabbMin\ =\ sbp-\/>m\_aabbMin;}
+\DoxyCodeLine{00138\ \ \ \ \ aabbMax\ =\ sbp-\/>m\_aabbMax;}
+\DoxyCodeLine{00139\ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{void}\ btSimpleBroadphase::setAabb(btBroadphaseProxy*\ proxy,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ \textcolor{comment}{/*dispatcher*/})}
+\DoxyCodeLine{00142\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ sbp\ =\ getSimpleProxyFromProxy(proxy);}
+\DoxyCodeLine{00144\ \ \ \ \ sbp-\/>m\_aabbMin\ =\ aabbMin;}
+\DoxyCodeLine{00145\ \ \ \ \ sbp-\/>m\_aabbMax\ =\ aabbMax;}
+\DoxyCodeLine{00146\ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}\ btSimpleBroadphase::rayTest(\textcolor{keyword}{const}\ btVector3\&\ rayFrom,\ \textcolor{keyword}{const}\ btVector3\&\ rayTo,\ \mbox{\hyperlink{structbt_broadphase_ray_callback}{btBroadphaseRayCallback}}\&\ rayCallback,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax)}
+\DoxyCodeLine{00149\ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <=\ m\_LastHandleIndex;\ i++)}
+\DoxyCodeLine{00151\ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy\ =\ \&m\_pHandles[i];}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!proxy-\/>m\_clientObject)}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ rayCallback.process(proxy);}
+\DoxyCodeLine{00158\ \ \ \ \ \}}
+\DoxyCodeLine{00159\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{void}\ btSimpleBroadphase::aabbTest(\textcolor{keyword}{const}\ btVector3\&\ aabbMin,\ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,\ \mbox{\hyperlink{structbt_broadphase_aabb_callback}{btBroadphaseAabbCallback}}\&\ callback)}
+\DoxyCodeLine{00162\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <=\ m\_LastHandleIndex;\ i++)}
+\DoxyCodeLine{00164\ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy\ =\ \&m\_pHandles[i];}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!proxy-\/>m\_clientObject)}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TestAabbAgainstAabb2(aabbMin,\ aabbMax,\ proxy-\/>m\_aabbMin,\ proxy-\/>m\_aabbMax))}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ callback.process(proxy);}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00174\ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{bool}\ btSimpleBroadphase::aabbOverlap(\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy0,\ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy1)}
+\DoxyCodeLine{00178\ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{return}\ proxy0-\/>m\_aabbMin[0]\ <=\ proxy1-\/>m\_aabbMax[0]\ \&\&\ proxy1-\/>m\_aabbMin[0]\ <=\ proxy0-\/>m\_aabbMax[0]\ \&\&}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ proxy0-\/>m\_aabbMin[1]\ <=\ proxy1-\/>m\_aabbMax[1]\ \&\&\ proxy1-\/>m\_aabbMin[1]\ <=\ proxy0-\/>m\_aabbMax[1]\ \&\&}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ proxy0-\/>m\_aabbMin[2]\ <=\ proxy1-\/>m\_aabbMax[2]\ \&\&\ proxy1-\/>m\_aabbMin[2]\ <=\ proxy0-\/>m\_aabbMax[2];}
+\DoxyCodeLine{00182\ \}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{comment}{//then\ remove\ non-\/overlapping\ ones}}
+\DoxyCodeLine{00185\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_check_overlap_callback}{CheckOverlapCallback}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_overlap_callback}{btOverlapCallback}}}
+\DoxyCodeLine{00186\ \{}
+\DoxyCodeLine{00187\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ processOverlap(btBroadphasePair\&\ pair)}
+\DoxyCodeLine{00189\ \ \ \ \ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (!btSimpleBroadphase::aabbOverlap(\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\textcolor{keyword}{>}(pair.m\_pProxy0),\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\textcolor{keyword}{>}(pair.m\_pProxy1)));}
+\DoxyCodeLine{00191\ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \};}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_simple_broadphase_ac899d483e888fa132677125c88991de8}{btSimpleBroadphase::calculateOverlappingPairs}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)}
+\DoxyCodeLine{00195\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{comment}{//first\ check\ for\ new\ overlapping\ pairs}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{int}\ i,\ j;}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_numHandles\ >=\ 0)}
+\DoxyCodeLine{00199\ \ \ \ \ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ new\_largest\_index\ =\ -\/1;}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <=\ m\_LastHandleIndex;\ i++)}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy0\ =\ \&m\_pHandles[i];}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!proxy0-\/>m\_clientObject)}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ new\_largest\_index\ =\ i;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ i\ +\ 1;\ j\ <=\ m\_LastHandleIndex;\ j++)}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ proxy1\ =\ \&m\_pHandles[j];}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(proxy0\ !=\ proxy1);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!proxy1-\/>m\_clientObject)}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ p0\ =\ getSimpleProxyFromProxy(proxy0);}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ p1\ =\ getSimpleProxyFromProxy(proxy1);}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (aabbOverlap(p0,\ p1))}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_pairCache-\/>findPair(proxy0,\ proxy1))}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_pairCache-\/>addOverlappingPair(proxy0,\ proxy1);}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_pairCache-\/>hasDeferredRemoval())}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_pairCache-\/>findPair(proxy0,\ proxy1))}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_pairCache-\/>removeOverlappingPair(proxy0,\ proxy1,\ dispatcher);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ m\_LastHandleIndex\ =\ new\_largest\_index;}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_ownsPairCache\ \&\&\ m\_pairCache-\/>hasDeferredRemoval())}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btBroadphasePairArray}}\&\ overlappingPairArray\ =\ m\_pairCache-\/>getOverlappingPairArray();}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//perform\ a\ sort,\ to\ find\ duplicates\ and\ to\ sort\ 'invalid'\ pairs\ to\ the\ end}}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ overlappingPairArray.quickSort(\mbox{\hyperlink{classbt_broadphase_pair_sort_predicate}{btBroadphasePairSortPredicate}}());}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ overlappingPairArray.resize(overlappingPairArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ m\_invalidPair);}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ m\_invalidPair\ =\ 0;}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ btBroadphasePair\ previousPair;}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ previousPair.m\_pProxy0\ =\ 0;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ previousPair.m\_pProxy1\ =\ 0;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ previousPair.m\_algorithm\ =\ 0;}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ overlappingPairArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btBroadphasePair\&\ pair\ =\ overlappingPairArray[i];}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isDuplicate\ =\ (pair\ ==\ previousPair);}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ previousPair\ =\ pair;}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ needsRemoval\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!isDuplicate)}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ hasOverlap\ =\ testAabbOverlap(pair.m\_pProxy0,\ pair.m\_pProxy1);}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hasOverlap)}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ needsRemoval\ =\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//callback-\/>processOverlap(pair);}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ needsRemoval\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//remove\ duplicate}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ needsRemoval\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//should\ have\ no\ algorithm}}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(!pair.m\_algorithm);}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (needsRemoval)}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_pairCache-\/>cleanOverlappingPair(pair,\ dispatcher);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ m\_overlappingPairArray.swap(i,m\_overlappingPairArray.size()-\/1);}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ m\_overlappingPairArray.pop\_back();}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pair.m\_pProxy0\ =\ 0;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pair.m\_pProxy1\ =\ 0;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_invalidPair++;}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\#define\ CLEAN\_INVALID\_PAIRS\ 1}}
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\#ifdef\ CLEAN\_INVALID\_PAIRS}}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//perform\ a\ sort,\ to\ sort\ 'invalid'\ pairs\ to\ the\ end}}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ overlappingPairArray.quickSort(\mbox{\hyperlink{classbt_broadphase_pair_sort_predicate}{btBroadphasePairSortPredicate}}());}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ overlappingPairArray.resize(overlappingPairArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ m\_invalidPair);}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ m\_invalidPair\ =\ 0;}
+\DoxyCodeLine{00310\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//CLEAN\_INVALID\_PAIRS}}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00312\ \ \ \ \ \}}
+\DoxyCodeLine{00313\ \}}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \textcolor{keywordtype}{bool}\ btSimpleBroadphase::testAabbOverlap(btBroadphaseProxy*\ proxy0,\ btBroadphaseProxy*\ proxy1)}
+\DoxyCodeLine{00316\ \{}
+\DoxyCodeLine{00317\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ p0\ =\ getSimpleProxyFromProxy(proxy0);}
+\DoxyCodeLine{00318\ \ \ \ \ \mbox{\hyperlink{structbt_simple_broadphase_proxy}{btSimpleBroadphaseProxy}}*\ p1\ =\ getSimpleProxyFromProxy(proxy1);}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordflow}{return}\ aabbOverlap(p0,\ p1);}
+\DoxyCodeLine{00320\ \}}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_simple_broadphase_a65c387ba0fa8690716296ee9d5f7550a}{btSimpleBroadphase::resetPool}}(\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)}
+\DoxyCodeLine{00323\ \{}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{comment}{//not\ yet}}
+\DoxyCodeLine{00325\ \}}
+
+\end{DoxyCode}

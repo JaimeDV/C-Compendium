@@ -1,0 +1,305 @@
+\doxysection{bt\+Convex\+Polyhedron.\+cpp}
+\hypertarget{bt_convex_polyhedron_8cpp_source}{}\label{bt_convex_polyhedron_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btConvexPolyhedron.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btConvexPolyhedron.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2011\ Advanced\ Micro\ Devices,\ Inc.\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btConvexPolyhedron.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btHashMap.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ btConvexPolyhedron::btConvexPolyhedron()}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \}}
+\DoxyCodeLine{00026\ btConvexPolyhedron::\string~btConvexPolyhedron()}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ IsAlmostZero1(\textcolor{keyword}{const}\ btVector3\&\ v)}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(v.x())\ >\ 1e-\/6\ ||\ btFabs(v.y())\ >\ 1e-\/6\ ||\ btFabs(v.z())\ >\ 1e-\/6)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00034\ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_internal_vertex_pair}{btInternalVertexPair}}}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{structbt_internal_vertex_pair}{btInternalVertexPair}}(\textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ v0,\ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ v1)}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ :\ m\_v0(v0),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ m\_v1(v1)}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_v1\ >\ m\_v0)}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ btSwap(m\_v0,\ m\_v1);}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_v0;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_v1;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ getHash()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_v0\ +\ (m\_v1\ <<\ 16);}
+\DoxyCodeLine{00050\ \ \ \ \ \}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_internal_vertex_pair}{btInternalVertexPair}}\&\ other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00052\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_v0\ ==\ other.m\_v0\ \&\&\ m\_v1\ ==\ other.m\_v1;}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_internal_edge}{btInternalEdge}}}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{structbt_internal_edge}{btInternalEdge}}()}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ :\ m\_face0(-\/1),}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ m\_face1(-\/1)}
+\DoxyCodeLine{00062\ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_face0;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{short}\ \textcolor{keywordtype}{int}\ m\_face1;}
+\DoxyCodeLine{00066\ \};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{//}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#ifdef\ TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{bool}\ btConvexPolyhedron::testContainment()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ p\ =\ 0;\ p\ <\ 8;\ p++)}
+\DoxyCodeLine{00074\ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ btVector3\ LocalPt;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\ ==\ 0)}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(m\_extents[0],\ m\_extents[1],\ m\_extents[2]);}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (p\ ==\ 1)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(m\_extents[0],\ m\_extents[1],\ -\/m\_extents[2]);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (p\ ==\ 2)}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(m\_extents[0],\ -\/m\_extents[1],\ m\_extents[2]);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (p\ ==\ 3)}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(m\_extents[0],\ -\/m\_extents[1],\ -\/m\_extents[2]);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (p\ ==\ 4)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(-\/m\_extents[0],\ m\_extents[1],\ m\_extents[2]);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (p\ ==\ 5)}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(-\/m\_extents[0],\ m\_extents[1],\ -\/m\_extents[2]);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (p\ ==\ 6)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(-\/m\_extents[0],\ -\/m\_extents[1],\ m\_extents[2]);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (p\ ==\ 7)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ LocalPt\ =\ m\_localCenter\ +\ btVector3(-\/m\_extents[0],\ -\/m\_extents[1],\ -\/m\_extents[2]);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_faces.size();\ i++)}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ Normal(m\_faces[i].m\_plane[0],\ m\_faces[i].m\_plane[1],\ m\_faces[i].m\_plane[2]);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ d\ =\ LocalPt.dot(Normal)\ +\ m\_faces[i].m\_plane[3];}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ >\ 0.0f)}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00102\ \}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ btConvexPolyhedron::initialize()}
+\DoxyCodeLine{00106\ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btInternalVertexPair,\ btInternalEdge>}}\ edges;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_faces.size();\ i++)}
+\DoxyCodeLine{00110\ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numVertices\ =\ m\_faces[i].m\_indices.size();}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ NbTris\ =\ numVertices;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ NbTris;\ j++)}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ k\ =\ (j\ +\ 1)\ \%\ numVertices;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_internal_vertex_pair}{btInternalVertexPair}}\ vp(m\_faces[i].m\_indices[j],\ m\_faces[i].m\_indices[k]);}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_internal_edge}{btInternalEdge}}*\ edptr\ =\ edges.find(vp);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ edge\ =\ m\_vertices[vp.m\_v1]\ -\/\ m\_vertices[vp.m\_v0];}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ edge.normalize();}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ found\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ p\ =\ 0;\ p\ <\ m\_uniqueEdges.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();\ p++)}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (IsAlmostZero1(m\_uniqueEdges[p]\ -\/\ edge)\ ||}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IsAlmostZero1(m\_uniqueEdges[p]\ +\ edge))}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ found\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!found)}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_uniqueEdges.push\_back(edge);}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (edptr)}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(edptr-\/>m\_face0\ >=\ 0);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(edptr-\/>m\_face1\ <\ 0);}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edptr-\/>m\_face1\ =\ i;}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_internal_edge}{btInternalEdge}}\ ed;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ed.m\_face0\ =\ i;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edges.insert(vp,\ ed);}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00151\ \ \ \ \ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#ifdef\ USE\_CONNECTED\_FACES}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_faces.size();\ i++)}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numVertices\ =\ m\_faces[i].m\_indices.size();}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ m\_faces[i].m\_connectedFaces.resize(numVertices);}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ numVertices;\ j++)}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ k\ =\ (j\ +\ 1)\ \%\ numVertices;}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_internal_vertex_pair}{btInternalVertexPair}}\ vp(m\_faces[i].m\_indices[j],\ m\_faces[i].m\_indices[k]);}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_internal_edge}{btInternalEdge}}*\ edptr\ =\ edges.find(vp);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(edptr);}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(edptr-\/>m\_face0\ >=\ 0);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(edptr-\/>m\_face1\ >=\ 0);}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ connectedFace\ =\ (edptr-\/>m\_face0\ ==\ i)\ ?\ edptr-\/>m\_face1\ :\ edptr-\/>m\_face0;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ m\_faces[i].m\_connectedFaces[j]\ =\ connectedFace;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//USE\_CONNECTED\_FACES}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ initialize2();}
+\DoxyCodeLine{00175\ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{void}\ btConvexPolyhedron::initialize2()}
+\DoxyCodeLine{00178\ \{}
+\DoxyCodeLine{00179\ \ \ \ \ m\_localCenter.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00180\ \ \ \ \ btScalar\ TotalArea\ =\ 0.0f;}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_faces.size();\ i++)}
+\DoxyCodeLine{00182\ \ \ \ \ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numVertices\ =\ m\_faces[i].m\_indices.size();}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ NbTris\ =\ numVertices\ -\/\ 2;}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ p0\ =\ m\_vertices[m\_faces[i].m\_indices[0]];}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 1;\ j\ <=\ NbTris;\ j++)}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ k\ =\ (j\ +\ 1)\ \%\ numVertices;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ p1\ =\ m\_vertices[m\_faces[i].m\_indices[j]];}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ p2\ =\ m\_vertices[m\_faces[i].m\_indices[k]];}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ Area\ =\ ((p0\ -\/\ p1).cross(p0\ -\/\ p2)).length()\ *\ 0.5f;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ Center\ =\ (p0\ +\ p1\ +\ p2)\ /\ 3.0f;}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localCenter\ +=\ Area\ *\ Center;}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ TotalArea\ +=\ Area;}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00197\ \ \ \ \ \}}
+\DoxyCodeLine{00198\ \ \ \ \ m\_localCenter\ /=\ TotalArea;}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#ifdef\ TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordflow}{if}\ (1)}
+\DoxyCodeLine{00202\ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ m\_radius\ =\ FLT\_MAX;}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_faces.size();\ i++)}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ Normal(m\_faces[i].m\_plane[0],\ m\_faces[i].m\_plane[1],\ m\_faces[i].m\_plane[2]);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ dist\ =\ btFabs(m\_localCenter.dot(Normal)\ +\ m\_faces[i].m\_plane[3]);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ <\ m\_radius)}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_radius\ =\ dist;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ btScalar\ MinX\ =\ FLT\_MAX;}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ btScalar\ MinY\ =\ FLT\_MAX;}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ btScalar\ MinZ\ =\ FLT\_MAX;}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ btScalar\ MaxX\ =\ -\/FLT\_MAX;}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ btScalar\ MaxY\ =\ -\/FLT\_MAX;}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ btScalar\ MaxZ\ =\ -\/FLT\_MAX;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_vertices.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();\ i++)}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ pt\ =\ m\_vertices[i];}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pt.x()\ <\ MinX)\ MinX\ =\ pt.x();}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pt.x()\ >\ MaxX)\ MaxX\ =\ pt.x();}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pt.y()\ <\ MinY)\ MinY\ =\ pt.y();}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pt.y()\ >\ MaxY)\ MaxY\ =\ pt.y();}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pt.z()\ <\ MinZ)\ MinZ\ =\ pt.z();}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pt.z()\ >\ MaxZ)\ MaxZ\ =\ pt.z();}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ mC.setValue(MaxX\ +\ MinX,\ MaxY\ +\ MinY,\ MaxZ\ +\ MinZ);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ mE.setValue(MaxX\ -\/\ MinX,\ MaxY\ -\/\ MinY,\ MaxZ\ -\/\ MinZ);}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ const\ btScalar\ r\ =\ m\_radius\ /\ sqrtf(2.0f);}}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ r\ =\ m\_radius\ /\ sqrtf(3.0f);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ LargestExtent\ =\ mE.maxAxis();}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ Step\ =\ (mE[LargestExtent]\ *\ 0.5f\ -\/\ r)\ /\ 1024.0f;}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ m\_extents[0]\ =\ m\_extents[1]\ =\ m\_extents[2]\ =\ r;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ m\_extents[LargestExtent]\ =\ mE[LargestExtent]\ *\ 0.5f;}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ FoundBox\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 1024;\ j++)}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (testContainment())}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FoundBox\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ m\_extents[LargestExtent]\ -\/=\ Step;}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!FoundBox)}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ m\_extents[0]\ =\ m\_extents[1]\ =\ m\_extents[2]\ =\ r;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Refine\ the\ box}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ Step\ =\ (m\_radius\ -\/\ r)\ /\ 1024.0f;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ e0\ =\ (1\ <<\ LargestExtent)\ \&\ 3;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ e1\ =\ (1\ <<\ e0)\ \&\ 3;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 1024;\ j++)}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ Saved0\ =\ m\_extents[e0];}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ Saved1\ =\ m\_extents[e1];}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_extents[e0]\ +=\ Step;}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_extents[e1]\ +=\ Step;}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!testContainment())}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_extents[e0]\ =\ Saved0;}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_extents[e1]\ =\ Saved1;}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00274\ \ \ \ \ \}}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00276\ \}}
+\DoxyCodeLine{00277\ \textcolor{keywordtype}{void}\ btConvexPolyhedron::project(\textcolor{keyword}{const}\ btTransform\&\ trans,\ \textcolor{keyword}{const}\ btVector3\&\ dir,\ btScalar\&\ minProj,\ btScalar\&\ maxProj,\ btVector3\&\ witnesPtMin,\ btVector3\&\ witnesPtMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00278\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00279\ \ \ \ \ minProj\ =\ FLT\_MAX;}
+\DoxyCodeLine{00280\ \ \ \ \ maxProj\ =\ -\/FLT\_MAX;}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordtype}{int}\ numVerts\ =\ m\_vertices.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numVerts;\ i++)}
+\DoxyCodeLine{00283\ \ \ \ \ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ btVector3\ pt\ =\ trans\ *\ m\_vertices[i];}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ btScalar\ dp\ =\ pt.dot(dir);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dp\ <\ minProj)}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ minProj\ =\ dp;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ witnesPtMin\ =\ pt;}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dp\ >\ maxProj)}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ maxProj\ =\ dp;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ witnesPtMax\ =\ pt;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00296\ \ \ \ \ \}}
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordflow}{if}\ (minProj\ >\ maxProj)}
+\DoxyCodeLine{00298\ \ \ \ \ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ btSwap(minProj,\ maxProj);}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ btSwap(witnesPtMin,\ witnesPtMax);}
+\DoxyCodeLine{00301\ \ \ \ \ \}}
+\DoxyCodeLine{00302\ \}}
+
+\end{DoxyCode}

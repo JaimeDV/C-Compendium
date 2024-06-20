@@ -1,0 +1,230 @@
+\doxysection{b2\+\_\+collision.\+h}
+\hypertarget{b2__collision_8h_source}{}\label{b2__collision_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_collision.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_collision.h}}
+\mbox{\hyperlink{b2__collision_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_COLLISION\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_COLLISION\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <limits.h>}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}b2\_math.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_shape}{b2Shape}};}
+\DoxyCodeLine{00036\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_circle_shape}{b2CircleShape}};}
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_edge_shape}{b2EdgeShape}};}
+\DoxyCodeLine{00038\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_polygon_shape}{b2PolygonShape}};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{const}\ uint8\ b2\_nullFeature\ =\ UCHAR\_MAX;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_contact_feature}{b2ContactFeature}}}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{enum}\ Type}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ e\_vertex\ =\ 0,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ e\_face\ =\ 1}
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ uint8\ \mbox{\hyperlink{structb2_contact_feature_a833bc746e7cb5e3cd458f1c0809101d0}{indexA}};\ \ \ \ \ }
+\DoxyCodeLine{00053\ \ \ \ \ uint8\ \mbox{\hyperlink{structb2_contact_feature_ad96712b6a0cc1f4b22b85b5948eab81d}{indexB}};\ \ \ \ \ }
+\DoxyCodeLine{00054\ \ \ \ \ uint8\ \mbox{\hyperlink{structb2_contact_feature_a3361b651f0a88fb60ec6aba9f4921cc2}{typeA}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00055\ \ \ \ \ uint8\ \mbox{\hyperlink{structb2_contact_feature_abb74afd6ee5b60834a3f8e2616182bdf}{typeB}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{union\ }B2\_API\ \mbox{\hyperlink{unionb2_contact_i_d}{b2ContactID}}}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{structb2_contact_feature}{b2ContactFeature}}\ cf;}
+\DoxyCodeLine{00062\ \ \ \ \ uint32\ \mbox{\hyperlink{unionb2_contact_i_d_a04c04f8fdcb799b33552d01b3aa3f245}{key}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00063\ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_manifold_point}{b2ManifoldPoint}}}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_manifold_point_ab3616990e7d1644deeeb691246094bfa}{localPoint}};\ \ \ \ \ \ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_manifold_point_a09176fb626391441d9335af818ce51f2}{normalImpulse}};\ \ \ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_manifold_point_a15021bfbefe740207617baf5ba41a74b}{tangentImpulse}};\ }
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{unionb2_contact_i_d}{b2ContactID}}\ \mbox{\hyperlink{structb2_manifold_point_afa7ec272b2b27abe129540f8fbe57fc5}{id}};\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00081\ \};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}}
+\DoxyCodeLine{00100\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{enum}\ Type}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ e\_circles,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ e\_faceA,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ e\_faceB}
+\DoxyCodeLine{00106\ \ \ \ \ \};}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{structb2_manifold_point}{b2ManifoldPoint}}\ points[\mbox{\hyperlink{b2__common_8h_aa5f44cc9edf711433dea2b2ec94f3c42}{b2\_maxManifoldPoints}}];\ \ \ \ }
+\DoxyCodeLine{00109\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_manifold_a3604e9fef2a03347c5649c71a9fd4c79}{localNormal}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00110\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_manifold_a8825cea31b27dbbaf22c13c3070870d5}{localPoint}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00111\ \ \ \ \ Type\ type;}
+\DoxyCodeLine{00112\ \ \ \ \ int32\ \mbox{\hyperlink{structb2_manifold_abf59ff6fa36bed34b0242ad54951a696}{pointCount}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00113\ \};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00116\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_world_manifold}{b2WorldManifold}}}
+\DoxyCodeLine{00117\ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb2_world_manifold_a205cd53748c5ee68f0958af96f45f5a4}{Initialize}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,\ \textcolor{keywordtype}{float}\ radiusA,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB,\ \textcolor{keywordtype}{float}\ radiusB);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_world_manifold_acf8de61b73d9784d16f7d0e824ce44bf}{normal}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00127\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ points[\mbox{\hyperlink{b2__common_8h_aa5f44cc9edf711433dea2b2ec94f3c42}{b2\_maxManifoldPoints}}];\ \ \ \ \ \ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{float}\ separations[\mbox{\hyperlink{b2__common_8h_aa5f44cc9edf711433dea2b2ec94f3c42}{b2\_maxManifoldPoints}}];\ \ \ \ }
+\DoxyCodeLine{00129\ \};}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00132\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{b2__collision_8h_a0a894e3715ce8c61b7958dd6e083663d}{b2PointState}}}
+\DoxyCodeLine{00133\ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{b2__collision_8h_a0a894e3715ce8c61b7958dd6e083663da7ce77ce1a592f49d92939997976c217b}{b2\_nullState}},\ \ \ \ \ \ \ }
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{b2__collision_8h_a0a894e3715ce8c61b7958dd6e083663dac60dc479bee2089a695b37948179b3d4}{b2\_addState}},\ \ \ \ \ }
+\DoxyCodeLine{00136\ \ \ \ \ \mbox{\hyperlink{b2__collision_8h_a0a894e3715ce8c61b7958dd6e083663dafb032f2175741fa95361e55d1c069e0a}{b2\_persistState}},\ }
+\DoxyCodeLine{00137\ \ \ \ \ \mbox{\hyperlink{b2__collision_8h_a0a894e3715ce8c61b7958dd6e083663da42ca6d7de57b948c8c895cd6f51ee8be}{b2\_removeState}}\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00138\ \};}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00142\ B2\_API\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{b2__collision_8h_a04288250049cbfc7d1a860e7c60e55e9}{b2GetPointStates}}(\mbox{\hyperlink{b2__collision_8h_a0a894e3715ce8c61b7958dd6e083663d}{b2PointState}}\ state1[\mbox{\hyperlink{b2__common_8h_aa5f44cc9edf711433dea2b2ec94f3c42}{b2\_maxManifoldPoints}}],\ \mbox{\hyperlink{b2__collision_8h_a0a894e3715ce8c61b7958dd6e083663d}{b2PointState}}\ state2[\mbox{\hyperlink{b2__common_8h_aa5f44cc9edf711433dea2b2ec94f3c42}{b2\_maxManifoldPoints}}],}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold2);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00146\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_clip_vertex}{b2ClipVertex}}}
+\DoxyCodeLine{00147\ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ v;}
+\DoxyCodeLine{00149\ \ \ \ \ \mbox{\hyperlink{unionb2_contact_i_d}{b2ContactID}}\ id;}
+\DoxyCodeLine{00150\ \};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00153\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}}
+\DoxyCodeLine{00154\ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ p1,\ p2;}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{float}\ maxFraction;}
+\DoxyCodeLine{00157\ \};}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00161\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_ray_cast_output}{b2RayCastOutput}}}
+\DoxyCodeLine{00162\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ normal;}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{float}\ fraction;}
+\DoxyCodeLine{00165\ \};}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00168\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}}
+\DoxyCodeLine{00169\ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsValid()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00174\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_a_a_b_b_a2c4051e79001a3166cc7f8ad811137fe}{GetCenter}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00175\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.5f\ *\ (lowerBound\ +\ upperBound);}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00180\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_a_a_b_b_a2a4f550a18d2a0895fbc5c4d3ec17d22}{GetExtents}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00181\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.5f\ *\ (upperBound\ -\/\ lowerBound);}
+\DoxyCodeLine{00183\ \ \ \ \ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_a_a_b_b_a1a99ebbc150518667f24c853a5b6168b}{GetPerimeter}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00187\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ wx\ =\ upperBound.x\ -\/\ lowerBound.x;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ wy\ =\ upperBound.y\ -\/\ lowerBound.y;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 2.0f\ *\ (wx\ +\ wy);}
+\DoxyCodeLine{00191\ \ \ \ \ \}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb2_a_a_b_b_ad551edba62d2ad6094672a9ba3e26496}{Combine}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb)}
+\DoxyCodeLine{00195\ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ lowerBound\ =\ b2Min(lowerBound,\ aabb.\mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}});}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ upperBound\ =\ b2Max(upperBound,\ aabb.\mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}});}
+\DoxyCodeLine{00198\ \ \ \ \ \}}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb2_a_a_b_b_a34b9c7d824df845c10caa9c12ae90452}{Combine}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb2)}
+\DoxyCodeLine{00202\ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ lowerBound\ =\ b2Min(aabb1.\mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}},\ aabb2.\mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}});}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ upperBound\ =\ b2Max(aabb1.\mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}},\ aabb2.\mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}});}
+\DoxyCodeLine{00205\ \ \ \ \ \}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_a_a_b_b_acf98175d3a53bca755d5c4852fa85a00}{Contains}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00209\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ result\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ result\ =\ result\ \&\&\ lowerBound.x\ <=\ aabb.\mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}}.x;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ result\ =\ result\ \&\&\ lowerBound.y\ <=\ aabb.\mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}}.y;}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ result\ =\ result\ \&\&\ aabb.\mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}}.x\ <=\ upperBound.x;}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ result\ =\ result\ \&\&\ aabb.\mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}}.y\ <=\ upperBound.y;}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00216\ \ \ \ \ \}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{bool}\ RayCast(\mbox{\hyperlink{structb2_ray_cast_output}{b2RayCastOutput}}*\ output,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\&\ input)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}};\ \ }
+\DoxyCodeLine{00221\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}};\ \ }
+\DoxyCodeLine{00222\ \};}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00225\ B2\_API\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{b2__collision_8h_a07097764ce44f2f56363665e174e6a99}{b2CollideCircles}}(\mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold,}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_circle_shape}{b2CircleShape}}*\ circleA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_circle_shape}{b2CircleShape}}*\ circleB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB);}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00230\ B2\_API\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{b2__collision_8h_a2ac0c6b0178c2af3c07a0bc18bdbbcab}{b2CollidePolygonAndCircle}}(\mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold,}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_polygon_shape}{b2PolygonShape}}*\ polygonA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_circle_shape}{b2CircleShape}}*\ circleB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB);}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00235\ B2\_API\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{b2__collision_8h_aba296a9e3c99f43e4f27aeeadc3a7a9b}{b2CollidePolygons}}(\mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold,}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_polygon_shape}{b2PolygonShape}}*\ polygonA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_polygon_shape}{b2PolygonShape}}*\ polygonB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB);}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00240\ B2\_API\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{b2__collision_8h_a178f4de7a4c22aafc58f087ca44ba244}{b2CollideEdgeAndCircle}}(\mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold,}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_edge_shape}{b2EdgeShape}}*\ polygonA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_circle_shape}{b2CircleShape}}*\ circleB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB);}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00245\ B2\_API\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{b2__collision_8h_a0ac33feb3d8d7bc13f56c5d729ab29a0}{b2CollideEdgeAndPolygon}}(\mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ manifold,}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_edge_shape}{b2EdgeShape}}*\ edgeA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_polygon_shape}{b2PolygonShape}}*\ circleB,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB);}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00250\ B2\_API\ int32\ \mbox{\hyperlink{b2__collision_8h_ae3cb294fe9a7fc7468af0890098db22c}{b2ClipSegmentToLine}}(\mbox{\hyperlink{structb2_clip_vertex}{b2ClipVertex}}\ vOut[2],\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_clip_vertex}{b2ClipVertex}}\ vIn[2],}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ normal,\ \textcolor{keywordtype}{float}\ offset,\ int32\ vertexIndexA);}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00254\ B2\_API\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{b2__collision_8h_a769992d82855399cf20721cd6b411fe7}{b2TestOverlap}}(\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ shapeA,\ int32\ indexA,}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ shapeB,\ int32\ indexB,}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfA,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xfB);}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ Inline\ Functions\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_a_a_b_b_a70bb45c086fcc2d7ee8694deb386070e}{b2AABB::IsValid}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00261\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00262\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ d\ =\ \mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}}\ -\/\ \mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}};}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keywordtype}{bool}\ valid\ =\ d.x\ >=\ 0.0f\ \&\&\ d.y\ >=\ 0.0f;}
+\DoxyCodeLine{00264\ \ \ \ \ valid\ =\ valid\ \&\&\ \mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}}.\mbox{\hyperlink{structb2_vec2_abad59bf9a0269f02cda9dc919592c0ee}{IsValid}}()\ \&\&\ \mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}}.\mbox{\hyperlink{structb2_vec2_abad59bf9a0269f02cda9dc919592c0ee}{IsValid}}();}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keywordflow}{return}\ valid;}
+\DoxyCodeLine{00266\ \}}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{b2__collision_8h_a769992d82855399cf20721cd6b411fe7}{b2TestOverlap}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ b)}
+\DoxyCodeLine{00269\ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ d1,\ d2;}
+\DoxyCodeLine{00271\ \ \ \ \ d1\ =\ b.lowerBound\ -\/\ a.upperBound;}
+\DoxyCodeLine{00272\ \ \ \ \ d2\ =\ a.lowerBound\ -\/\ b.upperBound;}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordflow}{if}\ (d1.x\ >\ 0.0f\ ||\ d1.y\ >\ 0.0f)}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keywordflow}{if}\ (d2.x\ >\ 0.0f\ ||\ d2.y\ >\ 0.0f)}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00281\ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

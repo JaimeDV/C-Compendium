@@ -1,0 +1,319 @@
+\doxysection{gim\+\_\+tri\+\_\+collision.\+h}
+\hypertarget{gim__tri__collision_8h_source}{}\label{gim__tri__collision_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_tri\_collision.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_tri\_collision.h}}
+\mbox{\hyperlink{gim__tri__collision_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ GIM\_TRI\_COLLISION\_H\_INCLUDED}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ GIM\_TRI\_COLLISION\_H\_INCLUDED}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00008\ \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00009\ \textcolor{comment}{This\ source\ file\ is\ part\ of\ GIMPACT\ Library.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{For\ the\ latest\ info,\ see\ http://gimpact.sourceforge.net/}}
+\DoxyCodeLine{00012\ \textcolor{comment}{}}
+\DoxyCodeLine{00013\ \textcolor{comment}{Copyright\ (c)\ 2006\ Francisco\ Leon\ Najera.\ C.C.\ 80087371.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{email:\ projectileman@yahoo.com}}
+\DoxyCodeLine{00015\ \textcolor{comment}{}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ modify\ it\ under\ the\ terms\ of\ EITHER:}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ (1)\ The\ GNU\ Lesser\ General\ Public\ License\ as\ published\ by\ the\ Free}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ \ \ \ Software\ Foundation;\ either\ version\ 2.1\ of\ the\ License,\ or\ (at}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ \ \ your\ option)\ any\ later\ version.\ The\ text\ of\ the\ GNU\ Lesser}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ \ \ \ \ General\ Public\ License\ is\ included\ with\ this\ library\ in\ the}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ \ \ file\ GIMPACT-\/LICENSE-\/LGPL.TXT.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ (2)\ The\ BSD-\/style\ license\ that\ is\ included\ with\ this\ library\ in}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ \ \ the\ file\ GIMPACT-\/LICENSE-\/BSD.TXT.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ (3)\ The\ zlib/libpng\ license\ that\ is\ included\ with\ this\ library\ in}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ \ \ \ the\ file\ GIMPACT-\/LICENSE-\/ZLIB.TXT.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ See\ the\ files}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ GIMPACT-\/LICENSE-\/LGPL.TXT,\ GIMPACT-\/LICENSE-\/ZLIB.TXT\ and\ GIMPACT-\/LICENSE-\/BSD.TXT\ for\ more\ details.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{}}
+\DoxyCodeLine{00033\ \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00034\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{gim__box__collision_8h}{gim\_box\_collision.h}}"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}gim\_clip\_polygon.h"{}}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#ifndef\ MAX\_TRI\_CLIPPING}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ MAX\_TRI\_CLIPPING\ 16}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ GREAL\ m\_penetration\_depth;}
+\DoxyCodeLine{00047\ \ \ \ \ GUINT\ m\_point\_count;}
+\DoxyCodeLine{00048\ \ \ \ \ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ m\_separating\_normal;}
+\DoxyCodeLine{00049\ \ \ \ \ btVector3\ m\_points[MAX\_TRI\_CLIPPING];}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ copy\_from(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}\ \&other)}
+\DoxyCodeLine{00052\ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ m\_penetration\_depth\ =\ other.m\_penetration\_depth;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ m\_separating\_normal\ =\ other.m\_separating\_normal;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ m\_point\_count\ =\ other.m\_point\_count;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ GUINT\ i\ =\ m\_point\_count;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (i-\/-\/)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ m\_points[i]\ =\ other.m\_points[i];}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}()}
+\DoxyCodeLine{00064\ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}\ \&other)}
+\DoxyCodeLine{00068\ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ copy\_from(other);}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ DISTANCE\_FUNC,\ \textcolor{keyword}{typename}\ CLASS\_PLANE>}
+\DoxyCodeLine{00074\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a_a159d51dfe240909dda5436304a655500}{mergepoints\_generic}}(\textcolor{keyword}{const}\ CLASS\_PLANE\ \&plane,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GREAL\ margin,\ \textcolor{keyword}{const}\ btVector3\ *points,\ GUINT\ point\_count,\ DISTANCE\_FUNC\ distance\_func)}
+\DoxyCodeLine{00076\ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ m\_point\_count\ =\ 0;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ m\_penetration\_depth\ =\ -\/1000.0f;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ GUINT\ point\_indices[MAX\_TRI\_CLIPPING];}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ GUINT\ \_k;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\_k\ =\ 0;\ \_k\ <\ point\_count;\ \_k++)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ GREAL\ \_dist\ =\ -\/distance\_func(plane,\ points[\_k])\ +\ margin;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_dist\ >=\ 0.0f)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_dist\ >\ m\_penetration\_depth)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_penetration\_depth\ =\ \_dist;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ point\_indices[0]\ =\ \_k;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_point\_count\ =\ 1;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ ((\_dist\ +\ G\_EPSILON)\ >=\ m\_penetration\_depth)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ point\_indices[m\_point\_count]\ =\ \_k;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_point\_count++;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\_k\ =\ 0;\ \_k\ <\ m\_point\_count;\ \_k++)}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ m\_points[\_k]\ =\ points[point\_indices[\_k]];}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00111\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a_a4d3e25d735f8e5111bb54dd764cbb041}{merge\_points}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ \&plane,\ GREAL\ margin,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *points,\ GUINT\ point\_count)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ m\_separating\_normal\ =\ plane;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a_a159d51dfe240909dda5436304a655500}{mergepoints\_generic}}(plane,\ margin,\ points,\ point\_count,\ \mbox{\hyperlink{class_d_i_s_t_a_n_c_e___p_l_a_n_e__3_d___f_u_n_c}{DISTANCE\_PLANE\_3D\_FUNC}}());}
+\DoxyCodeLine{00116\ \ \ \ \ \}}
+\DoxyCodeLine{00117\ \};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00120\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}}
+\DoxyCodeLine{00121\ \{}
+\DoxyCodeLine{00122\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00123\ \ \ \ \ btScalar\ m\_margin;}
+\DoxyCodeLine{00124\ \ \ \ \ btVector3\ m\_vertices[3];}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}()\ :\ m\_margin(0.1f)}
+\DoxyCodeLine{00127\ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ SIMD\_FORCE\_INLINE\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ get\_box()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00131\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}(m\_vertices[0],\ m\_vertices[1],\ m\_vertices[2],\ m\_margin);}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ get\_normal(btVector3\ \&normal)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00136\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ TRIANGLE\_NORMAL(m\_vertices[0],\ m\_vertices[1],\ m\_vertices[2],\ normal);}
+\DoxyCodeLine{00138\ \ \ \ \ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ get\_plane(\mbox{\hyperlink{classbt_vector4}{btVector4}}\ \&plane)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00141\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__basic__geometry__operations_8h_a3a555c6ce6f2cba54d48cf5397616975}{TRIANGLE\_PLANE}}(m\_vertices[0],\ m\_vertices[1],\ m\_vertices[2],\ plane);}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00144\ \ \ \ \ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ apply\_transform(\textcolor{keyword}{const}\ btTransform\ \&trans)}
+\DoxyCodeLine{00147\ \ \ \ \ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ m\_vertices[0]\ =\ trans(m\_vertices[0]);}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ m\_vertices[1]\ =\ trans(m\_vertices[1]);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ m\_vertices[2]\ =\ trans(m\_vertices[2]);}
+\DoxyCodeLine{00151\ \ \ \ \ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ get\_edge\_plane(GUINT\ edge\_index,\ \textcolor{keyword}{const}\ btVector3\ \&triangle\_normal,\ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ \&plane)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00154\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&e0\ =\ m\_vertices[edge\_index];}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&e1\ =\ m\_vertices[(edge\_index\ +\ 1)\ \%\ 3];}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__basic__geometry__operations_8h_a4f359987a785fce8ab0f3be33335f9d9}{EDGE\_PLANE}}(e0,\ e1,\ triangle\_normal,\ plane);}
+\DoxyCodeLine{00158\ \ \ \ \ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00167\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_a45e2c6e131c368afa12e210cf9166fbb}{get\_triangle\_transform}}(btTransform\ \&triangle\_transform)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00168\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ btMatrix3x3\ \&matrix\ =\ triangle\_transform.getBasis();}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ btVector3\ zaxis;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ get\_normal(zaxis);}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_a3f960fcf0ab237da3840f942cabdd16e}{MAT\_SET\_Z}}(matrix,\ zaxis);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ btVector3\ xaxis\ =\ m\_vertices[1]\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_aaf654e98fc3d0b65b965f942c031752a}{VEC\_NORMALIZE}}(xaxis);}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_a0a8d39f2682204f04133f1f17388fdd0}{MAT\_SET\_X}}(matrix,\ xaxis);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{comment}{//y\ axis}}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ xaxis\ =\ zaxis.cross(xaxis);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_af008fcd9bfe801c91a9d0feca02a7587}{MAT\_SET\_Y}}(matrix,\ xaxis);}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ triangle\_transform.setOrigin(m\_vertices[0]);}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_a60a6a90dccfd5f81663088847fbfae34}{collide\_triangle\_hard\_test}}(}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}\ \&other,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}\ \&contact\_data)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00201\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_ac8930de461fb35af599d7a28d0a02229}{collide\_triangle}}(}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e}{GIM\_TRIANGLE}}\ \&other,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t___d_a_t_a}{GIM\_TRIANGLE\_CONTACT\_DATA}}\ \&contact\_data)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00204\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \textcolor{comment}{//test\ box\ collisioin}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ boxu(m\_vertices[0],\ m\_vertices[1],\ m\_vertices[2],\ m\_margin);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_i_m___a_a_b_b}{GIM\_AABB}}\ boxv(other.m\_vertices[0],\ other.m\_vertices[1],\ other.m\_vertices[2],\ other.m\_margin);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!boxu.has\_collision(boxv))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{comment}{//do\ hard\ test}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_a60a6a90dccfd5f81663088847fbfae34}{collide\_triangle\_hard\_test}}(other,\ contact\_data);}
+\DoxyCodeLine{00212\ \ \ \ \ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00242\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_aa35a00f5c7b9eeb8f0656be929294504}{get\_uv\_parameters}}(}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&point,}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&tri\_plane,}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ GREAL\ \&u,\ GREAL\ \&v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00246\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ btVector3\ \_axe1\ =\ m\_vertices[1]\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ btVector3\ \_axe2\ =\ m\_vertices[2]\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ btVector3\ \_vecproj\ =\ point\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ GUINT\ \_i1\ =\ (tri\_plane.closestAxis()\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ GUINT\ \_i2\ =\ (\_i1\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(\_axe2[\_i2])\ <\ G\_EPSILON)}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ u\ =\ (\_vecproj[\_i2]\ *\ \_axe2[\_i1]\ -\/\ \_vecproj[\_i1]\ *\ \_axe2[\_i2])\ /\ (\_axe1[\_i2]\ *\ \_axe2[\_i1]\ -\/\ \_axe1[\_i1]\ *\ \_axe2[\_i2]);}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ v\ =\ (\_vecproj[\_i1]\ -\/\ u\ *\ \_axe1[\_i1])\ /\ \_axe2[\_i1];}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ u\ =\ (\_vecproj[\_i1]\ *\ \_axe2[\_i2]\ -\/\ \_vecproj[\_i2]\ *\ \_axe2[\_i1])\ /\ (\_axe1[\_i1]\ *\ \_axe2[\_i2]\ -\/\ \_axe1[\_i2]\ *\ \_axe2[\_i1]);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ v\ =\ (\_vecproj[\_i2]\ -\/\ u\ *\ \_axe1[\_i2])\ /\ \_axe2[\_i2];}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (u\ <\ -\/G\_EPSILON)}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (v\ <\ -\/G\_EPSILON)}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ sumuv;}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ sumuv\ =\ u\ +\ v;}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sumuv\ <\ -\/G\_EPSILON)}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (sumuv\ -\/\ 1.0f\ >\ G\_EPSILON)}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00285\ \ \ \ \ \}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00291\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_ac465430340164aa45925762d3471b5f8}{is\_point\_inside}}(\textcolor{keyword}{const}\ btVector3\ \&point,\ \textcolor{keyword}{const}\ btVector3\ \&tri\_normal)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00292\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ with\ edge\ 0}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ edge\_plane;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ this-\/>get\_edge\_plane(0,\ tri\_normal,\ edge\_plane);}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ GREAL\ dist\ =\ DISTANCE\_PLANE\_POINT(edge\_plane,\ point);}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ -\/\ m\_margin\ >\ 0.0f)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ outside\ plane}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ this-\/>get\_edge\_plane(1,\ tri\_normal,\ edge\_plane);}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ dist\ =\ DISTANCE\_PLANE\_POINT(edge\_plane,\ point);}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ -\/\ m\_margin\ >\ 0.0f)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ outside\ plane}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ this-\/>get\_edge\_plane(2,\ tri\_normal,\ edge\_plane);}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ dist\ =\ DISTANCE\_PLANE\_POINT(edge\_plane,\ point);}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ -\/\ m\_margin\ >\ 0.0f)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ outside\ plane}}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00307\ \ \ \ \ \}}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00310\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_a2942ca686a994c2d112ad356c2a4e7ad}{ray\_collision}}(}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&vPoint,}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&vDir,\ btVector3\ \&pout,\ btVector3\ \&triangle\_normal,}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ GREAL\ \&tparam,\ GREAL\ tmax\ =\ G\_REAL\_INFINITY)}
+\DoxyCodeLine{00314\ \ \ \ \ \{}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ faceplane;}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dif1\ =\ m\_vertices[1]\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dif2\ =\ m\_vertices[2]\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_a62c7e1537c9e1017df8bf2e1836bf56a}{VEC\_CROSS}}(faceplane,\ dif1,\ dif2);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ faceplane[3]\ =\ m\_vertices[0].dot(faceplane);}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ GUINT\ res\ =\ \mbox{\hyperlink{gim__basic__geometry__operations_8h_ab7127544f6d10de9066c1c7eeec759e6}{LINE\_PLANE\_COLLISION}}(faceplane,\ vDir,\ vPoint,\ pout,\ tparam,\ btScalar(0),\ tmax);}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ ==\ 0)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_ac465430340164aa45925762d3471b5f8}{is\_point\_inside}}(pout,\ faceplane))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ ==\ 2)\ \ \textcolor{comment}{//invert\ normal}}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ triangle\_normal.setValue(-\/faceplane[0],\ -\/faceplane[1],\ -\/faceplane[2]);}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ triangle\_normal.setValue(faceplane[0],\ faceplane[1],\ faceplane[2]);}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_aaf654e98fc3d0b65b965f942c031752a}{VEC\_NORMALIZE}}(triangle\_normal);}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00339\ \ \ \ \ \}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00342\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_a2b333284fd573994acf89b9085a61927}{ray\_collision\_front\_side}}(}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&vPoint,}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&vDir,\ btVector3\ \&pout,\ btVector3\ \&triangle\_normal,}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ GREAL\ \&tparam,\ GREAL\ tmax\ =\ G\_REAL\_INFINITY)}
+\DoxyCodeLine{00346\ \ \ \ \ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ faceplane;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dif1\ =\ m\_vertices[1]\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ dif2\ =\ m\_vertices[2]\ -\/\ m\_vertices[0];}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_a62c7e1537c9e1017df8bf2e1836bf56a}{VEC\_CROSS}}(faceplane,\ dif1,\ dif2);}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ faceplane[3]\ =\ m\_vertices[0].dot(faceplane);}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ GUINT\ res\ =\ \mbox{\hyperlink{gim__basic__geometry__operations_8h_ab7127544f6d10de9066c1c7eeec759e6}{LINE\_PLANE\_COLLISION}}(faceplane,\ vDir,\ vPoint,\ pout,\ tparam,\ btScalar(0),\ tmax);}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ !=\ 1)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_g_i_m___t_r_i_a_n_g_l_e_ac465430340164aa45925762d3471b5f8}{is\_point\_inside}}(pout,\ faceplane))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ triangle\_normal.setValue(faceplane[0],\ faceplane[1],\ faceplane[2]);}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gim__linear__math_8h_aaf654e98fc3d0b65b965f942c031752a}{VEC\_NORMALIZE}}(triangle\_normal);}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00365\ \ \ \ \ \}}
+\DoxyCodeLine{00366\ \};}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GIM\_TRI\_COLLISION\_H\_INCLUDED}}
+
+\end{DoxyCode}

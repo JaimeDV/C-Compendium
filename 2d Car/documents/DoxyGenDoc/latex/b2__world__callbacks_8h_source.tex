@@ -1,0 +1,108 @@
+\doxysection{b2\+\_\+world\+\_\+callbacks.\+h}
+\hypertarget{b2__world__callbacks_8h_source}{}\label{b2__world__callbacks_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_world\_callbacks.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_world\_callbacks.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_WORLD\_CALLBACKS\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_WORLD\_CALLBACKS\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{b2__settings_8h}{b2\_settings.h}}"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb2_vec2}{b2Vec2}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb2_transform}{b2Transform}};}
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_fixture}{b2Fixture}};}
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_body}{b2Body}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_joint}{b2Joint}};}
+\DoxyCodeLine{00034\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact}{b2Contact}};}
+\DoxyCodeLine{00035\ \textcolor{keyword}{struct\ }b2ContactResult;}
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb2_manifold}{b2Manifold}};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_destruction_listener}{b2DestructionListener}}}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb2_destruction_listener}{\string~b2DestructionListener}}()\ \{\}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_destruction_listener_a6cd15baa6e5c33118cf7173ab5bf6d58}{SayGoodbye}}(\mbox{\hyperlink{classb2_joint}{b2Joint}}*\ joint)\ =\ 0;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_destruction_listener_ab327c0073d162112c38d2fe8f8b9fce3}{SayGoodbye}}(\mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixture)\ =\ 0;}
+\DoxyCodeLine{00053\ \};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_contact_filter}{b2ContactFilter}}}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb2_contact_filter}{\string~b2ContactFilter}}()\ \{\}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_contact_filter_a0e33d4fc90a9345160a07cc494b45ecd}{ShouldCollide}}(\mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureA,\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixtureB);}
+\DoxyCodeLine{00065\ \};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00070\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_contact_impulse}{b2ContactImpulse}}}
+\DoxyCodeLine{00071\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{float}\ normalImpulses[\mbox{\hyperlink{b2__common_8h_aa5f44cc9edf711433dea2b2ec94f3c42}{b2\_maxManifoldPoints}}];}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{float}\ tangentImpulses[\mbox{\hyperlink{b2__common_8h_aa5f44cc9edf711433dea2b2ec94f3c42}{b2\_maxManifoldPoints}}];}
+\DoxyCodeLine{00074\ \ \ \ \ int32\ count;}
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_contact_listener}{b2ContactListener}}}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb2_contact_listener}{\string~b2ContactListener}}()\ \{\}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_listener_a35148fc56fb9eac12077200fbd928f65}{BeginContact}}(\mbox{\hyperlink{classb2_contact}{b2Contact}}*\ contact)\ \{\ B2\_NOT\_USED(contact);\ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_listener_afb3059058e5c47903a3947c2eef5826b}{EndContact}}(\mbox{\hyperlink{classb2_contact}{b2Contact}}*\ contact)\ \{\ B2\_NOT\_USED(contact);\ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_listener_a416f85eb45a1099053402b15a19a7de0}{PreSolve}}(\mbox{\hyperlink{classb2_contact}{b2Contact}}*\ contact,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_manifold}{b2Manifold}}*\ oldManifold)}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ B2\_NOT\_USED(contact);}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ B2\_NOT\_USED(oldManifold);}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_contact_listener_acd58ec96f7569b95eec65b8ca3f8013d}{PostSolve}}(\mbox{\hyperlink{classb2_contact}{b2Contact}}*\ contact,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_contact_impulse}{b2ContactImpulse}}*\ impulse)}
+\DoxyCodeLine{00120\ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ B2\_NOT\_USED(contact);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ B2\_NOT\_USED(impulse);}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \};}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00128\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_query_callback}{b2QueryCallback}}}
+\DoxyCodeLine{00129\ \{}
+\DoxyCodeLine{00130\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb2_query_callback}{\string~b2QueryCallback}}()\ \{\}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_query_callback_a187dd04dd0f5164fb05c2ce2cbfd9ee5}{ReportFixture}}(\mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixture)\ =\ 0;}
+\DoxyCodeLine{00136\ \};}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00140\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_ray_cast_callback}{b2RayCastCallback}}}
+\DoxyCodeLine{00141\ \{}
+\DoxyCodeLine{00142\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb2_ray_cast_callback}{\string~b2RayCastCallback}}()\ \{\}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_ray_cast_callback_ae0a13ab4fe2f4a7b501445af1a01ebb1}{ReportFixture}}(\ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixture,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ point,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ normal,\ \textcolor{keywordtype}{float}\ fraction)\ =\ 0;}
+\DoxyCodeLine{00159\ \};}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,290 @@
+\doxysection{bt\+Deformable\+Contact\+Constraint.\+h}
+\hypertarget{bt_deformable_contact_constraint_8h_source}{}\label{bt_deformable_contact_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableContactConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableContactConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DEFORMABLE\_CONTACT\_CONSTRAINT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DEFORMABLE\_CONTACT\_CONSTRAINT\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}btSoftBody.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ btDeformableContactConstraint\ is\ an\ abstract\ class\ specifying\ the\ method\ that\ each\ type\ of\ contact\ constraint\ needs\ to\ implement}}
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{//\ True\ if\ the\ friction\ is\ static}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ False\ if\ the\ friction\ is\ dynamic}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_static;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}*\ m\_infoGlobal;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ normal\ of\ the\ contact}}
+\DoxyCodeLine{00030\ \ \ \ \ btVector3\ m\_normal;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}(\textcolor{keyword}{const}\ btVector3\&\ normal,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)\ :\ m\_static(\textcolor{keyword}{false}),\ m\_normal(normal),\ m\_infoGlobal(\&infoGlobal)}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}(\textcolor{keywordtype}{bool}\ isStatic,\ \textcolor{keyword}{const}\ btVector3\&\ normal,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)\ :\ m\_static(isStatic),\ m\_normal(normal),\ m\_infoGlobal(\&infoGlobal)}
+\DoxyCodeLine{00037\ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}()\ \{\}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}\&\ other)}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ :\ m\_static(other.m\_static),\ m\_normal(other.m\_normal),\ m\_infoGlobal(other.m\_infoGlobal)}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{\string~btDeformableContactConstraint}}()\ \{\}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{//\ solve\ the\ constraint\ with\ inelastic\ impulse\ and\ return\ the\ error,\ which\ is\ the\ square\ of\ normal\ component\ of\ velocity\ diffrerence}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ the\ constraint\ is\ solved\ by\ calculating\ the\ impulse\ between\ object\ A\ and\ B\ in\ the\ contact\ and\ apply\ the\ impulse\ to\ both\ objects\ involved\ in\ the\ contact}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveConstraint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)\ =\ 0;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ of\ the\ object\ A\ in\ the\ contact}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVa()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ of\ the\ object\ B\ in\ the\ contact}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVb()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ change\ of\ the\ soft\ body\ node\ in\ the\ constraint}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getDv(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//\ apply\ impulse\ to\ the\ soft\ body\ node\ and/or\ face\ involved}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse)\ =\ 0;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\ scale\ the\ penetration\ depth\ by\ erp}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPenetrationScale(btScalar\ scale)\ =\ 0;}
+\DoxyCodeLine{00067\ \};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{//}}
+\DoxyCodeLine{00070\ \textcolor{comment}{//\ Constraint\ that\ a\ certain\ node\ in\ the\ deformable\ objects\ cannot\ move}}
+\DoxyCodeLine{00071\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_static_constraint}{btDeformableStaticConstraint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ m\_node;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_static_constraint}{btDeformableStaticConstraint}}(\mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ node,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)\ :\ m\_node(node),\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}(\textcolor{keyword}{false},\ btVector3(0,\ 0,\ 0),\ infoGlobal)}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \}}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_static_constraint}{btDeformableStaticConstraint}}()\ \{\}}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_static_constraint}{btDeformableStaticConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_static_constraint}{btDeformableStaticConstraint}}\&\ other)}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ :\ m\_node(other.m\_node),\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}(other)}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_static_constraint}{\string~btDeformableStaticConstraint}}()\ \{\}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveConstraint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVa()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVb()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00098\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getDv(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00103\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse)\ \{\}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPenetrationScale(btScalar\ scale)\ \{\}}
+\DoxyCodeLine{00109\ \};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{//}}
+\DoxyCodeLine{00112\ \textcolor{comment}{//\ Anchor\ Constraint\ between\ rigid\ and\ deformable\ node}}
+\DoxyCodeLine{00113\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_node_anchor_constraint}{btDeformableNodeAnchorConstraint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}}
+\DoxyCodeLine{00114\ \{}
+\DoxyCodeLine{00115\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_node_rigid_anchor}{btSoftBody::DeformableNodeRigidAnchor}}*\ m\_anchor;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_node_anchor_constraint}{btDeformableNodeAnchorConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_node_rigid_anchor}{btSoftBody::DeformableNodeRigidAnchor}}\&\ c,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00119\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_node_anchor_constraint}{btDeformableNodeAnchorConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_node_anchor_constraint}{btDeformableNodeAnchorConstraint}}\&\ other);}
+\DoxyCodeLine{00120\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_node_anchor_constraint}{btDeformableNodeAnchorConstraint}}()\ \{\}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_node_anchor_constraint}{\string~btDeformableNodeAnchorConstraint}}()}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveConstraint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{//\ object\ A\ is\ the\ rigid/multi\ body,\ and\ object\ B\ is\ the\ deformable\ node/face}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVa()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ of\ the\ deformable\ node\ in\ contact}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVb()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getDv(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ n)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00131\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPenetrationScale(btScalar\ scale)\ \{\}}
+\DoxyCodeLine{00137\ \};}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{comment}{//}}
+\DoxyCodeLine{00140\ \textcolor{comment}{//\ Constraint\ between\ rigid/multi\ body\ and\ deformable\ objects}}
+\DoxyCodeLine{00141\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{btDeformableRigidContactConstraint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}}
+\DoxyCodeLine{00142\ \{}
+\DoxyCodeLine{00143\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00144\ \ \ \ \ btVector3\ m\_total\_normal\_dv;}
+\DoxyCodeLine{00145\ \ \ \ \ btVector3\ m\_total\_tangent\_dv;}
+\DoxyCodeLine{00146\ \ \ \ \ btScalar\ m\_penetration;}
+\DoxyCodeLine{00147\ \ \ \ \ btScalar\ m\_total\_split\_impulse;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_binding;}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_rigid_contact}{btSoftBody::DeformableRigidContact}}*\ m\_contact;}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{btDeformableRigidContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_rigid_contact}{btSoftBody::DeformableRigidContact}}\&\ c,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00152\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{btDeformableRigidContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{btDeformableRigidContactConstraint}}\&\ other);}
+\DoxyCodeLine{00153\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{btDeformableRigidContactConstraint}}()\ \{\}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{\string~btDeformableRigidContactConstraint}}()}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//\ object\ A\ is\ the\ rigid/multi\ body,\ and\ object\ B\ is\ the\ deformable\ node/face}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVa()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//\ get\ the\ split\ impulse\ velocity\ of\ the\ deformable\ face\ at\ the\ contact\ point}}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getSplitVb()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{comment}{//\ get\ the\ split\ impulse\ velocity\ of\ the\ rigid/multibdoy\ at\ the\ contaft}}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getSplitVa()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveConstraint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPenetrationScale(btScalar\ scale)}
+\DoxyCodeLine{00170\ \ \ \ \ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ m\_penetration\ *=\ scale;}
+\DoxyCodeLine{00172\ \ \ \ \ \}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ btScalar\ solveSplitImpulse(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applySplitImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse)\ =\ 0;}
+\DoxyCodeLine{00177\ \};}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{comment}{//}}
+\DoxyCodeLine{00180\ \textcolor{comment}{//\ Constraint\ between\ rigid/multi\ body\ and\ deformable\ objects\ nodes}}
+\DoxyCodeLine{00181\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_node_rigid_contact_constraint}{btDeformableNodeRigidContactConstraint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{btDeformableRigidContactConstraint}}}
+\DoxyCodeLine{00182\ \{}
+\DoxyCodeLine{00183\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{comment}{//\ the\ deformable\ node\ in\ contact}}
+\DoxyCodeLine{00185\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ m\_node;}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_node_rigid_contact_constraint}{btDeformableNodeRigidContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_node_rigid_contact}{btSoftBody::DeformableNodeRigidContact}}\&\ contact,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00188\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_node_rigid_contact_constraint}{btDeformableNodeRigidContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_node_rigid_contact_constraint}{btDeformableNodeRigidContactConstraint}}\&\ other);}
+\DoxyCodeLine{00189\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_node_rigid_contact_constraint}{btDeformableNodeRigidContactConstraint}}()\ \{\}}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_node_rigid_contact_constraint}{\string~btDeformableNodeRigidContactConstraint}}()}
+\DoxyCodeLine{00191\ \ \ \ \ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ of\ the\ deformable\ node\ in\ contact}}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVb()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{comment}{//\ get\ the\ split\ impulse\ velocity\ of\ the\ deformable\ face\ at\ the\ contact\ point}}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getSplitVb()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ change\ of\ the\ input\ soft\ body\ node\ in\ the\ constraint}}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getDv(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{comment}{//\ cast\ the\ contact\ to\ the\ desired\ type}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_node_rigid_contact}{btSoftBody::DeformableNodeRigidContact}}*\ getContact()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00205\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{classbt_soft_body_1_1_deformable_node_rigid_contact}{btSoftBody::DeformableNodeRigidContact}}*\textcolor{keyword}{>}(m\_contact);}
+\DoxyCodeLine{00207\ \ \ \ \ \}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse);}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applySplitImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse);}
+\DoxyCodeLine{00212\ \};}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \textcolor{comment}{//}}
+\DoxyCodeLine{00215\ \textcolor{comment}{//\ Constraint\ between\ rigid/multi\ body\ and\ deformable\ objects\ faces}}
+\DoxyCodeLine{00216\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_face_rigid_contact_constraint}{btDeformableFaceRigidContactConstraint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_rigid_contact_constraint}{btDeformableRigidContactConstraint}}}
+\DoxyCodeLine{00217\ \{}
+\DoxyCodeLine{00218\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00219\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ m\_face;}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useStrainLimiting;}
+\DoxyCodeLine{00221\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_face_rigid_contact_constraint}{btDeformableFaceRigidContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_face_rigid_contact}{btSoftBody::DeformableFaceRigidContact}}\&\ contact,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \textcolor{keywordtype}{bool}\ useStrainLimiting);}
+\DoxyCodeLine{00222\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_face_rigid_contact_constraint}{btDeformableFaceRigidContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_deformable_face_rigid_contact_constraint}{btDeformableFaceRigidContactConstraint}}\&\ other);}
+\DoxyCodeLine{00223\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_face_rigid_contact_constraint}{btDeformableFaceRigidContactConstraint}}()\ :\ m\_useStrainLimiting(\textcolor{keyword}{false})\ \{\}}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_face_rigid_contact_constraint}{\string~btDeformableFaceRigidContactConstraint}}()}
+\DoxyCodeLine{00225\ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ of\ the\ deformable\ face\ at\ the\ contact\ point}}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVb()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{comment}{//\ get\ the\ split\ impulse\ velocity\ of\ the\ deformable\ face\ at\ the\ contact\ point}}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getSplitVb()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ change\ of\ the\ input\ soft\ body\ node\ in\ the\ constraint}}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getDv(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{comment}{//\ cast\ the\ contact\ to\ the\ desired\ type}}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_soft_body_1_1_deformable_face_rigid_contact}{btSoftBody::DeformableFaceRigidContact}}*\ getContact()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00239\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{classbt_soft_body_1_1_deformable_face_rigid_contact}{btSoftBody::DeformableFaceRigidContact}}*\textcolor{keyword}{>}(m\_contact);}
+\DoxyCodeLine{00241\ \ \ \ \ \}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse);}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applySplitImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse);}
+\DoxyCodeLine{00246\ \};}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \textcolor{comment}{//}}
+\DoxyCodeLine{00249\ \textcolor{comment}{//\ Constraint\ between\ \ deformable\ objects\ faces\ and\ deformable\ objects\ nodes}}
+\DoxyCodeLine{00250\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_face_node_contact_constraint}{btDeformableFaceNodeContactConstraint}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_deformable_contact_constraint}{btDeformableContactConstraint}}}
+\DoxyCodeLine{00251\ \{}
+\DoxyCodeLine{00252\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00253\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*\ m\_node;}
+\DoxyCodeLine{00254\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_1_1_face}{btSoftBody::Face}}*\ m\_face;}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}*\ m\_contact;}
+\DoxyCodeLine{00256\ \ \ \ \ btVector3\ m\_total\_normal\_dv;}
+\DoxyCodeLine{00257\ \ \ \ \ btVector3\ m\_total\_tangent\_dv;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_face_node_contact_constraint}{btDeformableFaceNodeContactConstraint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}\&\ contact,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00260\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_face_node_contact_constraint}{btDeformableFaceNodeContactConstraint}}()\ \{\}}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_face_node_contact_constraint}{\string~btDeformableFaceNodeContactConstraint}}()\ \{\}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ solveConstraint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ of\ the\ object\ A\ in\ the\ contact}}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVa()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ of\ the\ object\ B\ in\ the\ contact}}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getVb()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{comment}{//\ get\ the\ velocity\ change\ of\ the\ input\ soft\ body\ node\ in\ the\ constraint}}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keyword}{virtual}\ btVector3\ getDv(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}*)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{comment}{//\ cast\ the\ contact\ to\ the\ desired\ type}}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}*\ getContact()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00276\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{structbt_soft_body_1_1_deformable_face_node_contact}{btSoftBody::DeformableFaceNodeContact}}*\textcolor{keyword}{>}(m\_contact);}
+\DoxyCodeLine{00278\ \ \ \ \ \}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ impulse);}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setPenetrationScale(btScalar\ scale)\ \{\}}
+\DoxyCodeLine{00283\ \};}
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ BT\_DEFORMABLE\_CONTACT\_CONSTRAINT\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

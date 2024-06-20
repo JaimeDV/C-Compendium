@@ -1,0 +1,204 @@
+\doxysection{bt\+Deformable\+Backward\+Euler\+Objective.\+h}
+\hypertarget{bt_deformable_backward_euler_objective_8h_source}{}\label{bt_deformable_backward_euler_objective_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableBackwardEulerObjective.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableBackwardEulerObjective.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_BACKWARD\_EULER\_OBJECTIVE\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_BACKWARD\_EULER\_OBJECTIVE\_H}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\#include\ "{}btConjugateGradient.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btDeformableLagrangianForce.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btDeformableMassSpringForce.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btDeformableGravityForce.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}btDeformableCorotatedForce.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}btDeformableMousePickingForce.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}btDeformableLinearElasticityForce.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}btDeformableNeoHookeanForce.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}btDeformableContactProjection.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}btPreconditioner.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}btDeformableMultiBodyDynamicsWorld.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuickprof.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_backward_euler_objective}{btDeformableBackwardEulerObjective}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00035\ \ \ \ \ btScalar\ m\_dt;}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btDeformableLagrangianForce*>}}\ m\_lf;}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ m\_softBodies;}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{class_preconditioner}{Preconditioner}}*\ m\_preconditioner;}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_contact_projection}{btDeformableContactProjection}}\ m\_projection;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ m\_backupVelocity;}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody::Node*>}}\ m\_nodes;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_implicit;}
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{class_mass_preconditioner}{MassPreconditioner}}*\ m\_massPreconditioner;}
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{class_k_k_t_preconditioner}{KKTPreconditioner}}*\ m\_KKTPreconditioner;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_backward_euler_objective}{btDeformableBackwardEulerObjective}}(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ softBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ backup\_v);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_backward_euler_objective}{\string~btDeformableBackwardEulerObjective}}();}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ initialize()\ \{\}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ compute\ the\ rhs\ for\ CG\ solve,\ i.e,\ add\ the\ dt\ scaled\ implicit\ force\ to\ residual}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ computeResidual(btScalar\ dt,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ residual);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{//\ add\ explicit\ force\ to\ the\ velocity}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{void}\ applyExplicitForce(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{//\ apply\ force\ to\ velocity\ and\ optionally\ reset\ the\ force\ to\ zero}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ applyForce(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ force,\ \textcolor{keywordtype}{bool}\ setZero);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ compute\ the\ norm\ of\ the\ residual}}
+\DoxyCodeLine{00062\ \ \ \ \ btScalar\ computeNorm(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ residual)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//\ compute\ one\ step\ of\ the\ solve\ (there\ is\ only\ one\ solve\ if\ the\ system\ is\ linear)}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ computeStep(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dv,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ residual,\ \textcolor{keyword}{const}\ btScalar\&\ dt);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{//\ perform\ A*x\ =\ b}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ multiply(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ x,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ b)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ set\ initial\ guess\ for\ CG\ solve}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{void}\ initialGuess(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dv,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ residual);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{//\ reset\ data\ structure\ and\ reset\ dt}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{void}\ reinitialize(\textcolor{keywordtype}{bool}\ nodeUpdated,\ btScalar\ dt);}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ setDt(btScalar\ dt);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//\ add\ friction\ force\ to\ residual}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{void}\ applyDynamicFriction(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ r);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ add\ dv\ to\ velocity}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ updateVelocity(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dv);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//set\ constraints\ as\ projections}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ setConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ update\ the\ projections\ and\ project\ the\ residual}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ project(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ r)}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}project"{}});}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ m\_projection.project(r);}
+\DoxyCodeLine{00092\ \ \ \ \ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{//\ perform\ precondition\ M\string^(-\/1)\ x\ =\ b}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ precondition(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ x,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ b)}
+\DoxyCodeLine{00096\ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ m\_preconditioner-\/>operator()(x,\ b);}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{//\ reindex\ all\ the\ vertices}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ updateId()}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ node\_id\ =\ 0;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ face\_id\ =\ 0;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ m\_nodes.\mbox{\hyperlink{classbt_aligned_object_array_a12123db01dda7758f0df5e3bba10cc0a}{clear}}();}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_nodes.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>m\_nodes[j].index\ =\ node\_id;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_nodes.push\_back(\&psb-\/>m\_nodes[j]);}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ++node\_id;}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_faces.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psb-\/>m\_faces[j].m\_index\ =\ face\_id;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ++face\_id;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00121\ \ \ \ \ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody::Node*>}}*\ getIndices()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00124\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_nodes;}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ setImplicit(\textcolor{keywordtype}{bool}\ implicit)}
+\DoxyCodeLine{00129\ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ m\_implicit\ =\ implicit;}
+\DoxyCodeLine{00131\ \ \ \ \ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ total\ potential\ energy\ in\ the\ system}}
+\DoxyCodeLine{00134\ \ \ \ \ btScalar\ totalEnergy(btScalar\ dt);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ addLagrangeMultiplier(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ vec,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ extended\_vec)}
+\DoxyCodeLine{00137\ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ extended\_vec.resize(vec.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_projection.m\_lagrangeMultipliers.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ vec.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ extended\_vec[i]\ =\ vec[i];}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ offset\ =\ vec.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_projection.m\_lagrangeMultipliers.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ extended\_vec[offset\ +\ i].setZero();}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00148\ \ \ \ \ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{void}\ addLagrangeMultiplierRHS(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ residual,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ m\_dv,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ extended\_residual)}
+\DoxyCodeLine{00151\ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ extended\_residual.resize(residual.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_projection.m\_lagrangeMultipliers.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ residual.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ extended\_residual[i]\ =\ residual[i];}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ offset\ =\ residual.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_projection.m\_lagrangeMultipliers.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_lagrange_multiplier}{LagrangeMultiplier}}\&\ lm\ =\ m\_projection.m\_lagrangeMultipliers[i];}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ extended\_residual[offset\ +\ i].setZero();}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ d\ =\ 0;\ d\ <\ lm.m\_num\_constraints;\ ++d)}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ n\ =\ 0;\ n\ <\ lm.m\_num\_nodes;\ ++n)}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ extended\_residual[offset\ +\ i][d]\ +=\ lm.m\_weights[n]\ *\ m\_dv[lm.m\_indices[n]].dot(lm.m\_dirs[d]);}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateContactForce(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ dv,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ rhs,\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ f)}
+\DoxyCodeLine{00173\ \ \ \ \ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ counter\ =\ 0;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_softBodies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_soft_body}{btSoftBody}}*\ psb\ =\ m\_softBodies[i];}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ psb-\/>m\_nodes.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++j)}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_soft_body_1_1_node}{btSoftBody::Node}}\&\ node\ =\ psb-\/>m\_nodes[j];}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f[counter]\ =\ (node.m\_im\ ==\ 0)\ ?\ btVector3(0,\ 0,\ 0)\ :\ dv[counter]\ /\ node.m\_im;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ++counter;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_lf.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ ++i)}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ add\ damping\ matrix}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ m\_lf[i]-\/>addScaledDampingForceDifferential(-\/m\_dt,\ dv,\ f);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ counter\ =\ 0;}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ counter\ <\ f.size();\ ++counter)}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ f[counter]\ =\ rhs[counter]\ -\/\ f[counter];}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ \};}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btBackwardEulerObjective\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

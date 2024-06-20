@@ -1,0 +1,114 @@
+\doxysection{bt\+Dispatcher.\+h}
+\hypertarget{bt_dispatcher_8h_source}{}\label{bt_dispatcher_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btDispatcher.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btDispatcher.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_DISPATCHER\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_DISPATCHER\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}};}
+\DoxyCodeLine{00021\ \textcolor{keyword}{struct\ }btBroadphaseProxy;}
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }btCollisionObject;}
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}};}
+\DoxyCodeLine{00025\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }btPersistentManifold;}
+\DoxyCodeLine{00028\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{enum}\ DispatchFunc}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ DISPATCH\_DISCRETE\ =\ 1,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ DISPATCH\_CONTINUOUS}
+\DoxyCodeLine{00036\ \ \ \ \ \};}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}()}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ :\ m\_timeStep(btScalar(0.)),}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ m\_stepCount(0),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ m\_dispatchFunc(DISPATCH\_DISCRETE),}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ m\_timeOfImpact(btScalar(1.)),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ m\_useContinuous(\textcolor{keyword}{true}),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ m\_debugDraw(0),}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ m\_enableSatConvex(\textcolor{keyword}{false}),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ m\_enableSPU(\textcolor{keyword}{true}),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ m\_useEpa(\textcolor{keyword}{true}),}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ m\_allowedCcdPenetration(btScalar(0.04)),}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ m\_useConvexConservativeDistanceUtil(\textcolor{keyword}{false}),}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ m\_convexConservativeDistanceThreshold(0.0f),}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ m\_deterministicOverlappingPairs(\textcolor{keyword}{false})}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \ \ btScalar\ m\_timeStep;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_stepCount;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_dispatchFunc;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{mutable}\ btScalar\ m\_timeOfImpact;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useContinuous;}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ m\_debugDraw;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableSatConvex;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableSPU;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useEpa;}
+\DoxyCodeLine{00062\ \ \ \ \ btScalar\ m\_allowedCcdPenetration;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useConvexConservativeDistanceUtil;}
+\DoxyCodeLine{00064\ \ \ \ \ btScalar\ m\_convexConservativeDistanceThreshold;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_deterministicOverlappingPairs;}
+\DoxyCodeLine{00066\ \};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{enum}\ ebtDispatcherQueryType}
+\DoxyCodeLine{00069\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ BT\_CONTACT\_POINT\_ALGORITHMS\ =\ 1,}
+\DoxyCodeLine{00071\ \ \ \ \ BT\_CLOSEST\_POINT\_ALGORITHMS\ =\ 2}
+\DoxyCodeLine{00072\ \};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}}
+\DoxyCodeLine{00077\ \{}
+\DoxyCodeLine{00078\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_dispatcher}{\string~btDispatcher}}();}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}*\ findAlgorithm(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ btPersistentManifold*\ sharedManifold,\ ebtDispatcherQueryType\ queryType)\ =\ 0;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ btPersistentManifold*\ getNewManifold(\textcolor{keyword}{const}\ btCollisionObject*\ b0,\ \textcolor{keyword}{const}\ btCollisionObject*\ b1)\ =\ 0;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ releaseManifold(btPersistentManifold*\ manifold)\ =\ 0;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ clearManifold(btPersistentManifold*\ manifold)\ =\ 0;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ needsCollision(\textcolor{keyword}{const}\ btCollisionObject*\ body0,\ \textcolor{keyword}{const}\ btCollisionObject*\ body1)\ =\ 0;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ needsResponse(\textcolor{keyword}{const}\ btCollisionObject*\ body0,\ \textcolor{keyword}{const}\ btCollisionObject*\ body1)\ =\ 0;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ dispatchAllCollisionPairs(\mbox{\hyperlink{classbt_overlapping_pair_cache}{btOverlappingPairCache}}*\ pairCache,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher)\ =\ 0;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumManifolds()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{virtual}\ btPersistentManifold*\ getManifoldByIndexInternal(\textcolor{keywordtype}{int}\ index)\ =\ 0;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{virtual}\ btPersistentManifold**\ getInternalManifoldPointer()\ =\ 0;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ getInternalManifoldPool()\ =\ 0;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_pool_allocator}{btPoolAllocator}}*\ getInternalManifoldPool()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}*\ allocateCollisionAlgorithm(\textcolor{keywordtype}{int}\ size)\ =\ 0;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ freeCollisionAlgorithm(\textcolor{keywordtype}{void}*\ ptr)\ =\ 0;}
+\DoxyCodeLine{00108\ \};}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DISPATCHER\_H}}
+
+\end{DoxyCode}

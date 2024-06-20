@@ -1,0 +1,75 @@
+\doxysection{b3\+Logging.\+h}
+\hypertarget{b3_logging_8h_source}{}\label{b3_logging_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3Logging.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Common/b3Logging.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_LOGGING\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_LOGGING\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00006\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}}
+\DoxyCodeLine{00007\ \{}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ b3Printf(...)\ b3OutputPrintfVarArgsInternal(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{comment}{//\#define\ b3Printf(...)\ do\ \{b3OutputPrintfVarArgsInternal("{}b3Printf[\%s,\%d]:"{},\_\_FILE\_\_,\_\_LINE\_\_);b3OutputPrintfVarArgsInternal(\_\_VA\_ARGS\_\_);\ \}\ while(0)}}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{//\#define\ b3Printf\ b3OutputPrintfVarArgsInternal}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{//\#define\ b3Printf(...)\ printf(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{comment}{//\#define\ b3Printf(...)}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ b3Warning(...)\ do\{\ \ b3OutputWarningMessageVarArgsInternal("{}b3Warning[\%s,\%d]:\(\backslash\)n"{},\ \_\_FILE\_\_,\ \_\_LINE\_\_);b3OutputWarningMessageVarArgsInternal(\_\_VA\_ARGS\_\_);\}\ while\ (0)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ b3Error(...)do\ \ \{b3OutputErrorMessageVarArgsInternal("{}b3Error[\%s,\%d]:\(\backslash\)n"{},\ \_\_FILE\_\_,\ \_\_LINE\_\_);b3OutputErrorMessageVarArgsInternal(\_\_VA\_ARGS\_\_);\}\ while\ (0)}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ B3\_NO\_PROFILE}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ b3EnterProfileZone(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{void}\ b3LeaveProfileZone();}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{class\ }b3ProfileZone}
+\DoxyCodeLine{00026\ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ b3ProfileZone(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ b3EnterProfileZone(name);}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \string~b3ProfileZone()}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ b3LeaveProfileZone();}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ B3\_PROFILE(name)\ b3ProfileZone\ \_\_profile(name)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#else\ \ }\textcolor{comment}{//B3\_NO\_PROFILE}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ B3\_PROFILE(name)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ b3StartProfile(a)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ b3StopProfile}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\#ifndef\ B3\_NO\_PROFILE}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{typedef}\ void(b3PrintfFunc)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ msg);}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{typedef}\ void(b3WarningMessageFunc)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ msg);}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{typedef}\ void(b3ErrorMessageFunc)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ msg);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{typedef}\ void(b3EnterProfileZoneFunc)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ msg);}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{typedef}\ void(b3LeaveProfileZoneFunc)();}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{void}\ b3SetCustomPrintfFunc(b3PrintfFunc*\ printfFunc);}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{void}\ b3SetCustomWarningMessageFunc(b3WarningMessageFunc*\ warningMsgFunc);}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ b3SetCustomErrorMessageFunc(b3ErrorMessageFunc*\ errorMsgFunc);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{void}\ b3SetCustomEnterProfileZoneFunc(b3EnterProfileZoneFunc*\ enterFunc);}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ b3SetCustomLeaveProfileZoneFunc(b3LeaveProfileZoneFunc*\ leaveFunc);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ b3OutputPrintfVarArgsInternal(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ str,\ ...);}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ b3OutputWarningMessageVarArgsInternal(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ str,\ ...);}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ b3OutputErrorMessageVarArgsInternal(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ str,\ ...);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00071\ \}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_LOGGING\_H}}
+
+\end{DoxyCode}

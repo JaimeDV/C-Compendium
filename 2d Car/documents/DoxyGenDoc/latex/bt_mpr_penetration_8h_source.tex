@@ -1,0 +1,889 @@
+\doxysection{bt\+Mpr\+Penetration.\+h}
+\hypertarget{bt_mpr_penetration_8h_source}{}\label{bt_mpr_penetration_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btMprPenetration.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btMprPenetration.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{/***}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (c)2012\ Daniel\ Fiser\ <danfis@danfis.cz>}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ \ This\ file\ was\ ported\ from\ mpr.c\ file,\ part\ of\ libccd.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ \ The\ Minkoski\ Portal\ Refinement\ implementation\ was\ ported\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ \ to\ OpenCL\ by\ Erwin\ Coumans\ for\ the\ Bullet\ 3\ Physics\ library.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ \ The\ original\ MPR\ idea\ and\ implementation\ is\ by\ Gary\ Snethen}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ \ in\ XenoCollide,\ see\ http://github.com/erwincoumans/xenocollide}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ \ Distributed\ under\ the\ OSI-\/approved\ BSD\ License\ (the\ "{}License"{});}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ see\ <http://www.opensource.org/licenses/bsd-\/license.php>.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ \ This\ software\ is\ distributed\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ \ implied\ warranty\ of\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ \ See\ the\ License\ for\ more\ information.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ BT\_MPR\_PENETRATION\_H}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ BT\_MPR\_PENETRATION\_H}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ BT\_DEBUG\_MPR1}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{//\#define\ MPR\_AVERAGE\_CONTACT\_POSITIONS}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ btVector3\ m\_firstDir;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_maxGjkIterations;}
+\DoxyCodeLine{00035\ \ \ \ \ btScalar\ m\_maximumDistanceSquared;}
+\DoxyCodeLine{00036\ \ \ \ \ btScalar\ m\_gjkRelError2;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}()}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ :\ m\_firstDir(0,\ 1,\ 0),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ m\_maxGjkIterations(1000),}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ m\_maximumDistanceSquared(1e30f),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ m\_gjkRelError2(1.0e-\/6)}
+\DoxyCodeLine{00043\ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_mpr_collision_description}{\string~btMprCollisionDescription}}()}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_mpr_distance_info}{btMprDistanceInfo}}}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ btVector3\ m\_pointOnA;}
+\DoxyCodeLine{00053\ \ \ \ \ btVector3\ m\_pointOnB;}
+\DoxyCodeLine{00054\ \ \ \ \ btVector3\ m\_normalBtoA;}
+\DoxyCodeLine{00055\ \ \ \ \ btScalar\ m\_distance;}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ BT\_MPR\_SQRT\ sqrtf}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ BT\_MPR\_SQRT\ sqrt}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ BT\_MPR\_FMIN(x,\ y)\ ((x)\ <\ (y)\ ?\ (x)\ :\ (y))}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ BT\_MPR\_FABS\ fabs}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ BT\_MPR\_TOLERANCE\ 1E-\/6f}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ BT\_MPR\_MAX\_ITERATIONS\ 1000}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct__bt_mpr_support__t}{\_btMprSupport\_t}}}
+\DoxyCodeLine{00070\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ btVector3\ \mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}};\ \ \ }
+\DoxyCodeLine{00072\ \ \ \ \ btVector3\ \mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}};\ \ }
+\DoxyCodeLine{00073\ \ \ \ \ btVector3\ \mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}};\ \ }
+\DoxyCodeLine{00074\ \};}
+\DoxyCodeLine{00075\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct__bt_mpr_support__t}{\_btMprSupport\_t}}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct__bt_mpr_simplex__t}{\_btMprSimplex\_t}}}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ ps[4];}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t_a3f19f86e42b7dfe695a21ba2d48430be}{last}};\ \ }
+\DoxyCodeLine{00081\ \};}
+\DoxyCodeLine{00082\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct__bt_mpr_simplex__t}{\_btMprSimplex\_t}}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *btMprSimplexPointW(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *s,\ \textcolor{keywordtype}{int}\ idx)}
+\DoxyCodeLine{00085\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{return}\ \&s-\/>ps[idx];}
+\DoxyCodeLine{00087\ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprSimplexSetSize(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *s,\ \textcolor{keywordtype}{int}\ size)}
+\DoxyCodeLine{00090\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ s-\/>\mbox{\hyperlink{struct__bt_mpr_simplex__t_a3f19f86e42b7dfe695a21ba2d48430be}{last}}\ =\ size\ -\/\ 1;}
+\DoxyCodeLine{00092\ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#ifdef\ DEBUG\_MPR}}
+\DoxyCodeLine{00095\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btPrintPortalVertex(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{\_btMprSimplex\_t}}\ *portal,\ \textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00096\ \{}
+\DoxyCodeLine{00097\ \ \ \ \ printf(\textcolor{stringliteral}{"{}portal[\%d].v\ =\ \%f,\%f,\%f,\ v1=\%f,\%f,\%f,\ v2=\%f,\%f,\%f\(\backslash\)n"{}},\ index,\ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}}.x(),\ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}}.y(),\ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}}.z(),}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}}.x(),\ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}}.y(),\ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}}.z(),}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}}.x(),\ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}}.y(),\ portal-\/>ps[index].\mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}}.z());}
+\DoxyCodeLine{00100\ \}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//DEBUG\_MPR}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ btMprSimplexSize(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *s)}
+\DoxyCodeLine{00104\ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordflow}{return}\ s-\/>\mbox{\hyperlink{struct__bt_mpr_simplex__t_a3f19f86e42b7dfe695a21ba2d48430be}{last}}\ +\ 1;}
+\DoxyCodeLine{00106\ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *btMprSimplexPoint(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *s,\ \textcolor{keywordtype}{int}\ idx)}
+\DoxyCodeLine{00109\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//\ here\ is\ no\ check\ on\ boundaries}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{return}\ \&s-\/>ps[idx];}
+\DoxyCodeLine{00112\ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprSupportCopy(\mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *d,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *s)}
+\DoxyCodeLine{00115\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ *d\ =\ *s;}
+\DoxyCodeLine{00117\ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprSimplexSet(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *s,\ \textcolor{keywordtype}{size\_t}\ pos,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *a)}
+\DoxyCodeLine{00120\ \{}
+\DoxyCodeLine{00121\ \ \ \ \ btMprSupportCopy(s-\/>ps\ +\ pos,\ a);}
+\DoxyCodeLine{00122\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprSimplexSwap(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *s,\ \textcolor{keywordtype}{size\_t}\ pos1,\ \textcolor{keywordtype}{size\_t}\ pos2)}
+\DoxyCodeLine{00125\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ supp;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ btMprSupportCopy(\&supp,\ \&s-\/>ps[pos1]);}
+\DoxyCodeLine{00129\ \ \ \ \ btMprSupportCopy(\&s-\/>ps[pos1],\ \&s-\/>ps[pos2]);}
+\DoxyCodeLine{00130\ \ \ \ \ btMprSupportCopy(\&s-\/>ps[pos2],\ \&supp);}
+\DoxyCodeLine{00131\ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ btMprIsZero(\textcolor{keywordtype}{float}\ val)}
+\DoxyCodeLine{00134\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_MPR\_FABS(val)\ <\ FLT\_EPSILON;}
+\DoxyCodeLine{00136\ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ btMprEq(\textcolor{keywordtype}{float}\ \_a,\ \textcolor{keywordtype}{float}\ \_b)}
+\DoxyCodeLine{00139\ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{float}\ ab;}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{float}\ a,\ b;}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ ab\ =\ BT\_MPR\_FABS(\_a\ -\/\ \_b);}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordflow}{if}\ (BT\_MPR\_FABS(ab)\ <\ FLT\_EPSILON)}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ a\ =\ BT\_MPR\_FABS(\_a);}
+\DoxyCodeLine{00148\ \ \ \ \ b\ =\ BT\_MPR\_FABS(\_b);}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordflow}{if}\ (b\ >\ a)}
+\DoxyCodeLine{00150\ \ \ \ \ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ab\ <\ FLT\_EPSILON\ *\ b;}
+\DoxyCodeLine{00152\ \ \ \ \ \}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00154\ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ab\ <\ FLT\_EPSILON\ *\ a;}
+\DoxyCodeLine{00156\ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ btMprVec3Eq(\textcolor{keyword}{const}\ btVector3\ *a,\ \textcolor{keyword}{const}\ btVector3\ *b)}
+\DoxyCodeLine{00160\ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordflow}{return}\ btMprEq((*a).x(),\ (*b).x())\ \&\&\ btMprEq((*a).y(),\ (*b).y())\ \&\&\ btMprEq((*a).z(),\ (*b).z());}
+\DoxyCodeLine{00162\ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ btConvexTemplate>}
+\DoxyCodeLine{00165\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btFindOrigin(\textcolor{keyword}{const}\ btConvexTemplate\ \&a,\ \textcolor{keyword}{const}\ btConvexTemplate\ \&b,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}\ \&colDesc,\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *center)}
+\DoxyCodeLine{00166\ \{}
+\DoxyCodeLine{00167\ \ \ \ \ center-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}}\ =\ a.getObjectCenterInWorld();}
+\DoxyCodeLine{00168\ \ \ \ \ center-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}}\ =\ b.getObjectCenterInWorld();}
+\DoxyCodeLine{00169\ \ \ \ \ center-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}}\ =\ center-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}}\ -\/\ center-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}};}
+\DoxyCodeLine{00170\ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprVec3Set(btVector3\ *v,\ \textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{float}\ z)}
+\DoxyCodeLine{00173\ \{}
+\DoxyCodeLine{00174\ \ \ \ \ v-\/>setValue(x,\ y,\ z);}
+\DoxyCodeLine{00175\ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprVec3Add(btVector3\ *v,\ \textcolor{keyword}{const}\ btVector3\ *w)}
+\DoxyCodeLine{00178\ \{}
+\DoxyCodeLine{00179\ \ \ \ \ *v\ +=\ *w;}
+\DoxyCodeLine{00180\ \}}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprVec3Copy(btVector3\ *v,\ \textcolor{keyword}{const}\ btVector3\ *w)}
+\DoxyCodeLine{00183\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ *v\ =\ *w;}
+\DoxyCodeLine{00185\ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprVec3Scale(btVector3\ *d,\ \textcolor{keywordtype}{float}\ k)}
+\DoxyCodeLine{00188\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ *d\ *=\ k;}
+\DoxyCodeLine{00190\ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ btMprVec3Dot(\textcolor{keyword}{const}\ btVector3\ *a,\ \textcolor{keyword}{const}\ btVector3\ *b)}
+\DoxyCodeLine{00193\ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{float}\ dot;}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ dot\ =\ btDot(*a,\ *b);}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{return}\ dot;}
+\DoxyCodeLine{00198\ \}}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ btMprVec3Len2(\textcolor{keyword}{const}\ btVector3\ *v)}
+\DoxyCodeLine{00201\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordflow}{return}\ btMprVec3Dot(v,\ v);}
+\DoxyCodeLine{00203\ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprVec3Normalize(btVector3\ *d)}
+\DoxyCodeLine{00206\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{float}\ k\ =\ 1.f\ /\ BT\_MPR\_SQRT(btMprVec3Len2(d));}
+\DoxyCodeLine{00208\ \ \ \ \ btMprVec3Scale(d,\ k);}
+\DoxyCodeLine{00209\ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprVec3Cross(btVector3\ *d,\ \textcolor{keyword}{const}\ btVector3\ *a,\ \textcolor{keyword}{const}\ btVector3\ *b)}
+\DoxyCodeLine{00212\ \{}
+\DoxyCodeLine{00213\ \ \ \ \ *d\ =\ btCross(*a,\ *b);}
+\DoxyCodeLine{00214\ \}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprVec3Sub2(btVector3\ *d,\ \textcolor{keyword}{const}\ btVector3\ *v,\ \textcolor{keyword}{const}\ btVector3\ *w)}
+\DoxyCodeLine{00217\ \{}
+\DoxyCodeLine{00218\ \ \ \ \ *d\ =\ *v\ -\/\ *w;}
+\DoxyCodeLine{00219\ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btPortalDir(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,\ btVector3\ *dir)}
+\DoxyCodeLine{00222\ \{}
+\DoxyCodeLine{00223\ \ \ \ \ btVector3\ v2v1,\ v3v1;}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ btMprVec3Sub2(\&v2v1,\ \&btMprSimplexPoint(portal,\ 2)-\/>v,}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00227\ \ \ \ \ btMprVec3Sub2(\&v3v1,\ \&btMprSimplexPoint(portal,\ 3)-\/>v,}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00229\ \ \ \ \ btMprVec3Cross(dir,\ \&v2v1,\ \&v3v1);}
+\DoxyCodeLine{00230\ \ \ \ \ btMprVec3Normalize(dir);}
+\DoxyCodeLine{00231\ \}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ portalEncapsulesOrigin(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *dir)}
+\DoxyCodeLine{00235\ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{float}\ dot;}
+\DoxyCodeLine{00237\ \ \ \ \ dot\ =\ btMprVec3Dot(dir,\ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordflow}{return}\ btMprIsZero(dot)\ ||\ dot\ >\ 0.f;}
+\DoxyCodeLine{00239\ \}}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ portalReachTolerance(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *v4,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *dir)}
+\DoxyCodeLine{00244\ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordtype}{float}\ dv1,\ dv2,\ dv3,\ dv4;}
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keywordtype}{float}\ dot1,\ dot2,\ dot3;}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{comment}{//\ find\ the\ smallest\ dot\ product\ of\ dir\ and\ \{v1-\/v4,\ v2-\/v4,\ v3-\/v4\}}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ dv1\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 1)-\/>v,\ dir);}
+\DoxyCodeLine{00251\ \ \ \ \ dv2\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 2)-\/>v,\ dir);}
+\DoxyCodeLine{00252\ \ \ \ \ dv3\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 3)-\/>v,\ dir);}
+\DoxyCodeLine{00253\ \ \ \ \ dv4\ =\ btMprVec3Dot(\&v4-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}},\ dir);}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ dot1\ =\ dv4\ -\/\ dv1;}
+\DoxyCodeLine{00256\ \ \ \ \ dot2\ =\ dv4\ -\/\ dv2;}
+\DoxyCodeLine{00257\ \ \ \ \ dot3\ =\ dv4\ -\/\ dv3;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ dot1\ =\ BT\_MPR\_FMIN(dot1,\ dot2);}
+\DoxyCodeLine{00260\ \ \ \ \ dot1\ =\ BT\_MPR\_FMIN(dot1,\ dot3);}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordflow}{return}\ btMprEq(dot1,\ BT\_MPR\_TOLERANCE)\ ||\ dot1\ <\ BT\_MPR\_TOLERANCE;}
+\DoxyCodeLine{00263\ \}}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ portalCanEncapsuleOrigin(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *v4,}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *dir)}
+\DoxyCodeLine{00268\ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keywordtype}{float}\ dot;}
+\DoxyCodeLine{00270\ \ \ \ \ dot\ =\ btMprVec3Dot(\&v4-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}},\ dir);}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordflow}{return}\ btMprIsZero(dot)\ ||\ dot\ >\ 0.f;}
+\DoxyCodeLine{00272\ \}}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btExpandPortal(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *v4)}
+\DoxyCodeLine{00276\ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keywordtype}{float}\ dot;}
+\DoxyCodeLine{00278\ \ \ \ \ btVector3\ v4v0;}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ btMprVec3Cross(\&v4v0,\ \&v4-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}},\ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00281\ \ \ \ \ dot\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 1)-\/>v,\ \&v4v0);}
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ >\ 0.f)}
+\DoxyCodeLine{00283\ \ \ \ \ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ dot\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 2)-\/>v,\ \&v4v0);}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ >\ 0.f)}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ btMprSimplexSet(portal,\ 1,\ v4);}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ btMprSimplexSet(portal,\ 3,\ v4);}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00293\ \ \ \ \ \}}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00295\ \ \ \ \ \{}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ dot\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 3)-\/>v,\ \&v4v0);}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ >\ 0.f)}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ btMprSimplexSet(portal,\ 2,\ v4);}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ btMprSimplexSet(portal,\ 1,\ v4);}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00305\ \ \ \ \ \}}
+\DoxyCodeLine{00306\ \}}
+\DoxyCodeLine{00307\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ btConvexTemplate>}
+\DoxyCodeLine{00308\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btMprSupport(\textcolor{keyword}{const}\ btConvexTemplate\ \&a,\ \textcolor{keyword}{const}\ btConvexTemplate\ \&b,}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}\ \&colDesc,}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&dir,\ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ *supp)}
+\DoxyCodeLine{00311\ \{}
+\DoxyCodeLine{00312\ \ \ \ \ btVector3\ separatingAxisInA\ =\ dir\ *\ a.getWorldTransform().getBasis();}
+\DoxyCodeLine{00313\ \ \ \ \ btVector3\ separatingAxisInB\ =\ -\/dir\ *\ b.getWorldTransform().getBasis();}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \ \ \ \ btVector3\ pInA\ =\ a.getLocalSupportWithMargin(separatingAxisInA);}
+\DoxyCodeLine{00316\ \ \ \ \ btVector3\ qInB\ =\ b.getLocalSupportWithMargin(separatingAxisInB);}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \ \ supp-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}}\ =\ a.getWorldTransform()(pInA);}
+\DoxyCodeLine{00319\ \ \ \ \ supp-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}}\ =\ b.getWorldTransform()(qInB);}
+\DoxyCodeLine{00320\ \ \ \ \ supp-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_acb1c4482f63f4e62041dd9e299ae7484}{v}}\ =\ supp-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a218f7af17e27c0e43fe0685390238a16}{v1}}\ -\/\ supp-\/>\mbox{\hyperlink{struct__bt_mpr_support__t_a21324c5741d2419b4c1a384cdc3e8ef0}{v2}};}
+\DoxyCodeLine{00321\ \}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ btConvexTemplate>}
+\DoxyCodeLine{00324\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ btDiscoverPortal(\textcolor{keyword}{const}\ btConvexTemplate\ \&a,\ \textcolor{keyword}{const}\ btConvexTemplate\ \&b,}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}\ \&colDesc,}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal)}
+\DoxyCodeLine{00327\ \{}
+\DoxyCodeLine{00328\ \ \ \ \ btVector3\ dir,\ va,\ vb;}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keywordtype}{float}\ dot;}
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{keywordtype}{int}\ cont;}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{comment}{//\ vertex\ 0\ is\ center\ of\ portal}}
+\DoxyCodeLine{00333\ \ \ \ \ btFindOrigin(a,\ b,\ colDesc,\ btMprSimplexPointW(portal,\ 0));}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{comment}{//\ vertex\ 0\ is\ center\ of\ portal}}
+\DoxyCodeLine{00336\ \ \ \ \ btMprSimplexSetSize(portal,\ 1);}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}}\ =\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00339\ \ \ \ \ btVector3\ *org\ =\ \&\mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}};}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprVec3Eq(\&btMprSimplexPoint(portal,\ 0)-\/>v,\ org))}
+\DoxyCodeLine{00342\ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Portal's\ center\ lies\ on\ origin\ (0,0,0)\ =>\ we\ know\ that\ objects}}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ intersect\ but\ we\ would\ need\ to\ know\ penetration\ info.}}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ So\ move\ center\ little\ bit...}}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ btMprVec3Set(\&va,\ FLT\_EPSILON\ *\ 10.f,\ 0.f,\ 0.f);}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ btMprVec3Add(\&btMprSimplexPointW(portal,\ 0)-\/>v,\ \&va);}
+\DoxyCodeLine{00348\ \ \ \ \ \}}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ \textcolor{comment}{//\ vertex\ 1\ =\ support\ in\ direction\ of\ origin}}
+\DoxyCodeLine{00351\ \ \ \ \ btMprVec3Copy(\&dir,\ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00352\ \ \ \ \ btMprVec3Scale(\&dir,\ -\/1.f);}
+\DoxyCodeLine{00353\ \ \ \ \ btMprVec3Normalize(\&dir);}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ btMprSupport(a,\ b,\ colDesc,\ dir,\ btMprSimplexPointW(portal,\ 1));}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \ \ \ \ btMprSimplexSetSize(portal,\ 2);}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{comment}{//\ test\ if\ origin\ isn't\ outside\ of\ v1}}
+\DoxyCodeLine{00360\ \ \ \ \ dot\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 1)-\/>v,\ \&dir);}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprIsZero(dot)\ ||\ dot\ <\ 0.f)}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ \ \ \textcolor{comment}{//\ vertex\ 2}}
+\DoxyCodeLine{00366\ \ \ \ \ btMprVec3Cross(\&dir,\ \&btMprSimplexPoint(portal,\ 0)-\/>v,}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprIsZero(btMprVec3Len2(\&dir)))}
+\DoxyCodeLine{00369\ \ \ \ \ \{}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprVec3Eq(\&btMprSimplexPoint(portal,\ 1)-\/>v,\ org))}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ origin\ lies\ on\ v1}}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ origin\ lies\ on\ v0-\/v1\ segment}}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 2;}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00380\ \ \ \ \ \}}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \ \ btMprVec3Normalize(\&dir);}
+\DoxyCodeLine{00383\ \ \ \ \ btMprSupport(a,\ b,\ colDesc,\ dir,\ btMprSimplexPointW(portal,\ 2));}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \ \ \ \ dot\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 2)-\/>v,\ \&dir);}
+\DoxyCodeLine{00386\ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprIsZero(dot)\ ||\ dot\ <\ 0.f)}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ btMprSimplexSetSize(portal,\ 3);}
+\DoxyCodeLine{00390\ }
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{comment}{//\ vertex\ 3\ direction}}
+\DoxyCodeLine{00392\ \ \ \ \ btMprVec3Sub2(\&va,\ \&btMprSimplexPoint(portal,\ 1)-\/>v,}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00394\ \ \ \ \ btMprVec3Sub2(\&vb,\ \&btMprSimplexPoint(portal,\ 2)-\/>v,}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00396\ \ \ \ \ btMprVec3Cross(\&dir,\ \&va,\ \&vb);}
+\DoxyCodeLine{00397\ \ \ \ \ btMprVec3Normalize(\&dir);}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \ \ \textcolor{comment}{//\ it\ is\ better\ to\ form\ portal\ faces\ to\ be\ oriented\ "{}outside"{}\ origin}}
+\DoxyCodeLine{00400\ \ \ \ \ dot\ =\ btMprVec3Dot(\&dir,\ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ >\ 0.f)}
+\DoxyCodeLine{00402\ \ \ \ \ \{}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ btMprSimplexSwap(portal,\ 1,\ 2);}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ btMprVec3Scale(\&dir,\ -\/1.f);}
+\DoxyCodeLine{00405\ \ \ \ \ \}}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \ \ \textcolor{keywordflow}{while}\ (btMprSimplexSize(portal)\ <\ 4)}
+\DoxyCodeLine{00408\ \ \ \ \ \{}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ btMprSupport(a,\ b,\ colDesc,\ dir,\ btMprSimplexPointW(portal,\ 3));}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ dot\ =\ btMprVec3Dot(\&btMprSimplexPoint(portal,\ 3)-\/>v,\ \&dir);}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprIsZero(dot)\ ||\ dot\ <\ 0.f)}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ cont\ =\ 0;}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ test\ if\ origin\ is\ outside\ (v1,\ v0,\ v3)\ -\/\ set\ v2\ as\ v3\ and}}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ continue}}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ btMprVec3Cross(\&va,\ \&btMprSimplexPoint(portal,\ 1)-\/>v,}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 3)-\/>v);}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ dot\ =\ btMprVec3Dot(\&va,\ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ <\ 0.f\ \&\&\ !btMprIsZero(dot))}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ btMprSimplexSet(portal,\ 2,\ btMprSimplexPoint(portal,\ 3));}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ cont\ =\ 1;}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!cont)}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ test\ if\ origin\ is\ outside\ (v3,\ v0,\ v2)\ -\/\ set\ v1\ as\ v3\ and}}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ continue}}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Cross(\&va,\ \&btMprSimplexPoint(portal,\ 3)-\/>v,}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 2)-\/>v);}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ dot\ =\ btMprVec3Dot(\&va,\ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dot\ <\ 0.f\ \&\&\ !btMprIsZero(dot))}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMprSimplexSet(portal,\ 1,\ btMprSimplexPoint(portal,\ 3));}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cont\ =\ 1;}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cont)}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Sub2(\&va,\ \&btMprSimplexPoint(portal,\ 1)-\/>v,}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Sub2(\&vb,\ \&btMprSimplexPoint(portal,\ 2)-\/>v,}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Cross(\&dir,\ \&va,\ \&vb);}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Normalize(\&dir);}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ btMprSimplexSetSize(portal,\ 4);}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00455\ \ \ \ \ \}}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00458\ \}}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ btConvexTemplate>}
+\DoxyCodeLine{00461\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ btRefinePortal(\textcolor{keyword}{const}\ btConvexTemplate\ \&a,\ \textcolor{keyword}{const}\ btConvexTemplate\ \&b,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}\ \&colDesc,}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal)}
+\DoxyCodeLine{00463\ \{}
+\DoxyCodeLine{00464\ \ \ \ \ btVector3\ dir;}
+\DoxyCodeLine{00465\ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ v4;}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ BT\_MPR\_MAX\_ITERATIONS;\ i++)}
+\DoxyCodeLine{00468\ \ \ \ \ \textcolor{comment}{//while\ (1)}}
+\DoxyCodeLine{00469\ \ \ \ \ \{}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ compute\ direction\ outside\ the\ portal\ (from\ v0\ through\ v1,v2,v3}}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ face)}}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ btPortalDir(portal,\ \&dir);}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ test\ if\ origin\ is\ inside\ the\ portal}}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (portalEncapsulesOrigin(portal,\ \&dir))}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00477\ }
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ get\ next\ support\ point}}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ btMprSupport(a,\ b,\ colDesc,\ dir,\ \&v4);}
+\DoxyCodeLine{00481\ }
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ test\ if\ v4\ can\ expand\ portal\ to\ contain\ origin\ and\ if\ portal}}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ expanding\ doesn't\ reach\ given\ tolerance}}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!portalCanEncapsuleOrigin(portal,\ \&v4,\ \&dir)\ ||\ portalReachTolerance(portal,\ \&v4,\ \&dir))}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00488\ }
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ v1-\/v2-\/v3\ triangle\ must\ be\ rearranged\ to\ face\ outside\ Minkowski}}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ difference\ (direction\ from\ v0).}}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ btExpandPortal(portal,\ \&v4);}
+\DoxyCodeLine{00492\ \ \ \ \ \}}
+\DoxyCodeLine{00493\ }
+\DoxyCodeLine{00494\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00495\ \}}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ btFindPos(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,\ btVector3\ *pos)}
+\DoxyCodeLine{00498\ \{}
+\DoxyCodeLine{00499\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}}\ =\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00500\ \ \ \ \ btVector3\ *origin\ =\ \&\mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}};}
+\DoxyCodeLine{00501\ }
+\DoxyCodeLine{00502\ \ \ \ \ btVector3\ dir;}
+\DoxyCodeLine{00503\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i;}
+\DoxyCodeLine{00504\ \ \ \ \ \textcolor{keywordtype}{float}\ b[4],\ sum,\ inv;}
+\DoxyCodeLine{00505\ \ \ \ \ btVector3\ vec,\ p1,\ p2;}
+\DoxyCodeLine{00506\ }
+\DoxyCodeLine{00507\ \ \ \ \ btPortalDir(portal,\ \&dir);}
+\DoxyCodeLine{00508\ }
+\DoxyCodeLine{00509\ \ \ \ \ \textcolor{comment}{//\ use\ barycentric\ coordinates\ of\ tetrahedron\ to\ find\ origin}}
+\DoxyCodeLine{00510\ \ \ \ \ btMprVec3Cross(\&vec,\ \&btMprSimplexPoint(portal,\ 1)-\/>v,}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 2)-\/>v);}
+\DoxyCodeLine{00512\ \ \ \ \ b[0]\ =\ btMprVec3Dot(\&vec,\ \&btMprSimplexPoint(portal,\ 3)-\/>v);}
+\DoxyCodeLine{00513\ }
+\DoxyCodeLine{00514\ \ \ \ \ btMprVec3Cross(\&vec,\ \&btMprSimplexPoint(portal,\ 3)-\/>v,}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 2)-\/>v);}
+\DoxyCodeLine{00516\ \ \ \ \ b[1]\ =\ btMprVec3Dot(\&vec,\ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00517\ }
+\DoxyCodeLine{00518\ \ \ \ \ btMprVec3Cross(\&vec,\ \&btMprSimplexPoint(portal,\ 0)-\/>v,}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00520\ \ \ \ \ b[2]\ =\ btMprVec3Dot(\&vec,\ \&btMprSimplexPoint(portal,\ 3)-\/>v);}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \ \ \ \ btMprVec3Cross(\&vec,\ \&btMprSimplexPoint(portal,\ 2)-\/>v,}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00524\ \ \ \ \ b[3]\ =\ btMprVec3Dot(\&vec,\ \&btMprSimplexPoint(portal,\ 0)-\/>v);}
+\DoxyCodeLine{00525\ }
+\DoxyCodeLine{00526\ \ \ \ \ sum\ =\ b[0]\ +\ b[1]\ +\ b[2]\ +\ b[3];}
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00528\ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprIsZero(sum)\ ||\ sum\ <\ 0.f)}
+\DoxyCodeLine{00529\ \ \ \ \ \{}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ b[0]\ =\ 0.f;}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ btMprVec3Cross(\&vec,\ \&btMprSimplexPoint(portal,\ 2)-\/>v,}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 3)-\/>v);}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ b[1]\ =\ btMprVec3Dot(\&vec,\ \&dir);}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ btMprVec3Cross(\&vec,\ \&btMprSimplexPoint(portal,\ 3)-\/>v,}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ b[2]\ =\ btMprVec3Dot(\&vec,\ \&dir);}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ btMprVec3Cross(\&vec,\ \&btMprSimplexPoint(portal,\ 1)-\/>v,}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&btMprSimplexPoint(portal,\ 2)-\/>v);}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ b[3]\ =\ btMprVec3Dot(\&vec,\ \&dir);}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ sum\ =\ b[1]\ +\ b[2]\ +\ b[3];}
+\DoxyCodeLine{00543\ \ \ \ \ \}}
+\DoxyCodeLine{00544\ }
+\DoxyCodeLine{00545\ \ \ \ \ inv\ =\ 1.f\ /\ sum;}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \ \ \ \ btMprVec3Copy(\&p1,\ origin);}
+\DoxyCodeLine{00548\ \ \ \ \ btMprVec3Copy(\&p2,\ origin);}
+\DoxyCodeLine{00549\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{00550\ \ \ \ \ \{}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ btMprVec3Copy(\&vec,\ \&btMprSimplexPoint(portal,\ i)-\/>v1);}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ btMprVec3Scale(\&vec,\ b[i]);}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ btMprVec3Add(\&p1,\ \&vec);}
+\DoxyCodeLine{00554\ }
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ btMprVec3Copy(\&vec,\ \&btMprSimplexPoint(portal,\ i)-\/>v2);}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ btMprVec3Scale(\&vec,\ b[i]);}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ btMprVec3Add(\&p2,\ \&vec);}
+\DoxyCodeLine{00558\ \ \ \ \ \}}
+\DoxyCodeLine{00559\ \ \ \ \ btMprVec3Scale(\&p1,\ inv);}
+\DoxyCodeLine{00560\ \ \ \ \ btMprVec3Scale(\&p2,\ inv);}
+\DoxyCodeLine{00561\ \textcolor{preprocessor}{\#ifdef\ MPR\_AVERAGE\_CONTACT\_POSITIONS}}
+\DoxyCodeLine{00562\ \ \ \ \ btMprVec3Copy(pos,\ \&p1);}
+\DoxyCodeLine{00563\ \ \ \ \ btMprVec3Add(pos,\ \&p2);}
+\DoxyCodeLine{00564\ \ \ \ \ btMprVec3Scale(pos,\ 0.5);}
+\DoxyCodeLine{00565\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00566\ \ \ \ \ btMprVec3Copy(pos,\ \&p2);}
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//MPR\_AVERAGE\_CONTACT\_POSITIONS}}
+\DoxyCodeLine{00568\ \}}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ btMprVec3Dist2(\textcolor{keyword}{const}\ btVector3\ *a,\ \textcolor{keyword}{const}\ btVector3\ *b)}
+\DoxyCodeLine{00571\ \{}
+\DoxyCodeLine{00572\ \ \ \ \ btVector3\ ab;}
+\DoxyCodeLine{00573\ \ \ \ \ btMprVec3Sub2(\&ab,\ a,\ b);}
+\DoxyCodeLine{00574\ \ \ \ \ \textcolor{keywordflow}{return}\ btMprVec3Len2(\&ab);}
+\DoxyCodeLine{00575\ \}}
+\DoxyCodeLine{00576\ }
+\DoxyCodeLine{00577\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \_btMprVec3PointSegmentDist2(\textcolor{keyword}{const}\ btVector3\ *P,}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *x0,}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *b,}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ *witness)}
+\DoxyCodeLine{00581\ \{}
+\DoxyCodeLine{00582\ \ \ \ \ \textcolor{comment}{//\ The\ computation\ comes\ from\ solving\ equation\ of\ segment:}}
+\DoxyCodeLine{00583\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ S(t)\ =\ x0\ +\ t.d}}
+\DoxyCodeLine{00584\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ where\ -\/\ x0\ is\ initial\ point\ of\ segment}}
+\DoxyCodeLine{00585\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/\ d\ is\ direction\ of\ segment\ from\ x0\ (|d|\ >\ 0)}}
+\DoxyCodeLine{00586\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/\ t\ belongs\ to\ <0,\ 1>\ interval}}
+\DoxyCodeLine{00587\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00588\ \ \ \ \ \textcolor{comment}{//\ Than,\ distance\ from\ a\ segment\ to\ some\ point\ P\ can\ be\ expressed:}}
+\DoxyCodeLine{00589\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ D(t)\ =\ |x0\ +\ t.d\ -\/\ P|\string^2}}
+\DoxyCodeLine{00590\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ which\ is\ distance\ from\ any\ point\ on\ segment.\ Minimization}}
+\DoxyCodeLine{00591\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ of\ this\ function\ brings\ distance\ from\ P\ to\ segment.}}
+\DoxyCodeLine{00592\ \ \ \ \ \textcolor{comment}{//\ Minimization\ of\ D(t)\ leads\ to\ simple\ quadratic\ equation\ that's}}
+\DoxyCodeLine{00593\ \ \ \ \ \textcolor{comment}{//\ solving\ is\ straightforward.}}
+\DoxyCodeLine{00594\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00595\ \ \ \ \ \textcolor{comment}{//\ Bonus\ of\ this\ method\ is\ witness\ point\ for\ free.}}
+\DoxyCodeLine{00596\ }
+\DoxyCodeLine{00597\ \ \ \ \ \textcolor{keywordtype}{float}\ dist,\ t;}
+\DoxyCodeLine{00598\ \ \ \ \ btVector3\ d,\ a;}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \ \ \ \ \textcolor{comment}{//\ direction\ of\ segment}}
+\DoxyCodeLine{00601\ \ \ \ \ btMprVec3Sub2(\&d,\ b,\ x0);}
+\DoxyCodeLine{00602\ }
+\DoxyCodeLine{00603\ \ \ \ \ \textcolor{comment}{//\ precompute\ vector\ from\ P\ to\ x0}}
+\DoxyCodeLine{00604\ \ \ \ \ btMprVec3Sub2(\&a,\ x0,\ P);}
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \ \ \ \ t\ =\ -\/1.f\ *\ btMprVec3Dot(\&a,\ \&d);}
+\DoxyCodeLine{00607\ \ \ \ \ t\ /=\ btMprVec3Len2(\&d);}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00609\ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ <\ 0.f\ ||\ btMprIsZero(t))}
+\DoxyCodeLine{00610\ \ \ \ \ \{}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ dist\ =\ btMprVec3Dist2(x0,\ P);}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (witness)}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Copy(witness,\ x0);}
+\DoxyCodeLine{00614\ \ \ \ \ \}}
+\DoxyCodeLine{00615\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (t\ >\ 1.f\ ||\ btMprEq(t,\ 1.f))}
+\DoxyCodeLine{00616\ \ \ \ \ \{}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ dist\ =\ btMprVec3Dist2(b,\ P);}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (witness)}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Copy(witness,\ b);}
+\DoxyCodeLine{00620\ \ \ \ \ \}}
+\DoxyCodeLine{00621\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00622\ \ \ \ \ \{}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (witness)}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Copy(witness,\ \&d);}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Scale(witness,\ t);}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Add(witness,\ x0);}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ =\ btMprVec3Dist2(witness,\ P);}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ recycling\ variables}}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Scale(\&d,\ t);}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Add(\&d,\ \&a);}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ =\ btMprVec3Len2(\&d);}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00637\ \ \ \ \ \}}
+\DoxyCodeLine{00638\ }
+\DoxyCodeLine{00639\ \ \ \ \ \textcolor{keywordflow}{return}\ dist;}
+\DoxyCodeLine{00640\ \}}
+\DoxyCodeLine{00641\ }
+\DoxyCodeLine{00642\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ btMprVec3PointTriDist2(\textcolor{keyword}{const}\ btVector3\ *P,}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *x0,\ \textcolor{keyword}{const}\ btVector3\ *B,}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ *C,}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ *witness)}
+\DoxyCodeLine{00646\ \{}
+\DoxyCodeLine{00647\ \ \ \ \ \textcolor{comment}{//\ Computation\ comes\ from\ analytic\ expression\ for\ triangle\ (x0,\ B,\ C)}}
+\DoxyCodeLine{00648\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ T(s,\ t)\ =\ x0\ +\ s.d1\ +\ t.d2,\ where\ d1\ =\ B\ -\/\ x0\ and\ d2\ =\ C\ -\/\ x0\ and}}
+\DoxyCodeLine{00649\ \ \ \ \ \textcolor{comment}{//\ Then\ equation\ for\ distance\ is:}}
+\DoxyCodeLine{00650\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ D(s,\ t)\ =\ |\ T(s,\ t)\ -\/\ P\ |\string^2}}
+\DoxyCodeLine{00651\ \ \ \ \ \textcolor{comment}{//\ This\ leads\ to\ minimization\ of\ quadratic\ function\ of\ two\ variables.}}
+\DoxyCodeLine{00652\ \ \ \ \ \textcolor{comment}{//\ The\ solution\ from\ is\ taken\ only\ if\ s\ is\ between\ 0\ and\ 1,\ t\ is}}
+\DoxyCodeLine{00653\ \ \ \ \ \textcolor{comment}{//\ between\ 0\ and\ 1\ and\ t\ +\ s\ <\ 1,\ otherwise\ distance\ from\ segment\ is}}
+\DoxyCodeLine{00654\ \ \ \ \ \textcolor{comment}{//\ computed.}}
+\DoxyCodeLine{00655\ }
+\DoxyCodeLine{00656\ \ \ \ \ btVector3\ d1,\ d2,\ a;}
+\DoxyCodeLine{00657\ \ \ \ \ \textcolor{keywordtype}{float}\ u,\ v,\ w,\ p,\ q,\ r;}
+\DoxyCodeLine{00658\ \ \ \ \ \textcolor{keywordtype}{float}\ s,\ t,\ dist,\ dist2;}
+\DoxyCodeLine{00659\ \ \ \ \ btVector3\ witness2;}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00661\ \ \ \ \ btMprVec3Sub2(\&d1,\ B,\ x0);}
+\DoxyCodeLine{00662\ \ \ \ \ btMprVec3Sub2(\&d2,\ C,\ x0);}
+\DoxyCodeLine{00663\ \ \ \ \ btMprVec3Sub2(\&a,\ x0,\ P);}
+\DoxyCodeLine{00664\ }
+\DoxyCodeLine{00665\ \ \ \ \ u\ =\ btMprVec3Dot(\&a,\ \&a);}
+\DoxyCodeLine{00666\ \ \ \ \ v\ =\ btMprVec3Dot(\&d1,\ \&d1);}
+\DoxyCodeLine{00667\ \ \ \ \ w\ =\ btMprVec3Dot(\&d2,\ \&d2);}
+\DoxyCodeLine{00668\ \ \ \ \ p\ =\ btMprVec3Dot(\&a,\ \&d1);}
+\DoxyCodeLine{00669\ \ \ \ \ q\ =\ btMprVec3Dot(\&a,\ \&d2);}
+\DoxyCodeLine{00670\ \ \ \ \ r\ =\ btMprVec3Dot(\&d1,\ \&d2);}
+\DoxyCodeLine{00671\ }
+\DoxyCodeLine{00672\ \ \ \ \ btScalar\ div\ =\ (w\ *\ v\ -\/\ r\ *\ r);}
+\DoxyCodeLine{00673\ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprIsZero(div))}
+\DoxyCodeLine{00674\ \ \ \ \ \{}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ s\ =\ -\/1;}
+\DoxyCodeLine{00676\ \ \ \ \ \}}
+\DoxyCodeLine{00677\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00678\ \ \ \ \ \{}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ s\ =\ (q\ *\ r\ -\/\ w\ *\ p)\ /\ div;}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ t\ =\ (-\/s\ *\ r\ -\/\ q)\ /\ w;}
+\DoxyCodeLine{00681\ \ \ \ \ \}}
+\DoxyCodeLine{00682\ }
+\DoxyCodeLine{00683\ \ \ \ \ \textcolor{keywordflow}{if}\ ((btMprIsZero(s)\ ||\ s\ >\ 0.f)\ \&\&\ (btMprEq(s,\ 1.f)\ ||\ s\ <\ 1.f)\ \&\&\ (btMprIsZero(t)\ ||\ t\ >\ 0.f)\ \&\&\ (btMprEq(t,\ 1.f)\ ||\ t\ <\ 1.f)\ \&\&\ (btMprEq(t\ +\ s,\ 1.f)\ ||\ t\ +\ s\ <\ 1.f))}
+\DoxyCodeLine{00684\ \ \ \ \ \{}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (witness)}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Scale(\&d1,\ s);}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Scale(\&d2,\ t);}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Copy(witness,\ x0);}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Add(witness,\ \&d1);}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Add(witness,\ \&d2);}
+\DoxyCodeLine{00692\ }
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ =\ btMprVec3Dist2(witness,\ P);}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ =\ s\ *\ s\ *\ v;}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ +=\ t\ *\ t\ *\ w;}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ +=\ 2.f\ *\ s\ *\ t\ *\ r;}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ +=\ 2.f\ *\ s\ *\ p;}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ +=\ 2.f\ *\ t\ *\ q;}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ +=\ u;}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00704\ \ \ \ \ \}}
+\DoxyCodeLine{00705\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00706\ \ \ \ \ \{}
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ dist\ =\ \_btMprVec3PointSegmentDist2(P,\ x0,\ B,\ witness);}
+\DoxyCodeLine{00708\ }
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ dist2\ =\ \_btMprVec3PointSegmentDist2(P,\ x0,\ C,\ \&witness2);}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist2\ <\ dist)}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ =\ dist2;}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (witness)}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Copy(witness,\ \&witness2);}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00716\ }
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ dist2\ =\ \_btMprVec3PointSegmentDist2(P,\ B,\ C,\ \&witness2);}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist2\ <\ dist)}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ \ \ dist\ =\ dist2;}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (witness)}
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Copy(witness,\ \&witness2);}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00724\ \ \ \ \ \}}
+\DoxyCodeLine{00725\ }
+\DoxyCodeLine{00726\ \ \ \ \ \textcolor{keywordflow}{return}\ dist;}
+\DoxyCodeLine{00727\ \}}
+\DoxyCodeLine{00728\ }
+\DoxyCodeLine{00729\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ btConvexTemplate>}
+\DoxyCodeLine{00730\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ btFindPenetr(\textcolor{keyword}{const}\ btConvexTemplate\ \&a,\ \textcolor{keyword}{const}\ btConvexTemplate\ \&b,}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}\ \&colDesc,}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ *depth,\ btVector3\ *pdir,\ btVector3\ *pos)}
+\DoxyCodeLine{00734\ \{}
+\DoxyCodeLine{00735\ \ \ \ \ btVector3\ dir;}
+\DoxyCodeLine{00736\ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_support__t}{btMprSupport\_t}}\ v4;}
+\DoxyCodeLine{00737\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ iterations;}
+\DoxyCodeLine{00738\ }
+\DoxyCodeLine{00739\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}}\ =\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00740\ \ \ \ \ btVector3\ *origin\ =\ \&\mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}};}
+\DoxyCodeLine{00741\ }
+\DoxyCodeLine{00742\ \ \ \ \ iterations\ =\ 1UL;}
+\DoxyCodeLine{00743\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ BT\_MPR\_MAX\_ITERATIONS;\ i++)}
+\DoxyCodeLine{00744\ \ \ \ \ \textcolor{comment}{//while\ (1)}}
+\DoxyCodeLine{00745\ \ \ \ \ \{}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ compute\ portal\ direction\ and\ obtain\ next\ support\ point}}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ btPortalDir(portal,\ \&dir);}
+\DoxyCodeLine{00748\ }
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ btMprSupport(a,\ b,\ colDesc,\ dir,\ \&v4);}
+\DoxyCodeLine{00750\ }
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ reached\ tolerance\ -\/>\ find\ penetration\ info}}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (portalReachTolerance(portal,\ \&v4,\ \&dir)\ ||\ iterations\ ==\ BT\_MPR\_MAX\_ITERATIONS)}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ *depth\ =\ btMprVec3PointTriDist2(origin,\ \&btMprSimplexPoint(portal,\ 1)-\/>v,\ \&btMprSimplexPoint(portal,\ 2)-\/>v,\ \&btMprSimplexPoint(portal,\ 3)-\/>v,\ pdir);}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ *depth\ =\ BT\_MPR\_SQRT(*depth);}
+\DoxyCodeLine{00756\ }
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btMprIsZero((*pdir).x())\ \&\&\ btMprIsZero((*pdir).y())\ \&\&\ btMprIsZero((*pdir).z()))}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *pdir\ =\ dir;}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ btMprVec3Normalize(pdir);}
+\DoxyCodeLine{00762\ }
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ barycentric\ coordinates:}}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ btFindPos(portal,\ pos);}
+\DoxyCodeLine{00765\ }
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00768\ }
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ btExpandPortal(portal,\ \&v4);}
+\DoxyCodeLine{00770\ }
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ iterations++;}
+\DoxyCodeLine{00772\ \ \ \ \ \}}
+\DoxyCodeLine{00773\ \}}
+\DoxyCodeLine{00774\ }
+\DoxyCodeLine{00775\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ btFindPenetrTouch(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,\ \textcolor{keywordtype}{float}\ *depth,\ btVector3\ *dir,\ btVector3\ *pos)}
+\DoxyCodeLine{00776\ \{}
+\DoxyCodeLine{00777\ \ \ \ \ \textcolor{comment}{//\ Touching\ contact\ on\ portal's\ v1\ -\/\ so\ depth\ is\ zero\ and\ direction}}
+\DoxyCodeLine{00778\ \ \ \ \ \textcolor{comment}{//\ is\ unimportant\ and\ pos\ can\ be\ guessed}}
+\DoxyCodeLine{00779\ \ \ \ \ *depth\ =\ 0.f;}
+\DoxyCodeLine{00780\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}}\ =\ btVector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00781\ \ \ \ \ btVector3\ *origin\ =\ \&\mbox{\hyperlink{group__gtc__constants_ga788f5a421fc0f40a1296ebc094cbaa8a}{zero}};}
+\DoxyCodeLine{00782\ }
+\DoxyCodeLine{00783\ \ \ \ \ btMprVec3Copy(dir,\ origin);}
+\DoxyCodeLine{00784\ \textcolor{preprocessor}{\#ifdef\ MPR\_AVERAGE\_CONTACT\_POSITIONS}}
+\DoxyCodeLine{00785\ \ \ \ \ btMprVec3Copy(pos,\ \&btMprSimplexPoint(portal,\ 1)-\/>v1);}
+\DoxyCodeLine{00786\ \ \ \ \ btMprVec3Add(pos,\ \&btMprSimplexPoint(portal,\ 1)-\/>v2);}
+\DoxyCodeLine{00787\ \ \ \ \ btMprVec3Scale(pos,\ 0.5);}
+\DoxyCodeLine{00788\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00789\ \ \ \ \ btMprVec3Copy(pos,\ \&btMprSimplexPoint(portal,\ 1)-\/>v2);}
+\DoxyCodeLine{00790\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00791\ \}}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ btFindPenetrSegment(\mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ *portal,}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ *depth,\ btVector3\ *dir,\ btVector3\ *pos)}
+\DoxyCodeLine{00795\ \{}
+\DoxyCodeLine{00796\ \ \ \ \ \textcolor{comment}{//\ Origin\ lies\ on\ v0-\/v1\ segment.}}
+\DoxyCodeLine{00797\ \ \ \ \ \textcolor{comment}{//\ Depth\ is\ distance\ to\ v1,\ direction\ also\ and\ position\ must\ be}}
+\DoxyCodeLine{00798\ \ \ \ \ \textcolor{comment}{//\ computed}}
+\DoxyCodeLine{00799\ \textcolor{preprocessor}{\#ifdef\ MPR\_AVERAGE\_CONTACT\_POSITIONS}}
+\DoxyCodeLine{00800\ \ \ \ \ btMprVec3Copy(pos,\ \&btMprSimplexPoint(portal,\ 1)-\/>v1);}
+\DoxyCodeLine{00801\ \ \ \ \ btMprVec3Add(pos,\ \&btMprSimplexPoint(portal,\ 1)-\/>v2);}
+\DoxyCodeLine{00802\ \ \ \ \ btMprVec3Scale(pos,\ 0.5f);}
+\DoxyCodeLine{00803\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00804\ \ \ \ \ btMprVec3Copy(pos,\ \&btMprSimplexPoint(portal,\ 1)-\/>v2);}
+\DoxyCodeLine{00805\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//MPR\_AVERAGE\_CONTACT\_POSITIONS}}
+\DoxyCodeLine{00806\ }
+\DoxyCodeLine{00807\ \ \ \ \ btMprVec3Copy(dir,\ \&btMprSimplexPoint(portal,\ 1)-\/>v);}
+\DoxyCodeLine{00808\ \ \ \ \ *depth\ =\ BT\_MPR\_SQRT(btMprVec3Len2(dir));}
+\DoxyCodeLine{00809\ \ \ \ \ btMprVec3Normalize(dir);}
+\DoxyCodeLine{00810\ \}}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ btConvexTemplate>}
+\DoxyCodeLine{00813\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ btMprPenetration(\textcolor{keyword}{const}\ btConvexTemplate\ \&a,\ \textcolor{keyword}{const}\ btConvexTemplate\ \&b,}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}\ \&colDesc,}
+\DoxyCodeLine{00815\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ *depthOut,\ btVector3\ *dirOut,\ btVector3\ *posOut)}
+\DoxyCodeLine{00816\ \{}
+\DoxyCodeLine{00817\ \ \ \ \ \mbox{\hyperlink{struct__bt_mpr_simplex__t}{btMprSimplex\_t}}\ portal;}
+\DoxyCodeLine{00818\ }
+\DoxyCodeLine{00819\ \ \ \ \ \textcolor{comment}{//\ Phase\ 1:\ Portal\ discovery}}
+\DoxyCodeLine{00820\ \ \ \ \ \textcolor{keywordtype}{int}\ result\ =\ btDiscoverPortal(a,\ b,\ colDesc,\ \&portal);}
+\DoxyCodeLine{00821\ }
+\DoxyCodeLine{00822\ \ \ \ \ \textcolor{comment}{//sepAxis[pairIndex]\ =\ *pdir;//or\ -\/dir?}}
+\DoxyCodeLine{00823\ }
+\DoxyCodeLine{00824\ \ \ \ \ \textcolor{keywordflow}{switch}\ (result)}
+\DoxyCodeLine{00825\ \ \ \ \ \{}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Phase\ 2:\ Portal\ refinement}}
+\DoxyCodeLine{00829\ }
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ btRefinePortal(a,\ b,\ colDesc,\ \&portal);}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (result\ <\ 0)}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00833\ }
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Phase\ 3.\ Penetration\ info}}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \ \ \ \ btFindPenetr(a,\ b,\ colDesc,\ \&portal,\ depthOut,\ dirOut,\ posOut);}
+\DoxyCodeLine{00836\ }
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Touching\ contact\ on\ portal's\ v1.}}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ btFindPenetrTouch(\&portal,\ depthOut,\ dirOut,\ posOut);}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ 0;}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \ \ \ \ btFindPenetrSegment(\&portal,\ depthOut,\ dirOut,\ posOut);}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ 0;}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ (res\ <\ 0)}}
+\DoxyCodeLine{00855\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Origin\ isn't\ inside\ portal\ -\/\ no\ collision.}}
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ -\/1;}
+\DoxyCodeLine{00858\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00859\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00860\ \ \ \ \ \};}
+\DoxyCodeLine{00861\ }
+\DoxyCodeLine{00862\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00863\ \};}
+\DoxyCodeLine{00864\ }
+\DoxyCodeLine{00865\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ btConvexTemplate,\ \textcolor{keyword}{typename}\ btMprDistanceTemplate>}
+\DoxyCodeLine{00866\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ btComputeMprPenetration(\textcolor{keyword}{const}\ btConvexTemplate\ \&a,\ \textcolor{keyword}{const}\ btConvexTemplate\ \&b,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_mpr_collision_description}{btMprCollisionDescription}}\ \&colDesc,\ btMprDistanceTemplate\ *distInfo)}
+\DoxyCodeLine{00867\ \{}
+\DoxyCodeLine{00868\ \ \ \ \ btVector3\ dir,\ pos;}
+\DoxyCodeLine{00869\ \ \ \ \ \textcolor{keywordtype}{float}\ depth;}
+\DoxyCodeLine{00870\ }
+\DoxyCodeLine{00871\ \ \ \ \ \textcolor{keywordtype}{int}\ res\ =\ btMprPenetration(a,\ b,\ colDesc,\ \&depth,\ \&dir,\ \&pos);}
+\DoxyCodeLine{00872\ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ ==\ 0)}
+\DoxyCodeLine{00873\ \ \ \ \ \{}
+\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ distInfo-\/>m\_distance\ =\ -\/depth;}
+\DoxyCodeLine{00875\ \ \ \ \ \ \ \ \ distInfo-\/>m\_pointOnB\ =\ pos;}
+\DoxyCodeLine{00876\ \ \ \ \ \ \ \ \ distInfo-\/>m\_normalBtoA\ =\ -\/dir;}
+\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ distInfo-\/>m\_pointOnA\ =\ pos\ -\/\ distInfo-\/>m\_distance\ *\ dir;}
+\DoxyCodeLine{00878\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00879\ \ \ \ \ \}}
+\DoxyCodeLine{00880\ }
+\DoxyCodeLine{00881\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00882\ \}}
+\DoxyCodeLine{00883\ }
+\DoxyCodeLine{00884\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_MPR\_PENETRATION\_H}}
+
+\end{DoxyCode}

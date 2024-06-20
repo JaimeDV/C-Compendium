@@ -1,0 +1,92 @@
+\doxysection{Scene.\+hpp}
+\hypertarget{_scene_8hpp_source}{}\label{_scene_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Scene.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Scene.hpp}}
+\mbox{\hyperlink{_scene_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Render\_Node.hpp"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_body_8hpp}{Body.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}Light.hpp"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}SFML/Window.hpp"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_input_manager_8hpp}{InputManager.hpp}}"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_particle_system_8hpp}{ParticleSystem.hpp}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }ColisionChecker;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{class\ }InputManager;}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{class\ }Tank;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}}}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ vector<shared\_ptr<PhysicBody>>\ modelList;\ \ \textcolor{comment}{//\ Vector\ to\ hold\ all\ physical\ body\ models\ in\ the\ scene}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ shared\_ptr<Render\_Node>\ renderScene\ =\ make\_shared<Render\_Node>();\ \textcolor{comment}{//\ Render\ node\ for\ the\ scene}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ shared\_ptr<sf::Window>\ window;\ \ \textcolor{comment}{//\ Pointer\ to\ the\ SFML\ window}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ btVector3\ gravityForce;\ \textcolor{comment}{//\ Vector\ representing\ the\ force\ of\ gravity\ in\ the\ scene}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ btDiscreteDynamicsWorld\ worldReference;\ \ \textcolor{comment}{//\ Reference\ to\ the\ Bullet\ Physics\ world}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ btDefaultCollisionConfiguration\ collisionConfiguration;\ \ \textcolor{comment}{//\ Collision\ configuration\ for\ Bullet\ Physics}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ btCollisionDispatcher\ collisionDispatcher;\ \ \textcolor{comment}{//\ Collision\ dispatcher\ for\ Bullet\ Physics}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ btDbvtBroadphase\ overlappingPairCache;\ \ \textcolor{comment}{//\ Broadphase\ collision\ detection\ for\ Bullet\ Physics}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ btSequentialImpulseConstraintSolver\ constraintSolver;\ \ \textcolor{comment}{//\ Solver\ for\ physics\ constraints}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ shared\_ptr<ColisionChecker>\ colisionManager;\ \ \textcolor{comment}{//\ Collision\ checker\ for\ managing\ collisions}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ shared\_ptr<InputManager>\ inputManager;\ \ \textcolor{comment}{//\ Input\ manager\ for\ handling\ user\ input}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ shared\_ptr<Tank>\ mainPlayer;\ \ \textcolor{comment}{//\ Pointer\ to\ the\ main\ player\ object}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ vector<shared\_ptr<Message\_Dispacher>>\ messagers;\ \ \textcolor{comment}{//\ Vector\ to\ hold\ all\ message\ dispatchers\ in\ the\ scene}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ running\ =\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ Flag\ indicating\ whether\ the\ scene\ is\ running}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ sensitivity\ =\ 1.f;\ \ \textcolor{comment}{//\ Sensitivity\ value\ for\ input\ handling}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ shared\_ptr<ParticleSystem>\ particleSystem\ =\ \textcolor{keyword}{nullptr};\ \ \textcolor{comment}{//\ Pointer\ to\ the\ particle\ system\ in\ the\ scene}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_scene_a3d22c8ebceee0067d19d1c8115953d02}{Scene}}(\textcolor{keywordtype}{unsigned}\ width,\ \textcolor{keywordtype}{unsigned}\ height);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_ae018f85e4e176e5edc90d65d0e9060a6}{addModel}}(shared\_ptr<PhysicBody>\ model);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_a1c66f8cced3e8ad0d735fdd1ca115514}{Render}}();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_scene_a9625789fb0ebf00e2cca6d590718a4a1}{IsPhysicSphere}}(\textcolor{keyword}{const}\ std::shared\_ptr<PhysicBody>\&\ obj);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ shared\_ptr<Render\_Node>\ \mbox{\hyperlink{classmisi_1_1_scene_ac9e016d4d6f299c24581190da16c176b}{CreateScene}}();}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_a52e182eaf73a3a555e52571b790cb60b}{ConfigureScene}}(Render\_Node\&\ scene);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_a1f8707f5e2f1de45a680b888b7451421}{ResetViewport}}(\textcolor{keyword}{const}\ sf::Window\&\ window,\ Render\_Node\&\ scene);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_a33aaa2603884fc5b65cd414db71b65bf}{InstantiateWindow}}(\textcolor{keywordtype}{int}\ width,\ \textcolor{keywordtype}{int}\ height);}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_aaa795d347c973633ad5276f54f975524}{RemoveModel}}(shared\_ptr<PhysicBody>\ model);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_af3204b61555a065808a6b17951652f69}{AddInputManager}}(shared\_ptr<InputManager>\ inputer)}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ inputManager\ =\ inputer;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_a11bbfe06b95b56acfa36c6daba7c14f7}{MoveCamera}}(Render\_Node\&\ scene,\ glt::Vector3\ direction);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_a967cc157ab70c34ec7cad26ecceb33bf}{handle}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ message)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_ae2173319d84a568980480ff4bc81caa2}{SetSensitivity}}(\textcolor{keywordtype}{float}\ value)}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ sensitivity\ =\ value;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_a8823dac2f28d97d8f9e49296b09daadf}{AddModelListener}}(shared\_ptr<PhysicBody>\ listener);}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_ae2da3e4784ee64668dc239d41f8ab14d}{AddMeseenger}}(shared\_ptr<Message\_Dispacher>\ given\_m)}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ messagers.push\_back(given\_m);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_af5e332faa0b83c0beee5a4d20692807a}{AddMainPlayer}}(shared\_ptr<Tank>\ given\_player)}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ mainPlayer\ =\ given\_player;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_scene_ad232e7c3a6da481d81aaae2ef4439e6e}{AddParticleSystem}}(shared\_ptr<ParticleSystem>\ given\_particleSystem)}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ particleSystem\ =\ given\_particleSystem;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \};}
+\DoxyCodeLine{00128\ \}}
+
+\end{DoxyCode}

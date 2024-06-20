@@ -1,0 +1,215 @@
+\doxysection{b2\+\_\+broad\+\_\+phase.\+h}
+\hypertarget{b2__broad__phase_8h_source}{}\label{b2__broad__phase_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_broad\_phase.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_broad\_phase.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_BROAD\_PHASE\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_BROAD\_PHASE\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{b2__settings_8h}{b2\_settings.h}}"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{b2__collision_8h}{b2\_collision.h}}"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}b2\_dynamic\_tree.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_pair}{b2Pair}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ int32\ proxyIdA;}
+\DoxyCodeLine{00034\ \ \ \ \ int32\ proxyIdB;}
+\DoxyCodeLine{00035\ \};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_broad_phase}{b2BroadPhase}}}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00045\ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ e\_nullProxy\ =\ -\/1}
+\DoxyCodeLine{00047\ \ \ \ \ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{classb2_broad_phase}{b2BroadPhase}}();}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{classb2_broad_phase}{\string~b2BroadPhase}}();}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00054\ \ \ \ \ int32\ \mbox{\hyperlink{classb2_broad_phase_ae2f7af756bc55ece45221466c5af449c}{CreateProxy}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb,\ \textcolor{keywordtype}{void}*\ userData);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_broad_phase_a84f0fb227dc01a9b9baa55c7b8c68984}{DestroyProxy}}(int32\ proxyId);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_broad_phase_a01dc18a19c2b5d0cc1d9cd8c8554234c}{MoveProxy}}(int32\ proxyId,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ displacement);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_broad_phase_a67b296431ebbc7b44037f21d645d9166}{TouchProxy}}(int32\ proxyId);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ GetFatAABB(int32\ proxyId)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}*\ GetUserData(int32\ proxyId)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{bool}\ TestOverlap(int32\ proxyIdA,\ int32\ proxyIdB)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00076\ \ \ \ \ int32\ GetProxyCount()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{void}\ UpdatePairs(T*\ callback);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ Query(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ RayCast(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\&\ input)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00098\ \ \ \ \ int32\ GetTreeHeight()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00101\ \ \ \ \ int32\ GetTreeBalance()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{float}\ GetTreeQuality()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{void}\ ShiftOrigin(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ newOrigin);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_dynamic_tree}{b2DynamicTree}};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{void}\ BufferMove(int32\ proxyId);}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{void}\ UnBufferMove(int32\ proxyId);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{bool}\ QueryCallback(int32\ proxyId);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \mbox{\hyperlink{classb2_dynamic_tree}{b2DynamicTree}}\ m\_tree;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ int32\ m\_proxyCount;}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ int32*\ m\_moveBuffer;}
+\DoxyCodeLine{00125\ \ \ \ \ int32\ m\_moveCapacity;}
+\DoxyCodeLine{00126\ \ \ \ \ int32\ m\_moveCount;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \mbox{\hyperlink{structb2_pair}{b2Pair}}*\ m\_pairBuffer;}
+\DoxyCodeLine{00129\ \ \ \ \ int32\ m\_pairCapacity;}
+\DoxyCodeLine{00130\ \ \ \ \ int32\ m\_pairCount;}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ int32\ m\_queryProxyId;}
+\DoxyCodeLine{00133\ \};}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classb2_broad_phase_a3b85893e3cf18b43087cb96b0b9076d1}{b2BroadPhase::GetUserData}}(int32\ proxyId)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00136\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_aa8399f9440707780f267696098e8b920}{GetUserData}}(proxyId);}
+\DoxyCodeLine{00138\ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_broad_phase_a263cc21e2a3f1f892c20b048eca3cad6}{b2BroadPhase::TestOverlap}}(int32\ proxyIdA,\ int32\ proxyIdB)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00141\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabbA\ =\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a655b9ddff43e4e0a34a372eddc03ecb9}{GetFatAABB}}(proxyIdA);}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabbB\ =\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a655b9ddff43e4e0a34a372eddc03ecb9}{GetFatAABB}}(proxyIdB);}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{b2__collision_8h_a769992d82855399cf20721cd6b411fe7}{b2TestOverlap}}(aabbA,\ aabbB);}
+\DoxyCodeLine{00145\ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ \mbox{\hyperlink{classb2_broad_phase_af5c47c036ca67d44676ea3cec73ae3d8}{b2BroadPhase::GetFatAABB}}(int32\ proxyId)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00148\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a655b9ddff43e4e0a34a372eddc03ecb9}{GetFatAABB}}(proxyId);}
+\DoxyCodeLine{00150\ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{keyword}{inline}\ int32\ \mbox{\hyperlink{classb2_broad_phase_ab7a8c31223d8404b79f6c57e8fc69837}{b2BroadPhase::GetProxyCount}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00153\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_proxyCount;}
+\DoxyCodeLine{00155\ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{keyword}{inline}\ int32\ \mbox{\hyperlink{classb2_broad_phase_a868f95225d62c3ea79d231ed305253ea}{b2BroadPhase::GetTreeHeight}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00158\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_ae3c7dc771d596f1f95fd3a3d7f2f3e97}{GetHeight}}();}
+\DoxyCodeLine{00160\ \}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{keyword}{inline}\ int32\ \mbox{\hyperlink{classb2_broad_phase_a29612faf9f0191827440178629d5e887}{b2BroadPhase::GetTreeBalance}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00163\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a3feab170229e0acd17f6a4ad3fca406e}{GetMaxBalance}}();}
+\DoxyCodeLine{00165\ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_broad_phase_abd35a141e33777a6dd02c28004df7b95}{b2BroadPhase::GetTreeQuality}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00168\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a270c60a449c1cb2e1d0dd7bf2089e3fe}{GetAreaRatio}}();}
+\DoxyCodeLine{00170\ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00173\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_broad_phase_a0a1acd693466b997700242ae00784c20}{b2BroadPhase::UpdatePairs}}(T*\ callback)}
+\DoxyCodeLine{00174\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{//\ Reset\ pair\ buffer}}
+\DoxyCodeLine{00176\ \ \ \ \ m\_pairCount\ =\ 0;}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{comment}{//\ Perform\ tree\ queries\ for\ all\ moving\ proxies.}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{for}\ (int32\ i\ =\ 0;\ i\ <\ m\_moveCount;\ ++i)}
+\DoxyCodeLine{00180\ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ m\_queryProxyId\ =\ m\_moveBuffer[i];}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_queryProxyId\ ==\ e\_nullProxy)}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ We\ have\ to\ query\ the\ tree\ with\ the\ fat\ AABB\ so\ that}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ don't\ fail\ to\ create\ a\ pair\ that\ may\ touch\ later.}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ fatAABB\ =\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a655b9ddff43e4e0a34a372eddc03ecb9}{GetFatAABB}}(m\_queryProxyId);}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Query\ tree,\ create\ pairs\ and\ add\ them\ pair\ buffer.}}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a324df3eb65dfc22d3dcdca387737b193}{Query}}(\textcolor{keyword}{this},\ fatAABB);}
+\DoxyCodeLine{00193\ \ \ \ \ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{comment}{//\ Send\ pairs\ to\ caller}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordflow}{for}\ (int32\ i\ =\ 0;\ i\ <\ m\_pairCount;\ ++i)}
+\DoxyCodeLine{00197\ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb2_pair}{b2Pair}}*\ primaryPair\ =\ m\_pairBuffer\ +\ i;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ userDataA\ =\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_aa8399f9440707780f267696098e8b920}{GetUserData}}(primaryPair-\/>proxyIdA);}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ userDataB\ =\ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_aa8399f9440707780f267696098e8b920}{GetUserData}}(primaryPair-\/>proxyIdB);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ callback-\/>AddPair(userDataA,\ userDataB);}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{comment}{//\ Clear\ move\ flags}}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordflow}{for}\ (int32\ i\ =\ 0;\ i\ <\ m\_moveCount;\ ++i)}
+\DoxyCodeLine{00207\ \ \ \ \ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ int32\ proxyId\ =\ m\_moveBuffer[i];}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (proxyId\ ==\ e\_nullProxy)}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ m\_tree.ClearMoved(proxyId);}
+\DoxyCodeLine{00215\ \ \ \ \ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{comment}{//\ Reset\ move\ buffer}}
+\DoxyCodeLine{00218\ \ \ \ \ m\_moveCount\ =\ 0;}
+\DoxyCodeLine{00219\ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00222\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_broad_phase_a187586ea98b9d16e5ef6e12fa31f8de2}{b2BroadPhase::Query}}(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00223\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00224\ \ \ \ \ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_a324df3eb65dfc22d3dcdca387737b193}{Query}}(callback,\ aabb);}
+\DoxyCodeLine{00225\ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00228\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_broad_phase_ae65392ea91c7d0839ed5312f78b2837a}{b2BroadPhase::RayCast}}(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\&\ input)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00229\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00230\ \ \ \ \ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_aebd2dc6ee462e0cd0763a5f472243a13}{RayCast}}(callback,\ input);}
+\DoxyCodeLine{00231\ \}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_broad_phase_a410e6115e3d1b4fca61cfbf397767772}{b2BroadPhase::ShiftOrigin}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ newOrigin)}
+\DoxyCodeLine{00234\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ m\_tree.\mbox{\hyperlink{classb2_dynamic_tree_af37ddfed6a5da97d5a78b09918d19ceb}{ShiftOrigin}}(newOrigin);}
+\DoxyCodeLine{00236\ \}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

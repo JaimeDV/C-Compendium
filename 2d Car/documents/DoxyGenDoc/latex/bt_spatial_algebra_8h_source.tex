@@ -1,0 +1,393 @@
+\doxysection{bt\+Spatial\+Algebra.\+h}
+\hypertarget{bt_spatial_algebra_8h_source}{}\label{bt_spatial_algebra_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btSpatialAlgebra.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btSpatialAlgebra.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2015\ Erwin\ Coumans,\ Jakub\ Stepien}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00007\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00009\ \textcolor{comment}{}}
+\DoxyCodeLine{00010\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifndef\ BT\_SPATIAL\_ALGEBRA\_H}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ BT\_SPATIAL\_ALGEBRA\_H}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}btMatrix3x3.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ btVector3\ m\_topVec,\ m\_bottomVec;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}()\ \{\ setZero();\ \}}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}(\textcolor{keyword}{const}\ btVector3\ \&angular,\ \textcolor{keyword}{const}\ btVector3\ \&linear)\ :\ m\_topVec(linear),\ m\_bottomVec(angular)\ \{\}}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}(\textcolor{keyword}{const}\ btScalar\ \&ax,\ \textcolor{keyword}{const}\ btScalar\ \&ay,\ \textcolor{keyword}{const}\ btScalar\ \&az,\ \textcolor{keyword}{const}\ btScalar\ \&lx,\ \textcolor{keyword}{const}\ btScalar\ \&ly,\ \textcolor{keyword}{const}\ btScalar\ \&lz)}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ setValue(ax,\ ay,\ az,\ lx,\ ly,\ lz);}
+\DoxyCodeLine{00032\ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ setVector(\textcolor{keyword}{const}\ btVector3\ \&angular,\ \textcolor{keyword}{const}\ btVector3\ \&linear)}
+\DoxyCodeLine{00035\ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ m\_topVec\ =\ linear;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ m\_bottomVec\ =\ angular;}
+\DoxyCodeLine{00038\ \ \ \ \ \}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ setValue(\textcolor{keyword}{const}\ btScalar\ \&ax,\ \textcolor{keyword}{const}\ btScalar\ \&ay,\ \textcolor{keyword}{const}\ btScalar\ \&az,\ \textcolor{keyword}{const}\ btScalar\ \&lx,\ \textcolor{keyword}{const}\ btScalar\ \&ly,\ \textcolor{keyword}{const}\ btScalar\ \&lz)}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ m\_bottomVec.setValue(ax,\ ay,\ az);}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ m\_topVec.setValue(lx,\ ly,\ lz);}
+\DoxyCodeLine{00043\ \ \ \ \ \}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ addVector(\textcolor{keyword}{const}\ btVector3\ \&angular,\ \textcolor{keyword}{const}\ btVector3\ \&linear)}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ m\_topVec\ +=\ linear;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ m\_bottomVec\ +=\ angular;}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ addValue(\textcolor{keyword}{const}\ btScalar\ \&ax,\ \textcolor{keyword}{const}\ btScalar\ \&ay,\ \textcolor{keyword}{const}\ btScalar\ \&az,\ \textcolor{keyword}{const}\ btScalar\ \&lx,\ \textcolor{keyword}{const}\ btScalar\ \&ly,\ \textcolor{keyword}{const}\ btScalar\ \&lz)}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ m\_bottomVec[0]\ +=\ ax;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ m\_bottomVec[1]\ +=\ ay;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ m\_bottomVec[2]\ +=\ az;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ m\_topVec[0]\ +=\ lx;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ m\_topVec[1]\ +=\ ly;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ m\_topVec[2]\ +=\ lz;}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&getLinear()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_topVec;\ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&getAngular()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_bottomVec;\ \}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ setLinear(\textcolor{keyword}{const}\ btVector3\ \&linear)\ \{\ m\_topVec\ =\ linear;\ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ setAngular(\textcolor{keyword}{const}\ btVector3\ \&angular)\ \{\ m\_bottomVec\ =\ angular;\ \}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ addAngular(\textcolor{keyword}{const}\ btVector3\ \&angular)\ \{\ m\_bottomVec\ +=\ angular;\ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ addLinear(\textcolor{keyword}{const}\ btVector3\ \&linear)\ \{\ m\_topVec\ +=\ linear;\ \}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ setZero()}
+\DoxyCodeLine{00070\ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ m\_topVec.setZero();}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ m\_bottomVec.setZero();}
+\DoxyCodeLine{00073\ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ \&operator+=(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ \&vec)}
+\DoxyCodeLine{00076\ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ m\_topVec\ +=\ vec.m\_topVec;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ m\_bottomVec\ +=\ vec.m\_bottomVec;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ \&operator-\/=(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ \&vec)}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ m\_topVec\ -\/=\ vec.m\_topVec;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ m\_bottomVec\ -\/=\ vec.m\_bottomVec;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00086\ \ \ \ \ \}}
+\DoxyCodeLine{00087\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ operator-\/(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ \&vec)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}(m\_bottomVec\ -\/\ vec.m\_bottomVec,\ m\_topVec\ -\/\ vec.m\_topVec);\ \}}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ operator+(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ \&vec)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}(m\_bottomVec\ +\ vec.m\_bottomVec,\ m\_topVec\ +\ vec.m\_topVec);\ \}}
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ operator-\/()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}(-\/m\_bottomVec,\ -\/m\_topVec);\ \}}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ operator*(\textcolor{keyword}{const}\ btScalar\ \&s)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}(s\ *\ m\_bottomVec,\ s\ *\ m\_topVec);\ \}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//btSpatialForceVector\ \&\ operator\ =\ (const\ btSpatialForceVector\ \&vec)\ \{\ m\_topVec\ =\ vec.m\_topVec;\ m\_bottomVec\ =\ vec.m\_bottomVec;\ return\ *this;\ \}}}
+\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}}
+\DoxyCodeLine{00095\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ btVector3\ m\_topVec,\ m\_bottomVec;}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00098\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}()\ \{\ setZero();\ \}}
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}(\textcolor{keyword}{const}\ btVector3\ \&angular,\ \textcolor{keyword}{const}\ btVector3\ \&linear)\ :\ m\_topVec(angular),\ m\_bottomVec(linear)\ \{\}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{void}\ setVector(\textcolor{keyword}{const}\ btVector3\ \&angular,\ \textcolor{keyword}{const}\ btVector3\ \&linear)}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ m\_topVec\ =\ angular;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ m\_bottomVec\ =\ linear;}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ setValue(\textcolor{keyword}{const}\ btScalar\ \&ax,\ \textcolor{keyword}{const}\ btScalar\ \&ay,\ \textcolor{keyword}{const}\ btScalar\ \&az,\ \textcolor{keyword}{const}\ btScalar\ \&lx,\ \textcolor{keyword}{const}\ btScalar\ \&ly,\ \textcolor{keyword}{const}\ btScalar\ \&lz)}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ m\_topVec.setValue(ax,\ ay,\ az);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ m\_bottomVec.setValue(lx,\ ly,\ lz);}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{void}\ addVector(\textcolor{keyword}{const}\ btVector3\ \&angular,\ \textcolor{keyword}{const}\ btVector3\ \&linear)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ m\_topVec\ +=\ linear;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ m\_bottomVec\ +=\ angular;}
+\DoxyCodeLine{00116\ \ \ \ \ \}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{void}\ addValue(\textcolor{keyword}{const}\ btScalar\ \&ax,\ \textcolor{keyword}{const}\ btScalar\ \&ay,\ \textcolor{keyword}{const}\ btScalar\ \&az,\ \textcolor{keyword}{const}\ btScalar\ \&lx,\ \textcolor{keyword}{const}\ btScalar\ \&ly,\ \textcolor{keyword}{const}\ btScalar\ \&lz)}
+\DoxyCodeLine{00118\ \ \ \ \ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ m\_topVec[0]\ +=\ ax;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ m\_topVec[1]\ +=\ ay;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ m\_topVec[2]\ +=\ az;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ m\_bottomVec[0]\ +=\ lx;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ m\_bottomVec[1]\ +=\ ly;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ m\_bottomVec[2]\ +=\ lz;}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&getAngular()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_topVec;\ \}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&getLinear()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_bottomVec;\ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ setAngular(\textcolor{keyword}{const}\ btVector3\ \&angular)\ \{\ m\_topVec\ =\ angular;\ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{void}\ setLinear(\textcolor{keyword}{const}\ btVector3\ \&linear)\ \{\ m\_bottomVec\ =\ linear;\ \}}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{void}\ addAngular(\textcolor{keyword}{const}\ btVector3\ \&angular)\ \{\ m\_topVec\ +=\ angular;\ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ addLinear(\textcolor{keyword}{const}\ btVector3\ \&linear)\ \{\ m\_bottomVec\ +=\ linear;\ \}}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ setZero()}
+\DoxyCodeLine{00137\ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ m\_topVec.setZero();}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ m\_bottomVec.setZero();}
+\DoxyCodeLine{00140\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00142\ \ \ \ \ btScalar\ dot(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ \&b)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00143\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_bottomVec.dot(b.m\_topVec)\ +\ m\_topVec.dot(b.m\_bottomVec);}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{void}\ cross(\textcolor{keyword}{const}\ SpatialVectorType\ \&b,\ SpatialVectorType\ \&out)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00149\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ out.m\_topVec\ =\ m\_topVec.cross(b.m\_topVec);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ out.m\_bottomVec\ =\ m\_bottomVec.cross(b.m\_topVec)\ +\ m\_topVec.cross(b.m\_bottomVec);}
+\DoxyCodeLine{00152\ \ \ \ \ \}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00154\ \ \ \ \ SpatialVectorType\ cross(\textcolor{keyword}{const}\ SpatialVectorType\ \&b)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00155\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ SpatialVectorType\ out;}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ out.m\_topVec\ =\ m\_topVec.cross(b.m\_topVec);}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ out.m\_bottomVec\ =\ m\_bottomVec.cross(b.m\_topVec)\ +\ m\_topVec.cross(b.m\_bottomVec);}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00162\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&operator+=(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&vec)}
+\DoxyCodeLine{00163\ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ m\_topVec\ +=\ vec.m\_topVec;}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ m\_bottomVec\ +=\ vec.m\_bottomVec;}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00167\ \ \ \ \ \}}
+\DoxyCodeLine{00168\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&operator-\/=(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&vec)}
+\DoxyCodeLine{00169\ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ m\_topVec\ -\/=\ vec.m\_topVec;}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ m\_bottomVec\ -\/=\ vec.m\_bottomVec;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00173\ \ \ \ \ \}}
+\DoxyCodeLine{00174\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&operator*=(\textcolor{keyword}{const}\ btScalar\ \&s)}
+\DoxyCodeLine{00175\ \ \ \ \ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ m\_topVec\ *=\ s;}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ m\_bottomVec\ *=\ s;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00179\ \ \ \ \ \}}
+\DoxyCodeLine{00180\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ operator-\/(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&vec)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}(m\_topVec\ -\/\ vec.m\_topVec,\ m\_bottomVec\ -\/\ vec.m\_bottomVec);\ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ operator+(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&vec)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}(m\_topVec\ +\ vec.m\_topVec,\ m\_bottomVec\ +\ vec.m\_bottomVec);\ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ operator-\/()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}(-\/m\_topVec,\ -\/m\_bottomVec);\ \}}
+\DoxyCodeLine{00183\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ operator*(\textcolor{keyword}{const}\ btScalar\ \&s)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}(s\ *\ m\_topVec,\ s\ *\ m\_bottomVec);\ \}}
+\DoxyCodeLine{00184\ \};}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}}
+\DoxyCodeLine{00187\ \{}
+\DoxyCodeLine{00188\ \ \ \ \ btMatrix3x3\ m\_topLeftMat,\ m\_topRightMat,\ m\_bottomLeftMat;}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00190\ \ \ \ \ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}()\ \{\ setIdentity();\ \}}
+\DoxyCodeLine{00191\ \ \ \ \ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}(\textcolor{keyword}{const}\ btMatrix3x3\ \&topLeftMat,\ \textcolor{keyword}{const}\ btMatrix3x3\ \&topRightMat,\ \textcolor{keyword}{const}\ btMatrix3x3\ \&bottomLeftMat)\ \{\ setMatrix(topLeftMat,\ topRightMat,\ bottomLeftMat);\ \}}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{void}\ setMatrix(\textcolor{keyword}{const}\ btMatrix3x3\ \&topLeftMat,\ \textcolor{keyword}{const}\ btMatrix3x3\ \&topRightMat,\ \textcolor{keyword}{const}\ btMatrix3x3\ \&bottomLeftMat)}
+\DoxyCodeLine{00194\ \ \ \ \ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ m\_topLeftMat\ =\ topLeftMat;}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ m\_topRightMat\ =\ topRightMat;}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ m\_bottomLeftMat\ =\ bottomLeftMat;}
+\DoxyCodeLine{00198\ \ \ \ \ \}}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{void}\ addMatrix(\textcolor{keyword}{const}\ btMatrix3x3\ \&topLeftMat,\ \textcolor{keyword}{const}\ btMatrix3x3\ \&topRightMat,\ \textcolor{keyword}{const}\ btMatrix3x3\ \&bottomLeftMat)}
+\DoxyCodeLine{00201\ \ \ \ \ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ m\_topLeftMat\ +=\ topLeftMat;}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ m\_topRightMat\ +=\ topRightMat;}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ m\_bottomLeftMat\ +=\ bottomLeftMat;}
+\DoxyCodeLine{00205\ \ \ \ \ \}}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{void}\ setIdentity()}
+\DoxyCodeLine{00208\ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ m\_topLeftMat.setIdentity();}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ m\_topRightMat.setIdentity();}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ m\_bottomLeftMat.setIdentity();}
+\DoxyCodeLine{00212\ \ \ \ \ \}}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00214\ \ \ \ \ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}\ \&operator-\/=(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}\ \&mat)}
+\DoxyCodeLine{00215\ \ \ \ \ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ m\_topLeftMat\ -\/=\ mat.m\_topLeftMat;}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ m\_topRightMat\ -\/=\ mat.m\_topRightMat;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ m\_bottomLeftMat\ -\/=\ mat.m\_bottomLeftMat;}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00222\ \ \ \ \ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}\ operator*(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_spatial_motion_vector}{btSpatialMotionVector}}\ \&vec)}
+\DoxyCodeLine{00223\ \ \ \ \ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structbt_spatial_force_vector}{btSpatialForceVector}}(m\_bottomLeftMat\ *\ vec.m\_topVec\ +\ m\_topLeftMat.transpose()\ *\ vec.m\_bottomVec,\ m\_topLeftMat\ *\ vec.m\_topVec\ +\ m\_topRightMat\ *\ vec.m\_bottomVec);}
+\DoxyCodeLine{00225\ \ \ \ \ \}}
+\DoxyCodeLine{00226\ \};}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_spatial_transformation_matrix}{btSpatialTransformationMatrix}}}
+\DoxyCodeLine{00229\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ btMatrix3x3\ m\_rotMat;\ \ \textcolor{comment}{//btMatrix3x3\ m\_trnCrossMat;}}
+\DoxyCodeLine{00231\ \ \ \ \ btVector3\ m\_trnVec;}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keyword}{enum}\ eOutputOperation}
+\DoxyCodeLine{00234\ \ \ \ \ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ None\ =\ 0,}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ Add\ =\ 1,}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ Subtract\ =\ 2}
+\DoxyCodeLine{00238\ \ \ \ \ \};}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordtype}{void}\ transform(\textcolor{keyword}{const}\ SpatialVectorType\ \&inVec,}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialVectorType\ \&outVec,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eOutputOperation\ outOp\ =\ None)}
+\DoxyCodeLine{00244\ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outOp\ ==\ None)}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ =\ m\_rotMat\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ =\ -\/m\_trnVec.cross(outVec.m\_topVec)\ +\ m\_rotMat\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Add)}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ +=\ m\_rotMat\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ +=\ -\/m\_trnVec.cross(outVec.m\_topVec)\ +\ m\_rotMat\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Subtract)}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ -\/=\ m\_rotMat\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ -\/=\ -\/m\_trnVec.cross(outVec.m\_topVec)\ +\ m\_rotMat\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00260\ \ \ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keywordtype}{void}\ transformRotationOnly(\textcolor{keyword}{const}\ SpatialVectorType\ \&inVec,}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialVectorType\ \&outVec,}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eOutputOperation\ outOp\ =\ None)}
+\DoxyCodeLine{00266\ \ \ \ \ \{}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outOp\ ==\ None)}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ =\ m\_rotMat\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ =\ m\_rotMat\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Add)}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ +=\ m\_rotMat\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ +=\ m\_rotMat\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Subtract)}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ -\/=\ m\_rotMat\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ -\/=\ m\_rotMat\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00282\ \ \ \ \ \}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordtype}{void}\ transformInverse(\textcolor{keyword}{const}\ SpatialVectorType\ \&inVec,}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialVectorType\ \&outVec,}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eOutputOperation\ outOp\ =\ None)}
+\DoxyCodeLine{00288\ \ \ \ \ \{}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outOp\ ==\ None)}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ =\ m\_rotMat.transpose()\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ =\ m\_rotMat.transpose()\ *\ (inVec.m\_bottomVec\ +\ m\_trnVec.cross(inVec.m\_topVec));}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Add)}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ +=\ m\_rotMat.transpose()\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ +=\ m\_rotMat.transpose()\ *\ (inVec.m\_bottomVec\ +\ m\_trnVec.cross(inVec.m\_topVec));}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Subtract)}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ -\/=\ m\_rotMat.transpose()\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ -\/=\ m\_rotMat.transpose()\ *\ (inVec.m\_bottomVec\ +\ m\_trnVec.cross(inVec.m\_topVec));}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00304\ \ \ \ \ \}}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordtype}{void}\ transformInverseRotationOnly(\textcolor{keyword}{const}\ SpatialVectorType\ \&inVec,}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialVectorType\ \&outVec,}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eOutputOperation\ outOp\ =\ None)}
+\DoxyCodeLine{00310\ \ \ \ \ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outOp\ ==\ None)}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ =\ m\_rotMat.transpose()\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ =\ m\_rotMat.transpose()\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Add)}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ +=\ m\_rotMat.transpose()\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ +=\ m\_rotMat.transpose()\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Subtract)}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_topVec\ -\/=\ m\_rotMat.transpose()\ *\ inVec.m\_topVec;}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ outVec.m\_bottomVec\ -\/=\ m\_rotMat.transpose()\ *\ inVec.m\_bottomVec;}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00326\ \ \ \ \ \}}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keywordtype}{void}\ transformInverse(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}\ \&inMat,}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}\ \&outMat,}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eOutputOperation\ outOp\ =\ None)}
+\DoxyCodeLine{00331\ \ \ \ \ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\ r\_cross(0,\ -\/m\_trnVec[2],\ m\_trnVec[1],}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_trnVec[2],\ 0,\ -\/m\_trnVec[0],}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/m\_trnVec[1],\ m\_trnVec[0],\ 0);}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outOp\ ==\ None)}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_topLeftMat\ =\ m\_rotMat.transpose()\ *\ (inMat.m\_topLeftMat\ -\/\ inMat.m\_topRightMat\ *\ r\_cross)\ *\ m\_rotMat;}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_topRightMat\ =\ m\_rotMat.transpose()\ *\ inMat.m\_topRightMat\ *\ m\_rotMat;}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_bottomLeftMat\ =\ m\_rotMat.transpose()\ *\ (r\_cross\ *\ (inMat.m\_topLeftMat\ -\/\ inMat.m\_topRightMat\ *\ r\_cross)\ +\ inMat.m\_bottomLeftMat\ -\/\ inMat.m\_topLeftMat.transpose()\ *\ r\_cross)\ *\ m\_rotMat;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Add)}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_topLeftMat\ +=\ m\_rotMat.transpose()\ *\ (inMat.m\_topLeftMat\ -\/\ inMat.m\_topRightMat\ *\ r\_cross)\ *\ m\_rotMat;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_topRightMat\ +=\ m\_rotMat.transpose()\ *\ inMat.m\_topRightMat\ *\ m\_rotMat;}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_bottomLeftMat\ +=\ m\_rotMat.transpose()\ *\ (r\_cross\ *\ (inMat.m\_topLeftMat\ -\/\ inMat.m\_topRightMat\ *\ r\_cross)\ +\ inMat.m\_bottomLeftMat\ -\/\ inMat.m\_topLeftMat.transpose()\ *\ r\_cross)\ *\ m\_rotMat;}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (outOp\ ==\ Subtract)}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_topLeftMat\ -\/=\ m\_rotMat.transpose()\ *\ (inMat.m\_topLeftMat\ -\/\ inMat.m\_topRightMat\ *\ r\_cross)\ *\ m\_rotMat;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_topRightMat\ -\/=\ m\_rotMat.transpose()\ *\ inMat.m\_topRightMat\ *\ m\_rotMat;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ outMat.m\_bottomLeftMat\ -\/=\ m\_rotMat.transpose()\ *\ (r\_cross\ *\ (inMat.m\_topLeftMat\ -\/\ inMat.m\_topRightMat\ *\ r\_cross)\ +\ inMat.m\_bottomLeftMat\ -\/\ inMat.m\_topLeftMat.transpose()\ *\ r\_cross)\ *\ m\_rotMat;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00354\ \ \ \ \ \}}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00357\ \ \ \ \ SpatialVectorType\ operator*(\textcolor{keyword}{const}\ SpatialVectorType\ \&vec)}
+\DoxyCodeLine{00358\ \ \ \ \ \{}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ SpatialVectorType\ out;}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ transform(vec,\ out);}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00362\ \ \ \ \ \}}
+\DoxyCodeLine{00363\ \};}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00366\ \textcolor{keywordtype}{void}\ symmetricSpatialOuterProduct(\textcolor{keyword}{const}\ SpatialVectorType\ \&a,\ \textcolor{keyword}{const}\ SpatialVectorType\ \&b,\ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}\ \&out)}
+\DoxyCodeLine{00367\ \{}
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{comment}{//output\ op\ maybe?}}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \ \ \ \ out.m\_topLeftMat\ =\ outerProduct(a.m\_topVec,\ b.m\_bottomVec);}
+\DoxyCodeLine{00371\ \ \ \ \ out.m\_topRightMat\ =\ outerProduct(a.m\_topVec,\ b.m\_topVec);}
+\DoxyCodeLine{00372\ \ \ \ \ out.m\_topLeftMat\ =\ outerProduct(a.m\_bottomVec,\ b.m\_bottomVec);}
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{comment}{//maybe\ simple\ a*spatTranspose(a)\ would\ be\ nicer?}}
+\DoxyCodeLine{00374\ \}}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ SpatialVectorType>}
+\DoxyCodeLine{00377\ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}\ symmetricSpatialOuterProduct(\textcolor{keyword}{const}\ SpatialVectorType\ \&a,\ \textcolor{keyword}{const}\ SpatialVectorType\ \&b)}
+\DoxyCodeLine{00378\ \{}
+\DoxyCodeLine{00379\ \ \ \ \ \mbox{\hyperlink{structbt_symmetric_spatial_dyad}{btSymmetricSpatialDyad}}\ out;}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ \ \ out.m\_topLeftMat\ =\ outerProduct(a.m\_topVec,\ b.m\_bottomVec);}
+\DoxyCodeLine{00382\ \ \ \ \ out.m\_topRightMat\ =\ outerProduct(a.m\_topVec,\ b.m\_topVec);}
+\DoxyCodeLine{00383\ \ \ \ \ out.m\_bottomLeftMat\ =\ outerProduct(a.m\_bottomVec,\ b.m\_bottomVec);}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{00386\ \ \ \ \ \textcolor{comment}{//maybe\ simple\ a*spatTranspose(a)\ would\ be\ nicer?}}
+\DoxyCodeLine{00387\ \}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SPATIAL\_ALGEBRA\_H}}
+
+\end{DoxyCode}

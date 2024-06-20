@@ -1,0 +1,148 @@
+\doxysection{b3\+Gpu\+Sap\+Broadphase.\+h}
+\hypertarget{b3_gpu_sap_broadphase_8h_source}{}\label{b3_gpu_sap_broadphase_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/BroadphaseCollision/b3GpuSapBroadphase.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/BroadphaseCollision/b3GpuSapBroadphase.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ B3\_GPU\_SAP\_BROADPHASE\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ B3\_GPU\_SAP\_BROADPHASE\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3FillCL.h"{}}\ \ \textcolor{comment}{//b3Int2}}
+\DoxyCodeLine{00006\ \textcolor{keyword}{class\ }b3Vector3;}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}b3SapAabb.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/shared/b3Int2.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}b3GpuBroadphaseInterface.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_gpu_sap_broadphase}{b3GpuSapBroadphase}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ cl\_context\ m\_context;}
+\DoxyCodeLine{00017\ \ \ \ \ cl\_device\_id\ m\_device;}
+\DoxyCodeLine{00018\ \ \ \ \ cl\_command\_queue\ m\_queue;}
+\DoxyCodeLine{00019\ \ \ \ \ cl\_kernel\ m\_flipFloatKernel;}
+\DoxyCodeLine{00020\ \ \ \ \ cl\_kernel\ m\_scatterKernel;}
+\DoxyCodeLine{00021\ \ \ \ \ cl\_kernel\ m\_copyAabbsKernel;}
+\DoxyCodeLine{00022\ \ \ \ \ cl\_kernel\ m\_sapKernel;}
+\DoxyCodeLine{00023\ \ \ \ \ cl\_kernel\ m\_sap2Kernel;}
+\DoxyCodeLine{00024\ \ \ \ \ cl\_kernel\ m\_prepareSumVarianceKernel;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_radix_sort32_c_l}{b3RadixSort32CL}}*\ m\_sorter;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3SortData>}}\ m\_sortedAxisCPU[3][2];}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3UnsignedInt2>}}\ m\_objectMinMaxIndexCPU[3][2];}
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3UnsignedInt2>}}\ m\_objectMinMaxIndexGPUaxis0;}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3UnsignedInt2>}}\ m\_objectMinMaxIndexGPUaxis1;}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3UnsignedInt2>}}\ m\_objectMinMaxIndexGPUaxis2;}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3UnsignedInt2>}}\ m\_objectMinMaxIndexGPUaxis0prev;}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3UnsignedInt2>}}\ m\_objectMinMaxIndexGPUaxis1prev;}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3UnsignedInt2>}}\ m\_objectMinMaxIndexGPUaxis2prev;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_sortedAxisGPU0;}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_sortedAxisGPU1;}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_sortedAxisGPU2;}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_sortedAxisGPU0prev;}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_sortedAxisGPU1prev;}
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_sortedAxisGPU2prev;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Int4>}}\ m\_addedHostPairsGPU;}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Int4>}}\ m\_removedHostPairsGPU;}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_addedCountGPU;}
+\DoxyCodeLine{00048\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_removedCountGPU;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_currentBuffer;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_pairCount;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SapAabb>}}\ m\_allAabbsGPU;}
+\DoxyCodeLine{00056\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3SapAabb>}}\ m\_allAabbsCPU;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SapAabb>}}\&\ getAllAabbsGPU()}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_allAabbsGPU;}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3SapAabb>}}\&\ getAllAabbsCPU()}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_allAabbsCPU;}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Vector3>}}\ m\_sum;}
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Vector3>}}\ m\_sum2;}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Vector3>}}\ m\_dst;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_smallAabbsMappingGPU;}
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_smallAabbsMappingCPU;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_largeAabbsMappingGPU;}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_largeAabbsMappingCPU;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Int4>}}\ m\_overlappingPairs;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//temporary\ gpu\ work\ memory}}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_gpuSmallSortData;}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SapAabb>}}\ m\_gpuSmallSortedAabbs;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_prefix_scan_float4_c_l}{b3PrefixScanFloat4CL}}*\ m\_prefixScanFloat4;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{enum}\ b3GpuSapKernelType}
+\DoxyCodeLine{00086\ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ B3\_GPU\_SAP\_KERNEL\_BRUTE\_FORCE\_CPU\ =\ 1,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ B3\_GPU\_SAP\_KERNEL\_BRUTE\_FORCE\_GPU,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ B3\_GPU\_SAP\_KERNEL\_ORIGINAL,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ B3\_GPU\_SAP\_KERNEL\_BARRIER,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ B3\_GPU\_SAP\_KERNEL\_LOCAL\_SHARED\_MEMORY}
+\DoxyCodeLine{00092\ \ \ \ \ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \mbox{\hyperlink{classb3_gpu_sap_broadphase}{b3GpuSapBroadphase}}(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q,\ b3GpuSapKernelType\ kernelType\ =\ B3\_GPU\_SAP\_KERNEL\_LOCAL\_SHARED\_MEMORY);}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_gpu_sap_broadphase}{\string~b3GpuSapBroadphase}}();}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}*\ CreateFuncBruteForceCpu(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q)}
+\DoxyCodeLine{00098\ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classb3_gpu_sap_broadphase}{b3GpuSapBroadphase}}(ctx,\ device,\ q,\ B3\_GPU\_SAP\_KERNEL\_BRUTE\_FORCE\_CPU);}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}*\ CreateFuncBruteForceGpu(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q)}
+\DoxyCodeLine{00103\ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classb3_gpu_sap_broadphase}{b3GpuSapBroadphase}}(ctx,\ device,\ q,\ B3\_GPU\_SAP\_KERNEL\_BRUTE\_FORCE\_GPU);}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}*\ CreateFuncOriginal(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q)}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classb3_gpu_sap_broadphase}{b3GpuSapBroadphase}}(ctx,\ device,\ q,\ B3\_GPU\_SAP\_KERNEL\_ORIGINAL);}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}*\ CreateFuncBarrier(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q)}
+\DoxyCodeLine{00112\ \ \ \ \ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classb3_gpu_sap_broadphase}{b3GpuSapBroadphase}}(ctx,\ device,\ q,\ B3\_GPU\_SAP\_KERNEL\_BARRIER);}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}*\ CreateFuncLocalMemory(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q)}
+\DoxyCodeLine{00116\ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classb3_gpu_sap_broadphase}{b3GpuSapBroadphase}}(ctx,\ device,\ q,\ B3\_GPU\_SAP\_KERNEL\_LOCAL\_SHARED\_MEMORY);}
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateOverlappingPairs(\textcolor{keywordtype}{int}\ maxPairs);}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateOverlappingPairsHost(\textcolor{keywordtype}{int}\ maxPairs);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{void}\ init3dSap();}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateOverlappingPairsHostIncremental3Sap();}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ createProxy(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask);}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ createLargeProxy(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{comment}{//call\ writeAabbsToGpu\ after\ done\ making\ all\ changes\ (createProxy\ etc)}}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ writeAabbsToGpu();}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{virtual}\ cl\_mem\ getAabbBufferWS();}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumOverlap();}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{virtual}\ cl\_mem\ getOverlappingPairBuffer();}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Int4>}}\&\ getOverlappingPairsGPU();}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\&\ getSmallAabbIndicesGPU();}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\&\ getLargeAabbIndicesGPU();}
+\DoxyCodeLine{00141\ \};}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_GPU\_SAP\_BROADPHASE\_H}}
+
+\end{DoxyCode}

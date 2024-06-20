@@ -1,0 +1,236 @@
+\doxysection{bt\+Triangle\+Info\+Map.\+h}
+\hypertarget{bt_triangle_info_map_8h_source}{}\label{bt_triangle_info_map_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleInfoMap.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btTriangleInfoMap.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2010\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ \_BT\_TRIANGLE\_INFO\_MAP\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ \_BT\_TRIANGLE\_INFO\_MAP\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btHashMap.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSerializer.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ TRI\_INFO\_V0V1\_CONVEX\ 1}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ TRI\_INFO\_V1V2\_CONVEX\ 2}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ TRI\_INFO\_V2V0\_CONVEX\ 4}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ TRI\_INFO\_V0V1\_SWAP\_NORMALB\ 8}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ TRI\_INFO\_V1V2\_SWAP\_NORMALB\ 16}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ TRI\_INFO\_V2V0\_SWAP\_NORMALB\ 32}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_triangle_info}{btTriangleInfo}}}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info}{btTriangleInfo}}()}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ m\_edgeV0V1Angle\ =\ SIMD\_2\_PI;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ m\_edgeV1V2Angle\ =\ SIMD\_2\_PI;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ m\_edgeV2V0Angle\ =\ SIMD\_2\_PI;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ m\_flags\ =\ 0;}
+\DoxyCodeLine{00041\ \ \ \ \ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_flags;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ btScalar\ m\_edgeV0V1Angle;}
+\DoxyCodeLine{00046\ \ \ \ \ btScalar\ m\_edgeV1V2Angle;}
+\DoxyCodeLine{00047\ \ \ \ \ btScalar\ m\_edgeV2V0Angle;}
+\DoxyCodeLine{00048\ \};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashInt,\ btTriangleInfo>}}\ \mbox{\hyperlink{classbt_hash_map}{btInternalTriangleInfoMap}};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_triangle_info_map}{btTriangleInfoMap}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classbt_hash_map}{btInternalTriangleInfoMap}}}
+\DoxyCodeLine{00054\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ btScalar\ m\_convexEpsilon;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00056\ \ \ \ \ btScalar\ \mbox{\hyperlink{structbt_triangle_info_map_a7516c96369cd0eef22286b7e5ad537e8}{m\_planarEpsilon}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ btScalar\ \mbox{\hyperlink{structbt_triangle_info_map_aa980d33e5be082442a128f0ba2efb064}{m\_equalVertexThreshold}};\ \ \ }
+\DoxyCodeLine{00058\ \ \ \ \ btScalar\ \mbox{\hyperlink{structbt_triangle_info_map_a521c0769aefc5c02b8394f924127dfc5}{m\_edgeDistanceThreshold}};\ \ }
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ \mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}};\ \ \textcolor{comment}{//ignore\ edges\ that\ connect\ triangles\ at\ an\ angle\ larger\ than\ this\ m\_maxEdgeAngleThreshold}}
+\DoxyCodeLine{00060\ \ \ \ \ btScalar\ m\_zeroAreaThreshold;\ \ \ \ \ \ }
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_a60e9096e47e52a03e29004e77d9dd572}{btTriangleInfoMap}}()}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ m\_convexEpsilon\ =\ 0.00f;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_a7516c96369cd0eef22286b7e5ad537e8}{m\_planarEpsilon}}\ =\ 0.0001f;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_aa980d33e5be082442a128f0ba2efb064}{m\_equalVertexThreshold}}\ =\ btScalar(0.0001)\ *\ btScalar(0.0001);}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_a521c0769aefc5c02b8394f924127dfc5}{m\_edgeDistanceThreshold}}\ =\ btScalar(0.1);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ m\_zeroAreaThreshold\ =\ btScalar(0.0001)\ *\ btScalar(0.0001);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_a3fca61db63fe0db431044d0eba95107a}{m\_maxEdgeAngleThreshold}}\ =\ SIMD\_2\_PI;}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_triangle_info_map}{\string~btTriangleInfoMap}}()\ \{\}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structbt_triangle_info_map_a261e882097348fb47cc787bcdf6e1420}{serialize}}(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_triangle_info_map_a729483561a5100a27dae3f92fe57ebca}{deSerialize}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}}\&\ data);}
+\DoxyCodeLine{00079\ \};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{struct\ \ }\mbox{\hyperlink{structbt_triangle_info_data}{btTriangleInfoData}}}
+\DoxyCodeLine{00085\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ m\_flags;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_edgeV0V1Angle;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_edgeV1V2Angle;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_edgeV2V0Angle;}
+\DoxyCodeLine{00090\ \};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{struct\ \ }\mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}}}
+\DoxyCodeLine{00093\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *m\_hashTablePtr;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *m\_nextPtr;}
+\DoxyCodeLine{00096\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_data}{btTriangleInfoData}}\ \ \ \ *m\_valueArrayPtr;}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *m\_keyArrayPtr;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_convexEpsilon;}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_planarEpsilon;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_equalVertexThreshold;\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_edgeDistanceThreshold;}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{float}\ \ \ m\_zeroAreaThreshold;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ m\_nextSize;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ m\_hashTableSize;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ m\_numValues;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ m\_numKeys;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ m\_padding[4];}
+\DoxyCodeLine{00110\ \};}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btTriangleInfoMap::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00115\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}});}
+\DoxyCodeLine{00117\ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00120\ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structbt_triangle_info_map_a261e882097348fb47cc787bcdf6e1420}{btTriangleInfoMap::serialize}}(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00121\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}}*\ tmapData\ =\ (\mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}}*)dataBuffer;}
+\DoxyCodeLine{00123\ \ \ \ \ tmapData-\/>m\_convexEpsilon\ =\ (float)m\_convexEpsilon;}
+\DoxyCodeLine{00124\ \ \ \ \ tmapData-\/>m\_planarEpsilon\ =\ (float)\mbox{\hyperlink{structbt_triangle_info_map_a7516c96369cd0eef22286b7e5ad537e8}{m\_planarEpsilon}};}
+\DoxyCodeLine{00125\ \ \ \ \ tmapData-\/>m\_equalVertexThreshold\ =\ (float)\mbox{\hyperlink{structbt_triangle_info_map_aa980d33e5be082442a128f0ba2efb064}{m\_equalVertexThreshold}};}
+\DoxyCodeLine{00126\ \ \ \ \ tmapData-\/>m\_edgeDistanceThreshold\ =\ (float)\mbox{\hyperlink{structbt_triangle_info_map_a521c0769aefc5c02b8394f924127dfc5}{m\_edgeDistanceThreshold}};}
+\DoxyCodeLine{00127\ \ \ \ \ tmapData-\/>m\_zeroAreaThreshold\ =\ (float)m\_zeroAreaThreshold;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ tmapData-\/>m\_hashTableSize\ =\ m\_hashTable.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ tmapData-\/>m\_hashTablePtr\ =\ tmapData-\/>m\_hashTableSize\ ?\ (\textcolor{keywordtype}{int}*)serializer-\/>getUniquePointer((\textcolor{keywordtype}{void}*)\&m\_hashTable[0])\ :\ 0;}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordflow}{if}\ (tmapData-\/>m\_hashTablePtr)}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{comment}{//serialize\ an\ int\ buffer}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ \textcolor{keyword}{sizeof}(int);}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numElem\ =\ tmapData-\/>m\_hashTableSize;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(sz,\ numElem);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ memPtr\ =\ (\textcolor{keywordtype}{int}*)chunk-\/>m\_oldPtr;}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numElem;\ i++,\ memPtr++)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ *memPtr\ =\ m\_hashTable[i];}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ \textcolor{stringliteral}{"{}int"{}},\ BT\_ARRAY\_CODE,\ (\textcolor{keywordtype}{void}*)\&m\_hashTable[0]);}
+\DoxyCodeLine{00144\ \ \ \ \ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ tmapData-\/>m\_nextSize\ =\ m\_next.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00147\ \ \ \ \ tmapData-\/>m\_nextPtr\ =\ tmapData-\/>m\_nextSize\ ?\ (\textcolor{keywordtype}{int}*)serializer-\/>getUniquePointer((\textcolor{keywordtype}{void}*)\&m\_next[0])\ :\ 0;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordflow}{if}\ (tmapData-\/>m\_nextPtr)}
+\DoxyCodeLine{00149\ \ \ \ \ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ \textcolor{keyword}{sizeof}(int);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numElem\ =\ tmapData-\/>m\_nextSize;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(sz,\ numElem);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ memPtr\ =\ (\textcolor{keywordtype}{int}*)chunk-\/>m\_oldPtr;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numElem;\ i++,\ memPtr++)}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ *memPtr\ =\ m\_next[i];}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ \textcolor{stringliteral}{"{}int"{}},\ BT\_ARRAY\_CODE,\ (\textcolor{keywordtype}{void}*)\&m\_next[0]);}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ tmapData-\/>m\_numValues\ =\ m\_valueArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00162\ \ \ \ \ tmapData-\/>m\_valueArrayPtr\ =\ tmapData-\/>m\_numValues\ ?\ (\mbox{\hyperlink{structbt_triangle_info_data}{btTriangleInfoData}}*)serializer-\/>getUniquePointer((\textcolor{keywordtype}{void}*)\&m\_valueArray[0])\ :\ 0;}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordflow}{if}\ (tmapData-\/>m\_valueArrayPtr)}
+\DoxyCodeLine{00164\ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_triangle_info_data}{btTriangleInfoData}});}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numElem\ =\ tmapData-\/>m\_numValues;}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(sz,\ numElem);}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_data}{btTriangleInfoData}}*\ memPtr\ =\ (\mbox{\hyperlink{structbt_triangle_info_data}{btTriangleInfoData}}*)chunk-\/>m\_oldPtr;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numElem;\ i++,\ memPtr++)}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ memPtr-\/>m\_edgeV0V1Angle\ =\ (float)m\_valueArray[i].m\_edgeV0V1Angle;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ memPtr-\/>m\_edgeV1V2Angle\ =\ (float)m\_valueArray[i].m\_edgeV1V2Angle;}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ memPtr-\/>m\_edgeV2V0Angle\ =\ (float)m\_valueArray[i].m\_edgeV2V0Angle;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ memPtr-\/>m\_flags\ =\ m\_valueArray[i].m\_flags;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ \textcolor{stringliteral}{"{}btTriangleInfoData"{}},\ BT\_ARRAY\_CODE,\ (\textcolor{keywordtype}{void}*)\&m\_valueArray[0]);}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ tmapData-\/>m\_numKeys\ =\ m\_keyArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00180\ \ \ \ \ tmapData-\/>m\_keyArrayPtr\ =\ tmapData-\/>m\_numKeys\ ?\ (\textcolor{keywordtype}{int}*)serializer-\/>getUniquePointer((\textcolor{keywordtype}{void}*)\&m\_keyArray[0])\ :\ 0;}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordflow}{if}\ (tmapData-\/>m\_keyArrayPtr)}
+\DoxyCodeLine{00182\ \ \ \ \ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ \textcolor{keyword}{sizeof}(int);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numElem\ =\ tmapData-\/>m\_numValues;}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(sz,\ numElem);}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ memPtr\ =\ (\textcolor{keywordtype}{int}*)chunk-\/>m\_oldPtr;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numElem;\ i++,\ memPtr++)}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ *memPtr\ =\ m\_keyArray[i].getUid1();}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ \textcolor{stringliteral}{"{}int"{}},\ BT\_ARRAY\_CODE,\ (\textcolor{keywordtype}{void}*)\&m\_keyArray[0]);}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{comment}{//\ Fill\ padding\ with\ zeros\ to\ appease\ msan.}}
+\DoxyCodeLine{00195\ \ \ \ \ tmapData-\/>m\_padding[0]\ =\ 0;}
+\DoxyCodeLine{00196\ \ \ \ \ tmapData-\/>m\_padding[1]\ =\ 0;}
+\DoxyCodeLine{00197\ \ \ \ \ tmapData-\/>m\_padding[2]\ =\ 0;}
+\DoxyCodeLine{00198\ \ \ \ \ tmapData-\/>m\_padding[3]\ =\ 0;}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}btTriangleInfoMapData"{}};}
+\DoxyCodeLine{00201\ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00204\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_triangle_info_map_a729483561a5100a27dae3f92fe57ebca}{btTriangleInfoMap::deSerialize}}(\mbox{\hyperlink{structbt_triangle_info_map_data}{btTriangleInfoMapData}}\&\ tmapData)}
+\DoxyCodeLine{00205\ \{}
+\DoxyCodeLine{00206\ \ \ \ \ m\_convexEpsilon\ =\ tmapData.m\_convexEpsilon;}
+\DoxyCodeLine{00207\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_a7516c96369cd0eef22286b7e5ad537e8}{m\_planarEpsilon}}\ =\ tmapData.m\_planarEpsilon;}
+\DoxyCodeLine{00208\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_aa980d33e5be082442a128f0ba2efb064}{m\_equalVertexThreshold}}\ =\ tmapData.m\_equalVertexThreshold;}
+\DoxyCodeLine{00209\ \ \ \ \ \mbox{\hyperlink{structbt_triangle_info_map_a521c0769aefc5c02b8394f924127dfc5}{m\_edgeDistanceThreshold}}\ =\ tmapData.m\_edgeDistanceThreshold;}
+\DoxyCodeLine{00210\ \ \ \ \ m\_zeroAreaThreshold\ =\ tmapData.m\_zeroAreaThreshold;}
+\DoxyCodeLine{00211\ \ \ \ \ m\_hashTable.resize(tmapData.m\_hashTableSize);}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ 0;}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ tmapData.m\_hashTableSize;\ i++)}
+\DoxyCodeLine{00214\ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ m\_hashTable[i]\ =\ tmapData.m\_hashTablePtr[i];}
+\DoxyCodeLine{00216\ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ m\_next.resize(tmapData.m\_nextSize);}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ tmapData.m\_nextSize;\ i++)}
+\DoxyCodeLine{00219\ \ \ \ \ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ m\_next[i]\ =\ tmapData.m\_nextPtr[i];}
+\DoxyCodeLine{00221\ \ \ \ \ \}}
+\DoxyCodeLine{00222\ \ \ \ \ m\_valueArray.resize(tmapData.m\_numValues);}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ tmapData.m\_numValues;\ i++)}
+\DoxyCodeLine{00224\ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ m\_valueArray[i].m\_edgeV0V1Angle\ =\ tmapData.m\_valueArrayPtr[i].m\_edgeV0V1Angle;}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ m\_valueArray[i].m\_edgeV1V2Angle\ =\ tmapData.m\_valueArrayPtr[i].m\_edgeV1V2Angle;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ m\_valueArray[i].m\_edgeV2V0Angle\ =\ tmapData.m\_valueArrayPtr[i].m\_edgeV2V0Angle;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ m\_valueArray[i].m\_flags\ =\ tmapData.m\_valueArrayPtr[i].m\_flags;}
+\DoxyCodeLine{00229\ \ \ \ \ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ m\_keyArray.resize(tmapData.m\_numKeys,\ \mbox{\hyperlink{classbt_hash_int}{btHashInt}}(0));}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ tmapData.m\_numKeys;\ i++)}
+\DoxyCodeLine{00233\ \ \ \ \ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ m\_keyArray[i].setUid1(tmapData.m\_keyArrayPtr[i]);}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\_BT\_TRIANGLE\_INFO\_MAP\_H}}
+
+\end{DoxyCode}

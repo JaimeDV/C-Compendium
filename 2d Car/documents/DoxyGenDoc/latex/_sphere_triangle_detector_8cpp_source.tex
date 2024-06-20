@@ -1,0 +1,221 @@
+\doxysection{Sphere\+Triangle\+Detector.\+cpp}
+\hypertarget{_sphere_triangle_detector_8cpp_source}{}\label{_sphere_triangle_detector_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/SphereTriangleDetector.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/SphereTriangleDetector.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}SphereTriangleDetector.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btTriangleShape.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btSphereShape.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ SphereTriangleDetector::SphereTriangleDetector(btSphereShape*\ sphere,\ btTriangleShape*\ triangle,\ btScalar\ contactBreakingThreshold)}
+\DoxyCodeLine{00022\ \ \ \ \ :\ m\_sphere(sphere),}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ m\_triangle(triangle),}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ m\_contactBreakingThreshold(contactBreakingThreshold)}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ SphereTriangleDetector::getClosestPoints(\textcolor{keyword}{const}\ ClosestPointInput\&\ input,\ Result\&\ output,\ \textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDraw,\ \textcolor{keywordtype}{bool}\ swapResults)}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ (void)debugDraw;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ transformA\ =\ input.m\_transformA;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ transformB\ =\ input.m\_transformB;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ btVector3\ point,\ normal;}
+\DoxyCodeLine{00035\ \ \ \ \ btScalar\ timeOfImpact\ =\ btScalar(1.);}
+\DoxyCodeLine{00036\ \ \ \ \ btScalar\ depth\ =\ btScalar(0.);}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//\ \ output.m\_distance\ =\ btScalar(BT\_LARGE\_FLOAT);}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//move\ sphere\ into\ triangle\ space}}
+\DoxyCodeLine{00039\ \ \ \ \ btTransform\ sphereInTr\ =\ transformB.inverseTimes(transformA);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{if}\ (collide(sphereInTr.getOrigin(),\ point,\ normal,\ depth,\ timeOfImpact,\ m\_contactBreakingThreshold))}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (swapResults)}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalOnB\ =\ transformB.getBasis()\ *\ normal;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalOnA\ =\ -\/normalOnB;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ pointOnA\ =\ transformB\ *\ point\ +\ normalOnB\ *\ depth;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ output.addContactPoint(normalOnA,\ pointOnA,\ depth);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ output.addContactPoint(transformB.getBasis()\ *\ normal,\ transformB\ *\ point,\ depth);}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ See\ also\ geometrictools.com}}
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ Basic\ idea:\ D\ =\ |p\ -\/\ (lo\ +\ t0*lv)|\ where\ t0\ =\ lv\ .\ (p\ -\/\ lo)\ /\ lv\ .\ lv}}
+\DoxyCodeLine{00059\ btScalar\ SegmentSqrDistance(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keyword}{const}\ btVector3\&\ p,\ btVector3\&\ nearest);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ btScalar\ SegmentSqrDistance(\textcolor{keyword}{const}\ btVector3\&\ from,\ \textcolor{keyword}{const}\ btVector3\&\ to,\ \textcolor{keyword}{const}\ btVector3\&\ p,\ btVector3\&\ nearest)}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ btVector3\ diff\ =\ p\ -\/\ from;}
+\DoxyCodeLine{00064\ \ \ \ \ btVector3\ v\ =\ to\ -\/\ from;}
+\DoxyCodeLine{00065\ \ \ \ \ btScalar\ t\ =\ v.dot(diff);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ >\ 0)}
+\DoxyCodeLine{00068\ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ btScalar\ dotVV\ =\ v.dot(v);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ <\ dotVV)}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ t\ /=\ dotVV;}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ diff\ -\/=\ t\ *\ v;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ 1;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ diff\ -\/=\ v;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ t\ =\ 0;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ nearest\ =\ from\ +\ t\ *\ v;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{return}\ diff.dot(diff);}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{bool}\ SphereTriangleDetector::facecontains(\textcolor{keyword}{const}\ btVector3\&\ p,\ \textcolor{keyword}{const}\ btVector3*\ vertices,\ btVector3\&\ normal)}
+\DoxyCodeLine{00089\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ btVector3\ lp(p);}
+\DoxyCodeLine{00091\ \ \ \ \ btVector3\ lnormal(normal);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{return}\ pointInTriangle(vertices,\ lnormal,\ \&lp);}
+\DoxyCodeLine{00094\ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{bool}\ SphereTriangleDetector::collide(\textcolor{keyword}{const}\ btVector3\&\ sphereCenter,\ btVector3\&\ point,\ btVector3\&\ resultNormal,\ btScalar\&\ depth,\ btScalar\&\ timeOfImpact,\ btScalar\ contactBreakingThreshold)}
+\DoxyCodeLine{00097\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ vertices\ =\ \&m\_triangle-\/>getVertexPtr(0);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ btScalar\ radius\ =\ m\_sphere-\/>getRadius();}
+\DoxyCodeLine{00101\ \ \ \ \ btScalar\ radiusWithThreshold\ =\ radius\ +\ contactBreakingThreshold;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ btVector3\ normal\ =\ (vertices[1]\ -\/\ vertices[0]).cross(vertices[2]\ -\/\ vertices[0]);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ btScalar\ l2\ =\ normal.length2();}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{bool}\ hasContact\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00107\ \ \ \ \ btVector3\ contactPoint;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{if}\ (l2\ >=\ SIMD\_EPSILON\ *\ SIMD\_EPSILON)}
+\DoxyCodeLine{00110\ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ normal\ /=\ btSqrt(l2);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ btVector3\ p1ToCentre\ =\ sphereCenter\ -\/\ vertices[0];}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ btScalar\ distanceFromPlane\ =\ p1ToCentre.dot(normal);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (distanceFromPlane\ <\ btScalar(0.))}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//triangle\ facing\ the\ other\ way}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ distanceFromPlane\ *=\ btScalar(-\/1.);}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ normal\ *=\ btScalar(-\/1.);}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isInsideContactPlane\ =\ distanceFromPlane\ <\ radiusWithThreshold;}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ for\ contact\ /\ intersection}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isInsideContactPlane)}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (facecontains(sphereCenter,\ vertices,\ normal))}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Inside\ the\ contact\ wedge\ -\/\ touches\ a\ point\ on\ the\ shell\ plane}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hasContact\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ contactPoint\ =\ sphereCenter\ -\/\ normal\ *\ distanceFromPlane;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Could\ be\ inside\ one\ of\ the\ contact\ capsules}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ contactCapsuleRadiusSqr\ =\ radiusWithThreshold\ *\ radiusWithThreshold;}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ minDistSqr\ =\ contactCapsuleRadiusSqr;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ nearestOnEdge;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_triangle-\/>getNumEdges();\ i++)}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ pa;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ pb;}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_triangle-\/>getEdge(i,\ pa,\ pb);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ distanceSqr\ =\ SegmentSqrDistance(pa,\ pb,\ sphereCenter,\ nearestOnEdge);}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (distanceSqr\ <\ minDistSqr)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Yep,\ we're\ inside\ a\ capsule,\ and\ record\ the\ capsule\ with\ smallest\ distance}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minDistSqr\ =\ distanceSqr;}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hasContact\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ contactPoint\ =\ nearestOnEdge;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordflow}{if}\ (hasContact)}
+\DoxyCodeLine{00162\ \ \ \ \ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ btVector3\ contactToCentre\ =\ sphereCenter\ -\/\ contactPoint;}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ btScalar\ distanceSqr\ =\ contactToCentre.length2();}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (distanceSqr\ <\ radiusWithThreshold\ *\ radiusWithThreshold)}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (distanceSqr\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ distance\ =\ btSqrt(distanceSqr);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultNormal\ =\ contactToCentre;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultNormal.normalize();}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ point\ =\ contactPoint;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ depth\ =\ -\/(radius\ -\/\ distance);}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultNormal\ =\ normal;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ point\ =\ contactPoint;}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ depth\ =\ -\/radius;}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00187\ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{keywordtype}{bool}\ SphereTriangleDetector::pointInTriangle(\textcolor{keyword}{const}\ btVector3\ vertices[],\ \textcolor{keyword}{const}\ btVector3\&\ normal,\ btVector3*\ p)}
+\DoxyCodeLine{00190\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ p1\ =\ \&vertices[0];}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ p2\ =\ \&vertices[1];}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ p3\ =\ \&vertices[2];}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ btVector3\ edge1(*p2\ -\/\ *p1);}
+\DoxyCodeLine{00196\ \ \ \ \ btVector3\ edge2(*p3\ -\/\ *p2);}
+\DoxyCodeLine{00197\ \ \ \ \ btVector3\ edge3(*p1\ -\/\ *p3);}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ btVector3\ p1\_to\_p(*p\ -\/\ *p1);}
+\DoxyCodeLine{00200\ \ \ \ \ btVector3\ p2\_to\_p(*p\ -\/\ *p2);}
+\DoxyCodeLine{00201\ \ \ \ \ btVector3\ p3\_to\_p(*p\ -\/\ *p3);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ btVector3\ edge1\_normal(edge1.cross(normal));}
+\DoxyCodeLine{00204\ \ \ \ \ btVector3\ edge2\_normal(edge2.cross(normal));}
+\DoxyCodeLine{00205\ \ \ \ \ btVector3\ edge3\_normal(edge3.cross(normal));}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ btScalar\ r1,\ r2,\ r3;}
+\DoxyCodeLine{00208\ \ \ \ \ r1\ =\ edge1\_normal.dot(p1\_to\_p);}
+\DoxyCodeLine{00209\ \ \ \ \ r2\ =\ edge2\_normal.dot(p2\_to\_p);}
+\DoxyCodeLine{00210\ \ \ \ \ r3\ =\ edge3\_normal.dot(p3\_to\_p);}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordflow}{if}\ ((r1\ >\ 0\ \&\&\ r2\ >\ 0\ \&\&\ r3\ >\ 0)\ ||}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ (r1\ <=\ 0\ \&\&\ r2\ <=\ 0\ \&\&\ r3\ <=\ 0))}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00215\ \}}
+
+\end{DoxyCode}

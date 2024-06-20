@@ -1,0 +1,134 @@
+\doxysection{b3\+Launcher\+CL.\+h}
+\hypertarget{b3_launcher_c_l_8h_source}{}\label{b3_launcher_c_l_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/ParallelPrimitives/b3LauncherCL.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/ParallelPrimitives/b3LauncherCL.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_LAUNCHER\_CL\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_LAUNCHER\_CL\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}b3BufferInfoCL.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3MinMax.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}b3OpenCLArray.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ B3\_DEBUG\_SERIALIZE\_CL}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#pragma\ warning(disable\ :\ 4996)}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ B3\_CL\_MAX\_ARG\_SIZE\ 16}}
+\DoxyCodeLine{00016\ B3\_ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00017\ b3KernelArgData}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_isBuffer;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_argIndex;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_argSizeInBytes;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_unusedPadding;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ cl\_mem\ m\_clBuffer;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ m\_argData[B3\_CL\_MAX\_ARG\_SIZE];}
+\DoxyCodeLine{00026\ \ \ \ \ \};}
+\DoxyCodeLine{00027\ \};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_launcher_c_l}{b3LauncherCL}}}
+\DoxyCodeLine{00030\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ cl\_command\_queue\ m\_commandQueue;}
+\DoxyCodeLine{00032\ \ \ \ \ cl\_kernel\ m\_kernel;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_idx;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3KernelArgData>}}\ m\_kernelArguments;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_serializationSizeInBytes;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_enableSerialization;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ m\_name;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3OpenCLArray<unsigned\ char>}}*>\ m\_arrays;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{classb3_launcher_c_l}{b3LauncherCL}}(cl\_command\_queue\ queue,\ cl\_kernel\ kernel,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_launcher_c_l}{\string~b3LauncherCL}}();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ setBuffer(cl\_mem\ clBuffer);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ setBuffers(\mbox{\hyperlink{structb3_buffer_info_c_l}{b3BufferInfoCL}}*\ buffInfo,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ getSerializationBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_serializationSizeInBytes;}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{int}\ deserializeArgs(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ buf,\ \textcolor{keywordtype}{int}\ bufSize,\ cl\_context\ ctx);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ validateResults(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ goldBuffer,\ \textcolor{keywordtype}{int}\ goldBufferCapacity,\ cl\_context\ ctx);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{int}\ serializeArguments(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ destBuffer,\ \textcolor{keywordtype}{int}\ destBufferCapacity);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumArguments()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00064\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_kernelArguments.\mbox{\hyperlink{classb3_aligned_object_array_a2c08bf2d2ee13ecee650d34e30730cb5}{size}}();}
+\DoxyCodeLine{00066\ \ \ \ \ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ b3KernelArgData\ getArgument(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_kernelArguments[index];}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ serializeToFile(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ fileName,\ \textcolor{keywordtype}{int}\ numWorkItems);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ setConst(\textcolor{keyword}{const}\ T\&\ consts)}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ \textcolor{keyword}{sizeof}(T);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ b3Assert(sz\ <=\ B3\_CL\_MAX\_ARG\_SIZE);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_enableSerialization)}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ b3KernelArgData\ kernelArg;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ kernelArg.m\_argIndex\ =\ m\_idx;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ kernelArg.m\_isBuffer\ =\ 0;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ T*\ destArg\ =\ (T*)kernelArg.m\_argData;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ *destArg\ =\ consts;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ kernelArg.m\_argSizeInBytes\ =\ \textcolor{keyword}{sizeof}(T);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ m\_kernelArguments.push\_back(kernelArg);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ m\_serializationSizeInBytes\ +=\ \textcolor{keyword}{sizeof}(b3KernelArgData);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ cl\_int\ status\ =\ clSetKernelArg(m\_kernel,\ m\_idx++,\ sz,\ \&consts);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ b3Assert(status\ ==\ CL\_SUCCESS);}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ launch1D(\textcolor{keywordtype}{int}\ numThreads,\ \textcolor{keywordtype}{int}\ localSize\ =\ 64)}
+\DoxyCodeLine{00098\ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ launch2D(numThreads,\ 1,\ localSize,\ 1);}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ launch2D(\textcolor{keywordtype}{int}\ numThreadsX,\ \textcolor{keywordtype}{int}\ numThreadsY,\ \textcolor{keywordtype}{int}\ localSizeX,\ \textcolor{keywordtype}{int}\ localSizeY)}
+\DoxyCodeLine{00103\ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ gRange[3]\ =\ \{1,\ 1,\ 1\};}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ lRange[3]\ =\ \{1,\ 1,\ 1\};}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ lRange[0]\ =\ localSizeX;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ lRange[1]\ =\ localSizeY;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ gRange[0]\ =\ b3Max((\textcolor{keywordtype}{size\_t})1,\ (numThreadsX\ /\ lRange[0])\ +\ (!(numThreadsX\ \%\ lRange[0])\ ?\ 0\ :\ 1));}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ gRange[0]\ *=\ lRange[0];}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ gRange[1]\ =\ b3Max((\textcolor{keywordtype}{size\_t})1,\ (numThreadsY\ /\ lRange[1])\ +\ (!(numThreadsY\ \%\ lRange[1])\ ?\ 0\ :\ 1));}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ gRange[1]\ *=\ lRange[1];}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ cl\_int\ status\ =\ clEnqueueNDRangeKernel(m\_commandQueue,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_kernel,\ 2,\ NULL,\ gRange,\ lRange,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (status\ !=\ CL\_SUCCESS)}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ OpenCL\ status\ =\ \%d\(\backslash\)n"{}},\ status);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ b3Assert(status\ ==\ CL\_SUCCESS);}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{void}\ enableSerialization(\textcolor{keywordtype}{bool}\ serialize)}
+\DoxyCodeLine{00123\ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ m\_enableSerialization\ =\ serialize;}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_LAUNCHER\_CL\_H}}
+
+\end{DoxyCode}

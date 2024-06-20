@@ -1,0 +1,161 @@
+\doxysection{C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.17/src/\+Bullet\+Collision/\+Gimpact/gim\+\_\+radixsort.h File Reference}
+\hypertarget{gim__radixsort_8h}{}\label{gim__radixsort_8h}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_radixsort.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/gim\_radixsort.h}}
+{\ttfamily \#include "{}gim\+\_\+memory.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classless__comparator}{less\+\_\+comparator}}
+\item 
+class \mbox{\hyperlink{classinteger__comparator}{integer\+\_\+comparator}}
+\begin{DoxyCompactList}\small\item\em Prototype for comparators. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classuint__key__func}{uint\+\_\+key\+\_\+func}}
+\begin{DoxyCompactList}\small\item\em Prototype for getting the integer representation of an object. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classcopy__elements__func}{copy\+\_\+elements\+\_\+func}}
+\begin{DoxyCompactList}\small\item\em Prototype for copying elements. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classmemcopy__elements__func}{memcopy\+\_\+elements\+\_\+func}}
+\begin{DoxyCompactList}\small\item\em Prototype for copying elements. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_g_i_m___r_s_o_r_t___t_o_k_e_n}{GIM\+\_\+\+RSORT\+\_\+\+TOKEN}}
+\item 
+class \mbox{\hyperlink{class_g_i_m___r_s_o_r_t___t_o_k_e_n___c_o_m_p_a_r_a_t_o_r}{GIM\+\_\+\+RSORT\+\_\+\+TOKEN\+\_\+\+COMPARATOR}}
+\begin{DoxyCompactList}\small\item\em Prototype for comparators. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{gim__radixsort_8h_a5431d62b4f94b12999b0a71ed862b192}\label{gim__radixsort_8h_a5431d62b4f94b12999b0a71ed862b192} 
+\#define {\bfseries k\+Hist}~2048
+\item 
+\Hypertarget{gim__radixsort_8h_adf173c1da5f821fe42424d1e2a8ceb89}\label{gim__radixsort_8h_adf173c1da5f821fe42424d1e2a8ceb89} 
+\#define {\bfseries D11\+\_\+0}(x)~(x \& 0x7\+FF)
+\item 
+\Hypertarget{gim__radixsort_8h_a3c70dcf5a632ab059e3575465f5d00e1}\label{gim__radixsort_8h_a3c70dcf5a632ab059e3575465f5d00e1} 
+\#define {\bfseries D11\+\_\+1}(x)~(x $>$$>$ 11 \& 0x7\+FF)
+\item 
+\Hypertarget{gim__radixsort_8h_a654845a487bba598115c27d6653d0624}\label{gim__radixsort_8h_a654845a487bba598115c27d6653d0624} 
+\#define {\bfseries D11\+\_\+2}(x)~(x $>$$>$ 22)
+\item 
+\Hypertarget{gim__radixsort_8h_a7465b49642a34b13aaaf84bc5b38ab67}\label{gim__radixsort_8h_a7465b49642a34b13aaaf84bc5b38ab67} 
+void {\bfseries gim\+\_\+radix\+\_\+sort\+\_\+rtokens} (\mbox{\hyperlink{struct_g_i_m___r_s_o_r_t___t_o_k_e_n}{GIM\+\_\+\+RSORT\+\_\+\+TOKEN}} \texorpdfstring{$\ast$}{*}array, \mbox{\hyperlink{struct_g_i_m___r_s_o_r_t___t_o_k_e_n}{GIM\+\_\+\+RSORT\+\_\+\+TOKEN}} \texorpdfstring{$\ast$}{*}sorted, GUINT element\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Radix sort for unsigned integer keys. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , class GETKEY\+\_\+\+CLASS $>$ }\\void \mbox{\hyperlink{gim__radixsort_8h_a4cf937eb4b0d6dc38fd963dfe5629606}{gim\+\_\+radix\+\_\+sort\+\_\+array\+\_\+tokens}} (T \texorpdfstring{$\ast$}{*}array, \mbox{\hyperlink{struct_g_i_m___r_s_o_r_t___t_o_k_e_n}{GIM\+\_\+\+RSORT\+\_\+\+TOKEN}} \texorpdfstring{$\ast$}{*}sorted\+\_\+tokens, GUINT element\+\_\+count, GETKEY\+\_\+\+CLASS uintkey\+\_\+macro)
+\begin{DoxyCompactList}\small\item\em Get the sorted tokens from an array. For generic use. Tokens are IRR\+\_\+\+RSORT\+\_\+\+TOKEN. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , class GETKEY\+\_\+\+CLASS , class COPY\+\_\+\+CLASS $>$ }\\void \mbox{\hyperlink{gim__radixsort_8h_a9728ce0cbe21b4b1f53172da3e5a4558}{gim\+\_\+radix\+\_\+sort}} (T \texorpdfstring{$\ast$}{*}array, GUINT element\+\_\+count, GETKEY\+\_\+\+CLASS get\+\_\+uintkey\+\_\+macro, COPY\+\_\+\+CLASS copy\+\_\+elements\+\_\+macro)
+\begin{DoxyCompactList}\small\item\em Sorts array in place. For generic use. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class T , typename KEYCLASS , typename COMP\+\_\+\+CLASS $>$ }\\bool \mbox{\hyperlink{gim__radixsort_8h_a4e96ac4a81a11e30d65cadc8f819f3d0}{gim\+\_\+binary\+\_\+search\+\_\+ex}} (const T \texorpdfstring{$\ast$}{*}\+\_\+array, GUINT \+\_\+start\+\_\+i, GUINT \+\_\+end\+\_\+i, GUINT \&\+\_\+result\+\_\+index, const KEYCLASS \&\+\_\+search\+\_\+key, COMP\+\_\+\+CLASS \+\_\+comp\+\_\+macro)
+\begin{DoxyCompactList}\small\item\em Failsafe Iterative binary search,. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{gim__radixsort_8h_a30dfa2c1b34a0ea3ee2a82da6c06a52e}{gim\+\_\+binary\+\_\+search}} (const T \texorpdfstring{$\ast$}{*}\+\_\+array, GUINT \+\_\+start\+\_\+i, GUINT \+\_\+end\+\_\+i, const T \&\+\_\+search\+\_\+key, GUINT \&\+\_\+result\+\_\+index)
+\begin{DoxyCompactList}\small\item\em Failsafe Iterative binary search,Template version. \end{DoxyCompactList}\item 
+\Hypertarget{gim__radixsort_8h_a708f5975baef234c06c593207d3e36b6}\label{gim__radixsort_8h_a708f5975baef234c06c593207d3e36b6} 
+{\footnotesize template$<$typename T , typename COMP\+\_\+\+CLASS $>$ }\\void {\bfseries gim\+\_\+down\+\_\+heap} (T \texorpdfstring{$\ast$}{*}p\+Arr, GUINT k, GUINT n, COMP\+\_\+\+CLASS Compare\+Func)
+\begin{DoxyCompactList}\small\item\em heap sort from \href{http://www.csse.monash.edu.au/~lloyd/tildeAlgDS/Sort/Heap/}{\texttt{ http\+://www.\+csse.\+monash.\+edu.\+au/\texorpdfstring{$\sim$}{\string~}lloyd/tilde\+Alg\+DS/\+Sort/\+Heap/}} \end{DoxyCompactList}\item 
+\Hypertarget{gim__radixsort_8h_a4202b9658716235a84206687f7498ae1}\label{gim__radixsort_8h_a4202b9658716235a84206687f7498ae1} 
+{\footnotesize template$<$typename T , typename COMP\+\_\+\+CLASS $>$ }\\void {\bfseries gim\+\_\+heap\+\_\+sort} (T \texorpdfstring{$\ast$}{*}p\+Arr, GUINT element\+\_\+count, COMP\+\_\+\+CLASS Compare\+Func)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Francisco Leon Najera. Based on the work of Michael Herf \+: "{}fast floating-\/point radix sort"{} Avaliable on \href{http://www.stereopsis.com/radix.html}{\texttt{ http\+://www.\+stereopsis.\+com/radix.\+html}} 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{gim__radixsort_8h_a30dfa2c1b34a0ea3ee2a82da6c06a52e}\label{gim__radixsort_8h_a30dfa2c1b34a0ea3ee2a82da6c06a52e} 
+\index{gim\_radixsort.h@{gim\_radixsort.h}!gim\_binary\_search@{gim\_binary\_search}}
+\index{gim\_binary\_search@{gim\_binary\_search}!gim\_radixsort.h@{gim\_radixsort.h}}
+\doxysubsubsection{\texorpdfstring{gim\_binary\_search()}{gim\_binary\_search()}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool gim\+\_\+binary\+\_\+search (\begin{DoxyParamCaption}\item[{const T \texorpdfstring{$\ast$}{*}}]{\+\_\+array,  }\item[{GUINT}]{\+\_\+start\+\_\+i,  }\item[{GUINT}]{\+\_\+end\+\_\+i,  }\item[{const T \&}]{\+\_\+search\+\_\+key,  }\item[{GUINT \&}]{\+\_\+result\+\_\+index }\end{DoxyParamCaption})}
+
+
+
+Failsafe Iterative binary search,Template version. 
+
+If the element is not found, it returns the nearest upper element position, may be the further position after the last element. 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+array} & \\
+\hline
+{\em \+\_\+start\+\_\+i} & the beginning of the array \\
+\hline
+{\em \+\_\+end\+\_\+i} & the ending index of the array \\
+\hline
+{\em \+\_\+search\+\_\+key} & Value to find \\
+\hline
+{\em \+\_\+result\+\_\+index} & the index of the found element, or if not found then it will get the index of the closest bigger value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if found, else false 
+\end{DoxyReturn}
+\Hypertarget{gim__radixsort_8h_a4e96ac4a81a11e30d65cadc8f819f3d0}\label{gim__radixsort_8h_a4e96ac4a81a11e30d65cadc8f819f3d0} 
+\index{gim\_radixsort.h@{gim\_radixsort.h}!gim\_binary\_search\_ex@{gim\_binary\_search\_ex}}
+\index{gim\_binary\_search\_ex@{gim\_binary\_search\_ex}!gim\_radixsort.h@{gim\_radixsort.h}}
+\doxysubsubsection{\texorpdfstring{gim\_binary\_search\_ex()}{gim\_binary\_search\_ex()}}
+{\footnotesize\ttfamily template$<$class T , typename KEYCLASS , typename COMP\+\_\+\+CLASS $>$ \\
+bool gim\+\_\+binary\+\_\+search\+\_\+ex (\begin{DoxyParamCaption}\item[{const T \texorpdfstring{$\ast$}{*}}]{\+\_\+array,  }\item[{GUINT}]{\+\_\+start\+\_\+i,  }\item[{GUINT}]{\+\_\+end\+\_\+i,  }\item[{GUINT \&}]{\+\_\+result\+\_\+index,  }\item[{const KEYCLASS \&}]{\+\_\+search\+\_\+key,  }\item[{COMP\+\_\+\+CLASS}]{\+\_\+comp\+\_\+macro }\end{DoxyParamCaption})}
+
+
+
+Failsafe Iterative binary search,. 
+
+If the element is not found, it returns the nearest upper element position, may be the further position after the last element. 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+array} & \\
+\hline
+{\em \+\_\+start\+\_\+i} & the beginning of the array \\
+\hline
+{\em \+\_\+end\+\_\+i} & the ending index of the array \\
+\hline
+{\em \+\_\+search\+\_\+key} & Value to find \\
+\hline
+{\em \+\_\+comp\+\_\+macro} & macro for comparing elements \\
+\hline
+{\em \+\_\+found} & If true the value has found. Boolean \\
+\hline
+{\em \+\_\+result\+\_\+index} & the index of the found element, or if not found then it will get the index of the closest bigger value \\
+\hline
+\end{DoxyParams}
+\Hypertarget{gim__radixsort_8h_a9728ce0cbe21b4b1f53172da3e5a4558}\label{gim__radixsort_8h_a9728ce0cbe21b4b1f53172da3e5a4558} 
+\index{gim\_radixsort.h@{gim\_radixsort.h}!gim\_radix\_sort@{gim\_radix\_sort}}
+\index{gim\_radix\_sort@{gim\_radix\_sort}!gim\_radixsort.h@{gim\_radixsort.h}}
+\doxysubsubsection{\texorpdfstring{gim\_radix\_sort()}{gim\_radix\_sort()}}
+{\footnotesize\ttfamily template$<$typename T , class GETKEY\+\_\+\+CLASS , class COPY\+\_\+\+CLASS $>$ \\
+void gim\+\_\+radix\+\_\+sort (\begin{DoxyParamCaption}\item[{T \texorpdfstring{$\ast$}{*}}]{array,  }\item[{GUINT}]{element\+\_\+count,  }\item[{GETKEY\+\_\+\+CLASS}]{get\+\_\+uintkey\+\_\+macro,  }\item[{COPY\+\_\+\+CLASS}]{copy\+\_\+elements\+\_\+macro }\end{DoxyParamCaption})}
+
+
+
+Sorts array in place. For generic use. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em type} & Type of the array \\
+\hline
+{\em array} & \\
+\hline
+{\em element\+\_\+count} & \\
+\hline
+{\em get\+\_\+uintkey\+\_\+macro} & Macro for extract the Integer value of the element. Similar to SIMPLE\+\_\+\+GET\+\_\+\+UINTKEY \\
+\hline
+{\em copy\+\_\+elements\+\_\+macro} & Macro for copy elements, similar to SIMPLE\+\_\+\+COPY\+\_\+\+ELEMENTS \\
+\hline
+\end{DoxyParams}
+\Hypertarget{gim__radixsort_8h_a4cf937eb4b0d6dc38fd963dfe5629606}\label{gim__radixsort_8h_a4cf937eb4b0d6dc38fd963dfe5629606} 
+\index{gim\_radixsort.h@{gim\_radixsort.h}!gim\_radix\_sort\_array\_tokens@{gim\_radix\_sort\_array\_tokens}}
+\index{gim\_radix\_sort\_array\_tokens@{gim\_radix\_sort\_array\_tokens}!gim\_radixsort.h@{gim\_radixsort.h}}
+\doxysubsubsection{\texorpdfstring{gim\_radix\_sort\_array\_tokens()}{gim\_radix\_sort\_array\_tokens()}}
+{\footnotesize\ttfamily template$<$typename T , class GETKEY\+\_\+\+CLASS $>$ \\
+void gim\+\_\+radix\+\_\+sort\+\_\+array\+\_\+tokens (\begin{DoxyParamCaption}\item[{T \texorpdfstring{$\ast$}{*}}]{array,  }\item[{\mbox{\hyperlink{struct_g_i_m___r_s_o_r_t___t_o_k_e_n}{GIM\+\_\+\+RSORT\+\_\+\+TOKEN}} \texorpdfstring{$\ast$}{*}}]{sorted\+\_\+tokens,  }\item[{GUINT}]{element\+\_\+count,  }\item[{GETKEY\+\_\+\+CLASS}]{uintkey\+\_\+macro }\end{DoxyParamCaption})}
+
+
+
+Get the sorted tokens from an array. For generic use. Tokens are IRR\+\_\+\+RSORT\+\_\+\+TOKEN. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em array} & Array of elements to sort \\
+\hline
+{\em sorted\+\_\+tokens} & Tokens of sorted elements \\
+\hline
+{\em element\+\_\+count} & element count \\
+\hline
+{\em uintkey\+\_\+macro} & Functor which retrieves the integer representation of an array element \\
+\hline
+\end{DoxyParams}

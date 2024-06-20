@@ -1,0 +1,210 @@
+\doxysection{bt\+Convex2d\+Convex2d\+Algorithm.\+cpp}
+\hypertarget{bt_convex2d_convex2d_algorithm_8cpp_source}{}\label{bt_convex2d_convex2d_algorithm_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btConvex2dConvex2dAlgorithm.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btConvex2dConvex2dAlgorithm.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btConvex2dConvex2dAlgorithm.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{//\#include\ <stdio.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexShape.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCapsuleShape.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkPairDetector.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionDispatcher.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btBoxShape.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btManifoldResult.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btConvexPenetrationDepthSolver.h"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btContinuousConvexCollision.h"{}}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.h"{}}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkConvexCast.h"{}}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btSphereShape.h"{}}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btMinkowskiPenetrationDepthSolver.h"{}}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkEpa2.h"{}}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/NarrowPhaseCollision/btGjkEpaPenetrationDepthSolver.h"{}}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"{}}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ btConvex2dConvex2dAlgorithm::CreateFunc::CreateFunc(btSimplexSolverInterface*\ simplexSolver,\ \mbox{\hyperlink{classbt_convex_penetration_depth_solver}{btConvexPenetrationDepthSolver}}*\ pdSolver)}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ m\_simplexSolver\ =\ simplexSolver;}
+\DoxyCodeLine{00048\ \ \ \ \ m\_pdSolver\ =\ pdSolver;}
+\DoxyCodeLine{00049\ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ btConvex2dConvex2dAlgorithm::CreateFunc::\string~CreateFunc()}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ btConvex2dConvex2dAlgorithm::btConvex2dConvex2dAlgorithm(btPersistentManifold*\ mf,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_algorithm_construction_info}{btCollisionAlgorithmConstructionInfo}}\&\ ci,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ btSimplexSolverInterface*\ simplexSolver,\ \mbox{\hyperlink{classbt_convex_penetration_depth_solver}{btConvexPenetrationDepthSolver}}*\ pdSolver,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*\ numPerturbationIterations\ */},\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*\ minimumPointsPerturbationThreshold\ */})}
+\DoxyCodeLine{00056\ \ \ \ \ :\ \mbox{\hyperlink{classbt_activating_collision_algorithm}{btActivatingCollisionAlgorithm}}(ci,\ body0Wrap,\ body1Wrap),}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ m\_simplexSolver(simplexSolver),}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ m\_pdSolver(pdSolver),}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ m\_ownManifold(false),}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ m\_manifoldPtr(mf),}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ m\_lowLevelOfDetail(false)}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ (void)body0Wrap;}
+\DoxyCodeLine{00064\ \ \ \ \ (void)body1Wrap;}
+\DoxyCodeLine{00065\ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ btConvex2dConvex2dAlgorithm::\string~btConvex2dConvex2dAlgorithm()}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_ownManifold)}
+\DoxyCodeLine{00070\ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_manifoldPtr)}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatcher-\/>releaseManifold(m\_manifoldPtr);}
+\DoxyCodeLine{00073\ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ btConvex2dConvex2dAlgorithm\ ::setLowLevelOfDetail(\textcolor{keywordtype}{bool}\ useLowLevel)}
+\DoxyCodeLine{00077\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ m\_lowLevelOfDetail\ =\ useLowLevel;}
+\DoxyCodeLine{00079\ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{extern}\ btScalar\ gContactBreakingThreshold;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{//}}
+\DoxyCodeLine{00084\ \textcolor{comment}{//\ Convex-\/Convex\ collision\ algorithm}}
+\DoxyCodeLine{00085\ \textcolor{comment}{//}}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ btConvex2dConvex2dAlgorithm\ ::processCollision(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut)}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_manifoldPtr)}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{comment}{//swapped?}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ m\_manifoldPtr\ =\ m\_dispatcher-\/>getNewManifold(body0Wrap-\/>getCollisionObject(),\ body1Wrap-\/>getCollisionObject());}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ m\_ownManifold\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ \ \ \ \ resultOut-\/>setPersistentManifold(m\_manifoldPtr);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{//comment-\/out\ next\ line\ to\ test\ multi-\/contact\ generation}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{//resultOut-\/>getPersistentManifold()-\/>clearManifold();}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ min0\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btConvexShape*\textcolor{keyword}{>}(body0Wrap-\/>getCollisionShape());}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ btConvexShape*\ min1\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btConvexShape*\textcolor{keyword}{>}(body1Wrap-\/>getCollisionShape());}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ btVector3\ normalOnB;}
+\DoxyCodeLine{00103\ \ \ \ \ btVector3\ pointOnBWorld;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_closest_point_input}{btGjkPairDetector::ClosestPointInput}}\ input;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_gjk_pair_detector}{btGjkPairDetector}}\ gjkPairDetector(min0,\ min1,\ m\_simplexSolver,\ m\_pdSolver);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{comment}{//TODO:\ if\ (dispatchInfo.m\_useContinuous)}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ gjkPairDetector.setMinkowskiA(min0);}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ gjkPairDetector.setMinkowskiB(min1);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ input.m\_maximumDistanceSquared\ =\ min0-\/>getMargin()\ +\ min1-\/>getMargin()\ +\ m\_manifoldPtr-\/>getContactBreakingThreshold();}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ input.m\_maximumDistanceSquared\ *=\ input.m\_maximumDistanceSquared;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ input.m\_transformA\ =\ body0Wrap-\/>getWorldTransform();}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ input.m\_transformB\ =\ body1Wrap-\/>getWorldTransform();}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ gjkPairDetector.getClosestPoints(input,\ *resultOut,\ dispatchInfo.m\_debugDraw);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ btVector3\ v0,\ v1;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ btVector3\ sepNormalWorldSpace;}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_ownManifold)}
+\DoxyCodeLine{00128\ \ \ \ \ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ resultOut-\/>refreshContactPoints();}
+\DoxyCodeLine{00130\ \ \ \ \ \}}
+\DoxyCodeLine{00131\ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ btScalar\ \mbox{\hyperlink{classbt_convex2d_convex2d_algorithm_a32bf85e0246ed54dd41edd861294c37e}{btConvex2dConvex2dAlgorithm::calculateTimeOfImpact}}(btCollisionObject*\ col0,\ btCollisionObject*\ col1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut)}
+\DoxyCodeLine{00134\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ (void)resultOut;}
+\DoxyCodeLine{00136\ \ \ \ \ (void)dispatchInfo;}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00141\ \ \ \ \ btScalar\ resultFraction\ =\ btScalar(1.);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ btScalar\ squareMot0\ =\ (col0-\/>getInterpolationWorldTransform().getOrigin()\ -\/\ col0-\/>getWorldTransform().getOrigin()).length2();}
+\DoxyCodeLine{00144\ \ \ \ \ btScalar\ squareMot1\ =\ (col1-\/>getInterpolationWorldTransform().getOrigin()\ -\/\ col1-\/>getWorldTransform().getOrigin()).length2();}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordflow}{if}\ (squareMot0\ <\ col0-\/>getCcdSquareMotionThreshold()\ \&\&}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ squareMot1\ <\ col1-\/>getCcdSquareMotionThreshold())}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ resultFraction;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{//An\ adhoc\ way\ of\ testing\ the\ Continuous\ Collision\ Detection\ algorithms}}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{comment}{//One\ object\ is\ approximated\ as\ a\ sphere,\ to\ simplify\ things}}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{comment}{//Starting\ in\ penetration\ should\ report\ no\ time\ of\ impact}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{//For\ proper\ CCD,\ better\ accuracy\ and\ handling\ of\ 'allowed'\ penetration\ should\ be\ added}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{comment}{//also\ the\ mainloop\ of\ the\ physics\ should\ have\ a\ kind\ of\ toi\ queue\ (something\ like\ Brian\ Mirtich's\ application\ of\ Timewarp\ for\ Rigidbodies)}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00157\ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ btConvexShape*\ convex0\ =\ \textcolor{keyword}{static\_cast<}btConvexShape*\textcolor{keyword}{>}(col0-\/>getCollisionShape());}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ btSphereShape\ sphere1(col1-\/>getCcdSweptSphereRadius());\ \ \textcolor{comment}{//todo:\ allow\ non-\/zero\ sphere\ sizes,\ for\ better\ approximation}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{btConvexCast::CastResult}}\ result;}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ btVoronoiSimplexSolver\ voronoiSimplex;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{comment}{//SubsimplexConvexCast\ ccd0(\&sphere,min0,\&voronoiSimplex);}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_gjk_convex_cast}{btGjkConvexCast}}\ ccd1(convex0,\ \&sphere1,\ \&voronoiSimplex);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ContinuousConvexCollision\ ccd(min0,min1,\&voronoiSimplex,0);}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ccd1.\mbox{\hyperlink{classbt_gjk_convex_cast_a814009e1ebc582495689f365a42ce2c1}{calcTimeOfImpact}}(col0-\/>getWorldTransform(),\ col0-\/>getInterpolationWorldTransform(),}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ col1-\/>getWorldTransform(),\ col1-\/>getInterpolationWorldTransform(),\ result))}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//store\ result.m\_fraction\ in\ both\ bodies}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (col0-\/>getHitFraction()\ >\ result.m\_fraction)}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ col0-\/>setHitFraction(result.m\_fraction);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (col1-\/>getHitFraction()\ >\ result.m\_fraction)}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ col1-\/>setHitFraction(result.m\_fraction);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultFraction\ >\ result.m\_fraction)}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultFraction\ =\ result.m\_fraction;}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00184\ \ \ \ \ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ btConvexShape*\ convex1\ =\ \textcolor{keyword}{static\_cast<}btConvexShape*\textcolor{keyword}{>}(col1-\/>getCollisionShape());}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ btSphereShape\ sphere0(col0-\/>getCcdSweptSphereRadius());\ \ \textcolor{comment}{//todo:\ allow\ non-\/zero\ sphere\ sizes,\ for\ better\ approximation}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{btConvexCast::CastResult}}\ result;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ btVoronoiSimplexSolver\ voronoiSimplex;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{comment}{//SubsimplexConvexCast\ ccd0(\&sphere,min0,\&voronoiSimplex);}}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_gjk_convex_cast}{btGjkConvexCast}}\ ccd1(\&sphere0,\ convex1,\ \&voronoiSimplex);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ContinuousConvexCollision\ ccd(min0,min1,\&voronoiSimplex,0);}}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ccd1.\mbox{\hyperlink{classbt_gjk_convex_cast_a814009e1ebc582495689f365a42ce2c1}{calcTimeOfImpact}}(col0-\/>getWorldTransform(),\ col0-\/>getInterpolationWorldTransform(),}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ col1-\/>getWorldTransform(),\ col1-\/>getInterpolationWorldTransform(),\ result))}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//store\ result.m\_fraction\ in\ both\ bodies}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (col0-\/>getHitFraction()\ >\ result.m\_fraction)}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ col0-\/>setHitFraction(result.m\_fraction);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (col1-\/>getHitFraction()\ >\ result.m\_fraction)}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ col1-\/>setHitFraction(result.m\_fraction);}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultFraction\ >\ result.m\_fraction)}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultFraction\ =\ result.m\_fraction;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \}}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordflow}{return}\ resultFraction;}
+\DoxyCodeLine{00211\ \}}
+
+\end{DoxyCode}

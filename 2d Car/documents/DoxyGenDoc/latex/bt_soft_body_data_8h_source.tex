@@ -1,0 +1,217 @@
+\doxysection{bt\+Soft\+Body\+Data.\+h}
+\hypertarget{bt_soft_body_data_8h_source}{}\label{bt_soft_body_data_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSoftBodyData.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btSoftBodyData.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_SOFTBODY\_FLOAT\_DATA}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_SOFTBODY\_FLOAT\_DATA}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_material_data}{SoftBodyMaterialData}}}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_linearStiffness;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_angularStiffness;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_volumeStiffness;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_flags;}
+\DoxyCodeLine{00028\ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_node_data}{SoftBodyNodeData}}}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_material_data}{SoftBodyMaterialData}}\ *m\_material;}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_position;}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_previousPosition;}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_velocity;}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_accumulatedForce;}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_normal;}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_inverseMass;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_area;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_attach;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_pad;}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_link_data}{SoftBodyLinkData}}}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_material_data}{SoftBodyMaterialData}}\ *m\_material;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_nodeIndices[2];\ \ \textcolor{comment}{//\ Node\ pointers}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restLength;\ \ \ \ \textcolor{comment}{//\ Rest\ length}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bbending;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Bending\ link}}
+\DoxyCodeLine{00050\ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_face_data}{SoftBodyFaceData}}}
+\DoxyCodeLine{00053\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_normal;\ \ \textcolor{comment}{//\ Normal}}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_material_data}{SoftBodyMaterialData}}\ *m\_material;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_nodeIndices[3];\ \ \textcolor{comment}{//\ Node\ pointers}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restArea;\ \ \ \ \ \ \textcolor{comment}{//\ Rest\ area}}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_tetra_data}{SoftBodyTetraData}}}
+\DoxyCodeLine{00061\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_c0[4];\ \ \textcolor{comment}{//\ gradients}}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_material_data}{SoftBodyMaterialData}}\ *m\_material;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_nodeIndices[4];\ \ \textcolor{comment}{//\ Node\ pointers}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restVolume;\ \ \ \ \textcolor{comment}{//\ Rest\ volume}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_c1;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (4*kVST)/(im0+im1+im2+im3)}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_c2;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m\_c1/sum(|g0..3|\string^2)}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_pad;}
+\DoxyCodeLine{00069\ \};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_rigid_anchor_data}{SoftRigidAnchorData}}}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{structbt_matrix3x3_float_data}{btMatrix3x3FloatData}}\ m\_c0;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Impulse\ matrix}}
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_c1;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Relative\ anchor}}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_localFrame;\ \ \textcolor{comment}{//\ Anchor\ position\ in\ body\ space}}
+\DoxyCodeLine{00076\ \ \ \ \ btRigidBodyData\ *m\_rigidBody;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_nodeIndex;\ \ \textcolor{comment}{//\ Node\ pointer}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_c2;\ \ \ \ \ \ \ \textcolor{comment}{//\ ima*dt}}
+\DoxyCodeLine{00079\ \};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_config_data}{SoftBodyConfigData}}}
+\DoxyCodeLine{00082\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_aeroModel;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Aerodynamic\ model\ (default:\ V\_Point)}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_baumgarte;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Velocities\ correction\ factor\ (Baumgarte)}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_damping;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Damping\ coefficient\ [0,1]}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_drag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Drag\ coefficient\ [0,+inf]}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_lift;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lift\ coefficient\ [0,+inf]}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_pressure;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pressure\ coefficient\ [-\/inf,+inf]}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_volume;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Volume\ conversation\ coefficient\ [0,+inf]}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_dynamicFriction;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Dynamic\ friction\ coefficient\ [0,1]}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_poseMatch;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pose\ matching\ coefficient\ [0,1]}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_rigidContactHardness;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Rigid\ contacts\ hardness\ [0,1]}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_kineticContactHardness;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Kinetic\ contacts\ hardness\ [0,1]}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_softContactHardness;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soft\ contacts\ hardness\ [0,1]}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_anchorHardness;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Anchors\ hardness\ [0,1]}}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_softRigidClusterHardness;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soft\ vs\ rigid\ hardness\ [0,1]\ (cluster\ only)}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_softKineticClusterHardness;\ \ \ \ \ \ \textcolor{comment}{//\ Soft\ vs\ kinetic\ hardness\ [0,1]\ (cluster\ only)}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_softSoftClusterHardness;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soft\ vs\ soft\ hardness\ [0,1]\ (cluster\ only)}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_softRigidClusterImpulseSplit;\ \ \ \ \textcolor{comment}{//\ Soft\ vs\ rigid\ impulse\ split\ [0,1]\ (cluster\ only)}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_softKineticClusterImpulseSplit;\ \ \textcolor{comment}{//\ Soft\ vs\ rigid\ impulse\ split\ [0,1]\ (cluster\ only)}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_softSoftClusterImpulseSplit;\ \ \ \ \ \textcolor{comment}{//\ Soft\ vs\ rigid\ impulse\ split\ [0,1]\ (cluster\ only)}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxVolume;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Maximum\ volume\ ratio\ for\ pose}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_timeScale;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Time\ scale}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_velocityIterations;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Velocities\ solver\ iterations}}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_positionIterations;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Positions\ solver\ iterations}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_driftIterations;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Drift\ solver\ iterations}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_clusterIterations;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cluster\ solver\ iterations}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_collisionFlags;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Collisions\ flags}}
+\DoxyCodeLine{00109\ \};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_pose_data}{SoftBodyPoseData}}}
+\DoxyCodeLine{00112\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{structbt_matrix3x3_float_data}{btMatrix3x3FloatData}}\ m\_rot;\ \ \ \ \textcolor{comment}{//\ Rotation}}
+\DoxyCodeLine{00114\ \ \ \ \ \mbox{\hyperlink{structbt_matrix3x3_float_data}{btMatrix3x3FloatData}}\ m\_scale;\ \ \textcolor{comment}{//\ Scale}}
+\DoxyCodeLine{00115\ \ \ \ \ \mbox{\hyperlink{structbt_matrix3x3_float_data}{btMatrix3x3FloatData}}\ m\_aqq;\ \ \ \ \textcolor{comment}{//\ Base\ scaling}}
+\DoxyCodeLine{00116\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_com;\ \ \ \ \ \ \textcolor{comment}{//\ COM}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ *m\_positions;\ \ \textcolor{comment}{//\ Reference\ positions}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{float}\ *m\_weights;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Weights}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numPositions;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numWeigts;}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bvolume;\ \ \ \ \ \ \ \textcolor{comment}{//\ Is\ valid}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bframe;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Is\ frame}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restVolume;\ \ \textcolor{comment}{//\ Rest\ volume}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_pad;}
+\DoxyCodeLine{00127\ \};}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_soft_body_cluster_data}{SoftBodyClusterData}}}
+\DoxyCodeLine{00130\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \mbox{\hyperlink{structbt_transform_float_data}{btTransformFloatData}}\ m\_framexform;}
+\DoxyCodeLine{00132\ \ \ \ \ \mbox{\hyperlink{structbt_matrix3x3_float_data}{btMatrix3x3FloatData}}\ m\_locii;}
+\DoxyCodeLine{00133\ \ \ \ \ \mbox{\hyperlink{structbt_matrix3x3_float_data}{btMatrix3x3FloatData}}\ m\_invwi;}
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_com;}
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_vimpulses[2];}
+\DoxyCodeLine{00136\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_dimpulses[2];}
+\DoxyCodeLine{00137\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_lv;}
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_av;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ *m\_framerefs;}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{int}\ *m\_nodeIndices;}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{float}\ *m\_masses;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numFrameRefs;}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numNodes;}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numMasses;}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_idmass;}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_imass;}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_nvimpulses;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_ndimpulses;}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_ndamping;}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_ldamping;}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_adamping;}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_matching;}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxSelfCollisionImpulse;}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_selfCollisionImpulseFactor;}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_containsAnchor;}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_collide;}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_clusterIndex;}
+\DoxyCodeLine{00161\ \};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{keyword}{enum}\ btSoftJointBodyType}
+\DoxyCodeLine{00164\ \{}
+\DoxyCodeLine{00165\ \ \ \ \ BT\_JOINT\_SOFT\_BODY\_CLUSTER\ =\ 1,}
+\DoxyCodeLine{00166\ \ \ \ \ BT\_JOINT\_RIGID\_BODY,}
+\DoxyCodeLine{00167\ \ \ \ \ BT\_JOINT\_COLLISION\_OBJECT}
+\DoxyCodeLine{00168\ \};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_body_joint_data}{btSoftBodyJointData}}}
+\DoxyCodeLine{00171\ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{void}\ *m\_bodyA;}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{void}\ *m\_bodyB;}
+\DoxyCodeLine{00174\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_refs[2];}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_cfm;}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_erp;}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_split;}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_delete;}
+\DoxyCodeLine{00179\ \ \ \ \ \mbox{\hyperlink{structbt_vector3_float_data}{btVector3FloatData}}\ m\_relPosition[2];\ \ \textcolor{comment}{//linear}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bodyAtype;}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_bodyBtype;}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_jointType;}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_pad;}
+\DoxyCodeLine{00184\ \};}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00187\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_soft_body_float_data}{btSoftBodyFloatData}}}
+\DoxyCodeLine{00188\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_float_data}{btCollisionObjectFloatData}}\ m\_collisionObjectData;}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_pose_data}{SoftBodyPoseData}}\ *m\_pose;}
+\DoxyCodeLine{00192\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_material_data}{SoftBodyMaterialData}}\ **m\_materials;}
+\DoxyCodeLine{00193\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_node_data}{SoftBodyNodeData}}\ *m\_nodes;}
+\DoxyCodeLine{00194\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_link_data}{SoftBodyLinkData}}\ *m\_links;}
+\DoxyCodeLine{00195\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_face_data}{SoftBodyFaceData}}\ *m\_faces;}
+\DoxyCodeLine{00196\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_tetra_data}{SoftBodyTetraData}}\ *m\_tetrahedra;}
+\DoxyCodeLine{00197\ \ \ \ \ \mbox{\hyperlink{struct_soft_rigid_anchor_data}{SoftRigidAnchorData}}\ *m\_anchors;}
+\DoxyCodeLine{00198\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_cluster_data}{SoftBodyClusterData}}\ *m\_clusters;}
+\DoxyCodeLine{00199\ \ \ \ \ \mbox{\hyperlink{structbt_soft_body_joint_data}{btSoftBodyJointData}}\ *m\_joints;}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numMaterials;}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numNodes;}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numLinks;}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numFaces;}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numTetrahedra;}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numAnchors;}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numClusters;}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numJoints;}
+\DoxyCodeLine{00209\ \ \ \ \ \mbox{\hyperlink{struct_soft_body_config_data}{SoftBodyConfigData}}\ m\_config;}
+\DoxyCodeLine{00210\ \};}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SOFTBODY\_FLOAT\_DATA}}
+
+\end{DoxyCode}

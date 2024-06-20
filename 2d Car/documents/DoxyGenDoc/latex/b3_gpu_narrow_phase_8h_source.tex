@@ -1,0 +1,107 @@
+\doxysection{b3\+Gpu\+Narrow\+Phase.\+h}
+\hypertarget{b3_gpu_narrow_phase_8h_source}{}\label{b3_gpu_narrow_phase_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/RigidBody/b3GpuNarrowPhase.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/RigidBody/b3GpuNarrowPhase.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ B3\_GPU\_NARROWPHASE\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ B3\_GPU\_NARROWPHASE\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/Initialize/b3OpenCLInclude.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3AlignedObjectArray.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Vector3.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_gpu_narrow_phase}{b3GpuNarrowPhase}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_gpu_narrow_phase_internal_data}{b3GpuNarrowPhaseInternalData}}*\ m\_data;}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_acceleratedCompanionShapeIndex;}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_planeBodyIndex;}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_static0Index;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ cl\_context\ m\_context;}
+\DoxyCodeLine{00018\ \ \ \ \ cl\_device\_id\ m\_device;}
+\DoxyCodeLine{00019\ \ \ \ \ cl\_command\_queue\ m\_queue;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ registerConvexHullShapeInternal(\textcolor{keyword}{class}\ b3ConvexUtility*\ convexPtr,\ \mbox{\hyperlink{structb3_collidable}{b3Collidable}}\&\ col);}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{int}\ registerConcaveMeshShape(\mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3Vector3>}}*\ vertices,\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}*\ indices,\ \mbox{\hyperlink{structb3_collidable}{b3Collidable}}\&\ col,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ scaling);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{classb3_gpu_narrow_phase}{b3GpuNarrowPhase}}(cl\_context\ vtx,\ cl\_device\_id\ dev,\ cl\_command\_queue\ q,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structb3_config}{b3Config}}\&\ config);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_gpu_narrow_phase}{\string~b3GpuNarrowPhase}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{int}\ registerSphereShape(\textcolor{keywordtype}{float}\ radius);}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{int}\ registerPlaneShape(\textcolor{keyword}{const}\ b3Vector3\&\ planeNormal,\ \textcolor{keywordtype}{float}\ planeConstant);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classb3_gpu_narrow_phase_a8bbcf9e34e95a188229adca76e1dfd5a}{registerCompoundShape}}(\mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3GpuChildShape>}}*\ childShapes);}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{int}\ registerFace(\textcolor{keyword}{const}\ b3Vector3\&\ faceNormal,\ \textcolor{keywordtype}{float}\ faceConstant);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{int}\ registerConcaveMesh(\mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3Vector3>}}*\ vertices,\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}*\ indices,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ scaling);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//do\ they\ need\ to\ be\ merged?}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{int}\ registerConvexHullShape(b3ConvexUtility*\ utilPtr);}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{int}\ registerConvexHullShape(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ vertices,\ \textcolor{keywordtype}{int}\ strideInBytes,\ \textcolor{keywordtype}{int}\ numVertices,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ scaling);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ registerRigidBody(\textcolor{keywordtype}{int}\ collidableIndex,\ \textcolor{keywordtype}{float}\ mass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ position,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ orientation,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ aabbMin,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ aabbMax,\ \textcolor{keywordtype}{bool}\ writeToGpu);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ setObjectTransform(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ position,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ orientation,\ \textcolor{keywordtype}{int}\ bodyIndex);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ writeAllBodiesToGpu();}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ readbackAllBodiesToCpu();}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ getObjectTransformFromCpu(\textcolor{keywordtype}{float}*\ position,\ \textcolor{keywordtype}{float}*\ orientation,\ \textcolor{keywordtype}{int}\ bodyIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ setObjectTransformCpu(\textcolor{keywordtype}{float}*\ position,\ \textcolor{keywordtype}{float}*\ orientation,\ \textcolor{keywordtype}{int}\ bodyIndex);}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ setObjectVelocityCpu(\textcolor{keywordtype}{float}*\ linVel,\ \textcolor{keywordtype}{float}*\ angVel,\ \textcolor{keywordtype}{int}\ bodyIndex);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ computeContacts(cl\_mem\ broadphasePairs,\ \textcolor{keywordtype}{int}\ numBroadphasePairs,\ cl\_mem\ aabbsWorldSpace,\ \textcolor{keywordtype}{int}\ numObjects);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ cl\_mem\ getBodiesGpu();}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ getBodiesCpu()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{//struct\ b3RigidBodyData*\ getBodiesCpu();}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumBodiesGpu()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ cl\_mem\ getBodyInertiasGpu();}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumBodyInertiasGpu()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ cl\_mem\ getCollidablesGpu();}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_collidable}{b3Collidable}}*\ getCollidablesCpu()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumCollidablesGpu()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }b3SapAabb*\ getLocalSpaceAabbsCpu()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }b3Contact4*\ getContactsCPU()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ cl\_mem\ getContactsGpu();}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumContactsGpu()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ cl\_mem\ getAabbLocalSpaceBufferGpu();}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ getNumRigidBodies()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{int}\ allocateCollidable();}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{int}\ getStatic0Index()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_static0Index;}
+\DoxyCodeLine{00084\ \ \ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{structb3_collidable}{b3Collidable}}\&\ getCollidableCpu(\textcolor{keywordtype}{int}\ collidableIndex);}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_collidable}{b3Collidable}}\&\ getCollidableCpu(\textcolor{keywordtype}{int}\ collidableIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_gpu_narrow_phase_internal_data}{b3GpuNarrowPhaseInternalData}}*\ getInternalData()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00089\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data;}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \mbox{\hyperlink{structb3_gpu_narrow_phase_internal_data}{b3GpuNarrowPhaseInternalData}}*\ getInternalData()}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_data;}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }b3SapAabb\&\ getLocalSpaceAabb(\textcolor{keywordtype}{int}\ collidableIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00099\ \};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_GPU\_NARROWPHASE\_H}}
+
+\end{DoxyCode}

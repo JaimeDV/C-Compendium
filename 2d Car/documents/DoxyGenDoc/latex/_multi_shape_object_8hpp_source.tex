@@ -1,0 +1,63 @@
+\doxysection{Multi\+Shape\+Object.\+hpp}
+\hypertarget{_multi_shape_object_8hpp_source}{}\label{_multi_shape_object_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/code/Headers/MultiShapeObject.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/code/Headers/MultiShapeObject.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Sphere.hpp"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Edge.hpp"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Polygon.hpp"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}vector"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{enum}\ fixtureType}
+\DoxyCodeLine{00014\ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ cube=0,}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ polygon,}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ sphere,}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ edge}
+\DoxyCodeLine{00019\ \ \ \ \ \};}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_multi_shape_object}{MultiShapeObject}}}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ vector<physicBody*>\ bodyList;}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ vector<b2RevoluteJoint*>\ RevoluteJoints;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1physic_body}{physicBody}}*\ fatherBody=\textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ b2RevoluteJoint*\ CreateJoint(b2World\&\ physics\_world,\ b2Body*\ body\_a,\ b2Body*\ body\_b,\ \textcolor{keywordtype}{bool}\ enable\_motor\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_multi_shape_object}{MultiShapeObject}}(\mbox{\hyperlink{classmisi_1_1physic_body}{physicBody}}*\ firstBody);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Unusued}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ AddObject(\mbox{\hyperlink{classmisi_1_1physic_body}{physicBody}}*\ newBody,\ \mbox{\hyperlink{classmisi_1_1physic_world}{physicWorld}}\&\ given\_world);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_a573be4162ef04b4393b24eb4ec0fd9b2}{AddPolygonFixture}}(b2Vec2\ position,\ b2Vec2\ given\_vertices,\textcolor{keywordtype}{float}\ density,\ \textcolor{keywordtype}{float}\ restitution,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ friction,\ \textcolor{keywordtype}{bool}\ iscube);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_aa9e4b4782885c0d1e74d40b64c8490ff}{AddSphereFixture}}(b2Vec2\ position,\ \textcolor{keywordtype}{float}\ radious,\ \textcolor{keywordtype}{float}\ density,\ \textcolor{keywordtype}{float}\ restitution,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ friction);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_aa83ba44c061d806193e7b01aae95092b}{AddEdgeFixture}}(b2Vec2\ positionA,\ b2Vec2\ positionB,\ \textcolor{keywordtype}{float}\ density,\ \textcolor{keywordtype}{float}\ restitution,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ friction);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_a5428689c4dfa63d906b4888aa1fc6ff3}{AddMotorJoint}}(b2Body*\ bodyToAdd);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_ab23e4eb982cc835d63dc34e29f6d765e}{AddRevoluteJoint}}(b2Body*\ bodyToAdd);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_a7abfb91986bcb1a21cd621fff7f15bc1}{AddWeldJoint}}(b2Body*\ bodyToAdd);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_ad1fe8144832ca7cbb7e38c461aff027c}{AddpPulleyJoint}}(b2Body*\ bodyToAdd);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_a4b04dc1b69a7e079c268102bd4eb06e7}{AddSpeed}}(\textcolor{keywordtype}{float}\ speed);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_multi_shape_object_ae3381d64e45db55ddb4525be2d2f345c}{SetTorque}}(\textcolor{keywordtype}{float}\ tourge);}
+\DoxyCodeLine{00076\ \ \ \ \ \};}
+\DoxyCodeLine{00077\ \}}
+
+\end{DoxyCode}

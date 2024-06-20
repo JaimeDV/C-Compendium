@@ -1,0 +1,338 @@
+\doxysection{bt\+Compound\+Shape.\+cpp}
+\hypertarget{bt_compound_shape_8cpp_source}{}\label{bt_compound_shape_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btCompoundShape.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btCompoundShape.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btCompoundShape.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}btCollisionShape.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btDbvt.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSerializer.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ btCompoundShape::btCompoundShape(\textcolor{keywordtype}{bool}\ enableDynamicAabbTree,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ initialChildCapacity)}
+\DoxyCodeLine{00022\ \ \ \ \ :\ m\_localAabbMin(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT)),}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ m\_localAabbMax(btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT)),}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ m\_dynamicAabbTree(0),}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ m\_updateRevision(1),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ m\_collisionMargin(btScalar(0.)),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ m\_localScaling(btScalar(1.),\ btScalar(1.),\ btScalar(1.))}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ m\_shapeType\ =\ COMPOUND\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordflow}{if}\ (enableDynamicAabbTree)}
+\DoxyCodeLine{00032\ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_dbvt}{btDbvt}}),\ 16);}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ m\_dynamicAabbTree\ =\ \textcolor{keyword}{new}\ (mem)\ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}();}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ btAssert(mem\ ==\ m\_dynamicAabbTree);}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ m\_children.reserve(initialChildCapacity);}
+\DoxyCodeLine{00039\ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ btCompoundShape::\string~btCompoundShape()}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_dynamicAabbTree)}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ m\_dynamicAabbTree-\/>\string~btDbvt();}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ btAlignedFree(m\_dynamicAabbTree);}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ btCompoundShape::addChildShape(\textcolor{keyword}{const}\ btTransform\&\ localTransform,\ btCollisionShape*\ shape)}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ m\_updateRevision++;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//m\_childTransforms.push\_back(localTransform);}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//m\_childShapes.push\_back(shape);}}
+\DoxyCodeLine{00055\ \ \ \ \ btCompoundShapeChild\ child;}
+\DoxyCodeLine{00056\ \ \ \ \ child.m\_node\ =\ 0;}
+\DoxyCodeLine{00057\ \ \ \ \ child.m\_transform\ =\ localTransform;}
+\DoxyCodeLine{00058\ \ \ \ \ child.m\_childShape\ =\ shape;}
+\DoxyCodeLine{00059\ \ \ \ \ child.m\_childShapeType\ =\ shape-\/>getShapeType();}
+\DoxyCodeLine{00060\ \ \ \ \ child.m\_childMargin\ =\ shape-\/>getMargin();}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//extend\ the\ local\ aabbMin/aabbMax}}
+\DoxyCodeLine{00063\ \ \ \ \ btVector3\ localAabbMin,\ localAabbMax;}
+\DoxyCodeLine{00064\ \ \ \ \ shape-\/>getAabb(localTransform,\ localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00066\ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_localAabbMin[i]\ >\ localAabbMin[i])}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMin[i]\ =\ localAabbMin[i];}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_localAabbMax[i]\ <\ localAabbMax[i])}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMax[i]\ =\ localAabbMax[i];}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_dynamicAabbTree)}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\ bounds\ =\ btDbvtVolume::FromMM(localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index\ =\ m\_children.size();}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ child.m\_node\ =\ m\_dynamicAabbTree-\/>insert(bounds,\ \textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(index));}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ m\_children.push\_back(child);}
+\DoxyCodeLine{00084\ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ btCompoundShape::updateChildTransform(\textcolor{keywordtype}{int}\ childIndex,\ \textcolor{keyword}{const}\ btTransform\&\ newChildTransform,\ \textcolor{keywordtype}{bool}\ shouldRecalculateLocalAabb)}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ m\_children[childIndex].m\_transform\ =\ newChildTransform;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_dynamicAabbTree)}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ btVector3\ localAabbMin,\ localAabbMax;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ m\_children[childIndex].m\_childShape-\/>getAabb(newChildTransform,\ localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ ATTRIBUTE\_ALIGNED16(\mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}})}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ bounds\ =\ btDbvtVolume::FromMM(localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{comment}{//int\ index\ =\ m\_children.size()-\/1;}}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ m\_dynamicAabbTree-\/>update(m\_children[childIndex].m\_node,\ bounds);}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{if}\ (shouldRecalculateLocalAabb)}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ recalculateLocalAabb();}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{keywordtype}{void}\ btCompoundShape::removeChildShapeByIndex(\textcolor{keywordtype}{int}\ childShapeIndex)}
+\DoxyCodeLine{00108\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ m\_updateRevision++;}
+\DoxyCodeLine{00110\ \ \ \ \ btAssert(childShapeIndex\ >=\ 0\ \&\&\ childShapeIndex\ <\ m\_children.size());}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_dynamicAabbTree)}
+\DoxyCodeLine{00112\ \ \ \ \ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ m\_dynamicAabbTree-\/>remove(m\_children[childShapeIndex].m\_node);}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ m\_children.swap(childShapeIndex,\ m\_children.size()\ -\/\ 1);}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_dynamicAabbTree)}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ m\_children[childShapeIndex].m\_node-\/>dataAsInt\ =\ childShapeIndex;}
+\DoxyCodeLine{00118\ \ \ \ \ m\_children.pop\_back();}
+\DoxyCodeLine{00119\ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ btCompoundShape::removeChildShape(btCollisionShape*\ shape)}
+\DoxyCodeLine{00122\ \{}
+\DoxyCodeLine{00123\ \ \ \ \ m\_updateRevision++;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{//\ Find\ the\ children\ containing\ the\ shape\ specified,\ and\ remove\ those\ children.}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{//note:\ there\ might\ be\ multiple\ children\ using\ the\ same\ shape!}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ m\_children.size()\ -\/\ 1;\ i\ >=\ 0;\ i-\/-\/)}
+\DoxyCodeLine{00127\ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_children[i].m\_childShape\ ==\ shape)}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ removeChildShapeByIndex(i);}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ recalculateLocalAabb();}
+\DoxyCodeLine{00135\ \}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{void}\ btCompoundShape::recalculateLocalAabb()}
+\DoxyCodeLine{00138\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{//\ Recalculate\ the\ local\ aabb}}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{comment}{//\ Brute\ force,\ it\ iterates\ over\ all\ the\ shapes\ left.}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ m\_localAabbMin\ =\ btVector3(btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT),\ btScalar(BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00143\ \ \ \ \ m\_localAabbMax\ =\ btVector3(btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT),\ btScalar(-\/BT\_LARGE\_FLOAT));}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{comment}{//extend\ the\ local\ aabbMin/aabbMax}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ m\_children.size();\ j++)}
+\DoxyCodeLine{00147\ \ \ \ \ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ btVector3\ localAabbMin,\ localAabbMax;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ m\_children[j].m\_childShape-\/>getAabb(m\_children[j].m\_transform,\ localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_localAabbMin[i]\ >\ localAabbMin[i])}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMin[i]\ =\ localAabbMin[i];}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_localAabbMax[i]\ <\ localAabbMax[i])}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_localAabbMax[i]\ =\ localAabbMax[i];}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{void}\ btCompoundShape::getAabb(\textcolor{keyword}{const}\ btTransform\&\ trans,\ btVector3\&\ aabbMin,\ btVector3\&\ aabbMax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00162\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00163\ \ \ \ \ btVector3\ localHalfExtents\ =\ btScalar(0.5)\ *\ (m\_localAabbMax\ -\/\ m\_localAabbMin);}
+\DoxyCodeLine{00164\ \ \ \ \ btVector3\ localCenter\ =\ btScalar(0.5)\ *\ (m\_localAabbMax\ +\ m\_localAabbMin);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{//avoid\ an\ illegal\ AABB\ when\ there\ are\ no\ children}}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_children.size())}
+\DoxyCodeLine{00168\ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ localHalfExtents.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ localCenter.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ \ \ \ \ localHalfExtents\ +=\ btVector3(getMargin(),\ getMargin(),\ getMargin());}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ btMatrix3x3\ abs\_b\ =\ trans.getBasis().absolute();}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ btVector3\ center\ =\ trans(localCenter);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ btVector3\ extent\ =\ localHalfExtents.dot3(abs\_b[0],\ abs\_b[1],\ abs\_b[2]);}
+\DoxyCodeLine{00179\ \ \ \ \ aabbMin\ =\ center\ -\/\ extent;}
+\DoxyCodeLine{00180\ \ \ \ \ aabbMax\ =\ center\ +\ extent;}
+\DoxyCodeLine{00181\ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \textcolor{keywordtype}{void}\ btCompoundShape::calculateLocalInertia(btScalar\ mass,\ btVector3\&\ inertia)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00184\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{comment}{//approximation:\ take\ the\ inertia\ from\ the\ aabb\ for\ now}}
+\DoxyCodeLine{00186\ \ \ \ \ btTransform\ ident;}
+\DoxyCodeLine{00187\ \ \ \ \ ident.setIdentity();}
+\DoxyCodeLine{00188\ \ \ \ \ btVector3\ aabbMin,\ aabbMax;}
+\DoxyCodeLine{00189\ \ \ \ \ getAabb(ident,\ aabbMin,\ aabbMax);}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ btVector3\ halfExtents\ =\ (aabbMax\ -\/\ aabbMin)\ *\ btScalar(0.5);}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ btScalar\ lx\ =\ btScalar(2.)\ *\ (halfExtents.x());}
+\DoxyCodeLine{00194\ \ \ \ \ btScalar\ ly\ =\ btScalar(2.)\ *\ (halfExtents.y());}
+\DoxyCodeLine{00195\ \ \ \ \ btScalar\ lz\ =\ btScalar(2.)\ *\ (halfExtents.z());}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ inertia[0]\ =\ mass\ /\ (btScalar(12.0))\ *\ (ly\ *\ ly\ +\ lz\ *\ lz);}
+\DoxyCodeLine{00198\ \ \ \ \ inertia[1]\ =\ mass\ /\ (btScalar(12.0))\ *\ (lx\ *\ lx\ +\ lz\ *\ lz);}
+\DoxyCodeLine{00199\ \ \ \ \ inertia[2]\ =\ mass\ /\ (btScalar(12.0))\ *\ (lx\ *\ lx\ +\ ly\ *\ ly);}
+\DoxyCodeLine{00200\ \}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{keywordtype}{void}\ btCompoundShape::calculatePrincipalAxisTransform(\textcolor{keyword}{const}\ btScalar*\ masses,\ btTransform\&\ principal,\ btVector3\&\ inertia)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00203\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ m\_children.size();}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ btScalar\ totalMass\ =\ 0;}
+\DoxyCodeLine{00207\ \ \ \ \ btVector3\ center(0,\ 0,\ 0);}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{int}\ k;}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordflow}{for}\ (k\ =\ 0;\ k\ <\ n;\ k++)}
+\DoxyCodeLine{00211\ \ \ \ \ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ btAssert(masses[k]\ >\ 0);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ center\ +=\ m\_children[k].m\_transform.getOrigin()\ *\ masses[k];}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ totalMass\ +=\ masses[k];}
+\DoxyCodeLine{00215\ \ \ \ \ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ btAssert(totalMass\ >\ 0);}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ \ \ center\ /=\ totalMass;}
+\DoxyCodeLine{00220\ \ \ \ \ principal.setOrigin(center);}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ btMatrix3x3\ tensor(0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordflow}{for}\ (k\ =\ 0;\ k\ <\ n;\ k++)}
+\DoxyCodeLine{00224\ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ btVector3\ i;}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ m\_children[k].m\_childShape-\/>calculateLocalInertia(masses[k],\ i);}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ t\ =\ m\_children[k].m\_transform;}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ btVector3\ o\ =\ t.getOrigin()\ -\/\ center;}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{comment}{//compute\ inertia\ tensor\ in\ coordinate\ system\ of\ compound\ shape}}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ btMatrix3x3\ j\ =\ t.getBasis().transpose();}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ j[0]\ *=\ i[0];}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ j[1]\ *=\ i[1];}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ j[2]\ *=\ i[2];}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ j\ =\ t.getBasis()\ *\ j;}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ inertia\ tensor}}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ tensor[0]\ +=\ j[0];}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ tensor[1]\ +=\ j[1];}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ tensor[2]\ +=\ j[2];}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{comment}{//compute\ inertia\ tensor\ of\ pointmass\ at\ o}}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ btScalar\ o2\ =\ o.length2();}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ j[0].setValue(o2,\ 0,\ 0);}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ j[1].setValue(0,\ o2,\ 0);}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ j[2].setValue(0,\ 0,\ o2);}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ j[0]\ +=\ o\ *\ -\/o.x();}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ j[1]\ +=\ o\ *\ -\/o.y();}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ j[2]\ +=\ o\ *\ -\/o.z();}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ inertia\ tensor\ of\ pointmass}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ tensor[0]\ +=\ masses[k]\ *\ j[0];}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ tensor[1]\ +=\ masses[k]\ *\ j[1];}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ tensor[2]\ +=\ masses[k]\ *\ j[2];}
+\DoxyCodeLine{00256\ \ \ \ \ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ tensor.diagonalize(principal.getBasis(),\ btScalar(0.00001),\ 20);}
+\DoxyCodeLine{00259\ \ \ \ \ inertia.setValue(tensor[0][0],\ tensor[1][1],\ tensor[2][2]);}
+\DoxyCodeLine{00260\ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \textcolor{keywordtype}{void}\ btCompoundShape::setLocalScaling(\textcolor{keyword}{const}\ btVector3\&\ scaling)}
+\DoxyCodeLine{00263\ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_children.size();\ i++)}
+\DoxyCodeLine{00265\ \ \ \ \ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ btTransform\ childTrans\ =\ getChildTransform(i);}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ btVector3\ childScale\ =\ m\_children[i].m\_childShape-\/>getLocalScaling();}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ childScale\ =\ childScale\ *\ (childTrans.getBasis()\ *\ scaling);}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ childScale\ =\ childScale\ *\ scaling\ /\ m\_localScaling;}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ m\_children[i].m\_childShape-\/>setLocalScaling(childScale);}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ childTrans.setOrigin((childTrans.getOrigin())\ *\ scaling\ /\ m\_localScaling);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ updateChildTransform(i,\ childTrans,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00273\ \ \ \ \ \}}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ m\_localScaling\ =\ scaling;}
+\DoxyCodeLine{00276\ \ \ \ \ recalculateLocalAabb();}
+\DoxyCodeLine{00277\ \}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \textcolor{keywordtype}{void}\ btCompoundShape::createAabbTreeFromChildren()}
+\DoxyCodeLine{00280\ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_dynamicAabbTree)}
+\DoxyCodeLine{00282\ \ \ \ \ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ mem\ =\ btAlignedAlloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_dbvt}{btDbvt}}),\ 16);}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ m\_dynamicAabbTree\ =\ \textcolor{keyword}{new}\ (mem)\ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}();}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ btAssert(mem\ ==\ m\_dynamicAabbTree);}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ index\ =\ 0;\ index\ <\ m\_children.size();\ index++)}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ btCompoundShapeChild\&\ child\ =\ m\_children[index];}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//extend\ the\ local\ aabbMin/aabbMax}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ localAabbMin,\ localAabbMax;}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ child.m\_childShape-\/>getAabb(child.m\_transform,\ localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\ bounds\ =\ btDbvtVolume::FromMM(localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index2\ =\ index;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ child.m\_node\ =\ m\_dynamicAabbTree-\/>insert(bounds,\ \textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(index2));}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00299\ \ \ \ \ \}}
+\DoxyCodeLine{00300\ \}}
+\DoxyCodeLine{00301\ }
+\DoxyCodeLine{00303\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btCompoundShape::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00304\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00305\ \ \ \ \ \mbox{\hyperlink{structbt_compound_shape_data}{btCompoundShapeData}}*\ shapeData\ =\ (\mbox{\hyperlink{structbt_compound_shape_data}{btCompoundShapeData}}*)dataBuffer;}
+\DoxyCodeLine{00306\ \ \ \ \ btCollisionShape::serialize(\&shapeData-\/>m\_collisionShapeData,\ serializer);}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ shapeData-\/>m\_collisionMargin\ =\ float(m\_collisionMargin);}
+\DoxyCodeLine{00309\ \ \ \ \ shapeData-\/>m\_numChildShapes\ =\ m\_children.size();}
+\DoxyCodeLine{00310\ \ \ \ \ shapeData-\/>m\_childShapePtr\ =\ 0;}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keywordflow}{if}\ (shapeData-\/>m\_numChildShapes)}
+\DoxyCodeLine{00312\ \ \ \ \ \{}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structbt_compound_shape_child_data}{btCompoundShapeChildData}}),\ shapeData-\/>m\_numChildShapes);}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_compound_shape_child_data}{btCompoundShapeChildData}}*\ memPtr\ =\ (\mbox{\hyperlink{structbt_compound_shape_child_data}{btCompoundShapeChildData}}*)chunk-\/>m\_oldPtr;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ shapeData-\/>m\_childShapePtr\ =\ (\mbox{\hyperlink{structbt_compound_shape_child_data}{btCompoundShapeChildData}}*)serializer-\/>getUniquePointer(memPtr);}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ shapeData-\/>m\_numChildShapes;\ i++,\ memPtr++)}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ memPtr-\/>m\_childMargin\ =\ float(m\_children[i].m\_childMargin);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ memPtr-\/>m\_childShape\ =\ (\mbox{\hyperlink{structbt_collision_shape_data}{btCollisionShapeData}}*)serializer-\/>getUniquePointer(m\_children[i].m\_childShape);}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//don't\ serialize\ shapes\ that\ already\ have\ been\ serialized}}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!serializer-\/>findPointer(m\_children[i].m\_childShape))}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(m\_children[i].m\_childShape-\/>calculateSerializeBufferSize(),\ 1);}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ structType\ =\ m\_children[i].m\_childShape-\/>serialize(chunk-\/>m\_oldPtr,\ serializer);}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ structType,\ BT\_SHAPE\_CODE,\ m\_children[i].m\_childShape);}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ memPtr-\/>m\_childShapeType\ =\ m\_children[i].m\_childShapeType;}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ m\_children[i].m\_transform.serializeFloat(memPtr-\/>m\_transform);}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ \textcolor{stringliteral}{"{}btCompoundShapeChildData"{}},\ BT\_ARRAY\_CODE,\ chunk-\/>m\_oldPtr);}
+\DoxyCodeLine{00333\ \ \ \ \ \}}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}btCompoundShapeData"{}};}
+\DoxyCodeLine{00335\ \}}
+
+\end{DoxyCode}

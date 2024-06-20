@@ -1,0 +1,348 @@
+\doxysection{bt\+Slider\+Constraint.\+h}
+\hypertarget{bt_slider_constraint_8h_source}{}\label{bt_slider_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSliderConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSliderConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00017\ \textcolor{comment}{Added\ by\ Roman\ Ponomarev\ (rponom@gmail.com)}}
+\DoxyCodeLine{00018\ \textcolor{comment}{April\ 04,\ 2008}}
+\DoxyCodeLine{00019\ \textcolor{comment}{}}
+\DoxyCodeLine{00020\ \textcolor{comment}{TODO:}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ -\/\ add\ clamping\ od\ accumulated\ impulse\ to\ improve\ stability}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ -\/\ add\ conversion\ for\ ODE\ constraint\ solver}}
+\DoxyCodeLine{00023\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#ifndef\ BT\_SLIDER\_CONSTRAINT\_H}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ BT\_SLIDER\_CONSTRAINT\_H}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}\ \ \textcolor{comment}{//for\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ btSliderConstraintData2\ btSliderConstraintDoubleData}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ btSliderConstraintDataName\ "{}btSliderConstraintDoubleData"{}}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ btSliderConstraintData2\ btSliderConstraintData}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ btSliderConstraintDataName\ "{}btSliderConstraintData"{}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ "{}btJacobianEntry.h"{}}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ "{}btTypedConstraint.h"{}}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ SLIDER\_CONSTRAINT\_DEF\_SOFTNESS\ (btScalar(1.0))}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ SLIDER\_CONSTRAINT\_DEF\_DAMPING\ (btScalar(1.0))}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ SLIDER\_CONSTRAINT\_DEF\_RESTITUTION\ (btScalar(0.7))}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ SLIDER\_CONSTRAINT\_DEF\_CFM\ (btScalar(0.f))}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{enum}\ btSliderFlags}
+\DoxyCodeLine{00050\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ BT\_SLIDER\_FLAGS\_CFM\_DIRLIN\ =\ (1\ <<\ 0),}
+\DoxyCodeLine{00052\ \ \ \ \ BT\_SLIDER\_FLAGS\_ERP\_DIRLIN\ =\ (1\ <<\ 1),}
+\DoxyCodeLine{00053\ \ \ \ \ BT\_SLIDER\_FLAGS\_CFM\_DIRANG\ =\ (1\ <<\ 2),}
+\DoxyCodeLine{00054\ \ \ \ \ BT\_SLIDER\_FLAGS\_ERP\_DIRANG\ =\ (1\ <<\ 3),}
+\DoxyCodeLine{00055\ \ \ \ \ BT\_SLIDER\_FLAGS\_CFM\_ORTLIN\ =\ (1\ <<\ 4),}
+\DoxyCodeLine{00056\ \ \ \ \ BT\_SLIDER\_FLAGS\_ERP\_ORTLIN\ =\ (1\ <<\ 5),}
+\DoxyCodeLine{00057\ \ \ \ \ BT\_SLIDER\_FLAGS\_CFM\_ORTANG\ =\ (1\ <<\ 6),}
+\DoxyCodeLine{00058\ \ \ \ \ BT\_SLIDER\_FLAGS\_ERP\_ORTANG\ =\ (1\ <<\ 7),}
+\DoxyCodeLine{00059\ \ \ \ \ BT\_SLIDER\_FLAGS\_CFM\_LIMLIN\ =\ (1\ <<\ 8),}
+\DoxyCodeLine{00060\ \ \ \ \ BT\_SLIDER\_FLAGS\_ERP\_LIMLIN\ =\ (1\ <<\ 9),}
+\DoxyCodeLine{00061\ \ \ \ \ BT\_SLIDER\_FLAGS\_CFM\_LIMANG\ =\ (1\ <<\ 10),}
+\DoxyCodeLine{00062\ \ \ \ \ BT\_SLIDER\_FLAGS\_ERP\_LIMANG\ =\ (1\ <<\ 11)}
+\DoxyCodeLine{00063\ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00066\ btSliderConstraint\ :\ public\ btTypedConstraint}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useSolveConstraintObsolete;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00072\ \ \ \ \ btTransform\ m\_frameInA;}
+\DoxyCodeLine{00073\ \ \ \ \ btTransform\ m\_frameInB;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ use\ frameA\ fo\ define\ limits,\ if\ true}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useLinearReferenceFrameA;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//\ linear\ limits}}
+\DoxyCodeLine{00077\ \ \ \ \ btScalar\ m\_lowerLinLimit;}
+\DoxyCodeLine{00078\ \ \ \ \ btScalar\ m\_upperLinLimit;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ angular\ limits}}
+\DoxyCodeLine{00080\ \ \ \ \ btScalar\ m\_lowerAngLimit;}
+\DoxyCodeLine{00081\ \ \ \ \ btScalar\ m\_upperAngLimit;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ softness,\ restitution\ and\ damping\ for\ different\ cases}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ DirLin\ -\/\ moving\ inside\ linear\ limits}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//\ LimLin\ -\/\ hitting\ linear\ limit}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//\ DirAng\ -\/\ moving\ inside\ angular\ limits}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//\ LimAng\ -\/\ hitting\ angular\ limit}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ OrthoLin,\ OrthoAng\ -\/\ against\ constraint\ axis}}
+\DoxyCodeLine{00088\ \ \ \ \ btScalar\ m\_softnessDirLin;}
+\DoxyCodeLine{00089\ \ \ \ \ btScalar\ m\_restitutionDirLin;}
+\DoxyCodeLine{00090\ \ \ \ \ btScalar\ m\_dampingDirLin;}
+\DoxyCodeLine{00091\ \ \ \ \ btScalar\ m\_cfmDirLin;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ btScalar\ m\_softnessDirAng;}
+\DoxyCodeLine{00094\ \ \ \ \ btScalar\ m\_restitutionDirAng;}
+\DoxyCodeLine{00095\ \ \ \ \ btScalar\ m\_dampingDirAng;}
+\DoxyCodeLine{00096\ \ \ \ \ btScalar\ m\_cfmDirAng;}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ btScalar\ m\_softnessLimLin;}
+\DoxyCodeLine{00099\ \ \ \ \ btScalar\ m\_restitutionLimLin;}
+\DoxyCodeLine{00100\ \ \ \ \ btScalar\ m\_dampingLimLin;}
+\DoxyCodeLine{00101\ \ \ \ \ btScalar\ m\_cfmLimLin;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ btScalar\ m\_softnessLimAng;}
+\DoxyCodeLine{00104\ \ \ \ \ btScalar\ m\_restitutionLimAng;}
+\DoxyCodeLine{00105\ \ \ \ \ btScalar\ m\_dampingLimAng;}
+\DoxyCodeLine{00106\ \ \ \ \ btScalar\ m\_cfmLimAng;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ btScalar\ m\_softnessOrthoLin;}
+\DoxyCodeLine{00109\ \ \ \ \ btScalar\ m\_restitutionOrthoLin;}
+\DoxyCodeLine{00110\ \ \ \ \ btScalar\ m\_dampingOrthoLin;}
+\DoxyCodeLine{00111\ \ \ \ \ btScalar\ m\_cfmOrthoLin;}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ btScalar\ m\_softnessOrthoAng;}
+\DoxyCodeLine{00114\ \ \ \ \ btScalar\ m\_restitutionOrthoAng;}
+\DoxyCodeLine{00115\ \ \ \ \ btScalar\ m\_dampingOrthoAng;}
+\DoxyCodeLine{00116\ \ \ \ \ btScalar\ m\_cfmOrthoAng;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{//\ for\ interlal\ use}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_solveLinLim;}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_solveAngLim;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_flags;}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ btJacobianEntry\ m\_jacLin[3];}
+\DoxyCodeLine{00125\ \ \ \ \ btScalar\ m\_jacLinDiagABInv[3];}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ btJacobianEntry\ m\_jacAng[3];}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ btScalar\ m\_timeStep;}
+\DoxyCodeLine{00130\ \ \ \ \ btTransform\ m\_calculatedTransformA;}
+\DoxyCodeLine{00131\ \ \ \ \ btTransform\ m\_calculatedTransformB;}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ btVector3\ m\_sliderAxis;}
+\DoxyCodeLine{00134\ \ \ \ \ btVector3\ m\_realPivotAInW;}
+\DoxyCodeLine{00135\ \ \ \ \ btVector3\ m\_realPivotBInW;}
+\DoxyCodeLine{00136\ \ \ \ \ btVector3\ m\_projPivotInW;}
+\DoxyCodeLine{00137\ \ \ \ \ btVector3\ m\_delta;}
+\DoxyCodeLine{00138\ \ \ \ \ btVector3\ m\_depth;}
+\DoxyCodeLine{00139\ \ \ \ \ btVector3\ m\_relPosA;}
+\DoxyCodeLine{00140\ \ \ \ \ btVector3\ m\_relPosB;}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ btScalar\ m\_linPos;}
+\DoxyCodeLine{00143\ \ \ \ \ btScalar\ m\_angPos;}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ btScalar\ m\_angDepth;}
+\DoxyCodeLine{00146\ \ \ \ \ btScalar\ m\_kAngle;}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_poweredLinMotor;}
+\DoxyCodeLine{00149\ \ \ \ \ btScalar\ m\_targetLinMotorVelocity;}
+\DoxyCodeLine{00150\ \ \ \ \ btScalar\ m\_maxLinMotorForce;}
+\DoxyCodeLine{00151\ \ \ \ \ btScalar\ m\_accumulatedLinMotorImpulse;}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_poweredAngMotor;}
+\DoxyCodeLine{00154\ \ \ \ \ btScalar\ m\_targetAngMotorVelocity;}
+\DoxyCodeLine{00155\ \ \ \ \ btScalar\ m\_maxAngMotorForce;}
+\DoxyCodeLine{00156\ \ \ \ \ btScalar\ m\_accumulatedAngMotorImpulse;}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{void}\ initParams();}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00162\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{comment}{//\ constructors}}
+\DoxyCodeLine{00165\ \ \ \ \ btSliderConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ frameInA,\ \textcolor{keyword}{const}\ btTransform\&\ frameInB,\ \textcolor{keywordtype}{bool}\ useLinearReferenceFrameA);}
+\DoxyCodeLine{00166\ \ \ \ \ btSliderConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ \&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ frameInB,\ \textcolor{keywordtype}{bool}\ useLinearReferenceFrameA);}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{comment}{//\ overrides}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo1(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}\ *\ info);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo1NonVirtual(\mbox{\hyperlink{structbt_constraint_info1}{btConstraintInfo1}}\ *\ info);}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo2(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info);}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo2NonVirtual(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ linVelA,\ \textcolor{keyword}{const}\ btVector3\&\ linVelB,\ btScalar\ rbAinvMass,\ btScalar\ rbBinvMass);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{comment}{//\ access}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ getRigidBodyA()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_rbA;\ \}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ getRigidBodyB()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_rbB;\ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getCalculatedTransformA()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_calculatedTransformA;\ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getCalculatedTransformB()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_calculatedTransformB;\ \}}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getFrameOffsetA()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_frameInA;\ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getFrameOffsetB()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_frameInB;\ \}}
+\DoxyCodeLine{00185\ \ \ \ \ btTransform\&\ getFrameOffsetA()\ \{\ \textcolor{keywordflow}{return}\ m\_frameInA;\ \}}
+\DoxyCodeLine{00186\ \ \ \ \ btTransform\&\ getFrameOffsetB()\ \{\ \textcolor{keywordflow}{return}\ m\_frameInB;\ \}}
+\DoxyCodeLine{00187\ \ \ \ \ btScalar\ getLowerLinLimit()\ \{\ \textcolor{keywordflow}{return}\ m\_lowerLinLimit;\ \}}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{void}\ setLowerLinLimit(btScalar\ lowerLimit)\ \{\ m\_lowerLinLimit\ =\ lowerLimit;\ \}}
+\DoxyCodeLine{00189\ \ \ \ \ btScalar\ getUpperLinLimit()\ \{\ \textcolor{keywordflow}{return}\ m\_upperLinLimit;\ \}}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordtype}{void}\ setUpperLinLimit(btScalar\ upperLimit)\ \{\ m\_upperLinLimit\ =\ upperLimit;\ \}}
+\DoxyCodeLine{00191\ \ \ \ \ btScalar\ getLowerAngLimit()\ \{\ \textcolor{keywordflow}{return}\ m\_lowerAngLimit;\ \}}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{void}\ setLowerAngLimit(btScalar\ lowerLimit)\ \{\ m\_lowerAngLimit\ =\ btNormalizeAngle(lowerLimit);\ \}}
+\DoxyCodeLine{00193\ \ \ \ \ btScalar\ getUpperAngLimit()\ \{\ \textcolor{keywordflow}{return}\ m\_upperAngLimit;\ \}}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{void}\ setUpperAngLimit(btScalar\ upperLimit)\ \{\ m\_upperAngLimit\ =\ btNormalizeAngle(upperLimit);\ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{bool}\ getUseLinearReferenceFrameA()\ \{\ \textcolor{keywordflow}{return}\ m\_useLinearReferenceFrameA;\ \}}
+\DoxyCodeLine{00196\ \ \ \ \ btScalar\ getSoftnessDirLin()\ \{\ \textcolor{keywordflow}{return}\ m\_softnessDirLin;\ \}}
+\DoxyCodeLine{00197\ \ \ \ \ btScalar\ getRestitutionDirLin()\ \{\ \textcolor{keywordflow}{return}\ m\_restitutionDirLin;\ \}}
+\DoxyCodeLine{00198\ \ \ \ \ btScalar\ getDampingDirLin()\ \{\ \textcolor{keywordflow}{return}\ m\_dampingDirLin;\ \}}
+\DoxyCodeLine{00199\ \ \ \ \ btScalar\ getSoftnessDirAng()\ \{\ \textcolor{keywordflow}{return}\ m\_softnessDirAng;\ \}}
+\DoxyCodeLine{00200\ \ \ \ \ btScalar\ getRestitutionDirAng()\ \{\ \textcolor{keywordflow}{return}\ m\_restitutionDirAng;\ \}}
+\DoxyCodeLine{00201\ \ \ \ \ btScalar\ getDampingDirAng()\ \{\ \textcolor{keywordflow}{return}\ m\_dampingDirAng;\ \}}
+\DoxyCodeLine{00202\ \ \ \ \ btScalar\ getSoftnessLimLin()\ \{\ \textcolor{keywordflow}{return}\ m\_softnessLimLin;\ \}}
+\DoxyCodeLine{00203\ \ \ \ \ btScalar\ getRestitutionLimLin()\ \{\ \textcolor{keywordflow}{return}\ m\_restitutionLimLin;\ \}}
+\DoxyCodeLine{00204\ \ \ \ \ btScalar\ getDampingLimLin()\ \{\ \textcolor{keywordflow}{return}\ m\_dampingLimLin;\ \}}
+\DoxyCodeLine{00205\ \ \ \ \ btScalar\ getSoftnessLimAng()\ \{\ \textcolor{keywordflow}{return}\ m\_softnessLimAng;\ \}}
+\DoxyCodeLine{00206\ \ \ \ \ btScalar\ getRestitutionLimAng()\ \{\ \textcolor{keywordflow}{return}\ m\_restitutionLimAng;\ \}}
+\DoxyCodeLine{00207\ \ \ \ \ btScalar\ getDampingLimAng()\ \{\ \textcolor{keywordflow}{return}\ m\_dampingLimAng;\ \}}
+\DoxyCodeLine{00208\ \ \ \ \ btScalar\ getSoftnessOrthoLin()\ \{\ \textcolor{keywordflow}{return}\ m\_softnessOrthoLin;\ \}}
+\DoxyCodeLine{00209\ \ \ \ \ btScalar\ getRestitutionOrthoLin()\ \{\ \textcolor{keywordflow}{return}\ m\_restitutionOrthoLin;\ \}}
+\DoxyCodeLine{00210\ \ \ \ \ btScalar\ getDampingOrthoLin()\ \{\ \textcolor{keywordflow}{return}\ m\_dampingOrthoLin;\ \}}
+\DoxyCodeLine{00211\ \ \ \ \ btScalar\ getSoftnessOrthoAng()\ \{\ \textcolor{keywordflow}{return}\ m\_softnessOrthoAng;\ \}}
+\DoxyCodeLine{00212\ \ \ \ \ btScalar\ getRestitutionOrthoAng()\ \{\ \textcolor{keywordflow}{return}\ m\_restitutionOrthoAng;\ \}}
+\DoxyCodeLine{00213\ \ \ \ \ btScalar\ getDampingOrthoAng()\ \{\ \textcolor{keywordflow}{return}\ m\_dampingOrthoAng;\ \}}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{void}\ setSoftnessDirLin(btScalar\ softnessDirLin)\ \{\ m\_softnessDirLin\ =\ softnessDirLin;\ \}}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordtype}{void}\ setRestitutionDirLin(btScalar\ restitutionDirLin)\ \{\ m\_restitutionDirLin\ =\ restitutionDirLin;\ \}}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordtype}{void}\ setDampingDirLin(btScalar\ dampingDirLin)\ \{\ m\_dampingDirLin\ =\ dampingDirLin;\ \}}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordtype}{void}\ setSoftnessDirAng(btScalar\ softnessDirAng)\ \{\ m\_softnessDirAng\ =\ softnessDirAng;\ \}}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{void}\ setRestitutionDirAng(btScalar\ restitutionDirAng)\ \{\ m\_restitutionDirAng\ =\ restitutionDirAng;\ \}}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{void}\ setDampingDirAng(btScalar\ dampingDirAng)\ \{\ m\_dampingDirAng\ =\ dampingDirAng;\ \}}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{void}\ setSoftnessLimLin(btScalar\ softnessLimLin)\ \{\ m\_softnessLimLin\ =\ softnessLimLin;\ \}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keywordtype}{void}\ setRestitutionLimLin(btScalar\ restitutionLimLin)\ \{\ m\_restitutionLimLin\ =\ restitutionLimLin;\ \}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{void}\ setDampingLimLin(btScalar\ dampingLimLin)\ \{\ m\_dampingLimLin\ =\ dampingLimLin;\ \}}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{void}\ setSoftnessLimAng(btScalar\ softnessLimAng)\ \{\ m\_softnessLimAng\ =\ softnessLimAng;\ \}}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{void}\ setRestitutionLimAng(btScalar\ restitutionLimAng)\ \{\ m\_restitutionLimAng\ =\ restitutionLimAng;\ \}}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordtype}{void}\ setDampingLimAng(btScalar\ dampingLimAng)\ \{\ m\_dampingLimAng\ =\ dampingLimAng;\ \}}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{void}\ setSoftnessOrthoLin(btScalar\ softnessOrthoLin)\ \{\ m\_softnessOrthoLin\ =\ softnessOrthoLin;\ \}}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordtype}{void}\ setRestitutionOrthoLin(btScalar\ restitutionOrthoLin)\ \{\ m\_restitutionOrthoLin\ =\ restitutionOrthoLin;\ \}}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordtype}{void}\ setDampingOrthoLin(btScalar\ dampingOrthoLin)\ \{\ m\_dampingOrthoLin\ =\ dampingOrthoLin;\ \}}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordtype}{void}\ setSoftnessOrthoAng(btScalar\ softnessOrthoAng)\ \{\ m\_softnessOrthoAng\ =\ softnessOrthoAng;\ \}}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordtype}{void}\ setRestitutionOrthoAng(btScalar\ restitutionOrthoAng)\ \{\ m\_restitutionOrthoAng\ =\ restitutionOrthoAng;\ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordtype}{void}\ setDampingOrthoAng(btScalar\ dampingOrthoAng)\ \{\ m\_dampingOrthoAng\ =\ dampingOrthoAng;\ \}}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{void}\ setPoweredLinMotor(\textcolor{keywordtype}{bool}\ onOff)\ \{\ m\_poweredLinMotor\ =\ onOff;\ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordtype}{bool}\ getPoweredLinMotor()\ \{\ \textcolor{keywordflow}{return}\ m\_poweredLinMotor;\ \}}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{keywordtype}{void}\ setTargetLinMotorVelocity(btScalar\ targetLinMotorVelocity)\ \{\ m\_targetLinMotorVelocity\ =\ targetLinMotorVelocity;\ \}}
+\DoxyCodeLine{00235\ \ \ \ \ btScalar\ getTargetLinMotorVelocity()\ \{\ \textcolor{keywordflow}{return}\ m\_targetLinMotorVelocity;\ \}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxLinMotorForce(btScalar\ maxLinMotorForce)\ \{\ m\_maxLinMotorForce\ =\ maxLinMotorForce;\ \}}
+\DoxyCodeLine{00237\ \ \ \ \ btScalar\ getMaxLinMotorForce()\ \{\ \textcolor{keywordflow}{return}\ m\_maxLinMotorForce;\ \}}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordtype}{void}\ setPoweredAngMotor(\textcolor{keywordtype}{bool}\ onOff)\ \{\ m\_poweredAngMotor\ =\ onOff;\ \}}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{bool}\ getPoweredAngMotor()\ \{\ \textcolor{keywordflow}{return}\ m\_poweredAngMotor;\ \}}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keywordtype}{void}\ setTargetAngMotorVelocity(btScalar\ targetAngMotorVelocity)\ \{\ m\_targetAngMotorVelocity\ =\ targetAngMotorVelocity;\ \}}
+\DoxyCodeLine{00241\ \ \ \ \ btScalar\ getTargetAngMotorVelocity()\ \{\ \textcolor{keywordflow}{return}\ m\_targetAngMotorVelocity;\ \}}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxAngMotorForce(btScalar\ maxAngMotorForce)\ \{\ m\_maxAngMotorForce\ =\ maxAngMotorForce;\ \}}
+\DoxyCodeLine{00243\ \ \ \ \ btScalar\ getMaxAngMotorForce()\ \{\ \textcolor{keywordflow}{return}\ m\_maxAngMotorForce;\ \}}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \ \ \ \ btScalar\ getLinearPos()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_linPos;\ \}}
+\DoxyCodeLine{00246\ \ \ \ \ btScalar\ getAngularPos()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_angPos;\ \}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{comment}{//\ access\ for\ ODE\ solver}}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordtype}{bool}\ getSolveLinLimit()\ \{\ \textcolor{keywordflow}{return}\ m\_solveLinLim;\ \}}
+\DoxyCodeLine{00250\ \ \ \ \ btScalar\ getLinDepth()\ \{\ \textcolor{keywordflow}{return}\ m\_depth[0];\ \}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordtype}{bool}\ getSolveAngLimit()\ \{\ \textcolor{keywordflow}{return}\ m\_solveAngLim;\ \}}
+\DoxyCodeLine{00252\ \ \ \ \ btScalar\ getAngDepth()\ \{\ \textcolor{keywordflow}{return}\ m\_angDepth;\ \}}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{comment}{//\ shared\ code\ used\ by\ ODE\ solver}}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateTransforms(\textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB);}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordtype}{void}\ testLinLimits();}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{keywordtype}{void}\ testAngLimits();}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{comment}{//\ access\ for\ PE\ Solver}}
+\DoxyCodeLine{00258\ \ \ \ \ btVector3\ getAncorInA();}
+\DoxyCodeLine{00259\ \ \ \ \ btVector3\ getAncorInB();}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{comment}{//\ access\ for\ UseFrameOffset}}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keywordtype}{bool}\ getUseFrameOffset()\ \{\ \textcolor{keywordflow}{return}\ m\_useOffsetForConstraintFrame;\ \}}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordtype}{void}\ setUseFrameOffset(\textcolor{keywordtype}{bool}\ frameOffsetOnOff)\ \{\ m\_useOffsetForConstraintFrame\ =\ frameOffsetOnOff;\ \}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keywordtype}{void}\ setFrames(\textcolor{keyword}{const}\ btTransform\&\ frameA,\ \textcolor{keyword}{const}\ btTransform\&\ frameB)}
+\DoxyCodeLine{00265\ \ \ \ \ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ m\_frameInA\ =\ frameA;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ m\_frameInB\ =\ frameB;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ calculateTransforms(m\_rbA.getCenterOfMassTransform(),\ m\_rbB.getCenterOfMassTransform());}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ buildJacobian();}
+\DoxyCodeLine{00270\ \ \ \ \ \}}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setParam(\textcolor{keywordtype}{int}\ num,\ btScalar\ value,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1);}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ getParam(\textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getFlags()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00279\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_flags;}
+\DoxyCodeLine{00281\ \ \ \ \ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ calculateSerializeBufferSize()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{classbt_rigid_body_a4f293343334b9736a6e7c41455abd46b}{serialize}}(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00287\ \};}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_slider_constraint_data}{btSliderConstraintData}}}
+\DoxyCodeLine{00292\ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_data}{btTypedConstraintData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00294\ \ \ \ \ \mbox{\hyperlink{structbt_transform_float_data}{btTransformFloatData}}\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00295\ \ \ \ \ \mbox{\hyperlink{structbt_transform_float_data}{btTransformFloatData}}\ m\_rbBFrame;}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_linearUpperLimit;}
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_linearLowerLimit;}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_angularUpperLimit;}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_angularLowerLimit;}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useLinearReferenceFrameA;}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00305\ \};}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_slider_constraint_double_data}{btSliderConstraintDoubleData}}}
+\DoxyCodeLine{00308\ \{}
+\DoxyCodeLine{00309\ \ \ \ \ \mbox{\hyperlink{structbt_typed_constraint_double_data}{btTypedConstraintDoubleData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00310\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbAFrame;\ \ \textcolor{comment}{//\ constraint\ axii.\ Assumes\ z\ is\ hinge\ axis.}}
+\DoxyCodeLine{00311\ \ \ \ \ \mbox{\hyperlink{structbt_transform_double_data}{btTransformDoubleData}}\ m\_rbBFrame;}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_linearUpperLimit;}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_linearLowerLimit;}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_angularUpperLimit;}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_angularLowerLimit;}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useLinearReferenceFrameA;}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00321\ \};}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ btSliderConstraint::calculateSerializeBufferSize()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00324\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{sizeof}(btSliderConstraintData2);}
+\DoxyCodeLine{00326\ \}}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00329\ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btSliderConstraint::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00330\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00331\ \ \ \ \ btSliderConstraintData2*\ sliderData\ =\ (btSliderConstraintData2*)dataBuffer;}
+\DoxyCodeLine{00332\ \ \ \ \ btTypedConstraint::serialize(\&sliderData-\/>m\_typeConstraintData,\ serializer);}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \ \ \ \ m\_frameInA.serialize(sliderData-\/>m\_rbAFrame);}
+\DoxyCodeLine{00335\ \ \ \ \ m\_frameInB.serialize(sliderData-\/>m\_rbBFrame);}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ sliderData-\/>m\_linearUpperLimit\ =\ m\_upperLinLimit;}
+\DoxyCodeLine{00338\ \ \ \ \ sliderData-\/>m\_linearLowerLimit\ =\ m\_lowerLinLimit;}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ sliderData-\/>m\_angularUpperLimit\ =\ m\_upperAngLimit;}
+\DoxyCodeLine{00341\ \ \ \ \ sliderData-\/>m\_angularLowerLimit\ =\ m\_lowerAngLimit;}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \ \ \ \ sliderData-\/>m\_useLinearReferenceFrameA\ =\ m\_useLinearReferenceFrameA;}
+\DoxyCodeLine{00344\ \ \ \ \ sliderData-\/>m\_useOffsetForConstraintFrame\ =\ m\_useOffsetForConstraintFrame;}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{return}\ btSliderConstraintDataName;}
+\DoxyCodeLine{00347\ \}}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SLIDER\_CONSTRAINT\_H}}
+
+\end{DoxyCode}

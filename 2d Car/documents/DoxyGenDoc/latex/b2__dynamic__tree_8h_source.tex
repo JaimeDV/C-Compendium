@@ -1,0 +1,274 @@
+\doxysection{b2\+\_\+dynamic\+\_\+tree.\+h}
+\hypertarget{b2__dynamic__tree_8h_source}{}\label{b2__dynamic__tree_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_dynamic\_tree.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_dynamic\_tree.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_DYNAMIC\_TREE\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_DYNAMIC\_TREE\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{b2__collision_8h}{b2\_collision.h}}"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}b2\_growable\_stack.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ b2\_nullNode\ (-\/1)}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_tree_node}{b2TreeNode}}}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsLeaf()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ child1\ ==\ b2\_nullNode;}
+\DoxyCodeLine{00038\ \ \ \ \ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\ \mbox{\hyperlink{structb2_tree_node_a798f1a594b33c713be45e76e79912239}{aabb}};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}*\ userData;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{union}}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ int32\ parent;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ int32\ next;}
+\DoxyCodeLine{00049\ \ \ \ \ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ int32\ child1;}
+\DoxyCodeLine{00052\ \ \ \ \ int32\ child2;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ leaf\ =\ 0,\ free\ node\ =\ -\/1}}
+\DoxyCodeLine{00055\ \ \ \ \ int32\ height;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{bool}\ moved;}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_dynamic_tree}{b2DynamicTree}}}
+\DoxyCodeLine{00069\ \{}
+\DoxyCodeLine{00070\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classb2_dynamic_tree_a8af64cf6a1566fa4c5b5c9683bd937d9}{b2DynamicTree}}();}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{classb2_dynamic_tree_a9060565fc63b4dd87d9560775c076786}{\string~b2DynamicTree}}();}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00078\ \ \ \ \ int32\ \mbox{\hyperlink{classb2_dynamic_tree_ae44676f12977dada46037da47fc7ffbf}{CreateProxy}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb,\ \textcolor{keywordtype}{void}*\ userData);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_dynamic_tree_a62aa451e7d7fe029818dd05f76ea9cdc}{DestroyProxy}}(int32\ proxyId);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_dynamic_tree_a7748252811f3c575015931399cbe4daa}{MoveProxy}}(int32\ proxyId,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ displacement);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}*\ GetUserData(int32\ proxyId)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{bool}\ WasMoved(int32\ proxyId)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{void}\ ClearMoved(int32\ proxyId);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ GetFatAABB(int32\ proxyId)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ Query(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{void}\ RayCast(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\&\ input)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_dynamic_tree_ae9b989f0c04e38f9c940623d4e1728b9}{Validate}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00119\ \ \ \ \ int32\ \mbox{\hyperlink{classb2_dynamic_tree_ae3c7dc771d596f1f95fd3a3d7f2f3e97}{GetHeight}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00123\ \ \ \ \ int32\ \mbox{\hyperlink{classb2_dynamic_tree_a3feab170229e0acd17f6a4ad3fca406e}{GetMaxBalance}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_dynamic_tree_a270c60a449c1cb2e1d0dd7bf2089e3fe}{GetAreaRatio}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_dynamic_tree_abd146017cfec1cf5ea7b87331f30a3ff}{RebuildBottomUp}}();}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_dynamic_tree_af37ddfed6a5da97d5a78b09918d19ceb}{ShiftOrigin}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ newOrigin);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ int32\ AllocateNode();}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{void}\ FreeNode(int32\ node);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{void}\ InsertLeaf(int32\ node);}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{void}\ RemoveLeaf(int32\ node);}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ int32\ Balance(int32\ index);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ int32\ ComputeHeight()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00147\ \ \ \ \ int32\ ComputeHeight(int32\ nodeId)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{void}\ ValidateStructure(int32\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{void}\ ValidateMetrics(int32\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ int32\ m\_root;}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \mbox{\hyperlink{structb2_tree_node}{b2TreeNode}}*\ m\_nodes;}
+\DoxyCodeLine{00155\ \ \ \ \ int32\ m\_nodeCount;}
+\DoxyCodeLine{00156\ \ \ \ \ int32\ m\_nodeCapacity;}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ int32\ m\_freeList;}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ int32\ m\_insertionCount;}
+\DoxyCodeLine{00161\ \};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classb2_dynamic_tree_aa8399f9440707780f267696098e8b920}{b2DynamicTree::GetUserData}}(int32\ proxyId)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00164\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00165\ \ \ \ \ b2Assert(0\ <=\ proxyId\ \&\&\ proxyId\ <\ m\_nodeCapacity);}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_nodes[proxyId].userData;}
+\DoxyCodeLine{00167\ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ b2DynamicTree::WasMoved(int32\ proxyId)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00170\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00171\ \ \ \ \ b2Assert(0\ <=\ proxyId\ \&\&\ proxyId\ <\ m\_nodeCapacity);}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_nodes[proxyId].moved;}
+\DoxyCodeLine{00173\ \}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ b2DynamicTree::ClearMoved(int32\ proxyId)}
+\DoxyCodeLine{00176\ \{}
+\DoxyCodeLine{00177\ \ \ \ \ b2Assert(0\ <=\ proxyId\ \&\&\ proxyId\ <\ m\_nodeCapacity);}
+\DoxyCodeLine{00178\ \ \ \ \ m\_nodes[proxyId].moved\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00179\ \}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ \mbox{\hyperlink{classb2_dynamic_tree_a655b9ddff43e4e0a34a372eddc03ecb9}{b2DynamicTree::GetFatAABB}}(int32\ proxyId)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00182\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00183\ \ \ \ \ b2Assert(0\ <=\ proxyId\ \&\&\ proxyId\ <\ m\_nodeCapacity);}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_nodes[proxyId].\mbox{\hyperlink{structb2_tree_node_a798f1a594b33c713be45e76e79912239}{aabb}};}
+\DoxyCodeLine{00185\ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00188\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_dynamic_tree_a324df3eb65dfc22d3dcdca387737b193}{b2DynamicTree::Query}}(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ aabb)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00189\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00190\ \ \ \ \ \mbox{\hyperlink{classb2_growable_stack}{b2GrowableStack<int32,\ 256>}}\ stack;}
+\DoxyCodeLine{00191\ \ \ \ \ stack.Push(m\_root);}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordflow}{while}\ (stack.GetCount()\ >\ 0)}
+\DoxyCodeLine{00194\ \ \ \ \ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ int32\ nodeId\ =\ stack.Pop();}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (nodeId\ ==\ b2\_nullNode)}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_tree_node}{b2TreeNode}}*\ node\ =\ m\_nodes\ +\ nodeId;}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{b2__collision_8h_a769992d82855399cf20721cd6b411fe7}{b2TestOverlap}}(node-\/>\mbox{\hyperlink{structb2_tree_node_a798f1a594b33c713be45e76e79912239}{aabb}},\ aabb))}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node-\/>IsLeaf())}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ proceed\ =\ callback-\/>QueryCallback(nodeId);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (proceed\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.Push(node-\/>child1);}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.Push(node-\/>child2);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00219\ \ \ \ \ \}}
+\DoxyCodeLine{00220\ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00223\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_dynamic_tree_aebd2dc6ee462e0cd0763a5f472243a13}{b2DynamicTree::RayCast}}(T*\ callback,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\&\ input)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00224\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00225\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ p1\ =\ input.p1;}
+\DoxyCodeLine{00226\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ p2\ =\ input.p2;}
+\DoxyCodeLine{00227\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ r\ =\ p2\ -\/\ p1;}
+\DoxyCodeLine{00228\ \ \ \ \ b2Assert(r.LengthSquared()\ >\ 0.0f);}
+\DoxyCodeLine{00229\ \ \ \ \ r.Normalize();}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{comment}{//\ v\ is\ perpendicular\ to\ the\ segment.}}
+\DoxyCodeLine{00232\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ v\ =\ b2Cross(1.0f,\ r);}
+\DoxyCodeLine{00233\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ abs\_v\ =\ b2Abs(v);}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{comment}{//\ Separating\ axis\ for\ segment\ (Gino,\ p80).}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{comment}{//\ |dot(v,\ p1\ -\/\ c)|\ >\ dot(|v|,\ h)}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordtype}{float}\ maxFraction\ =\ input.maxFraction;}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{comment}{//\ Build\ a\ bounding\ box\ for\ the\ segment.}}
+\DoxyCodeLine{00241\ \ \ \ \ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\ segmentAABB;}
+\DoxyCodeLine{00242\ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ t\ =\ p1\ +\ maxFraction\ *\ (p2\ -\/\ p1);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ segmentAABB.\mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}}\ =\ b2Min(p1,\ t);}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ segmentAABB.\mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}}\ =\ b2Max(p1,\ t);}
+\DoxyCodeLine{00246\ \ \ \ \ \}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \mbox{\hyperlink{classb2_growable_stack}{b2GrowableStack<int32,\ 256>}}\ stack;}
+\DoxyCodeLine{00249\ \ \ \ \ stack.Push(m\_root);}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordflow}{while}\ (stack.GetCount()\ >\ 0)}
+\DoxyCodeLine{00252\ \ \ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ int32\ nodeId\ =\ stack.Pop();}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (nodeId\ ==\ b2\_nullNode)}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_tree_node}{b2TreeNode}}*\ node\ =\ m\_nodes\ +\ nodeId;}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{b2__collision_8h_a769992d82855399cf20721cd6b411fe7}{b2TestOverlap}}(node-\/>\mbox{\hyperlink{structb2_tree_node_a798f1a594b33c713be45e76e79912239}{aabb}},\ segmentAABB)\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Separating\ axis\ for\ segment\ (Gino,\ p80).}}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ |dot(v,\ p1\ -\/\ c)|\ >\ dot(|v|,\ h)}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ c\ =\ node-\/>\mbox{\hyperlink{structb2_tree_node_a798f1a594b33c713be45e76e79912239}{aabb}}.\mbox{\hyperlink{structb2_a_a_b_b_a2c4051e79001a3166cc7f8ad811137fe}{GetCenter}}();}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ h\ =\ node-\/>\mbox{\hyperlink{structb2_tree_node_a798f1a594b33c713be45e76e79912239}{aabb}}.\mbox{\hyperlink{structb2_a_a_b_b_a2a4f550a18d2a0895fbc5c4d3ec17d22}{GetExtents}}();}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ separation\ =\ b2Abs(b2Dot(v,\ p1\ -\/\ c))\ -\/\ b2Dot(abs\_v,\ h);}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (separation\ >\ 0.0f)}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node-\/>IsLeaf())}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\ subInput;}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ subInput.p1\ =\ input.p1;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ subInput.p2\ =\ input.p2;}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ subInput.maxFraction\ =\ maxFraction;}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ value\ =\ callback-\/>RayCastCallback(subInput,\ nodeId);}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (value\ ==\ 0.0f)}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ client\ has\ terminated\ the\ ray\ cast.}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (value\ >\ 0.0f)}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ segment\ bounding\ box.}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxFraction\ =\ value;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ t\ =\ p1\ +\ maxFraction\ *\ (p2\ -\/\ p1);}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segmentAABB.\mbox{\hyperlink{structb2_a_a_b_b_ab94b68fbad8348b22b0522469b11bdb5}{lowerBound}}\ =\ b2Min(p1,\ t);}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segmentAABB.\mbox{\hyperlink{structb2_a_a_b_b_ad4a8ec483ba13a2c02918b01d058a18f}{upperBound}}\ =\ b2Max(p1,\ t);}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ stack.Push(node-\/>child1);}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ stack.Push(node-\/>child2);}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00305\ \ \ \ \ \}}
+\DoxyCodeLine{00306\ \}}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

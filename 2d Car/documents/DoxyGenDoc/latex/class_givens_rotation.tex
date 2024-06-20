@@ -1,0 +1,113 @@
+\doxysection{Givens\+Rotation Class Reference}
+\hypertarget{class_givens_rotation}{}\label{class_givens_rotation}\index{GivensRotation@{GivensRotation}}
+
+
+{\ttfamily \#include $<$bt\+Implicit\+QRSVD.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_givens_rotation_a56328afa1399250d0b10a3cc6a4c7e2f}\label{class_givens_rotation_a56328afa1399250d0b10a3cc6a4c7e2f} 
+{\bfseries Givens\+Rotation} (int rowi\+\_\+in, int rowk\+\_\+in)
+\item 
+\Hypertarget{class_givens_rotation_aac04f5d90baf967b7dfb3951da09e553}\label{class_givens_rotation_aac04f5d90baf967b7dfb3951da09e553} 
+{\bfseries Givens\+Rotation} (bt\+Scalar a, bt\+Scalar b, int rowi\+\_\+in, int rowk\+\_\+in)
+\item 
+\Hypertarget{class_givens_rotation_ad9a38be238d8d483793ad6b41588944a}\label{class_givens_rotation_ad9a38be238d8d483793ad6b41588944a} 
+void {\bfseries transpose\+In\+Place} ()
+\item 
+void \mbox{\hyperlink{class_givens_rotation_af17c7b691e33c14e5c4d9747ed8d254d}{compute}} (const bt\+Scalar a, const bt\+Scalar b)
+\item 
+void \mbox{\hyperlink{class_givens_rotation_aea7146927f75d8626a6c5f20effc6545}{compute\+Unconventional}} (const bt\+Scalar a, const bt\+Scalar b)
+\item 
+void \mbox{\hyperlink{class_givens_rotation_a605150fda9271706483ec4644726d3f6}{fill}} (const bt\+Matrix3x3 \&R) const
+\item 
+\Hypertarget{class_givens_rotation_a0c99165120906a70bd81408e0b20af90}\label{class_givens_rotation_a0c99165120906a70bd81408e0b20af90} 
+void {\bfseries fill} (const \mbox{\hyperlink{classbt_matrix2x2}{bt\+Matrix2x2}} \&R) const
+\item 
+void \mbox{\hyperlink{class_givens_rotation_a8d72a4db75e8a2b4110d80c20a45b114}{row\+Rotation}} (bt\+Matrix3x3 \&A) const
+\item 
+\Hypertarget{class_givens_rotation_aee729bc15901d46c89bec5b4c264552a}\label{class_givens_rotation_aee729bc15901d46c89bec5b4c264552a} 
+void {\bfseries row\+Rotation} (\mbox{\hyperlink{classbt_matrix2x2}{bt\+Matrix2x2}} \&A) const
+\item 
+void \mbox{\hyperlink{class_givens_rotation_af18e8ee04f5410484c7b9736c93001c2}{column\+Rotation}} (bt\+Matrix3x3 \&A) const
+\item 
+\Hypertarget{class_givens_rotation_aa41000d45ec11b7bb0b8bbf730ee9473}\label{class_givens_rotation_aa41000d45ec11b7bb0b8bbf730ee9473} 
+void {\bfseries column\+Rotation} (\mbox{\hyperlink{classbt_matrix2x2}{bt\+Matrix2x2}} \&A) const
+\item 
+void \mbox{\hyperlink{class_givens_rotation_a5e6b00a1c4ab181c2bb7e6cdd6cdc064}{operator\texorpdfstring{$\ast$}{*}=}} (const \mbox{\hyperlink{class_givens_rotation}{Givens\+Rotation}} \&A)
+\item 
+\mbox{\hyperlink{class_givens_rotation}{Givens\+Rotation}} \mbox{\hyperlink{class_givens_rotation_a6b9813a9298c7e9f117ad64b922e3df9}{operator\texorpdfstring{$\ast$}{*}}} (const \mbox{\hyperlink{class_givens_rotation}{Givens\+Rotation}} \&A) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_givens_rotation_a92a802512d328940b055506b0fb0d1aa}\label{class_givens_rotation_a92a802512d328940b055506b0fb0d1aa} 
+int {\bfseries rowi}
+\item 
+\Hypertarget{class_givens_rotation_aec08618ec560aba5fbb6f239e65d6de6}\label{class_givens_rotation_aec08618ec560aba5fbb6f239e65d6de6} 
+int {\bfseries rowk}
+\item 
+\Hypertarget{class_givens_rotation_acb64500bef0c13353ebcb7c5832ea293}\label{class_givens_rotation_acb64500bef0c13353ebcb7c5832ea293} 
+bt\+Scalar {\bfseries c}
+\item 
+\Hypertarget{class_givens_rotation_aab7dfd65bce12c6b7d41945d6573115a}\label{class_givens_rotation_aab7dfd65bce12c6b7d41945d6573115a} 
+bt\+Scalar {\bfseries s}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for givens rotation. Row rotation G\texorpdfstring{$\ast$}{*}A corresponds to something like c -\/s 0 ( s c 0 ) A 0 0 1 Column rotation A G\textquotesingle{} corresponds to something like c -\/s 0 A ( s c 0 ) 0 0 1
+
+c and s are always computed so that ( c -\/s ) ( a ) = ( \texorpdfstring{$\ast$}{*} ) s c b ( 0 )
+
+Assume rowi\texorpdfstring{$<$}{<}rowk. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_givens_rotation_af18e8ee04f5410484c7b9736c93001c2}\label{class_givens_rotation_af18e8ee04f5410484c7b9736c93001c2} 
+\index{GivensRotation@{GivensRotation}!columnRotation@{columnRotation}}
+\index{columnRotation@{columnRotation}!GivensRotation@{GivensRotation}}
+\doxysubsubsection{\texorpdfstring{columnRotation()}{columnRotation()}}
+{\footnotesize\ttfamily void Givens\+Rotation\+::column\+Rotation (\begin{DoxyParamCaption}\item[{bt\+Matrix3x3 \&}]{A }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+This function does something like c s 0 A ( -\/s c 0 ) -\/\texorpdfstring{$>$}{>} A 0 0 1 It only affects column i and column k of A. \Hypertarget{class_givens_rotation_af17c7b691e33c14e5c4d9747ed8d254d}\label{class_givens_rotation_af17c7b691e33c14e5c4d9747ed8d254d} 
+\index{GivensRotation@{GivensRotation}!compute@{compute}}
+\index{compute@{compute}!GivensRotation@{GivensRotation}}
+\doxysubsubsection{\texorpdfstring{compute()}{compute()}}
+{\footnotesize\ttfamily void Givens\+Rotation\+::compute (\begin{DoxyParamCaption}\item[{const bt\+Scalar}]{a,  }\item[{const bt\+Scalar}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Compute c and s from a and b so that ( c -\/s ) ( a ) = ( \texorpdfstring{$\ast$}{*} ) s c b ( 0 ) \Hypertarget{class_givens_rotation_aea7146927f75d8626a6c5f20effc6545}\label{class_givens_rotation_aea7146927f75d8626a6c5f20effc6545} 
+\index{GivensRotation@{GivensRotation}!computeUnconventional@{computeUnconventional}}
+\index{computeUnconventional@{computeUnconventional}!GivensRotation@{GivensRotation}}
+\doxysubsubsection{\texorpdfstring{computeUnconventional()}{computeUnconventional()}}
+{\footnotesize\ttfamily void Givens\+Rotation\+::compute\+Unconventional (\begin{DoxyParamCaption}\item[{const bt\+Scalar}]{a,  }\item[{const bt\+Scalar}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+This function computes c and s so that ( c -\/s ) ( a ) = ( 0 ) s c b ( \texorpdfstring{$\ast$}{*} ) \Hypertarget{class_givens_rotation_a605150fda9271706483ec4644726d3f6}\label{class_givens_rotation_a605150fda9271706483ec4644726d3f6} 
+\index{GivensRotation@{GivensRotation}!fill@{fill}}
+\index{fill@{fill}!GivensRotation@{GivensRotation}}
+\doxysubsubsection{\texorpdfstring{fill()}{fill()}}
+{\footnotesize\ttfamily void Givens\+Rotation\+::fill (\begin{DoxyParamCaption}\item[{const bt\+Matrix3x3 \&}]{R }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Fill the R with the entries of this rotation \Hypertarget{class_givens_rotation_a6b9813a9298c7e9f117ad64b922e3df9}\label{class_givens_rotation_a6b9813a9298c7e9f117ad64b922e3df9} 
+\index{GivensRotation@{GivensRotation}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!GivensRotation@{GivensRotation}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_givens_rotation}{Givens\+Rotation}} Givens\+Rotation\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_givens_rotation}{Givens\+Rotation}} \&}]{A }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Multiply givens must be for same row and column \Hypertarget{class_givens_rotation_a5e6b00a1c4ab181c2bb7e6cdd6cdc064}\label{class_givens_rotation_a5e6b00a1c4ab181c2bb7e6cdd6cdc064} 
+\index{GivensRotation@{GivensRotation}!operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}}
+\index{operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}!GivensRotation@{GivensRotation}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}=()}{operator*=()}}
+{\footnotesize\ttfamily void Givens\+Rotation\+::operator\texorpdfstring{$\ast$}{*}= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_givens_rotation}{Givens\+Rotation}} \&}]{A }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Multiply givens must be for same row and column \Hypertarget{class_givens_rotation_a8d72a4db75e8a2b4110d80c20a45b114}\label{class_givens_rotation_a8d72a4db75e8a2b4110d80c20a45b114} 
+\index{GivensRotation@{GivensRotation}!rowRotation@{rowRotation}}
+\index{rowRotation@{rowRotation}!GivensRotation@{GivensRotation}}
+\doxysubsubsection{\texorpdfstring{rowRotation()}{rowRotation()}}
+{\footnotesize\ttfamily void Givens\+Rotation\+::row\+Rotation (\begin{DoxyParamCaption}\item[{bt\+Matrix3x3 \&}]{A }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+This function does something like c -\/s 0 ( s c 0 ) A -\/\texorpdfstring{$>$}{>} A 0 0 1 It only affects row i and row k of A. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Linear\+Math/bt\+Implicit\+QRSVD.\+h\end{DoxyCompactItemize}

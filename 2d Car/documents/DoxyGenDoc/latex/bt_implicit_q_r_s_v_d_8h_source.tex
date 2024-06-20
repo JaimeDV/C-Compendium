@@ -1,0 +1,632 @@
+\doxysection{bt\+Implicit\+QRSVD.\+h}
+\hypertarget{bt_implicit_q_r_s_v_d_8h_source}{}\label{bt_implicit_q_r_s_v_d_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btImplicitQRSVD.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/LinearMath/btImplicitQRSVD.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#ifndef\ btImplicitQRSVD\_h}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ btImplicitQRSVD\_h}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#include\ <limits>}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#include\ "{}btMatrix3x3.h"{}}}
+\DoxyCodeLine{00046\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00048\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00049\ \ \ \ \ btScalar\ m\_00,\ m\_01,\ m\_10,\ m\_11;}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}():\ m\_00(0),\ m\_10(0),\ m\_01(0),\ m\_11(0)}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ other):\ m\_00(other.m\_00),m\_01(other.m\_01),m\_10(other.m\_10),m\_11(other.m\_11)}
+\DoxyCodeLine{00054\ \ \ \ \ \{\}}
+\DoxyCodeLine{00055\ \ \ \ \ btScalar\&\ operator()(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 0\ \&\&\ j\ ==\ 0)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_00;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 1\ \&\&\ j\ ==\ 0)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_10;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 0\ \&\&\ j\ ==\ 1)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_01;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 1\ \&\&\ j\ ==\ 1)}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_11;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ btAssert(\textcolor{keyword}{false});}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_00;}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\&\ operator()(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 0\ \&\&\ j\ ==\ 0)}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_00;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 1\ \&\&\ j\ ==\ 0)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_10;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 0\ \&\&\ j\ ==\ 1)}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_01;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ 1\ \&\&\ j\ ==\ 1)}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_11;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ btAssert(\textcolor{keyword}{false});}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_00;}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ setIdentity()}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ m\_00\ =\ 1;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ m\_11\ =\ 1;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ m\_01\ =\ 0;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ m\_10\ =\ 0;}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ btScalar\ copySign(btScalar\ x,\ btScalar\ y)\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{if}\ ((x\ <\ 0\ \&\&\ y\ >\ 0)\ ||\ (x\ >\ 0\ \&\&\ y\ <\ 0))}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/x;}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{return}\ x;}
+\DoxyCodeLine{00094\ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00114\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ \{}
+\DoxyCodeLine{00115\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ rowi;}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{int}\ rowk;}
+\DoxyCodeLine{00118\ \ \ \ \ btScalar\ c;}
+\DoxyCodeLine{00119\ \ \ \ \ btScalar\ s;}
+\DoxyCodeLine{00120\ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}(\textcolor{keywordtype}{int}\ rowi\_in,\ \textcolor{keywordtype}{int}\ rowk\_in)}
+\DoxyCodeLine{00122\ \ \ \ \ :\ rowi(rowi\_in)}
+\DoxyCodeLine{00123\ \ \ \ \ ,\ rowk(rowk\_in)}
+\DoxyCodeLine{00124\ \ \ \ \ ,\ c(1)}
+\DoxyCodeLine{00125\ \ \ \ \ ,\ s(0)}
+\DoxyCodeLine{00126\ \ \ \ \ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \}}
+\DoxyCodeLine{00128\ \ \ \ \ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}(btScalar\ a,\ btScalar\ b,\ \textcolor{keywordtype}{int}\ rowi\_in,\ \textcolor{keywordtype}{int}\ rowk\_in)}
+\DoxyCodeLine{00130\ \ \ \ \ :\ rowi(rowi\_in)}
+\DoxyCodeLine{00131\ \ \ \ \ ,\ rowk(rowk\_in)}
+\DoxyCodeLine{00132\ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation_af17c7b691e33c14e5c4d9747ed8d254d}{compute}}(a,\ b);}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \ \ }
+\DoxyCodeLine{00136\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{\string~GivensRotation}}()\ \{\}}
+\DoxyCodeLine{00137\ \ \ \ \ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ transposeInPlace()}
+\DoxyCodeLine{00139\ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ s\ =\ -\/s;}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ \ \ \ \ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_af17c7b691e33c14e5c4d9747ed8d254d}{compute}}(\textcolor{keyword}{const}\ btScalar\ a,\ \textcolor{keyword}{const}\ btScalar\ b)}
+\DoxyCodeLine{00149\ \ \ \ \ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ btScalar\ d\ =\ a\ *\ a\ +\ b\ *\ b;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ c\ =\ 1;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ s\ =\ 0;}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ >\ SIMD\_EPSILON)\ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ sqrtd\ =\ btSqrt(d);}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sqrtd>SIMD\_EPSILON)}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ t\ =\ btScalar(1.0)/sqrtd;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c\ =\ a\ *\ t;}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\ =\ -\/b\ *\ t;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \ \ \ \ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_aea7146927f75d8626a6c5f20effc6545}{computeUnconventional}}(\textcolor{keyword}{const}\ btScalar\ a,\ \textcolor{keyword}{const}\ btScalar\ b)}
+\DoxyCodeLine{00170\ \ \ \ \ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ btScalar\ d\ =\ a\ *\ a\ +\ b\ *\ b;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ c\ =\ 0;}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ s\ =\ 1;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ >\ SIMD\_EPSILON)\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ t\ =\ btScalar(1.0)/btSqrt(d);}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ s\ =\ a\ *\ t;}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ c\ =\ b\ *\ t;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00179\ \ \ \ \ \}}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_a605150fda9271706483ec4644726d3f6}{fill}}(\textcolor{keyword}{const}\ btMatrix3x3\&\ R)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00184\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ btMatrix3x3\&\ A\ =\ \textcolor{keyword}{const\_cast<}btMatrix3x3\&\textcolor{keyword}{>}(R);}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ A.setIdentity();}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ A[rowi][rowi]\ =\ c;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ A[rowk][rowi]\ =\ -\/s;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ A[rowi][rowk]\ =\ s;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ A[rowk][rowk]\ =\ c;}
+\DoxyCodeLine{00191\ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \ \ \ \ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_a605150fda9271706483ec4644726d3f6}{fill}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ R)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00194\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ A\ =\ \textcolor{keyword}{const\_cast<}\mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\textcolor{keyword}{>}(R);}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ A(rowi,rowi)\ =\ c;}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ A(rowk,rowi)\ =\ -\/s;}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ A(rowi,rowk)\ =\ s;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ A(rowk,rowk)\ =\ c;}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_a8d72a4db75e8a2b4110d80c20a45b114}{rowRotation}}(btMatrix3x3\&\ A)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00210\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 3;\ j++)\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau1\ =\ A[rowi][j];}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau2\ =\ A[rowk][j];}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ A[rowi][j]\ =\ c\ *\ tau1\ -\/\ s\ *\ tau2;}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ A[rowk][j]\ =\ s\ *\ tau1\ +\ c\ *\ tau2;}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ \}}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_a8d72a4db75e8a2b4110d80c20a45b114}{rowRotation}}(\mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ A)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00219\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 2;\ j++)\ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau1\ =\ A(rowi,j);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau2\ =\ A(rowk,j);}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ A(rowi,j)\ =\ c\ *\ tau1\ -\/\ s\ *\ tau2;}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ A(rowk,j)\ =\ s\ *\ tau1\ +\ c\ *\ tau2;}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00226\ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ }
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_af18e8ee04f5410484c7b9736c93001c2}{columnRotation}}(btMatrix3x3\&\ A)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00236\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 3;\ j++)\ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau1\ =\ A[j][rowi];}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau2\ =\ A[j][rowk];}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ A[j][rowi]\ =\ c\ *\ tau1\ -\/\ s\ *\ tau2;}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ A[j][rowk]\ =\ s\ *\ tau1\ +\ c\ *\ tau2;}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00243\ \ \ \ \ \}}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_af18e8ee04f5410484c7b9736c93001c2}{columnRotation}}(\mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ A)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00245\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 2;\ j++)\ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau1\ =\ A(j,rowi);}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tau2\ =\ A(j,rowk);}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ A(j,rowi)\ =\ c\ *\ tau1\ -\/\ s\ *\ tau2;}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ A(j,rowk)\ =\ s\ *\ tau1\ +\ c\ *\ tau2;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00252\ \ \ \ \ \}}
+\DoxyCodeLine{00253\ \ \ \ \ }
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_givens_rotation_a5e6b00a1c4ab181c2bb7e6cdd6cdc064}{operator*=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\&\ A)}
+\DoxyCodeLine{00258\ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ btScalar\ new\_c\ =\ c\ *\ A.c\ -\/\ s\ *\ A.s;}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ btScalar\ new\_s\ =\ s\ *\ A.c\ +\ c\ *\ A.s;}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ c\ =\ new\_c;}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ s\ =\ new\_s;}
+\DoxyCodeLine{00263\ \ \ \ \ \}}
+\DoxyCodeLine{00264\ \ \ \ \ }
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ \mbox{\hyperlink{class_givens_rotation_a6b9813a9298c7e9f117ad64b922e3df9}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\&\ A)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00269\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r(*\textcolor{keyword}{this});}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ r\ *=\ A;}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00273\ \ \ \ \ \}}
+\DoxyCodeLine{00274\ \};}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00286\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ zeroChase(btMatrix3x3\&\ H,\ btMatrix3x3\&\ U,\ btMatrix3x3\&\ V)}
+\DoxyCodeLine{00287\ \{}
+\DoxyCodeLine{00288\ \ \ \ \ }
+\DoxyCodeLine{00295\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r1(H[0][0],\ H[1][0],\ 0,\ 1);}
+\DoxyCodeLine{00304\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r2(1,\ 2);}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordflow}{if}\ (H[1][0]\ !=\ 0)}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ r2.compute(H[0][0]\ *\ H[0][1]\ +\ H[1][0]\ *\ H[1][1],\ H[0][0]\ *\ H[0][2]\ +\ H[1][0]\ *\ H[1][2]);}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ r2.compute(H[0][1],\ H[0][2]);}
+\DoxyCodeLine{00309\ \ \ \ \ }
+\DoxyCodeLine{00310\ \ \ \ \ r1.rowRotation(H);}
+\DoxyCodeLine{00311\ \ \ \ \ }
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{comment}{/*\ GivensRotation<T>\ r2(H(0,\ 1),\ H(0,\ 2),\ 1,\ 2);\ */}}
+\DoxyCodeLine{00313\ \ \ \ \ r2.columnRotation(H);}
+\DoxyCodeLine{00314\ \ \ \ \ r2.columnRotation(V);}
+\DoxyCodeLine{00315\ \ \ \ \ }
+\DoxyCodeLine{00322\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r3(H[1][1],\ H[2][1],\ 1,\ 2);}
+\DoxyCodeLine{00323\ \ \ \ \ r3.rowRotation(H);}
+\DoxyCodeLine{00324\ \ \ \ \ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{comment}{//\ Save\ this\ till\ end\ for\ better\ cache\ coherency}}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{comment}{//\ r1.rowRotation(u\_transpose);}}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{comment}{//\ r3.rowRotation(u\_transpose);}}
+\DoxyCodeLine{00328\ \ \ \ \ r1.columnRotation(U);}
+\DoxyCodeLine{00329\ \ \ \ \ r3.columnRotation(U);}
+\DoxyCodeLine{00330\ \}}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00342\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ makeUpperBidiag(btMatrix3x3\&\ H,\ btMatrix3x3\&\ U,\ btMatrix3x3\&\ V)}
+\DoxyCodeLine{00343\ \{}
+\DoxyCodeLine{00344\ \ \ \ \ U.setIdentity();}
+\DoxyCodeLine{00345\ \ \ \ \ V.setIdentity();}
+\DoxyCodeLine{00346\ \ \ \ \ }
+\DoxyCodeLine{00354\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r(H[1][0],\ H[2][0],\ 1,\ 2);}
+\DoxyCodeLine{00355\ \ \ \ \ r.rowRotation(H);}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{comment}{//\ r.rowRotation(u\_transpose);}}
+\DoxyCodeLine{00357\ \ \ \ \ r.columnRotation(U);}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{comment}{//\ zeroChase(H,\ u\_transpose,\ V);}}
+\DoxyCodeLine{00359\ \ \ \ \ zeroChase(H,\ U,\ V);}
+\DoxyCodeLine{00360\ \}}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00372\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ makeLambdaShape(btMatrix3x3\&\ H,\ btMatrix3x3\&\ U,\ btMatrix3x3\&\ V)}
+\DoxyCodeLine{00373\ \{}
+\DoxyCodeLine{00374\ \ \ \ \ U.setIdentity();}
+\DoxyCodeLine{00375\ \ \ \ \ V.setIdentity();}
+\DoxyCodeLine{00376\ \ \ \ \ }
+\DoxyCodeLine{00384\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r1(H[0][1],\ H[0][2],\ 1,\ 2);}
+\DoxyCodeLine{00385\ \ \ \ \ r1.columnRotation(H);}
+\DoxyCodeLine{00386\ \ \ \ \ r1.columnRotation(V);}
+\DoxyCodeLine{00387\ \ \ \ \ }
+\DoxyCodeLine{00395\ \ \ \ \ r1.computeUnconventional(H[1][2],\ H[2][2]);}
+\DoxyCodeLine{00396\ \ \ \ \ r1.rowRotation(H);}
+\DoxyCodeLine{00397\ \ \ \ \ r1.columnRotation(U);}
+\DoxyCodeLine{00398\ \ \ \ \ }
+\DoxyCodeLine{00406\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r2(H[2][0],\ H[2][1],\ 0,\ 1);}
+\DoxyCodeLine{00407\ \ \ \ \ r2.columnRotation(H);}
+\DoxyCodeLine{00408\ \ \ \ \ r2.columnRotation(V);}
+\DoxyCodeLine{00409\ \ \ \ \ }
+\DoxyCodeLine{00416\ \ \ \ \ r2.computeUnconventional(H[0][1],\ H[1][1]);}
+\DoxyCodeLine{00417\ \ \ \ \ r2.rowRotation(H);}
+\DoxyCodeLine{00418\ \ \ \ \ r2.columnRotation(U);}
+\DoxyCodeLine{00419\ \}}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00431\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ polarDecomposition(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ A,}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\&\ R,}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ S\_Sym)}
+\DoxyCodeLine{00434\ \{}
+\DoxyCodeLine{00435\ \ \ \ \ btScalar\ a\ =\ (A(0,\ 0)\ +\ A(1,\ 1)),\ \ b\ =\ (A(1,\ 0)\ -\/\ A(0,\ 1));}
+\DoxyCodeLine{00436\ \ \ \ \ btScalar\ denominator\ =\ btSqrt(a*a+b*b);}
+\DoxyCodeLine{00437\ \ \ \ \ R.c\ =\ (btScalar)1;}
+\DoxyCodeLine{00438\ \ \ \ \ R.s\ =\ (btScalar)0;}
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{keywordflow}{if}\ (denominator\ >\ SIMD\_EPSILON)\ \{\ }
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ No\ need\ to\ use\ a\ tolerance\ here\ because\ x(0)\ and\ x(1)\ always\ have}}
+\DoxyCodeLine{00442\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ smaller\ magnitude\ then\ denominator,\ therefore\ overflow\ never\ happens.}}
+\DoxyCodeLine{00443\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ In\ Bullet,\ we\ use\ a\ tolerance\ anyway.}}
+\DoxyCodeLine{00444\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ R.c\ =\ a\ /\ denominator;}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ R.s\ =\ -\/b\ /\ denominator;}
+\DoxyCodeLine{00447\ \ \ \ \ \}}
+\DoxyCodeLine{00448\ \ \ \ \ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ S\ =\ \textcolor{keyword}{const\_cast<}\mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\textcolor{keyword}{>}(S\_Sym);}
+\DoxyCodeLine{00449\ \ \ \ \ S\ =\ A;}
+\DoxyCodeLine{00450\ \ \ \ \ R.\mbox{\hyperlink{class_givens_rotation_a8d72a4db75e8a2b4110d80c20a45b114}{rowRotation}}(S);}
+\DoxyCodeLine{00451\ \}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ polarDecomposition(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ A,}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ R,}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ S\_Sym)}
+\DoxyCodeLine{00456\ \{}
+\DoxyCodeLine{00457\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r(0,\ 1);}
+\DoxyCodeLine{00458\ \ \ \ \ polarDecomposition(A,\ r,\ S\_Sym);}
+\DoxyCodeLine{00459\ \ \ \ \ r.fill(R);}
+\DoxyCodeLine{00460\ \}}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00469\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ singularValueDecomposition(}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ A,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\&\ U,}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ Sigma,}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\&\ V,}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ tol\ =\ 64\ *\ std::numeric\_limits<btScalar>::epsilon())}
+\DoxyCodeLine{00475\ \{}
+\DoxyCodeLine{00476\ \ \ \ \ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ sigma\ =\ \textcolor{keyword}{const\_cast<}\mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\textcolor{keyword}{>}(Sigma);}
+\DoxyCodeLine{00477\ \ \ \ \ sigma.setIdentity();}
+\DoxyCodeLine{00478\ \ \ \ \ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\ S\_Sym;}
+\DoxyCodeLine{00479\ \ \ \ \ polarDecomposition(A,\ U,\ S\_Sym);}
+\DoxyCodeLine{00480\ \ \ \ \ btScalar\ cosine,\ sine;}
+\DoxyCodeLine{00481\ \ \ \ \ btScalar\ x\ =\ S\_Sym(0,\ 0);}
+\DoxyCodeLine{00482\ \ \ \ \ btScalar\ y\ =\ S\_Sym(0,\ 1);}
+\DoxyCodeLine{00483\ \ \ \ \ btScalar\ z\ =\ S\_Sym(1,\ 1);}
+\DoxyCodeLine{00484\ \ \ \ \ \textcolor{keywordflow}{if}\ (y\ ==\ 0)\ \{}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ S\ is\ already\ diagonal}}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ cosine\ =\ 1;}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ sine\ =\ 0;}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ sigma(0,0)\ =\ x;}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ sigma(1,1)\ =\ z;}
+\DoxyCodeLine{00490\ \ \ \ \ \}}
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ btScalar\ tau\ =\ 0.5\ *\ (x\ -\/\ z);}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ btScalar\ val\ =\ tau\ *\ tau\ +\ y\ *\ y;}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (val\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ btScalar\ w\ =\ btSqrt(val);}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ w\ >\ y\ >\ 0}}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ btScalar\ t;}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tau\ >\ 0)\ \{}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ tau\ +\ w\ >\ w\ >\ y\ >\ 0\ ==>\ division\ is\ safe}}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ y\ /\ (tau\ +\ w);}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ tau\ -\/\ w\ <\ -\/w\ <\ -\/y\ <\ 0\ ==>\ division\ is\ safe}}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ y\ /\ (tau\ -\/\ w);}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ cosine\ =\ btScalar(1)\ /\ btSqrt(t\ *\ t\ +\ btScalar(1));}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ sine\ =\ -\/t\ *\ cosine;}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ V\ =\ [cosine\ -\/sine;\ sine\ cosine]}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ Sigma\ =\ V'SV.\ Only\ compute\ the\ diagonals\ for\ efficiency.}}
+\DoxyCodeLine{00512\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ Also\ utilize\ symmetry\ of\ S\ and\ don't\ form\ V\ yet.}}
+\DoxyCodeLine{00513\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ btScalar\ c2\ =\ cosine\ *\ cosine;}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ btScalar\ csy\ =\ 2\ *\ cosine\ *\ sine\ *\ y;}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ btScalar\ s2\ =\ sine\ *\ sine;}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ sigma(0,0)\ =\ c2\ *\ x\ -\/\ csy\ +\ s2\ *\ z;}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ sigma(1,1)\ =\ s2\ *\ x\ +\ csy\ +\ c2\ *\ z;}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \ \ \ \ cosine\ =\ 1;}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ sine\ =\ 0;}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ sigma(0,0)\ =\ x;}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ sigma(1,1)\ =\ z;}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00526\ \ \ \ \ \}}
+\DoxyCodeLine{00527\ \ \ \ \ }
+\DoxyCodeLine{00528\ \ \ \ \ \textcolor{comment}{//\ Sorting}}
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{comment}{//\ Polar\ already\ guarantees\ negative\ sign\ is\ on\ the\ small\ magnitude\ singular\ value.}}
+\DoxyCodeLine{00530\ \ \ \ \ \textcolor{keywordflow}{if}\ (sigma(0,0)\ <\ sigma(1,1))\ \{}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ std::swap(sigma(0,0),\ sigma(1,1));}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ V.c\ =\ -\/sine;}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ V.s\ =\ cosine;}
+\DoxyCodeLine{00534\ \ \ \ \ \}}
+\DoxyCodeLine{00535\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ V.c\ =\ cosine;}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ V.s\ =\ sine;}
+\DoxyCodeLine{00538\ \ \ \ \ \}}
+\DoxyCodeLine{00539\ \ \ \ \ U\ *=\ V;}
+\DoxyCodeLine{00540\ \}}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00549\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ singularValueDecomposition(}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ A,}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ U,}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ Sigma,}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\&\ V,}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ tol\ =\ 64\ *\ std::numeric\_limits<btScalar>::epsilon())}
+\DoxyCodeLine{00555\ \{}
+\DoxyCodeLine{00556\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ gv(0,\ 1);}
+\DoxyCodeLine{00557\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ gu(0,\ 1);}
+\DoxyCodeLine{00558\ \ \ \ \ singularValueDecomposition(A,\ gu,\ Sigma,\ gv);}
+\DoxyCodeLine{00559\ \ \ \ \ }
+\DoxyCodeLine{00560\ \ \ \ \ gu.fill(U);}
+\DoxyCodeLine{00561\ \ \ \ \ gv.fill(V);}
+\DoxyCodeLine{00562\ \}}
+\DoxyCodeLine{00563\ }
+\DoxyCodeLine{00572\ \textcolor{keyword}{inline}\ btScalar\ wilkinsonShift(\textcolor{keyword}{const}\ btScalar\ a1,\ \textcolor{keyword}{const}\ btScalar\ b1,\ \textcolor{keyword}{const}\ btScalar\ a2)}
+\DoxyCodeLine{00573\ \{}
+\DoxyCodeLine{00574\ \ \ \ \ btScalar\ d\ =\ (btScalar)0.5\ *\ (a1\ -\/\ a2);}
+\DoxyCodeLine{00575\ \ \ \ \ btScalar\ bs\ =\ b1\ *\ b1;}
+\DoxyCodeLine{00576\ \ \ \ \ btScalar\ val\ =\ d\ *\ d\ +\ bs;}
+\DoxyCodeLine{00577\ \ \ \ \ \textcolor{keywordflow}{if}\ (val>SIMD\_EPSILON)}
+\DoxyCodeLine{00578\ \ \ \ \ \{}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ btScalar\ denom\ =\ btFabs(d)\ +\ btSqrt(val);}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ btScalar\ mu\ =\ a2\ -\/\ copySign(bs\ /\ (denom),\ d);}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ T\ mu\ =\ a2\ -\/\ bs\ /\ (\ d\ +\ sign\_d*sqrt\ (d*d\ +\ bs));}}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mu;}
+\DoxyCodeLine{00584\ \ \ \ \ \}}
+\DoxyCodeLine{00585\ \ \ \ \ \textcolor{keywordflow}{return}\ a2;}
+\DoxyCodeLine{00586\ \}}
+\DoxyCodeLine{00587\ }
+\DoxyCodeLine{00591\ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{int}\ t>}
+\DoxyCodeLine{00592\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ process(btMatrix3x3\&\ B,\ btMatrix3x3\&\ U,\ btVector3\&\ sigma,\ btMatrix3x3\&\ V)}
+\DoxyCodeLine{00593\ \{}
+\DoxyCodeLine{00594\ \ \ \ \ \textcolor{keywordtype}{int}\ other\ =\ (t\ ==\ 1)\ ?\ 0\ :\ 2;}
+\DoxyCodeLine{00595\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ u(0,\ 1);}
+\DoxyCodeLine{00596\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ v(0,\ 1);}
+\DoxyCodeLine{00597\ \ \ \ \ sigma[other]\ =\ B[other][other];}
+\DoxyCodeLine{00598\ \ \ \ \ }
+\DoxyCodeLine{00599\ \ \ \ \ \mbox{\hyperlink{classbt_matrix2x2}{btMatrix2x2}}\ B\_sub,\ sigma\_sub;}
+\DoxyCodeLine{00600\ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ ==\ 0)}
+\DoxyCodeLine{00601\ \ \ \ \ \{}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ B\_sub.m\_00\ =\ B[0][0];}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ B\_sub.m\_10\ =\ B[1][0];}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ B\_sub.m\_01\ =\ B[0][1];}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ B\_sub.m\_11\ =\ B[1][1];}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ sigma\_sub.m\_00\ =\ sigma[0];}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ sigma\_sub.m\_11\ =\ sigma[1];}
+\DoxyCodeLine{00608\ \textcolor{comment}{//\ \ \ \ \ \ \ \ singularValueDecomposition(B.template\ block<2,\ 2>(t,\ t),\ u,\ sigma.template\ block<2,\ 1>(t,\ 0),\ v);}}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ singularValueDecomposition(B\_sub,\ u,\ sigma\_sub,\ v);}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ B[0][0]\ =\ B\_sub.m\_00;}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ B[1][0]\ =\ B\_sub.m\_10;}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ B[0][1]\ =\ B\_sub.m\_01;}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ B[1][1]\ =\ B\_sub.m\_11;}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ sigma[0]\ =\ sigma\_sub.m\_00;}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ sigma[1]\ =\ sigma\_sub.m\_11;}
+\DoxyCodeLine{00616\ \ \ \ \ \}}
+\DoxyCodeLine{00617\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00618\ \ \ \ \ \{}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ B\_sub.m\_00\ =\ B[1][1];}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ B\_sub.m\_10\ =\ B[2][1];}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ B\_sub.m\_01\ =\ B[1][2];}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ B\_sub.m\_11\ =\ B[2][2];}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ sigma\_sub.m\_00\ =\ sigma[1];}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ sigma\_sub.m\_11\ =\ sigma[2];}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ singularValueDecomposition(B.template\ block<2,\ 2>(t,\ t),\ u,\ sigma.template\ block<2,\ 1>(t,\ 0),\ v);}}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ singularValueDecomposition(B\_sub,\ u,\ sigma\_sub,\ v);}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ B[1][1]\ =\ B\_sub.m\_00;}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ B[2][1]\ =\ B\_sub.m\_10;}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ B[1][2]\ =\ B\_sub.m\_01;}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ B[2][2]\ =\ B\_sub.m\_11;}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ sigma[1]\ =\ sigma\_sub.m\_00;}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ sigma[2]\ =\ sigma\_sub.m\_11;}
+\DoxyCodeLine{00633\ \ \ \ \ \}}
+\DoxyCodeLine{00634\ \ \ \ \ u.rowi\ +=\ t;}
+\DoxyCodeLine{00635\ \ \ \ \ u.rowk\ +=\ t;}
+\DoxyCodeLine{00636\ \ \ \ \ v.rowi\ +=\ t;}
+\DoxyCodeLine{00637\ \ \ \ \ v.rowk\ +=\ t;}
+\DoxyCodeLine{00638\ \ \ \ \ u.columnRotation(U);}
+\DoxyCodeLine{00639\ \ \ \ \ v.columnRotation(V);}
+\DoxyCodeLine{00640\ \}}
+\DoxyCodeLine{00641\ }
+\DoxyCodeLine{00645\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ flipSign(\textcolor{keywordtype}{int}\ i,\ btMatrix3x3\&\ U,\ btVector3\&\ sigma)}
+\DoxyCodeLine{00646\ \{}
+\DoxyCodeLine{00647\ \ \ \ \ sigma[i]\ =\ -\/sigma[i];}
+\DoxyCodeLine{00648\ \ \ \ \ U[0][i]\ =\ -\/U[0][i];}
+\DoxyCodeLine{00649\ \ \ \ \ U[1][i]\ =\ -\/U[1][i];}
+\DoxyCodeLine{00650\ \ \ \ \ U[2][i]\ =\ -\/U[2][i];}
+\DoxyCodeLine{00651\ \}}
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00653\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ flipSign(\textcolor{keywordtype}{int}\ i,\ btMatrix3x3\&\ U)}
+\DoxyCodeLine{00654\ \{}
+\DoxyCodeLine{00655\ \ \ \ \ U[0][i]\ =\ -\/U[0][i];}
+\DoxyCodeLine{00656\ \ \ \ \ U[1][i]\ =\ -\/U[1][i];}
+\DoxyCodeLine{00657\ \ \ \ \ U[2][i]\ =\ -\/U[2][i];}
+\DoxyCodeLine{00658\ \}}
+\DoxyCodeLine{00659\ }
+\DoxyCodeLine{00660\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ swapCol(btMatrix3x3\&\ A,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)}
+\DoxyCodeLine{00661\ \{}
+\DoxyCodeLine{00662\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ d\ =\ 0;\ d\ <\ 3;\ ++d)}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ std::swap(A[d][i],\ A[d][j]);}
+\DoxyCodeLine{00664\ \}}
+\DoxyCodeLine{00668\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ sort(btMatrix3x3\&\ U,\ btVector3\&\ sigma,\ btMatrix3x3\&\ V,\ \textcolor{keywordtype}{int}\ t)}
+\DoxyCodeLine{00669\ \{}
+\DoxyCodeLine{00670\ \ \ \ \ \textcolor{keywordflow}{if}\ (t\ ==\ 0)}
+\DoxyCodeLine{00671\ \ \ \ \ \{}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case:\ sigma(0)\ >\ |sigma(1)|\ >=\ |sigma(2)|}}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(sigma[1])\ >=\ btFabs(sigma[2]))\ \{}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sigma[1]\ <\ 0)\ \{}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(1,\ U,\ sigma);}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(2,\ U,\ sigma);}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \textcolor{comment}{//fix\ sign\ of\ sigma\ for\ both\ cases}}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sigma[2]\ <\ 0)\ \{}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(1,\ U,\ sigma);}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(2,\ U,\ sigma);}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \textcolor{comment}{//swap\ sigma(1)\ and\ sigma(2)\ for\ both\ cases}}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ std::swap(sigma[1],\ sigma[2]);}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ swap\ the\ col\ 1\ and\ col\ 2\ for\ U,V}}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ swapCol(U,1,2);}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ swapCol(V,1,2);}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case:\ |sigma(2)|\ >=\ sigma(0)\ >\ |simga(1)|}}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sigma[1]\ >\ sigma[0])\ \{}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ std::swap(sigma[0],\ sigma[1]);}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \ \ \ \ swapCol(U,0,1);}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ swapCol(V,0,1);}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case:\ sigma(0)\ >=\ |sigma(2)|\ >\ |simga(1)|}}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(2,\ U);}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(2,\ V);}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00705\ \ \ \ \ \}}
+\DoxyCodeLine{00706\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (t\ ==\ 1)}
+\DoxyCodeLine{00707\ \ \ \ \ \{}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case:\ |sigma(0)|\ >=\ sigma(1)\ >\ |sigma(2)|}}
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(sigma[0])\ >=\ sigma[1])\ \{}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sigma[0]\ <\ 0)\ \{}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(0,\ U,\ sigma);}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(2,\ U,\ sigma);}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \textcolor{comment}{//swap\ sigma(0)\ and\ sigma(1)\ for\ both\ cases}}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ std::swap(sigma[0],\ sigma[1]);}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ swapCol(U,\ 0,\ 1);}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ swapCol(V,\ 0,\ 1);}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case:\ sigma(1)\ >\ |sigma(2)|\ >=\ |sigma(0)|}}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(sigma[1])\ <\ btFabs(sigma[2]))\ \{}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ std::swap(sigma[1],\ sigma[2]);}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \ \ \ \ swapCol(U,\ 1,\ 2);}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ swapCol(V,\ 1,\ 2);}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Case:\ sigma(1)\ >=\ |sigma(0)|\ >\ |sigma(2)|}}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(1,\ U);}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(1,\ V);}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ fix\ sign\ for\ both\ cases}}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sigma[1]\ <\ 0)\ \{}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(1,\ U,\ sigma);}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \ \ \ \ flipSign(2,\ U,\ sigma);}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00740\ \ \ \ \ \}}
+\DoxyCodeLine{00741\ \}}
+\DoxyCodeLine{00742\ }
+\DoxyCodeLine{00750\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ singularValueDecomposition(\textcolor{keyword}{const}\ btMatrix3x3\&\ A,}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\&\ U,}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\&\ sigma,}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btMatrix3x3\&\ V,}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tol\ =\ 128*std::numeric\_limits<btScalar>::epsilon())}
+\DoxyCodeLine{00755\ \{}
+\DoxyCodeLine{00756\ \textcolor{comment}{//\ \ \ \ using\ std::fabs;}}
+\DoxyCodeLine{00757\ \ \ \ \ btMatrix3x3\ B\ =\ A;}
+\DoxyCodeLine{00758\ \ \ \ \ U.setIdentity();}
+\DoxyCodeLine{00759\ \ \ \ \ V.setIdentity();}
+\DoxyCodeLine{00760\ \ \ \ \ }
+\DoxyCodeLine{00761\ \ \ \ \ makeUpperBidiag(B,\ U,\ V);}
+\DoxyCodeLine{00762\ \ \ \ \ }
+\DoxyCodeLine{00763\ \ \ \ \ \textcolor{keywordtype}{int}\ count\ =\ 0;}
+\DoxyCodeLine{00764\ \ \ \ \ btScalar\ mu\ =\ (btScalar)0;}
+\DoxyCodeLine{00765\ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r(0,\ 1);}
+\DoxyCodeLine{00766\ \ \ \ \ }
+\DoxyCodeLine{00767\ \ \ \ \ btScalar\ alpha\_1\ =\ B[0][0];}
+\DoxyCodeLine{00768\ \ \ \ \ btScalar\ beta\_1\ =\ B[0][1];}
+\DoxyCodeLine{00769\ \ \ \ \ btScalar\ alpha\_2\ =\ B[1][1];}
+\DoxyCodeLine{00770\ \ \ \ \ btScalar\ alpha\_3\ =\ B[2][2];}
+\DoxyCodeLine{00771\ \ \ \ \ btScalar\ beta\_2\ =\ B[1][2];}
+\DoxyCodeLine{00772\ \ \ \ \ btScalar\ gamma\_1\ =\ alpha\_1\ *\ beta\_1;}
+\DoxyCodeLine{00773\ \ \ \ \ btScalar\ gamma\_2\ =\ alpha\_2\ *\ beta\_2;}
+\DoxyCodeLine{00774\ \ \ \ \ btScalar\ val\ =\ alpha\_1\ *\ alpha\_1\ +\ alpha\_2\ *\ alpha\_2\ +\ alpha\_3\ *\ alpha\_3\ +\ beta\_1\ *\ beta\_1\ +\ beta\_2\ *\ beta\_2;}
+\DoxyCodeLine{00775\ \ \ \ \ \textcolor{keywordflow}{if}\ (val\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00776\ \ \ \ \ \{}
+\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ tol\ *=\ btMax((btScalar)0.5\ *\ btSqrt(val),\ (btScalar)1);}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \}\ \ \ \ }
+\DoxyCodeLine{00782\ \ \ \ \ \textcolor{keywordtype}{int}\ max\_count\ =\ 100;}
+\DoxyCodeLine{00783\ \ \ \ \ }
+\DoxyCodeLine{00784\ \ \ \ \ \textcolor{keywordflow}{while}\ (btFabs(beta\_2)\ >\ tol\ \&\&\ btFabs(beta\_1)\ >\ tol}
+\DoxyCodeLine{00785\ \ \ \ \ \ \ \ \ \ \ \ \&\&\ btFabs(alpha\_1)\ >\ tol\ \&\&\ btFabs(alpha\_2)\ >\ tol}
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \ \ \ \&\&\ btFabs(alpha\_3)\ >\ tol}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \&\&\ count\ <\ max\_count)\ \{}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ mu\ =\ wilkinsonShift(alpha\_2\ *\ alpha\_2\ +\ beta\_1\ *\ beta\_1,\ gamma\_2,\ alpha\_3\ *\ alpha\_3\ +\ beta\_2\ *\ beta\_2);}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ r.compute(alpha\_1\ *\ alpha\_1\ -\/\ mu,\ gamma\_1);}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ r.columnRotation(B);}
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ r.columnRotation(V);}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ zeroChase(B,\ U,\ V);}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ alpha\_1\ =\ B[0][0];}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ beta\_1\ =\ B[0][1];}
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ alpha\_2\ =\ B[1][1];}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ alpha\_3\ =\ B[2][2];}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ beta\_2\ =\ B[1][2];}
+\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ gamma\_1\ =\ alpha\_1\ *\ beta\_1;}
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ gamma\_2\ =\ alpha\_2\ *\ beta\_2;}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{00804\ \ \ \ \ \}}
+\DoxyCodeLine{00815\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(beta\_2)\ <=\ tol)\ \{}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ process<0>(B,\ U,\ sigma,\ V);}
+\DoxyCodeLine{00817\ \ \ \ \ \ \ \ \ sort(U,\ sigma,\ V,0);}
+\DoxyCodeLine{00818\ \ \ \ \ \}}
+\DoxyCodeLine{00825\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (btFabs(beta\_1)\ <=\ tol)\ \{}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ process<1>(B,\ U,\ sigma,\ V);}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ sort(U,\ sigma,\ V,1);}
+\DoxyCodeLine{00828\ \ \ \ \ \}}
+\DoxyCodeLine{00835\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (btFabs(alpha\_2)\ <=\ tol)\ \{}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r1(1,\ 2);}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ r1.computeUnconventional(B[1][2],\ B[2][2]);}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ r1.rowRotation(B);}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ r1.columnRotation(U);}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ process<0>(B,\ U,\ sigma,\ V);}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ sort(U,\ sigma,\ V,\ 0);}
+\DoxyCodeLine{00849\ \ \ \ \ \}}
+\DoxyCodeLine{00856\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (btFabs(alpha\_3)\ <=\ tol)\ \{}
+\DoxyCodeLine{00863\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r1(1,\ 2);}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ r1.compute(B[1][1],\ B[1][2]);}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ r1.columnRotation(B);}
+\DoxyCodeLine{00866\ \ \ \ \ \ \ \ \ r1.columnRotation(V);}
+\DoxyCodeLine{00873\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r2(0,\ 2);}
+\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ r2.compute(B[0][0],\ B[0][2]);}
+\DoxyCodeLine{00875\ \ \ \ \ \ \ \ \ r2.columnRotation(B);}
+\DoxyCodeLine{00876\ \ \ \ \ \ \ \ \ r2.columnRotation(V);}
+\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00878\ \ \ \ \ \ \ \ \ process<0>(B,\ U,\ sigma,\ V);}
+\DoxyCodeLine{00879\ \ \ \ \ \ \ \ \ sort(U,\ sigma,\ V,\ 0);}
+\DoxyCodeLine{00880\ \ \ \ \ \}}
+\DoxyCodeLine{00887\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (btFabs(alpha\_1)\ <=\ tol)\ \{}
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r1(0,\ 1);}
+\DoxyCodeLine{00895\ \ \ \ \ \ \ \ \ r1.computeUnconventional(B[0][1],\ B[1][1]);}
+\DoxyCodeLine{00896\ \ \ \ \ \ \ \ \ r1.rowRotation(B);}
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ r1.columnRotation(U);}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00905\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_givens_rotation}{GivensRotation}}\ r2(0,\ 2);}
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ r2.computeUnconventional(B[0][2],\ B[2][2]);}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ r2.rowRotation(B);}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ r2.columnRotation(U);}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ process<1>(B,\ U,\ sigma,\ V);}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ sort(U,\ sigma,\ V,\ 1);}
+\DoxyCodeLine{00912\ \ \ \ \ \}}
+\DoxyCodeLine{00913\ \ \ \ \ }
+\DoxyCodeLine{00914\ \ \ \ \ \textcolor{keywordflow}{return}\ count;}
+\DoxyCodeLine{00915\ \}}
+\DoxyCodeLine{00916\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btImplicitQRSVD\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

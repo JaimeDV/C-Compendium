@@ -1,0 +1,285 @@
+\doxysection{bt\+Solver\+Body.\+h}
+\hypertarget{bt_solver_body_8h_source}{}\label{bt_solver_body_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSolverBody.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btSolverBody.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_SOLVER\_BODY\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_SOLVER\_BODY\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}};}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btMatrix3x3.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedAllocator.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransformUtil.h"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_SSE}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ USE\_SIMD\ 1}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#ifdef\ USE\_SIMD}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }btSimdScalar}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ SIMD\_FORCE\_INLINE\ btSimdScalar()}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ SIMD\_FORCE\_INLINE\ btSimdScalar(\textcolor{keywordtype}{float}\ fl)}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ :\ m\_vec128(\_mm\_set1\_ps(fl))}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ SIMD\_FORCE\_INLINE\ btSimdScalar(\_\_m128\ v128)}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ :\ m\_vec128(v128)}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \_\_m128\ m\_vec128;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_floats[4];}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\_ints[4];}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ btScalar\ m\_unusedPadding;}
+\DoxyCodeLine{00053\ \ \ \ \ \};}
+\DoxyCodeLine{00054\ \ \ \ \ SIMD\_FORCE\_INLINE\ \_\_m128\ get128()}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_vec128;}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{const}\ \_\_m128\ get128()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00060\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_vec128;}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ set128(\_\_m128\ v128)}
+\DoxyCodeLine{00065\ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ m\_vec128\ =\ v128;}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{operator}\ \_\_m128()}
+\DoxyCodeLine{00070\ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_vec128;}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{operator}\ \textcolor{keyword}{const}\ \_\_m128()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00074\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_vec128;}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keyword}{operator}\ float()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00079\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_floats[0];}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ \};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ SIMD\_FORCE\_INLINE\ btSimdScalar}
+\DoxyCodeLine{00086\ operator*(\textcolor{keyword}{const}\ btSimdScalar\&\ v1,\ \textcolor{keyword}{const}\ btSimdScalar\&\ v2)}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{return}\ btSimdScalar(\_mm\_mul\_ps(v1.get128(),\ v2.get128()));}
+\DoxyCodeLine{00089\ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00092\ SIMD\_FORCE\_INLINE\ btSimdScalar}
+\DoxyCodeLine{00093\ operator+(\textcolor{keyword}{const}\ btSimdScalar\&\ v1,\ \textcolor{keyword}{const}\ btSimdScalar\&\ v2)}
+\DoxyCodeLine{00094\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{return}\ btSimdScalar(\_mm\_add\_ps(v1.get128(),\ v2.get128()));}
+\DoxyCodeLine{00096\ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#define\ btSimdScalar\ btScalar}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00103\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00104\ btSolverBody}
+\DoxyCodeLine{00105\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ BT\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00107\ \ \ \ \ btTransform\ m\_worldTransform;}
+\DoxyCodeLine{00108\ \ \ \ \ btVector3\ m\_deltaLinearVelocity;}
+\DoxyCodeLine{00109\ \ \ \ \ btVector3\ m\_deltaAngularVelocity;}
+\DoxyCodeLine{00110\ \ \ \ \ btVector3\ m\_angularFactor;}
+\DoxyCodeLine{00111\ \ \ \ \ btVector3\ m\_linearFactor;}
+\DoxyCodeLine{00112\ \ \ \ \ btVector3\ m\_invMass;}
+\DoxyCodeLine{00113\ \ \ \ \ btVector3\ m\_pushVelocity;}
+\DoxyCodeLine{00114\ \ \ \ \ btVector3\ m\_turnVelocity;}
+\DoxyCodeLine{00115\ \ \ \ \ btVector3\ m\_linearVelocity;}
+\DoxyCodeLine{00116\ \ \ \ \ btVector3\ m\_angularVelocity;}
+\DoxyCodeLine{00117\ \ \ \ \ btVector3\ m\_externalForceImpulse;}
+\DoxyCodeLine{00118\ \ \ \ \ btVector3\ m\_externalTorqueImpulse;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ m\_originalBody;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{void}\ setWorldTransform(\textcolor{keyword}{const}\ btTransform\&\ worldTransform)}
+\DoxyCodeLine{00122\ \ \ \ \ \{}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ m\_worldTransform\ =\ worldTransform;}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ getWorldTransform()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00127\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_worldTransform;}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getVelocityInLocalPointNoDelta(\textcolor{keyword}{const}\ btVector3\&\ rel\_pos,\ btVector3\&\ velocity)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00132\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ velocity\ =\ m\_linearVelocity\ +\ m\_externalForceImpulse\ +\ (m\_angularVelocity\ +\ m\_externalTorqueImpulse).cross(rel\_pos);}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ velocity.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getVelocityInLocalPointObsolete(\textcolor{keyword}{const}\ btVector3\&\ rel\_pos,\ btVector3\&\ velocity)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00140\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ velocity\ =\ m\_linearVelocity\ +\ m\_deltaLinearVelocity\ +\ (m\_angularVelocity\ +\ m\_deltaAngularVelocity).cross(rel\_pos);}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ velocity.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ getAngularVelocity(btVector3\ \&\ angVel)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00148\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ angVel\ =\ m\_angularVelocity\ +\ m\_deltaAngularVelocity;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ angVel.setValue(0,\ 0,\ 0);}
+\DoxyCodeLine{00153\ \ \ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{comment}{//Optimization\ for\ the\ iterative\ solver:\ avoid\ calculating\ constant\ terms\ involving\ inertia,\ normal,\ relative\ position}}
+\DoxyCodeLine{00156\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ applyImpulse(\textcolor{keyword}{const}\ btVector3\&\ linearComponent,\ \textcolor{keyword}{const}\ btVector3\&\ angularComponent,\ \textcolor{keyword}{const}\ btScalar\ impulseMagnitude)}
+\DoxyCodeLine{00157\ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ m\_deltaLinearVelocity\ +=\ linearComponent\ *\ impulseMagnitude\ *\ m\_linearFactor;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ m\_deltaAngularVelocity\ +=\ angularComponent\ *\ (impulseMagnitude\ *\ m\_angularFactor);}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ internalApplyPushImpulse(\textcolor{keyword}{const}\ btVector3\&\ linearComponent,\ \textcolor{keyword}{const}\ btVector3\&\ angularComponent,\ btScalar\ impulseMagnitude)}
+\DoxyCodeLine{00166\ \ \ \ \ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ m\_pushVelocity\ +=\ linearComponent\ *\ impulseMagnitude\ *\ m\_linearFactor;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ m\_turnVelocity\ +=\ angularComponent\ *\ (impulseMagnitude\ *\ m\_angularFactor);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00172\ \ \ \ \ \}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getDeltaLinearVelocity()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00175\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_deltaLinearVelocity;}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getDeltaAngularVelocity()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00180\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_deltaAngularVelocity;}
+\DoxyCodeLine{00182\ \ \ \ \ \}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getPushVelocity()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00185\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_pushVelocity;}
+\DoxyCodeLine{00187\ \ \ \ \ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ getTurnVelocity()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00190\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_turnVelocity;}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ btVector3\&\ internalGetDeltaLinearVelocity()}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_deltaLinearVelocity;}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ btVector3\&\ internalGetDeltaAngularVelocity()}
+\DoxyCodeLine{00203\ \ \ \ \ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_deltaAngularVelocity;}
+\DoxyCodeLine{00205\ \ \ \ \ \}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ internalGetAngularFactor()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00208\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_angularFactor;}
+\DoxyCodeLine{00210\ \ \ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ internalGetInvMass()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00213\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_invMass;}
+\DoxyCodeLine{00215\ \ \ \ \ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordtype}{void}\ internalSetInvMass(\textcolor{keyword}{const}\ btVector3\&\ invMass)}
+\DoxyCodeLine{00218\ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ m\_invMass\ =\ invMass;}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ btVector3\&\ internalGetPushVelocity()}
+\DoxyCodeLine{00223\ \ \ \ \ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_pushVelocity;}
+\DoxyCodeLine{00225\ \ \ \ \ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ btVector3\&\ internalGetTurnVelocity()}
+\DoxyCodeLine{00228\ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_turnVelocity;}
+\DoxyCodeLine{00230\ \ \ \ \ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ internalGetVelocityInLocalPointObsolete(\textcolor{keyword}{const}\ btVector3\&\ rel\_pos,\ btVector3\&\ velocity)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00233\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ velocity\ =\ m\_linearVelocity\ +\ m\_deltaLinearVelocity\ +\ (m\_angularVelocity\ +\ m\_deltaAngularVelocity).cross(rel\_pos);}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ internalGetAngularVelocity(btVector3\ \&\ angVel)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00238\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ angVel\ =\ m\_angularVelocity\ +\ m\_deltaAngularVelocity;}
+\DoxyCodeLine{00240\ \ \ \ \ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{comment}{//Optimization\ for\ the\ iterative\ solver:\ avoid\ calculating\ constant\ terms\ involving\ inertia,\ normal,\ relative\ position}}
+\DoxyCodeLine{00243\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ internalApplyImpulse(\textcolor{keyword}{const}\ btVector3\&\ linearComponent,\ \textcolor{keyword}{const}\ btVector3\&\ angularComponent,\ \textcolor{keyword}{const}\ btScalar\ impulseMagnitude)}
+\DoxyCodeLine{00244\ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ m\_deltaLinearVelocity\ +=\ linearComponent\ *\ impulseMagnitude\ *\ m\_linearFactor;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ m\_deltaAngularVelocity\ +=\ angularComponent\ *\ (impulseMagnitude\ *\ m\_angularFactor);}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00250\ \ \ \ \ \}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordtype}{void}\ writebackVelocity()}
+\DoxyCodeLine{00253\ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ m\_linearVelocity\ +=\ m\_deltaLinearVelocity;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularVelocity\ +=\ m\_deltaAngularVelocity;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//m\_originalBody-\/>setCompanionId(-\/1);}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00261\ \ \ \ \ \}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keywordtype}{void}\ writebackVelocityAndTransform(btScalar\ timeStep,\ btScalar\ splitImpulseTurnErp)}
+\DoxyCodeLine{00264\ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ (void)timeStep;}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_originalBody)}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ m\_linearVelocity\ +=\ m\_deltaLinearVelocity;}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularVelocity\ +=\ m\_deltaAngularVelocity;}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//correct\ the\ position/orientation\ based\ on\ push/turn\ recovery}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ newTransform;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_pushVelocity[0]\ !=\ 0.f\ ||\ m\_pushVelocity[1]\ !=\ 0\ ||\ m\_pushVelocity[2]\ !=\ 0\ ||\ m\_turnVelocity[0]\ !=\ 0.f\ ||\ m\_turnVelocity[1]\ !=\ 0\ ||\ m\_turnVelocity[2]\ !=\ 0)}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ btQuaternion\ orn\ =\ m\_worldTransform.getRotation();}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btTransformUtil::integrateTransform(m\_worldTransform,\ m\_pushVelocity,\ m\_turnVelocity\ *\ splitImpulseTurnErp,\ timeStep,\ newTransform);}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_worldTransform\ =\ newTransform;}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//m\_worldTransform.setRotation(orn);}}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//m\_originalBody-\/>setCompanionId(-\/1);}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00282\ \ \ \ \ \}}
+\DoxyCodeLine{00283\ \};}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_SOLVER\_BODY\_H}}
+
+\end{DoxyCode}

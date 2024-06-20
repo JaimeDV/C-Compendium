@@ -1,0 +1,95 @@
+\doxysection{bt\+Primitive\+Triangle Class Reference}
+\hypertarget{classbt_primitive_triangle}{}\label{classbt_primitive_triangle}\index{btPrimitiveTriangle@{btPrimitiveTriangle}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_primitive_triangle_af744acb5a8197dd9154b9707fef252cc}\label{classbt_primitive_triangle_af744acb5a8197dd9154b9707fef252cc} 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void {\bfseries build\+Tri\+Plane} ()
+\item 
+bool \mbox{\hyperlink{classbt_primitive_triangle_a844b5c15a34e656e64135f43a8d27d53}{overlap\+\_\+test\+\_\+conservative}} (const \mbox{\hyperlink{classbt_primitive_triangle}{bt\+Primitive\+Triangle}} \&other)
+\begin{DoxyCompactList}\small\item\em Test if triangles could collide. \end{DoxyCompactList}\item 
+SIMD\+\_\+\+FORCE\+\_\+\+INLINE void \mbox{\hyperlink{classbt_primitive_triangle_a44c4e264a4aa6b92a1188743555f1c92}{get\+\_\+edge\+\_\+plane}} (int edge\+\_\+index, \mbox{\hyperlink{classbt_vector4}{bt\+Vector4}} \&plane) const
+\begin{DoxyCompactList}\small\item\em Calcs the plane which is paralele to the edge and perpendicular to the triangle plane. \end{DoxyCompactList}\item 
+\Hypertarget{classbt_primitive_triangle_ab896f319c6d779b5028090df42432cf9}\label{classbt_primitive_triangle_ab896f319c6d779b5028090df42432cf9} 
+void {\bfseries apply\+Transform} (const bt\+Transform \&t)
+\item 
+int \mbox{\hyperlink{classbt_primitive_triangle_a56e930410f18f866e47431ed77c6c3ca}{clip\+\_\+triangle}} (\mbox{\hyperlink{classbt_primitive_triangle}{bt\+Primitive\+Triangle}} \&other, bt\+Vector3 \texorpdfstring{$\ast$}{*}clipped\+\_\+points)
+\begin{DoxyCompactList}\small\item\em Clips the triangle against this. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classbt_primitive_triangle_a24c4903aecd95c2d11bbc42ba3df0e66}{find\+\_\+triangle\+\_\+collision\+\_\+clip\+\_\+method}} (\mbox{\hyperlink{classbt_primitive_triangle}{bt\+Primitive\+Triangle}} \&other, \mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t}{GIM\+\_\+\+TRIANGLE\+\_\+\+CONTACT}} \&contacts)
+\begin{DoxyCompactList}\small\item\em Find collision using the clipping method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_primitive_triangle_a26239c0109fc0a279f1ed0369783eea3}\label{classbt_primitive_triangle_a26239c0109fc0a279f1ed0369783eea3} 
+bt\+Vector3 {\bfseries m\+\_\+vertices} \mbox{[}3\mbox{]}
+\item 
+\Hypertarget{classbt_primitive_triangle_acee3713806388dc0cbcffd2cd72e6947}\label{classbt_primitive_triangle_acee3713806388dc0cbcffd2cd72e6947} 
+\mbox{\hyperlink{classbt_vector4}{bt\+Vector4}} {\bfseries m\+\_\+plane}
+\item 
+\Hypertarget{classbt_primitive_triangle_a7650fff79447f8adcaa30a06c3caef39}\label{classbt_primitive_triangle_a7650fff79447f8adcaa30a06c3caef39} 
+bt\+Scalar {\bfseries m\+\_\+margin}
+\item 
+\Hypertarget{classbt_primitive_triangle_a54a0a58a99e14a99747a4d2d1a248fab}\label{classbt_primitive_triangle_a54a0a58a99e14a99747a4d2d1a248fab} 
+bt\+Scalar {\bfseries m\+\_\+dummy}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_primitive_triangle_a56e930410f18f866e47431ed77c6c3ca}\label{classbt_primitive_triangle_a56e930410f18f866e47431ed77c6c3ca} 
+\index{btPrimitiveTriangle@{btPrimitiveTriangle}!clip\_triangle@{clip\_triangle}}
+\index{clip\_triangle@{clip\_triangle}!btPrimitiveTriangle@{btPrimitiveTriangle}}
+\doxysubsubsection{\texorpdfstring{clip\_triangle()}{clip\_triangle()}}
+{\footnotesize\ttfamily int bt\+Primitive\+Triangle\+::clip\+\_\+triangle (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classbt_primitive_triangle}{bt\+Primitive\+Triangle}} \&}]{other,  }\item[{bt\+Vector3 \texorpdfstring{$\ast$}{*}}]{clipped\+\_\+points }\end{DoxyParamCaption})}
+
+
+
+Clips the triangle against this. 
+
+\begin{DoxyPrecond}{Precondition}
+clipped\+\_\+points must have MAX\+\_\+\+TRI\+\_\+\+CLIPPING size, and this triangle must have its plane calculated. 
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+the number of clipped points 
+\end{DoxyReturn}
+\Hypertarget{classbt_primitive_triangle_a24c4903aecd95c2d11bbc42ba3df0e66}\label{classbt_primitive_triangle_a24c4903aecd95c2d11bbc42ba3df0e66} 
+\index{btPrimitiveTriangle@{btPrimitiveTriangle}!find\_triangle\_collision\_clip\_method@{find\_triangle\_collision\_clip\_method}}
+\index{find\_triangle\_collision\_clip\_method@{find\_triangle\_collision\_clip\_method}!btPrimitiveTriangle@{btPrimitiveTriangle}}
+\doxysubsubsection{\texorpdfstring{find\_triangle\_collision\_clip\_method()}{find\_triangle\_collision\_clip\_method()}}
+{\footnotesize\ttfamily bool bt\+Primitive\+Triangle\+::find\+\_\+triangle\+\_\+collision\+\_\+clip\+\_\+method (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classbt_primitive_triangle}{bt\+Primitive\+Triangle}} \&}]{other,  }\item[{\mbox{\hyperlink{struct_g_i_m___t_r_i_a_n_g_l_e___c_o_n_t_a_c_t}{GIM\+\_\+\+TRIANGLE\+\_\+\+CONTACT}} \&}]{contacts }\end{DoxyParamCaption})}
+
+
+
+Find collision using the clipping method. 
+
+\begin{DoxyPrecond}{Precondition}
+this triangle and other must have their triangles calculated 
+\end{DoxyPrecond}
+\Hypertarget{classbt_primitive_triangle_a44c4e264a4aa6b92a1188743555f1c92}\label{classbt_primitive_triangle_a44c4e264a4aa6b92a1188743555f1c92} 
+\index{btPrimitiveTriangle@{btPrimitiveTriangle}!get\_edge\_plane@{get\_edge\_plane}}
+\index{get\_edge\_plane@{get\_edge\_plane}!btPrimitiveTriangle@{btPrimitiveTriangle}}
+\doxysubsubsection{\texorpdfstring{get\_edge\_plane()}{get\_edge\_plane()}}
+{\footnotesize\ttfamily SIMD\+\_\+\+FORCE\+\_\+\+INLINE void bt\+Primitive\+Triangle\+::get\+\_\+edge\+\_\+plane (\begin{DoxyParamCaption}\item[{int}]{edge\+\_\+index,  }\item[{\mbox{\hyperlink{classbt_vector4}{bt\+Vector4}} \&}]{plane }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calcs the plane which is paralele to the edge and perpendicular to the triangle plane. 
+
+\begin{DoxyPrecond}{Precondition}
+this triangle must have its plane calculated. 
+\end{DoxyPrecond}
+\Hypertarget{classbt_primitive_triangle_a844b5c15a34e656e64135f43a8d27d53}\label{classbt_primitive_triangle_a844b5c15a34e656e64135f43a8d27d53} 
+\index{btPrimitiveTriangle@{btPrimitiveTriangle}!overlap\_test\_conservative@{overlap\_test\_conservative}}
+\index{overlap\_test\_conservative@{overlap\_test\_conservative}!btPrimitiveTriangle@{btPrimitiveTriangle}}
+\doxysubsubsection{\texorpdfstring{overlap\_test\_conservative()}{overlap\_test\_conservative()}}
+{\footnotesize\ttfamily bool bt\+Primitive\+Triangle\+::overlap\+\_\+test\+\_\+conservative (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classbt_primitive_triangle}{bt\+Primitive\+Triangle}} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Test if triangles could collide. 
+
+class \doxylink{classbt_primitive_triangle}{bt\+Primitive\+Triangle} 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Gimpact/bt\+Triangle\+Shape\+Ex.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Gimpact/bt\+Triangle\+Shape\+Ex.\+cpp\end{DoxyCompactItemize}

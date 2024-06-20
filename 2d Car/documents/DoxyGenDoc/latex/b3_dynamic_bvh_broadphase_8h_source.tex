@@ -1,0 +1,193 @@
+\doxysection{b3\+Dynamic\+Bvh\+Broadphase.\+h}
+\hypertarget{b3_dynamic_bvh_broadphase_8h_source}{}\label{b3_dynamic_bvh_broadphase_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/BroadPhaseCollision/b3DynamicBvhBroadphase.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/BroadPhaseCollision/b3DynamicBvhBroadphase.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifndef\ B3\_DBVT\_BROADPHASE\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ B3\_DBVT\_BROADPHASE\_H}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/BroadPhaseCollision/b3DynamicBvh.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}Bullet3Collision/BroadPhaseCollision/b3OverlappingPairCache.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3AlignedObjectArray.h"{}}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}b3BroadphaseCallback.h"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{//}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ Compile\ time\ config}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ B3\_DBVT\_BP\_PROFILE\ 0}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\#define\ B3\_DBVT\_BP\_SORTPAIRS\ \ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ B3\_DBVT\_BP\_PREVENTFALSEUPDATE\ 0}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ B3\_DBVT\_BP\_ACCURATESLEEPING\ 0}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ B3\_DBVT\_BP\_ENABLE\_BENCHMARK\ 0}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ B3\_DBVT\_BP\_MARGIN\ (b3Scalar)0.05}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#if\ B3\_DBVT\_BP\_PROFILE}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ B3\_DBVT\_BP\_PROFILING\_RATE\ 256}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ B3\_ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{struct})}
+\DoxyCodeLine{00043\ b3BroadphaseProxy}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ B3\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{enum}\ CollisionFilterGroups}
+\DoxyCodeLine{00049\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ DefaultFilter\ =\ 1,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ StaticFilter\ =\ 2,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ KinematicFilter\ =\ 4,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ DebrisFilter\ =\ 8,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ SensorTrigger\ =\ 16,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ CharacterFilter\ =\ 32,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ AllFilter\ =\ -\/1\ \ \textcolor{comment}{//all\ bits\ sets:\ DefaultFilter\ |\ StaticFilter\ |\ KinematicFilter\ |\ DebrisFilter\ |\ SensorTrigger}}
+\DoxyCodeLine{00057\ \ \ \ \ \};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{//Usually\ the\ client\ b3CollisionObject\ or\ Rigidbody\ class}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_clientObject;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_collisionFilterGroup;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_collisionFilterMask;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_uniqueId;\ \ \textcolor{comment}{//m\_uniqueId\ is\ introduced\ for\ paircache.\ could\ get\ rid\ of\ this,\ by\ calculating\ the\ address\ offset\ etc.}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ b3Vector3\ m\_aabbMin;}
+\DoxyCodeLine{00066\ \ \ \ \ b3Vector3\ m\_aabbMax;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ B3\_FORCE\_INLINE\ \textcolor{keywordtype}{int}\ getUid()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_uniqueId;}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{//used\ for\ memory\ pools}}
+\DoxyCodeLine{00074\ \ \ \ \ b3BroadphaseProxy()\ :\ m\_clientObject(0)}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ b3BroadphaseProxy(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \textcolor{keywordtype}{void}*\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ :\ m\_clientObject(userPtr),}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ m\_collisionFilterGroup(collisionFilterGroup),}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ m\_collisionFilterMask(collisionFilterMask),}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ m\_aabbMin(aabbMin),}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ m\_aabbMax(aabbMax)}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{//}}
+\DoxyCodeLine{00089\ \textcolor{comment}{//\ b3DbvtProxy}}
+\DoxyCodeLine{00090\ \textcolor{comment}{//}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_dbvt_proxy}{b3DbvtProxy}}\ :\ b3BroadphaseProxy}
+\DoxyCodeLine{00092\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{/*\ Fields\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{//b3DbvtAabbMm\ \ aabb;}}
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{structb3_dbvt_node}{b3DbvtNode}}*\ leaf;}
+\DoxyCodeLine{00096\ \ \ \ \ \mbox{\hyperlink{structb3_dbvt_proxy}{b3DbvtProxy}}*\ links[2];}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{int}\ stage;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{/*\ ctor\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{structb3_dbvt_proxy}{b3DbvtProxy}}()\ \{\}}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{structb3_dbvt_proxy}{b3DbvtProxy}}(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \textcolor{keywordtype}{void}*\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask)\ :\ b3BroadphaseProxy(aabbMin,\ aabbMax,\ userPtr,\ collisionFilterGroup,\ collisionFilterMask)}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ links[0]\ =\ links[1]\ =\ 0;}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3DbvtProxy*>}}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3DbvtProxyArray}};}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00112\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_dynamic_bvh_broadphase}{b3DynamicBvhBroadphase}}}
+\DoxyCodeLine{00113\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{/*\ Config\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00116\ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ DYNAMIC\_SET\ =\ 0,\ \textcolor{comment}{/*\ Dynamic\ set\ index\ \ \ */}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ FIXED\_SET\ =\ 1,\ \ \ \textcolor{comment}{/*\ Fixed\ set\ index\ \ \ \ \ */}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ STAGECOUNT\ =\ 2\ \ \ \textcolor{comment}{/*\ Number\ of\ stages\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00120\ \ \ \ \ \};}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{/*\ Fields\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{structb3_dynamic_bvh}{b3DynamicBvh}}\ m\_sets[2];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Dbvt\ sets}}
+\DoxyCodeLine{00123\ \ \ \ \ \mbox{\hyperlink{structb3_dbvt_proxy}{b3DbvtProxy}}*\ m\_stageRoots[STAGECOUNT\ +\ 1];\ \ \textcolor{comment}{//\ Stages\ list}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3DbvtProxy>}}\ m\_proxies;}
+\DoxyCodeLine{00126\ \ \ \ \ \mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}*\ m\_paircache;\ \ \textcolor{comment}{//\ Pair\ cache}}
+\DoxyCodeLine{00127\ \ \ \ \ b3Scalar\ m\_prediction;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Velocity\ prediction}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_stageCurrent;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Current\ stage}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_fupdates;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \%\ of\ fixed\ updates\ per\ frame}}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_dupdates;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \%\ of\ dynamic\ updates\ per\ frame}}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_cupdates;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \%\ of\ cleanup\ updates\ per\ frame}}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_newpairs;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Number\ of\ pairs\ created}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_fixedleft;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Fixed\ optimization\ left}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ m\_updates\_call;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Number\ of\ updates\ call}}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ m\_updates\_done;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Number\ of\ updates\ done}}
+\DoxyCodeLine{00136\ \ \ \ \ b3Scalar\ m\_updates\_ratio;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m\_updates\_done/m\_updates\_call}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_pid;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Parse\ id}}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_cid;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cleanup\ index}}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_releasepaircache;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Release\ pair\ cache\ on\ delete}}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_deferedcollide;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Defere\ dynamic/static\ collision\ to\ collide\ call}}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_needcleanup;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Need\ to\ run\ cleanup?}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#if\ B3\_DBVT\_BP\_PROFILE}}
+\DoxyCodeLine{00143\ \ \ \ \ b3Clock\ m\_clock;}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00145\ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ m\_total;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ m\_ddcollide;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ m\_fdcollide;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ m\_cleanup;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ m\_jobcount;}
+\DoxyCodeLine{00151\ \ \ \ \ \}\ m\_profiling;}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{/*\ Methods\ \ \ \ \ \ */}}
+\DoxyCodeLine{00154\ \ \ \ \ \mbox{\hyperlink{structb3_dynamic_bvh_broadphase}{b3DynamicBvhBroadphase}}(\textcolor{keywordtype}{int}\ proxyCapacity,\ \mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}*\ paircache\ =\ 0);}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structb3_dynamic_bvh_broadphase}{\string~b3DynamicBvhBroadphase}}();}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{void}\ collide(b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{void}\ optimize();}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{comment}{/*\ b3BroadphaseInterface\ Implementation\ */}}
+\DoxyCodeLine{00160\ \ \ \ \ b3BroadphaseProxy*\ createProxy(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ objectIndex,\ \textcolor{keywordtype}{void}*\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask);}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ destroyProxy(b3BroadphaseProxy*\ proxy,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setAabb(\textcolor{keywordtype}{int}\ objectId,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ rayTest(\textcolor{keyword}{const}\ b3Vector3\&\ rayFrom,\ \textcolor{keyword}{const}\ b3Vector3\&\ rayTo,\ \mbox{\hyperlink{structb3_broadphase_ray_callback}{b3BroadphaseRayCallback}}\&\ rayCallback,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMin\ =\ b3MakeVector3(0,\ 0,\ 0),\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax\ =\ b3MakeVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ aabbTest(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \mbox{\hyperlink{structb3_broadphase_aabb_callback}{b3BroadphaseAabbCallback}}\&\ callback);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{//virtual\ void\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getAabb(b3BroadphaseProxy*\ proxy,b3Vector3\&\ aabbMin,\ b3Vector3\&\ aabbMax\ )\ const;}}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getAabb(\textcolor{keywordtype}{int}\ objectId,\ b3Vector3\&\ aabbMin,\ b3Vector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateOverlappingPairs(b3Dispatcher*\ dispatcher\ =\ 0);}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}*\ getOverlappingPairCache();}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb3_overlapping_pair_cache}{b3OverlappingPairCache}}*\ getOverlappingPairCache()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getBroadphaseAabb(b3Vector3\&\ aabbMin,\ b3Vector3\&\ aabbMax)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ printStats();}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb3_dynamic_bvh_broadphase_aa14412970c0f564d3a659710c6d7a4dd}{resetPool}}(b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{void}\ performDeferredRemoval(b3Dispatcher*\ dispatcher);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{void}\ setVelocityPrediction(b3Scalar\ prediction)}
+\DoxyCodeLine{00180\ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ m\_prediction\ =\ prediction;}
+\DoxyCodeLine{00182\ \ \ \ \ \}}
+\DoxyCodeLine{00183\ \ \ \ \ b3Scalar\ getVelocityPrediction()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00184\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_prediction;}
+\DoxyCodeLine{00186\ \ \ \ \ \}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb3_dynamic_bvh_broadphase_ac18c206ccd45e8e2f0c817381d6840a0}{setAabbForceUpdate}}(b3BroadphaseProxy*\ absproxy,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ b3Dispatcher*\ \textcolor{comment}{/*dispatcher*/});}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{comment}{//static\ void\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ benchmark(b3BroadphaseInterface*);}}
+\DoxyCodeLine{00195\ \};}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

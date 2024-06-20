@@ -1,0 +1,181 @@
+\doxysection{bt\+Contact\+Solver\+Info.\+h}
+\hypertarget{bt_contact_solver_info_8h_source}{}\label{bt_contact_solver_info_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btContactSolverInfo.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btContactSolverInfo.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_CONTACT\_SOLVER\_INFO}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_CONTACT\_SOLVER\_INFO}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btScalar.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{enum}\ btSolverMode}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ SOLVER\_RANDMIZE\_ORDER\ =\ 1,}
+\DoxyCodeLine{00024\ \ \ \ \ SOLVER\_FRICTION\_SEPARATE\ =\ 2,}
+\DoxyCodeLine{00025\ \ \ \ \ SOLVER\_USE\_WARMSTARTING\ =\ 4,}
+\DoxyCodeLine{00026\ \ \ \ \ SOLVER\_USE\_2\_FRICTION\_DIRECTIONS\ =\ 16,}
+\DoxyCodeLine{00027\ \ \ \ \ SOLVER\_ENABLE\_FRICTION\_DIRECTION\_CACHING\ =\ 32,}
+\DoxyCodeLine{00028\ \ \ \ \ SOLVER\_DISABLE\_VELOCITY\_DEPENDENT\_FRICTION\_DIRECTION\ =\ 64,}
+\DoxyCodeLine{00029\ \ \ \ \ SOLVER\_CACHE\_FRIENDLY\ =\ 128,}
+\DoxyCodeLine{00030\ \ \ \ \ SOLVER\_SIMD\ =\ 256,}
+\DoxyCodeLine{00031\ \ \ \ \ SOLVER\_INTERLEAVE\_CONTACT\_AND\_FRICTION\_CONSTRAINTS\ =\ 512,}
+\DoxyCodeLine{00032\ \ \ \ \ SOLVER\_ALLOW\_ZERO\_LENGTH\_FRICTION\_DIRECTIONS\ =\ 1024,}
+\DoxyCodeLine{00033\ \ \ \ \ SOLVER\_DISABLE\_IMPLICIT\_CONE\_FRICTION\ =\ 2048,}
+\DoxyCodeLine{00034\ \ \ \ \ SOLVER\_USE\_ARTICULATED\_WARMSTARTING\ =\ 4096,}
+\DoxyCodeLine{00035\ \};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_contact_solver_info_data}{btContactSolverInfoData}}}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ btScalar\ m\_tau;}
+\DoxyCodeLine{00040\ \ \ \ \ btScalar\ m\_damping;\ \ \textcolor{comment}{//global\ non-\/contact\ constraint\ damping,\ can\ be\ locally\ overridden\ by\ constraints\ during\ 'getInfo2'.}}
+\DoxyCodeLine{00041\ \ \ \ \ btScalar\ m\_friction;}
+\DoxyCodeLine{00042\ \ \ \ \ btScalar\ m\_timeStep;}
+\DoxyCodeLine{00043\ \ \ \ \ btScalar\ m\_restitution;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numIterations;}
+\DoxyCodeLine{00045\ \ \ \ \ btScalar\ m\_maxErrorReduction;}
+\DoxyCodeLine{00046\ \ \ \ \ btScalar\ m\_sor;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//successive\ over-\/relaxation\ term}}
+\DoxyCodeLine{00047\ \ \ \ \ btScalar\ m\_erp;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//error\ reduction\ for\ non-\/contact\ constraints}}
+\DoxyCodeLine{00048\ \ \ \ \ btScalar\ m\_erp2;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//error\ reduction\ for\ contact\ constraints}}
+\DoxyCodeLine{00049\ \ \ \ \ btScalar\ m\_deformable\_erp;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//error\ reduction\ for\ deformable\ constraints}}
+\DoxyCodeLine{00050\ \ \ \ \ btScalar\ m\_deformable\_cfm;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//constraint\ force\ mixing\ for\ deformable\ constraints}}
+\DoxyCodeLine{00051\ \ \ \ \ btScalar\ m\_deformable\_maxErrorReduction;\ \textcolor{comment}{//\ maxErrorReduction\ for\ deformable\ contact}}
+\DoxyCodeLine{00052\ \ \ \ \ btScalar\ m\_globalCfm;\ \ \ \ \textcolor{comment}{//constraint\ force\ mixing\ for\ contacts\ and\ non-\/contacts}}
+\DoxyCodeLine{00053\ \ \ \ \ btScalar\ m\_frictionERP;\ \ \textcolor{comment}{//error\ reduction\ for\ friction\ constraints}}
+\DoxyCodeLine{00054\ \ \ \ \ btScalar\ m\_frictionCFM;\ \ \textcolor{comment}{//constraint\ force\ mixing\ for\ friction\ constraints}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_splitImpulse;}
+\DoxyCodeLine{00057\ \ \ \ \ btScalar\ m\_splitImpulsePenetrationThreshold;}
+\DoxyCodeLine{00058\ \ \ \ \ btScalar\ m\_splitImpulseTurnErp;}
+\DoxyCodeLine{00059\ \ \ \ \ btScalar\ m\_linearSlop;}
+\DoxyCodeLine{00060\ \ \ \ \ btScalar\ m\_warmstartingFactor;}
+\DoxyCodeLine{00061\ \ \ \ \ btScalar\ m\_articulatedWarmstartingFactor;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_solverMode;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_restingContactRestitutionThreshold;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_minimumSolverBatchSize;}
+\DoxyCodeLine{00065\ \ \ \ \ btScalar\ m\_maxGyroscopicForce;}
+\DoxyCodeLine{00066\ \ \ \ \ btScalar\ m\_singleAxisRollingFrictionThreshold;}
+\DoxyCodeLine{00067\ \ \ \ \ btScalar\ m\_leastSquaresResidualThreshold;}
+\DoxyCodeLine{00068\ \ \ \ \ btScalar\ m\_restitutionVelocityThreshold;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_jointFeedbackInWorldSpace;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_jointFeedbackInJointFrame;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_reportSolverAnalytics;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numNonContactInnerIterations;}
+\DoxyCodeLine{00073\ \};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structbt_contact_solver_info_data}{btContactSolverInfoData}}}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_contact_solver_info_a233666cc8ab8288ae84b22145b41d76e}{btContactSolverInfo}}()}
+\DoxyCodeLine{00078\ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ m\_tau\ =\ btScalar(0.6);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ m\_damping\ =\ btScalar(1.0);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ m\_friction\ =\ btScalar(0.3);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ m\_timeStep\ =\ btScalar(1.f\ /\ 60.f);}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ m\_restitution\ =\ btScalar(0.);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ m\_maxErrorReduction\ =\ btScalar(20.);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ m\_numIterations\ =\ 10;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ m\_erp\ =\ btScalar(0.2);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ m\_erp2\ =\ btScalar(0.2);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ m\_deformable\_erp\ =\ btScalar(0.06);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ m\_deformable\_cfm\ =\ btScalar(0.01);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ m\_deformable\_maxErrorReduction\ =\ btScalar(0.1);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ m\_globalCfm\ =\ btScalar(0.);}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ m\_frictionERP\ =\ btScalar(0.2);\ \ \textcolor{comment}{//positional\ friction\ 'anchors'\ are\ disabled\ by\ default}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ m\_frictionCFM\ =\ btScalar(0.);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ m\_sor\ =\ btScalar(1.);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ m\_splitImpulse\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ m\_splitImpulsePenetrationThreshold\ =\ -\/.04f;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ m\_splitImpulseTurnErp\ =\ 0.1f;}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ m\_linearSlop\ =\ btScalar(0.0);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ m\_warmstartingFactor\ =\ btScalar(0.85);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ m\_articulatedWarmstartingFactor\ =\ btScalar(0.85);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{comment}{//m\_solverMode\ =\ \ SOLVER\_USE\_WARMSTARTING\ |\ \ SOLVER\_SIMD\ |\ SOLVER\_DISABLE\_VELOCITY\_DEPENDENT\_FRICTION\_DIRECTION|SOLVER\_USE\_2\_FRICTION\_DIRECTIONS|SOLVER\_ENABLE\_FRICTION\_DIRECTION\_CACHING;//\ |\ SOLVER\_RANDMIZE\_ORDER;}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ m\_solverMode\ =\ SOLVER\_USE\_WARMSTARTING\ |\ SOLVER\_SIMD;\ \ \textcolor{comment}{//\ |\ SOLVER\_RANDMIZE\_ORDER;}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ m\_restingContactRestitutionThreshold\ =\ 2;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//unused\ as\ of\ 2.81}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ m\_minimumSolverBatchSize\ =\ 128;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//try\ to\ combine\ islands\ until\ the\ amount\ of\ constraints\ reaches\ this\ limit}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ m\_maxGyroscopicForce\ =\ 100.f;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ m\_singleAxisRollingFrictionThreshold\ =\ 1e30f;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ m\_leastSquaresResidualThreshold\ =\ 0.f;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ m\_restitutionVelocityThreshold\ =\ 0.2f;\ \ \textcolor{comment}{//if\ the\ relative\ velocity\ is\ below\ this\ threshold,\ there\ is\ zero\ restitution}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ m\_jointFeedbackInWorldSpace\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ m\_jointFeedbackInJointFrame\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ m\_reportSolverAnalytics\ =\ 0;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ m\_numNonContactInnerIterations\ =\ 1;\ \ \ \textcolor{comment}{//\ the\ number\ of\ inner\ iterations\ for\ solving\ motor\ constraint\ in\ a\ single\ iteration\ of\ the\ constraint\ solve}}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00117\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_contact_solver_info_double_data}{btContactSolverInfoDoubleData}}}
+\DoxyCodeLine{00118\ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_tau;}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_damping;\ \ \textcolor{comment}{//global\ non-\/contact\ constraint\ damping,\ can\ be\ locally\ overridden\ by\ constraints\ during\ 'getInfo2'.}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_friction;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_timeStep;}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_restitution;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_maxErrorReduction;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_sor;}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_erp;\ \ \ \ \ \ \ \ \textcolor{comment}{//used\ as\ Baumgarte\ factor}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_erp2;\ \ \ \ \ \ \ \textcolor{comment}{//used\ in\ Split\ Impulse}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_globalCfm;\ \ \textcolor{comment}{//constraint\ force\ mixing}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_splitImpulsePenetrationThreshold;}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_splitImpulseTurnErp;}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_linearSlop;}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_warmstartingFactor;}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_articulatedWarmstartingFactor;}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_maxGyroscopicForce;\ \ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structbt_contact_solver_info_double_data_a9fb9abe1a4fa5c342f93fe3867093d31}{m\_singleAxisRollingFrictionThreshold}};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numIterations;}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_solverMode;}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_restingContactRestitutionThreshold;}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_minimumSolverBatchSize;}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_splitImpulse;}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{char}\ m\_padding[4];}
+\DoxyCodeLine{00143\ \};}
+\DoxyCodeLine{00145\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_contact_solver_info_float_data}{btContactSolverInfoFloatData}}}
+\DoxyCodeLine{00146\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_tau;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_damping;\ \ \textcolor{comment}{//global\ non-\/contact\ constraint\ damping,\ can\ be\ locally\ overridden\ by\ constraints\ during\ 'getInfo2'.}}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_friction;}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_timeStep;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restitution;}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxErrorReduction;}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_sor;}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_erp;\ \ \textcolor{comment}{//used\ as\ Baumgarte\ factor}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_erp2;\ \ \ \ \ \ \ \textcolor{comment}{//used\ in\ Split\ Impulse}}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_globalCfm;\ \ \textcolor{comment}{//constraint\ force\ mixing}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_splitImpulsePenetrationThreshold;}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_splitImpulseTurnErp;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_linearSlop;}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_warmstartingFactor;}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_articulatedWarmstartingFactor;}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_maxGyroscopicForce;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_singleAxisRollingFrictionThreshold;}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_numIterations;}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_solverMode;}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_restingContactRestitutionThreshold;}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_minimumSolverBatchSize;}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_splitImpulse;}
+\DoxyCodeLine{00174\ \ \ \ \ }
+\DoxyCodeLine{00175\ \};}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_CONTACT\_SOLVER\_INFO}}
+
+\end{DoxyCode}

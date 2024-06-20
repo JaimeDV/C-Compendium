@@ -1,0 +1,175 @@
+\doxysection{bt\+Generic6\+Dof\+Spring\+Constraint.\+cpp}
+\hypertarget{bt_generic6_dof_spring_constraint_8cpp_source}{}\label{bt_generic6_dof_spring_constraint_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library,\ http://bulletphysics.org}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (C)\ 2006,\ 2007\ Sony\ Computer\ Entertainment\ Inc.\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btGeneric6DofSpringConstraint.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransformUtil.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ btGeneric6DofSpringConstraint::btGeneric6DofSpringConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ frameInA,\ \textcolor{keyword}{const}\ btTransform\&\ frameInB,\ \textcolor{keywordtype}{bool}\ useLinearReferenceFrameA)}
+\DoxyCodeLine{00021\ \ \ \ \ :\ btGeneric6DofConstraint(rbA,\ rbB,\ frameInA,\ frameInB,\ useLinearReferenceFrameA)}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ init();}
+\DoxyCodeLine{00024\ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ btGeneric6DofSpringConstraint::btGeneric6DofSpringConstraint(\mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbB,\ \textcolor{keyword}{const}\ btTransform\&\ frameInB,\ \textcolor{keywordtype}{bool}\ useLinearReferenceFrameB)}
+\DoxyCodeLine{00027\ \ \ \ \ :\ btGeneric6DofConstraint(rbB,\ frameInB,\ useLinearReferenceFrameB)}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ init();}
+\DoxyCodeLine{00030\ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::init()}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ m\_objectType\ =\ D6\_SPRING\_CONSTRAINT\_TYPE;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 6;\ i++)}
+\DoxyCodeLine{00037\ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ m\_springEnabled[i]\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ m\_equilibriumPoint[i]\ =\ btScalar(0.f);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ m\_springStiffness[i]\ =\ btScalar(0.f);}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ m\_springDamping[i]\ =\ btScalar(1.f);}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::enableSpring(\textcolor{keywordtype}{int}\ index,\ \textcolor{keywordtype}{bool}\ onOff)}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ btAssert((index\ >=\ 0)\ \&\&\ (index\ <\ 6));}
+\DoxyCodeLine{00048\ \ \ \ \ m\_springEnabled[index]\ =\ onOff;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ <\ 3)}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_a210b91370079f48c679b0c3e7d140a0c}{m\_enableMotor}}[index]\ =\ onOff;}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ m\_angularLimits[index\ -\/\ 3].m\_enableMotor\ =\ onOff;}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::setStiffness(\textcolor{keywordtype}{int}\ index,\ btScalar\ stiffness)}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ btAssert((index\ >=\ 0)\ \&\&\ (index\ <\ 6));}
+\DoxyCodeLine{00062\ \ \ \ \ m\_springStiffness[index]\ =\ stiffness;}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::setDamping(\textcolor{keywordtype}{int}\ index,\ btScalar\ damping)}
+\DoxyCodeLine{00066\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ btAssert((index\ >=\ 0)\ \&\&\ (index\ <\ 6));}
+\DoxyCodeLine{00068\ \ \ \ \ m\_springDamping[index]\ =\ damping;}
+\DoxyCodeLine{00069\ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::setEquilibriumPoint()}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ calculateTransforms();}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ m\_equilibriumPoint[i]\ =\ m\_calculatedLinearDiff[i];}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00081\ \ \ \ \ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ m\_equilibriumPoint[i\ +\ 3]\ =\ m\_calculatedAxisAngleDiff[i];}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::setEquilibriumPoint(\textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ btAssert((index\ >=\ 0)\ \&\&\ (index\ <\ 6));}
+\DoxyCodeLine{00089\ \ \ \ \ calculateTransforms();}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ <\ 3)}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ m\_equilibriumPoint[index]\ =\ m\_calculatedLinearDiff[index];}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00095\ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ m\_equilibriumPoint[index]\ =\ m\_calculatedAxisAngleDiff[index\ -\/\ 3];}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::setEquilibriumPoint(\textcolor{keywordtype}{int}\ index,\ btScalar\ val)}
+\DoxyCodeLine{00101\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ btAssert((index\ >=\ 0)\ \&\&\ (index\ <\ 6));}
+\DoxyCodeLine{00103\ \ \ \ \ m\_equilibriumPoint[index]\ =\ val;}
+\DoxyCodeLine{00104\ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::internalUpdateSprings(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}*\ info)}
+\DoxyCodeLine{00107\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{comment}{//\ it\ is\ assumed\ that\ calculateTransforms()\ have\ been\ called\ before\ this\ call}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//btVector3\ relVel\ =\ m\_rbB.getLinearVelocity()\ -\/\ m\_rbA.getLinearVelocity();}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00112\ \ \ \ \ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_springEnabled[i])}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ get\ current\ position\ of\ constraint}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ currPos\ =\ m\_calculatedLinearDiff[i];}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ calculate\ difference}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ delta\ =\ currPos\ -\/\ m\_equilibriumPoint[i];}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spring\ force\ is\ (delta\ *\ m\_stiffness)\ according\ to\ Hooke's\ Law}}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ force\ =\ delta\ *\ m\_springStiffness[i];}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ velFactor\ =\ info-\/>fps\ *\ m\_springDamping[i]\ /\ btScalar(info-\/>m\_numIterations);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_accf517a6d93829f1ae423e804c9f56d0}{m\_targetVelocity}}[i]\ =\ velFactor\ *\ force;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ m\_linearLimits.\mbox{\hyperlink{classb3_translational_limit_motor_a5b94d50d0b18ca8b620766ef70e3c5e3}{m\_maxMotorForce}}[i]\ =\ btFabs(force);}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00127\ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_springEnabled[i\ +\ 3])}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ get\ current\ position\ of\ constraint}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ currPos\ =\ m\_calculatedAxisAngleDiff[i];}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ calculate\ difference}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ delta\ =\ currPos\ -\/\ m\_equilibriumPoint[i\ +\ 3];}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spring\ force\ is\ (-\/delta\ *\ m\_stiffness)\ according\ to\ Hooke's\ Law}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ force\ =\ -\/delta\ *\ m\_springStiffness[i\ +\ 3];}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ velFactor\ =\ info-\/>fps\ *\ m\_springDamping[i\ +\ 3]\ /\ btScalar(info-\/>m\_numIterations);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularLimits[i].\mbox{\hyperlink{classb3_rotational_limit_motor_a104686041a5a1da2d3399966b8987e6f}{m\_targetVelocity}}\ =\ velFactor\ *\ force;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ m\_angularLimits[i].\mbox{\hyperlink{classb3_rotational_limit_motor_a6ea1bd767ca6eb58428db1edd5c2bc06}{m\_maxMotorForce}}\ =\ btFabs(force);}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00140\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::getInfo2(\mbox{\hyperlink{structbt_constraint_info2}{btConstraintInfo2}}*\ info)}
+\DoxyCodeLine{00144\ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{comment}{//\ this\ will\ be\ called\ by\ constraint\ solver\ at\ the\ constraint\ setup\ stage}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{comment}{//\ set\ current\ motor\ parameters}}
+\DoxyCodeLine{00147\ \ \ \ \ internalUpdateSprings(info);}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{//\ do\ the\ rest\ of\ job\ for\ constraint\ setup}}
+\DoxyCodeLine{00149\ \ \ \ \ btGeneric6DofConstraint::getInfo2(info);}
+\DoxyCodeLine{00150\ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{void}\ btGeneric6DofSpringConstraint::setAxis(\textcolor{keyword}{const}\ btVector3\&\ axis1,\ \textcolor{keyword}{const}\ btVector3\&\ axis2)}
+\DoxyCodeLine{00153\ \{}
+\DoxyCodeLine{00154\ \ \ \ \ btVector3\ zAxis\ =\ axis1.normalized();}
+\DoxyCodeLine{00155\ \ \ \ \ btVector3\ yAxis\ =\ axis2.normalized();}
+\DoxyCodeLine{00156\ \ \ \ \ btVector3\ xAxis\ =\ yAxis.cross(zAxis);\ \ \textcolor{comment}{//\ we\ want\ right\ coordinate\ system}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ btTransform\ frameInW;}
+\DoxyCodeLine{00159\ \ \ \ \ frameInW.setIdentity();}
+\DoxyCodeLine{00160\ \ \ \ \ frameInW.getBasis().setValue(xAxis[0],\ yAxis[0],\ zAxis[0],}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xAxis[1],\ yAxis[1],\ zAxis[1],}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xAxis[2],\ yAxis[2],\ zAxis[2]);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{comment}{//\ now\ get\ constraint\ frame\ in\ local\ coordinate\ systems}}
+\DoxyCodeLine{00165\ \ \ \ \ m\_frameInA\ =\ m\_rbA.getCenterOfMassTransform().inverse()\ *\ frameInW;}
+\DoxyCodeLine{00166\ \ \ \ \ m\_frameInB\ =\ m\_rbB.getCenterOfMassTransform().inverse()\ *\ frameInW;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ calculateTransforms();}
+\DoxyCodeLine{00169\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,166 @@
+\doxysection{b3\+Gpu\+Narrow\+Phase Class Reference}
+\hypertarget{classb3_gpu_narrow_phase}{}\label{classb3_gpu_narrow_phase}\index{b3GpuNarrowPhase@{b3GpuNarrowPhase}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a6e38b9b451152d0e858c3598a458927d}\label{classb3_gpu_narrow_phase_a6e38b9b451152d0e858c3598a458927d} 
+{\bfseries b3\+Gpu\+Narrow\+Phase} (cl\+\_\+context vtx, cl\+\_\+device\+\_\+id dev, cl\+\_\+command\+\_\+queue q, const struct \mbox{\hyperlink{structb3_config}{b3\+Config}} \&config)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a2947e446c0068b8f40c6726a70858310}\label{classb3_gpu_narrow_phase_a2947e446c0068b8f40c6726a70858310} 
+int {\bfseries register\+Sphere\+Shape} (float radius)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a281a654e16f5b7be23a07b35d3a6b3a8}\label{classb3_gpu_narrow_phase_a281a654e16f5b7be23a07b35d3a6b3a8} 
+int {\bfseries register\+Plane\+Shape} (const b3\+Vector3 \&plane\+Normal, float plane\+Constant)
+\item 
+int \mbox{\hyperlink{classb3_gpu_narrow_phase_a8bbcf9e34e95a188229adca76e1dfd5a}{register\+Compound\+Shape}} (\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ \mbox{\hyperlink{structb3_gpu_child_shape}{b3\+Gpu\+Child\+Shape}} $>$ \texorpdfstring{$\ast$}{*}child\+Shapes)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a2e1dd8d288a64100049483dfb0832557}\label{classb3_gpu_narrow_phase_a2e1dd8d288a64100049483dfb0832557} 
+int {\bfseries register\+Face} (const b3\+Vector3 \&face\+Normal, float face\+Constant)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a44b79cb7ee7ac757ba8263e6518a0bd7}\label{classb3_gpu_narrow_phase_a44b79cb7ee7ac757ba8263e6518a0bd7} 
+int {\bfseries register\+Concave\+Mesh} (\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ b3\+Vector3 $>$ \texorpdfstring{$\ast$}{*}vertices, \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ int $>$ \texorpdfstring{$\ast$}{*}indices, const float \texorpdfstring{$\ast$}{*}scaling)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_ac3f85f0fbe0be5b9405dc871e06e96a5}\label{classb3_gpu_narrow_phase_ac3f85f0fbe0be5b9405dc871e06e96a5} 
+int {\bfseries register\+Convex\+Hull\+Shape} (b3\+Convex\+Utility \texorpdfstring{$\ast$}{*}util\+Ptr)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a120e19e7ab0cf2b7b793c1d1a8cbe323}\label{classb3_gpu_narrow_phase_a120e19e7ab0cf2b7b793c1d1a8cbe323} 
+int {\bfseries register\+Convex\+Hull\+Shape} (const float \texorpdfstring{$\ast$}{*}vertices, int stride\+In\+Bytes, int num\+Vertices, const float \texorpdfstring{$\ast$}{*}scaling)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a2c237fd5cbf245dde202a87f08c151d2}\label{classb3_gpu_narrow_phase_a2c237fd5cbf245dde202a87f08c151d2} 
+int {\bfseries register\+Rigid\+Body} (int collidable\+Index, float mass, const float \texorpdfstring{$\ast$}{*}position, const float \texorpdfstring{$\ast$}{*}orientation, const float \texorpdfstring{$\ast$}{*}aabb\+Min, const float \texorpdfstring{$\ast$}{*}aabb\+Max, bool write\+To\+Gpu)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a43fca86190db2e5b417b5aac59e26d17}\label{classb3_gpu_narrow_phase_a43fca86190db2e5b417b5aac59e26d17} 
+void {\bfseries set\+Object\+Transform} (const float \texorpdfstring{$\ast$}{*}position, const float \texorpdfstring{$\ast$}{*}orientation, int body\+Index)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a747142acc70066c36005be09a65149a3}\label{classb3_gpu_narrow_phase_a747142acc70066c36005be09a65149a3} 
+void {\bfseries write\+All\+Bodies\+To\+Gpu} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a163feb9ef98ee529de702c17fede027f}\label{classb3_gpu_narrow_phase_a163feb9ef98ee529de702c17fede027f} 
+void {\bfseries reset} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a2c144f0ee0f7b9674dc1a47439cc2331}\label{classb3_gpu_narrow_phase_a2c144f0ee0f7b9674dc1a47439cc2331} 
+void {\bfseries readback\+All\+Bodies\+To\+Cpu} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_aa5d7c36f3ba0ea5fe05e1832b5c654e7}\label{classb3_gpu_narrow_phase_aa5d7c36f3ba0ea5fe05e1832b5c654e7} 
+bool {\bfseries get\+Object\+Transform\+From\+Cpu} (float \texorpdfstring{$\ast$}{*}position, float \texorpdfstring{$\ast$}{*}orientation, int body\+Index) const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_ad6bfa1509fb8c841f5f811bb9f220e78}\label{classb3_gpu_narrow_phase_ad6bfa1509fb8c841f5f811bb9f220e78} 
+void {\bfseries set\+Object\+Transform\+Cpu} (float \texorpdfstring{$\ast$}{*}position, float \texorpdfstring{$\ast$}{*}orientation, int body\+Index)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a53ecf63392d309c5628358eaffa3328f}\label{classb3_gpu_narrow_phase_a53ecf63392d309c5628358eaffa3328f} 
+void {\bfseries set\+Object\+Velocity\+Cpu} (float \texorpdfstring{$\ast$}{*}lin\+Vel, float \texorpdfstring{$\ast$}{*}ang\+Vel, int body\+Index)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a9ca8a0b622cb0c6726c97f7f4b031d80}\label{classb3_gpu_narrow_phase_a9ca8a0b622cb0c6726c97f7f4b031d80} 
+virtual void {\bfseries compute\+Contacts} (cl\+\_\+mem broadphase\+Pairs, int num\+Broadphase\+Pairs, cl\+\_\+mem aabbs\+World\+Space, int num\+Objects)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a2560b560f4c9c6a6dd723579e8b138c6}\label{classb3_gpu_narrow_phase_a2560b560f4c9c6a6dd723579e8b138c6} 
+cl\+\_\+mem {\bfseries get\+Bodies\+Gpu} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_aa89e365ae4f14fdbad983ef579e9174e}\label{classb3_gpu_narrow_phase_aa89e365ae4f14fdbad983ef579e9174e} 
+const struct \mbox{\hyperlink{structb3_rigid_body_data}{b3\+Rigid\+Body\+Data}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Bodies\+Cpu} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_afe05bb65f62862c649dc6e6e47a9fbd9}\label{classb3_gpu_narrow_phase_afe05bb65f62862c649dc6e6e47a9fbd9} 
+int {\bfseries get\+Num\+Bodies\+Gpu} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a45b11be6e1c0bce737f6936ebb3cc71e}\label{classb3_gpu_narrow_phase_a45b11be6e1c0bce737f6936ebb3cc71e} 
+cl\+\_\+mem {\bfseries get\+Body\+Inertias\+Gpu} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a64b15709cde1bd6446a03cdb3502bab0}\label{classb3_gpu_narrow_phase_a64b15709cde1bd6446a03cdb3502bab0} 
+int {\bfseries get\+Num\+Body\+Inertias\+Gpu} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_ade69d5b9b39619047f4877dfc7ed78a9}\label{classb3_gpu_narrow_phase_ade69d5b9b39619047f4877dfc7ed78a9} 
+cl\+\_\+mem {\bfseries get\+Collidables\+Gpu} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a144b8aa09f8a8d790991458bc14b5634}\label{classb3_gpu_narrow_phase_a144b8aa09f8a8d790991458bc14b5634} 
+const struct \mbox{\hyperlink{structb3_collidable}{b3\+Collidable}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Collidables\+Cpu} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_acde0159ae9290312b57eb6db5985d184}\label{classb3_gpu_narrow_phase_acde0159ae9290312b57eb6db5985d184} 
+int {\bfseries get\+Num\+Collidables\+Gpu} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a5cfaad63b804950b066e5f7b56f9c0f9}\label{classb3_gpu_narrow_phase_a5cfaad63b804950b066e5f7b56f9c0f9} 
+const struct b3\+Sap\+Aabb \texorpdfstring{$\ast$}{*} {\bfseries get\+Local\+Space\+Aabbs\+Cpu} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_ac720d988a65474db19b496dcd575dd0c}\label{classb3_gpu_narrow_phase_ac720d988a65474db19b496dcd575dd0c} 
+const struct b3\+Contact4 \texorpdfstring{$\ast$}{*} {\bfseries get\+Contacts\+CPU} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a5e9f4cbb21961b90f61ae009b17e4232}\label{classb3_gpu_narrow_phase_a5e9f4cbb21961b90f61ae009b17e4232} 
+cl\+\_\+mem {\bfseries get\+Contacts\+Gpu} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a87cc7d1f640e9eadce1f4bf93274d4d0}\label{classb3_gpu_narrow_phase_a87cc7d1f640e9eadce1f4bf93274d4d0} 
+int {\bfseries get\+Num\+Contacts\+Gpu} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a81c4c7e65e14f4200c9d17e957242dd7}\label{classb3_gpu_narrow_phase_a81c4c7e65e14f4200c9d17e957242dd7} 
+cl\+\_\+mem {\bfseries get\+Aabb\+Local\+Space\+Buffer\+Gpu} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a55a422812bbb998962041dcff20fda84}\label{classb3_gpu_narrow_phase_a55a422812bbb998962041dcff20fda84} 
+int {\bfseries get\+Num\+Rigid\+Bodies} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a710d7c2609e8ef84aed2c52ba3b59172}\label{classb3_gpu_narrow_phase_a710d7c2609e8ef84aed2c52ba3b59172} 
+int {\bfseries allocate\+Collidable} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a6518547e9cb3fea687280744800c6181}\label{classb3_gpu_narrow_phase_a6518547e9cb3fea687280744800c6181} 
+int {\bfseries get\+Static0\+Index} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a7f78f8f7d314d7afb03f5a9c8c60e33a}\label{classb3_gpu_narrow_phase_a7f78f8f7d314d7afb03f5a9c8c60e33a} 
+\mbox{\hyperlink{structb3_collidable}{b3\+Collidable}} \& {\bfseries get\+Collidable\+Cpu} (int collidable\+Index)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a8cfa7becd3c6b9d05812b29d22f71035}\label{classb3_gpu_narrow_phase_a8cfa7becd3c6b9d05812b29d22f71035} 
+const \mbox{\hyperlink{structb3_collidable}{b3\+Collidable}} \& {\bfseries get\+Collidable\+Cpu} (int collidable\+Index) const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a6732e44ababcb27974a3bb54c6c2b849}\label{classb3_gpu_narrow_phase_a6732e44ababcb27974a3bb54c6c2b849} 
+const \mbox{\hyperlink{structb3_gpu_narrow_phase_internal_data}{b3\+Gpu\+Narrow\+Phase\+Internal\+Data}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Internal\+Data} () const
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a051628d348cd44f95c2dc2ac4ef3acc5}\label{classb3_gpu_narrow_phase_a051628d348cd44f95c2dc2ac4ef3acc5} 
+\mbox{\hyperlink{structb3_gpu_narrow_phase_internal_data}{b3\+Gpu\+Narrow\+Phase\+Internal\+Data}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Internal\+Data} ()
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a54035162902ace4124dd8a7dd08d8dda}\label{classb3_gpu_narrow_phase_a54035162902ace4124dd8a7dd08d8dda} 
+const struct b3\+Sap\+Aabb \& {\bfseries get\+Local\+Space\+Aabb} (int collidable\+Index) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a71bbf65f0fc7dafb23495112e4e6674e}\label{classb3_gpu_narrow_phase_a71bbf65f0fc7dafb23495112e4e6674e} 
+int {\bfseries register\+Convex\+Hull\+Shape\+Internal} (class b3\+Convex\+Utility \texorpdfstring{$\ast$}{*}convex\+Ptr, \mbox{\hyperlink{structb3_collidable}{b3\+Collidable}} \&col)
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_ae79c35b30b8d20196e99ca064edb57b0}\label{classb3_gpu_narrow_phase_ae79c35b30b8d20196e99ca064edb57b0} 
+int {\bfseries register\+Concave\+Mesh\+Shape} (\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ b3\+Vector3 $>$ \texorpdfstring{$\ast$}{*}vertices, \mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ int $>$ \texorpdfstring{$\ast$}{*}indices, \mbox{\hyperlink{structb3_collidable}{b3\+Collidable}} \&col, const float \texorpdfstring{$\ast$}{*}scaling)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a644f2e983cc87a9b2e069d59f0123e29}\label{classb3_gpu_narrow_phase_a644f2e983cc87a9b2e069d59f0123e29} 
+struct \mbox{\hyperlink{structb3_gpu_narrow_phase_internal_data}{b3\+Gpu\+Narrow\+Phase\+Internal\+Data}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+data}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a364fac51219582ec7b62f410c9333f2d}\label{classb3_gpu_narrow_phase_a364fac51219582ec7b62f410c9333f2d} 
+int {\bfseries m\+\_\+accelerated\+Companion\+Shape\+Index}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a68987f1890f1ba3be09f807a808173e6}\label{classb3_gpu_narrow_phase_a68987f1890f1ba3be09f807a808173e6} 
+int {\bfseries m\+\_\+plane\+Body\+Index}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a4251bbf5fc74abab04eb4bc13353d326}\label{classb3_gpu_narrow_phase_a4251bbf5fc74abab04eb4bc13353d326} 
+int {\bfseries m\+\_\+static0\+Index}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a2d3f999868913cf5d0478235b4ed94b3}\label{classb3_gpu_narrow_phase_a2d3f999868913cf5d0478235b4ed94b3} 
+cl\+\_\+context {\bfseries m\+\_\+context}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a0300a6fcc4cf95d070c7255122dfe831}\label{classb3_gpu_narrow_phase_a0300a6fcc4cf95d070c7255122dfe831} 
+cl\+\_\+device\+\_\+id {\bfseries m\+\_\+device}
+\item 
+\Hypertarget{classb3_gpu_narrow_phase_a9f1f1946e0768cc8fb4d755074cdac68}\label{classb3_gpu_narrow_phase_a9f1f1946e0768cc8fb4d755074cdac68} 
+cl\+\_\+command\+\_\+queue {\bfseries m\+\_\+queue}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classb3_gpu_narrow_phase_a8bbcf9e34e95a188229adca76e1dfd5a}\label{classb3_gpu_narrow_phase_a8bbcf9e34e95a188229adca76e1dfd5a} 
+\index{b3GpuNarrowPhase@{b3GpuNarrowPhase}!registerCompoundShape@{registerCompoundShape}}
+\index{registerCompoundShape@{registerCompoundShape}!b3GpuNarrowPhase@{b3GpuNarrowPhase}}
+\doxysubsubsection{\texorpdfstring{registerCompoundShape()}{registerCompoundShape()}}
+{\footnotesize\ttfamily int b3\+Gpu\+Narrow\+Phase\+::register\+Compound\+Shape (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classb3_aligned_object_array}{b3\+Aligned\+Object\+Array}}$<$ \mbox{\hyperlink{structb3_gpu_child_shape}{b3\+Gpu\+Child\+Shape}} $>$ \texorpdfstring{$\ast$}{*}}]{child\+Shapes }\end{DoxyParamCaption})}
+
+build\+Internal is expert use only\+: assumes that set\+Quantization\+Values and Leaf\+Node\+Array are initialized
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Open\+CL/\+Rigid\+Body/b3\+Gpu\+Narrow\+Phase.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet3\+Open\+CL/\+Rigid\+Body/b3\+Gpu\+Narrow\+Phase.\+cpp\end{DoxyCompactItemize}

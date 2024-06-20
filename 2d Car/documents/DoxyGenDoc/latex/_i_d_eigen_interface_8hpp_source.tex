@@ -1,0 +1,45 @@
+\doxysection{IDEigen\+Interface.\+hpp}
+\hypertarget{_i_d_eigen_interface_8hpp_source}{}\label{_i_d_eigen_interface_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletInverseDynamics/details/IDEigenInterface.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletInverseDynamics/details/IDEigenInterface.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ INVDYNEIGENINTERFACE\_HPP\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ INVDYNEIGENINTERFACE\_HPP\_}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}../IDConfig.hpp"{}}}
+\DoxyCodeLine{00004\ \textcolor{keyword}{namespace\ }btInverseDynamics}
+\DoxyCodeLine{00005\ \{}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ BT\_ID\_HAVE\_MAT3X}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifdef\ BT\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{typedef}\ Eigen::Matrix<double,\ Eigen::Dynamic,\ 1,\ Eigen::DontAlign>\ vecx;}
+\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ Eigen::Matrix<double,\ 3,\ 1,\ Eigen::DontAlign>\ vec3;}
+\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ Eigen::Matrix<double,\ 3,\ 3,\ Eigen::DontAlign>\ mat33;}
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ Eigen::Matrix<double,\ Eigen::Dynamic,\ Eigen::Dynamic,\ Eigen::DontAlign>\ matxx;}
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ Eigen::Matrix<double,\ 3,\ Eigen::Dynamic,\ Eigen::DontAlign>\ mat3x;}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ Eigen::Matrix<float,\ Eigen::Dynamic,\ 1,\ Eigen::DontAlign>\ vecx;}
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ Eigen::Matrix<float,\ 3,\ 1,\ Eigen::DontAlign>\ vec3;}
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ Eigen::Matrix<float,\ 3,\ 3,\ Eigen::DontAlign>\ mat33;}
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ Eigen::Matrix<float,\ Eigen::Dynamic,\ Eigen::Dynamic,\ Eigen::DontAlign>\ matxx;}
+\DoxyCodeLine{00019\ \textcolor{keyword}{typedef}\ Eigen::Matrix<float,\ 3,\ Eigen::Dynamic,\ Eigen::DontAlign>\ mat3x;}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ resize(mat3x\ \&m,\ Eigen::Index\ size)}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ m.resize(3,\ size);}
+\DoxyCodeLine{00025\ \ \ \ \ m.setZero();}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ setMatxxElem(\textcolor{keyword}{const}\ idArrayIdx\ row,\ \textcolor{keyword}{const}\ idArrayIdx\ col,\ \textcolor{keyword}{const}\ idScalar\ val,\ matxx\ *m)}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ (*m)(\mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}},\ col)\ =\ val;}
+\DoxyCodeLine{00031\ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ setMat3xElem(\textcolor{keyword}{const}\ idArrayIdx\ row,\ \textcolor{keyword}{const}\ idArrayIdx\ col,\ \textcolor{keyword}{const}\ idScalar\ val,\ mat3x\ *m)}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ (*m)(\mbox{\hyperlink{group__gtc__matrix__access_ga259e5ebd0f31ec3f83440f8cae7f5dba}{row}},\ col)\ =\ val;}
+\DoxyCodeLine{00036\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \}\ \ \textcolor{comment}{//\ namespace\ btInverseDynamics}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ INVDYNEIGENINTERFACE\_HPP\_}}
+
+\end{DoxyCode}

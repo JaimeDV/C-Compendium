@@ -1,0 +1,147 @@
+\doxysection{bt\+Cone\+Shape.\+cpp}
+\hypertarget{bt_cone_shape_8cpp_source}{}\label{bt_cone_shape_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btConeShape.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionShapes/btConeShape.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2009\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btConeShape.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ btConeShape::btConeShape(btScalar\ radius,\ btScalar\ height)\ :\ btConvexInternalShape(),}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_radius(radius),}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_height(height)}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ m\_shapeType\ =\ CONE\_SHAPE\_PROXYTYPE;}
+\DoxyCodeLine{00023\ \ \ \ \ setConeUpIndex(1);}
+\DoxyCodeLine{00024\ \ \ \ \ btVector3\ halfExtents;}
+\DoxyCodeLine{00025\ \ \ \ \ m\_sinAngle\ =\ (m\_radius\ /\ btSqrt(m\_radius\ *\ m\_radius\ +\ m\_height\ *\ m\_height));}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ btConeShapeZ::btConeShapeZ(btScalar\ radius,\ btScalar\ height)\ :\ btConeShape(radius,\ height)}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ setConeUpIndex(2);}
+\DoxyCodeLine{00031\ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ btConeShapeX::btConeShapeX(btScalar\ radius,\ btScalar\ height)\ :\ btConeShape(radius,\ height)}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ setConeUpIndex(0);}
+\DoxyCodeLine{00036\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ btConeShape::setConeUpIndex(\textcolor{keywordtype}{int}\ upIndex)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{switch}\ (upIndex)}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[0]\ =\ 1;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[1]\ =\ 0;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[2]\ =\ 2;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[0]\ =\ 0;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[1]\ =\ 1;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[2]\ =\ 2;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[0]\ =\ 0;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[1]\ =\ 2;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ m\_coneIndices[2]\ =\ 1;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00060\ \ \ \ \ \};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ m\_implicitShapeDimensions[m\_coneIndices[0]]\ =\ m\_radius;}
+\DoxyCodeLine{00063\ \ \ \ \ m\_implicitShapeDimensions[m\_coneIndices[1]]\ =\ m\_height;}
+\DoxyCodeLine{00064\ \ \ \ \ m\_implicitShapeDimensions[m\_coneIndices[2]]\ =\ m\_radius;}
+\DoxyCodeLine{00065\ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ btVector3\ btConeShape::coneLocalSupport(\textcolor{keyword}{const}\ btVector3\&\ v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00069\ \ \ \ \ btScalar\ halfHeight\ =\ m\_height\ *\ btScalar(0.5);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{if}\ (v[m\_coneIndices[1]]\ >\ v.length()\ *\ m\_sinAngle)}
+\DoxyCodeLine{00072\ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ btVector3\ tmp;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[0]]\ =\ btScalar(0.);}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[1]]\ =\ halfHeight;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[2]]\ =\ btScalar(0.);}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00081\ \ \ \ \ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ btScalar\ s\ =\ btSqrt(v[m\_coneIndices[0]]\ *\ v[m\_coneIndices[0]]\ +\ v[m\_coneIndices[2]]\ *\ v[m\_coneIndices[2]]);}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (s\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ d\ =\ m\_radius\ /\ s;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ tmp;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[0]]\ =\ v[m\_coneIndices[0]]\ *\ d;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[1]]\ =\ -\/halfHeight;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[2]]\ =\ v[m\_coneIndices[2]]\ *\ d;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ tmp;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[0]]\ =\ btScalar(0.);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[1]]\ =\ -\/halfHeight;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ tmp[m\_coneIndices[2]]\ =\ btScalar(0.);}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ tmp;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ btVector3\ btConeShape::localGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3\&\ vec)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00104\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordflow}{return}\ coneLocalSupport(vec);}
+\DoxyCodeLine{00106\ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{void}\ btConeShape::batchedUnitVectorGetSupportingVertexWithoutMargin(\textcolor{keyword}{const}\ btVector3*\ vectors,\ btVector3*\ supportVerticesOut,\ \textcolor{keywordtype}{int}\ numVectors)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00109\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numVectors;\ i++)}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ vec\ =\ vectors[i];}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ supportVerticesOut[i]\ =\ coneLocalSupport(vec);}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ btVector3\ btConeShape::localGetSupportingVertex(\textcolor{keyword}{const}\ btVector3\&\ vec)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00118\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00119\ \ \ \ \ btVector3\ supVertex\ =\ coneLocalSupport(vec);}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (getMargin()\ !=\ btScalar(0.))}
+\DoxyCodeLine{00121\ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ btVector3\ vecnorm\ =\ vec;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (vecnorm.length2()\ <\ (SIMD\_EPSILON\ *\ SIMD\_EPSILON))}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ vecnorm.setValue(btScalar(-\/1.),\ btScalar(-\/1.),\ btScalar(-\/1.));}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ vecnorm.normalize();}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ supVertex\ +=\ getMargin()\ *\ vecnorm;}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordflow}{return}\ supVertex;}
+\DoxyCodeLine{00131\ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ btConeShape::setLocalScaling(\textcolor{keyword}{const}\ btVector3\&\ scaling)}
+\DoxyCodeLine{00134\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}\ =\ m\_coneIndices[1];}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{int}\ r1\ =\ m\_coneIndices[0];}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{int}\ r2\ =\ m\_coneIndices[2];}
+\DoxyCodeLine{00138\ \ \ \ \ m\_height\ *=\ scaling[\mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}]\ /\ m\_localScaling[\mbox{\hyperlink{group__ext__quaternion__trigonometric_gac2b65b953ea72827e172fc39035964a7}{axis}}];}
+\DoxyCodeLine{00139\ \ \ \ \ m\_radius\ *=\ (scaling[r1]\ /\ m\_localScaling[r1]\ +\ scaling[r2]\ /\ m\_localScaling[r2])\ /\ 2;}
+\DoxyCodeLine{00140\ \ \ \ \ m\_sinAngle\ =\ (m\_radius\ /\ btSqrt(m\_radius\ *\ m\_radius\ +\ m\_height\ *\ m\_height));}
+\DoxyCodeLine{00141\ \ \ \ \ btConvexInternalShape::setLocalScaling(scaling);}
+\DoxyCodeLine{00142\ \}}
+
+\end{DoxyCode}

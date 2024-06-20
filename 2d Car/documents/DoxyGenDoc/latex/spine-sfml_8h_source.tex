@@ -1,0 +1,67 @@
+\doxysection{spine-\/sfml.h}
+\hypertarget{spine-sfml_8h_source}{}\label{spine-sfml_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/sfml/src/spine/spine-\/sfml.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/sfml/src/spine/spine-\/sfml.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/******************************************************************************}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Spine\ Runtimes\ Software\ License}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Version\ 2.3}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2013-\/2015,\ Esoteric\ Software}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ All\ rights\ reserved.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ You\ are\ granted\ a\ perpetual,\ non-\/exclusive,\ non-\/sublicensable\ and}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ non-\/transferable\ license\ to\ use,\ install,\ execute\ and\ perform\ the\ Spine}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Runtimes\ Software\ (the\ "{}Software"{})\ and\ derivative\ works\ solely\ for\ personal}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ or\ internal\ use.\ Without\ the\ written\ permission\ of\ Esoteric\ Software\ (see}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ Section\ 2\ of\ the\ Spine\ Software\ License\ Agreement),\ you\ may\ not\ (a)\ modify,}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ translate,\ adapt\ or\ otherwise\ create\ derivative\ works,\ improvements\ of\ the}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Software\ or\ develop\ new\ applications\ using\ the\ Software\ or\ (b)\ remove,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ delete,\ alter\ or\ obscure\ any\ trademarks\ or\ any\ copyright,\ trademark,\ patent}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ or\ other\ intellectual\ property\ or\ proprietary\ rights\ notices\ on\ or\ in\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ Software,\ including\ any\ copy\ thereof.\ Redistributions\ in\ binary\ or\ source}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ form\ must\ include\ this\ license\ and\ terms.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ ESOTERIC\ SOFTWARE\ "{}AS\ IS"{}\ AND\ ANY\ EXPRESS\ OR}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ MERCHANTABILITY\ AND\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ EVENT\ SHALL\ ESOTERIC\ SOFTWARE\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,\ DATA,\ OR\ PROFITS;}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY\ THEORY\ OF\ LIABILITY,}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT\ (INCLUDING\ NEGLIGENCE\ OR}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE\ OF\ THIS\ SOFTWARE,\ EVEN\ IF}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifndef\ SPINE\_SFML\_H\_}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ SPINE\_SFML\_H\_}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <spine/spine.h>}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <SFML/Graphics/Vertex.hpp>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <SFML/Graphics/VertexArray.hpp>}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{namespace\ }spine\ \{}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classspine_1_1_skeleton_drawable}{SkeletonDrawable}}:\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsf_1_1_drawable}{sf::Drawable}}\ \{}
+\DoxyCodeLine{00043\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00044\ \ \ \ \ Skeleton*\ skeleton;}
+\DoxyCodeLine{00045\ \ \ \ \ AnimationState*\ state;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{float}\ timeScale;}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{classsf_1_1_vertex_array}{sf::VertexArray}}*\ vertexArray;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{classspine_1_1_skeleton_drawable}{SkeletonDrawable}}\ (SkeletonData*\ skeleton,\ AnimationStateData*\ stateData\ =\ 0);}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{classspine_1_1_skeleton_drawable}{\string~SkeletonDrawable}}\ ();}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{void}\ update\ (\textcolor{keywordtype}{float}\ deltaTime);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classspine_1_1_skeleton_drawable_ab47ee66422d2495d5072794c4d067b5d}{draw}}\ (\mbox{\hyperlink{classsf_1_1_render_target}{sf::RenderTarget}}\&\ target,\ \mbox{\hyperlink{classsf_1_1_render_states}{sf::RenderStates}}\ states)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00055\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{bool}\ ownsAnimationStateData;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{float}*\ worldVertices;}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \}\ \textcolor{comment}{/*\ namespace\ spine\ */}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ SPINE\_SFML\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

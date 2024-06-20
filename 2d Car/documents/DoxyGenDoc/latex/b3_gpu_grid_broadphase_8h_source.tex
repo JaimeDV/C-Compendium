@@ -1,0 +1,86 @@
+\doxysection{b3\+Gpu\+Grid\+Broadphase.\+h}
+\hypertarget{b3_gpu_grid_broadphase_8h_source}{}\label{b3_gpu_grid_broadphase_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/BroadphaseCollision/b3GpuGridBroadphase.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3OpenCL/BroadphaseCollision/b3GpuGridBroadphase.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ B3\_GPU\_GRID\_BROADPHASE\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ B3\_GPU\_GRID\_BROADPHASE\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}b3GpuBroadphaseInterface.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_params_grid_broadphase_c_l}{b3ParamsGridBroadphaseCL}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_invCellSize[4];}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_gridSize[4];}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{int}\ getMaxBodiesPerCell()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_gridSize[3];}
+\DoxyCodeLine{00015\ \ \ \ \ \}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{void}\ setMaxBodiesPerCell(\textcolor{keywordtype}{int}\ maxOverlap)}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ m\_gridSize[3]\ =\ maxOverlap;}
+\DoxyCodeLine{00020\ \ \ \ \ \}}
+\DoxyCodeLine{00021\ \};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_gpu_grid_broadphase}{b3GpuGridBroadphase}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00026\ \ \ \ \ cl\_context\ m\_context;}
+\DoxyCodeLine{00027\ \ \ \ \ cl\_device\_id\ m\_device;}
+\DoxyCodeLine{00028\ \ \ \ \ cl\_command\_queue\ m\_queue;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SapAabb>}}\ m\_allAabbsGPU1;}
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3SapAabb>}}\ m\_allAabbsCPU1;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_smallAabbsMappingGPU;}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_smallAabbsMappingCPU;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_largeAabbsMappingGPU;}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<int>}}\ m\_largeAabbsMappingCPU;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3Int4>}}\ m\_hostPairs;}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Int4>}}\ m\_gpuPairs;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SortData>}}\ m\_hashGpu;}
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\ m\_cellStartGpu;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{structb3_params_grid_broadphase_c_l}{b3ParamsGridBroadphaseCL}}\ m\_paramsCPU;}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3ParamsGridBroadphaseCL>}}\ m\_paramsGPU;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb3_radix_sort32_c_l}{b3RadixSort32CL}}*\ m\_sorter;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{classb3_gpu_grid_broadphase}{b3GpuGridBroadphase}}(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q);}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_gpu_grid_broadphase}{\string~b3GpuGridBroadphase}}();}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classb3_gpu_broadphase_interface}{b3GpuBroadphaseInterface}}*\ \mbox{\hyperlink{struct_create_func}{CreateFunc}}(cl\_context\ ctx,\ cl\_device\_id\ device,\ cl\_command\_queue\ q)}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classb3_gpu_grid_broadphase}{b3GpuGridBroadphase}}(ctx,\ device,\ q);}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ createProxy(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ createLargeProxy(\textcolor{keyword}{const}\ b3Vector3\&\ aabbMin,\ \textcolor{keyword}{const}\ b3Vector3\&\ aabbMax,\ \textcolor{keywordtype}{int}\ userPtr,\ \textcolor{keywordtype}{int}\ collisionFilterGroup,\ \textcolor{keywordtype}{int}\ collisionFilterMask);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateOverlappingPairs(\textcolor{keywordtype}{int}\ maxPairs);}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ calculateOverlappingPairsHost(\textcolor{keywordtype}{int}\ maxPairs);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//call\ writeAabbsToGpu\ after\ done\ making\ all\ changes\ (createProxy\ etc)}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ writeAabbsToGpu();}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{virtual}\ cl\_mem\ getAabbBufferWS();}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ getNumOverlap();}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{virtual}\ cl\_mem\ getOverlappingPairBuffer();}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3SapAabb>}}\&\ getAllAabbsGPU();}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_aligned_object_array}{b3AlignedObjectArray<b3SapAabb>}}\&\ getAllAabbsCPU();}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<b3Int4>}}\&\ getOverlappingPairsGPU();}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\&\ getSmallAabbIndicesGPU();}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classb3_open_c_l_array}{b3OpenCLArray<int>}}\&\ getLargeAabbIndicesGPU();}
+\DoxyCodeLine{00078\ \};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_GPU\_GRID\_BROADPHASE\_H}}
+
+\end{DoxyCode}

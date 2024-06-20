@@ -1,0 +1,219 @@
+\doxysection{bt\+Typed\+Constraint.\+cpp}
+\hypertarget{bt_typed_constraint_8cpp_source}{}\label{bt_typed_constraint_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btTypedConstraint.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/ConstraintSolver/btTypedConstraint.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btTypedConstraint.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Dynamics/btRigidBody.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSerializer.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ DEFAULT\_DEBUGDRAW\_SIZE\ btScalar(0.05f)}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ btTypedConstraint::btTypedConstraint(btTypedConstraintType\ type,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA)}
+\DoxyCodeLine{00023\ \ \ \ \ :\ \mbox{\hyperlink{structbt_typed_object}{btTypedObject}}(type),}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ m\_userConstraintType(-\/1),}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ m\_userConstraintPtr((void*)-\/1),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ m\_breakingImpulseThreshold(SIMD\_INFINITY),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ m\_isEnabled(true),}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ m\_needsFeedback(false),}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ m\_overrideNumSolverIterations(-\/1),}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ m\_rbA(rbA),}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ m\_rbB(getFixedBody()),}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ m\_appliedImpulse(btScalar(0.)),}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ m\_dbgDrawSize(DEFAULT\_DEBUGDRAW\_SIZE),}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ m\_jointFeedback(0)}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ btTypedConstraint::btTypedConstraint(btTypedConstraintType\ type,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbA,\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ rbB)}
+\DoxyCodeLine{00039\ \ \ \ \ :\ \mbox{\hyperlink{structbt_typed_object}{btTypedObject}}(type),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ m\_userConstraintType(-\/1),}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ m\_userConstraintPtr((void*)-\/1),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ m\_breakingImpulseThreshold(SIMD\_INFINITY),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ m\_isEnabled(true),}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ m\_needsFeedback(false),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ m\_overrideNumSolverIterations(-\/1),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ m\_rbA(rbA),}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ m\_rbB(rbB),}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ m\_appliedImpulse(btScalar(0.)),}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ m\_dbgDrawSize(DEFAULT\_DEBUGDRAW\_SIZE),}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ m\_jointFeedback(0)}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ btScalar\ btTypedConstraint::getMotorFactor(btScalar\ pos,\ btScalar\ lowLim,\ btScalar\ uppLim,\ btScalar\ vel,\ btScalar\ timeFact)}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordflow}{if}\ (lowLim\ >\ uppLim)}
+\DoxyCodeLine{00057\ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btScalar(1.0f);}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (lowLim\ ==\ uppLim)}
+\DoxyCodeLine{00061\ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ btScalar(0.0f);}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ btScalar\ lim\_fact\ =\ btScalar(1.0f);}
+\DoxyCodeLine{00065\ \ \ \ \ btScalar\ delta\_max\ =\ vel\ /\ timeFact;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{if}\ (delta\_max\ <\ btScalar(0.0f))}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((pos\ >=\ lowLim)\ \&\&\ (pos\ <\ (lowLim\ -\/\ delta\_max)))}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ lim\_fact\ =\ (lowLim\ -\/\ pos)\ /\ delta\_max;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (pos\ <\ lowLim)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ lim\_fact\ =\ btScalar(0.0f);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ lim\_fact\ =\ btScalar(1.0f);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (delta\_max\ >\ btScalar(0.0f))}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((pos\ <=\ uppLim)\ \&\&\ (pos\ >\ (uppLim\ -\/\ delta\_max)))}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ lim\_fact\ =\ (uppLim\ -\/\ pos)\ /\ delta\_max;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (pos\ >\ uppLim)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ lim\_fact\ =\ btScalar(0.0f);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ lim\_fact\ =\ btScalar(1.0f);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00097\ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ lim\_fact\ =\ btScalar(0.0f);}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{return}\ lim\_fact;}
+\DoxyCodeLine{00101\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00104\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btTypedConstraint::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00105\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00106\ \ \ \ \ btTypedConstraintData2*\ tcd\ =\ (btTypedConstraintData2*)dataBuffer;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ tcd-\/>m\_rbA\ =\ (btRigidBodyData*)serializer-\/>getUniquePointer(\&m\_rbA);}
+\DoxyCodeLine{00109\ \ \ \ \ tcd-\/>m\_rbB\ =\ (btRigidBodyData*)serializer-\/>getUniquePointer(\&m\_rbB);}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{char}*\ name\ =\ (\textcolor{keywordtype}{char}*)serializer-\/>findNameForPointer(\textcolor{keyword}{this});}
+\DoxyCodeLine{00111\ \ \ \ \ tcd-\/>m\_name\ =\ (\textcolor{keywordtype}{char}*)serializer-\/>getUniquePointer(name);}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordflow}{if}\ (tcd-\/>m\_name)}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ serializer-\/>serializeName(name);}
+\DoxyCodeLine{00115\ \ \ \ \ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ tcd-\/>m\_objectType\ =\ m\_objectType;}
+\DoxyCodeLine{00118\ \ \ \ \ tcd-\/>m\_needsFeedback\ =\ m\_needsFeedback;}
+\DoxyCodeLine{00119\ \ \ \ \ tcd-\/>m\_overrideNumSolverIterations\ =\ m\_overrideNumSolverIterations;}
+\DoxyCodeLine{00120\ \ \ \ \ tcd-\/>m\_breakingImpulseThreshold\ =\ m\_breakingImpulseThreshold;}
+\DoxyCodeLine{00121\ \ \ \ \ tcd-\/>m\_isEnabled\ =\ m\_isEnabled\ ?\ 1\ :\ 0;}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ tcd-\/>m\_userConstraintId\ =\ m\_userConstraintId;}
+\DoxyCodeLine{00124\ \ \ \ \ tcd-\/>m\_userConstraintType\ =\ m\_userConstraintType;}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ tcd-\/>m\_appliedImpulse\ =\ m\_appliedImpulse;}
+\DoxyCodeLine{00127\ \ \ \ \ tcd-\/>m\_dbgDrawSize\ =\ m\_dbgDrawSize;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ tcd-\/>m\_disableCollisionsBetweenLinkedBodies\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_rbA.getNumConstraintRefs();\ i++)}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_rbA.getConstraintRef(i)\ ==\ \textcolor{keyword}{this})}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ tcd-\/>m\_disableCollisionsBetweenLinkedBodies\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_rbB.getNumConstraintRefs();\ i++)}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_rbB.getConstraintRef(i)\ ==\ \textcolor{keyword}{this})}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ tcd-\/>m\_disableCollisionsBetweenLinkedBodies\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordflow}{return}\ btTypedConstraintDataName;}
+\DoxyCodeLine{00140\ \}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\&\ btTypedConstraint::getFixedBody()}
+\DoxyCodeLine{00143\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}\ s\_fixed(0,\ 0,\ 0);}
+\DoxyCodeLine{00145\ \ \ \ \ s\_fixed.setMassProps(btScalar(0.),\ btVector3(btScalar(0.),\ btScalar(0.),\ btScalar(0.)));}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordflow}{return}\ s\_fixed;}
+\DoxyCodeLine{00147\ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_angular_limit_aae9e0c21886c2f98f9ad1928bf024b3f}{btAngularLimit::set}}(btScalar\ low,\ btScalar\ high,\ btScalar\ \_softness,\ btScalar\ \_biasFactor,\ btScalar\ \_relaxationFactor)}
+\DoxyCodeLine{00150\ \{}
+\DoxyCodeLine{00151\ \ \ \ \ m\_halfRange\ =\ (high\ -\/\ low)\ /\ 2.0f;}
+\DoxyCodeLine{00152\ \ \ \ \ m\_center\ =\ btNormalizeAngle(low\ +\ m\_halfRange);}
+\DoxyCodeLine{00153\ \ \ \ \ m\_softness\ =\ \_softness;}
+\DoxyCodeLine{00154\ \ \ \ \ m\_biasFactor\ =\ \_biasFactor;}
+\DoxyCodeLine{00155\ \ \ \ \ m\_relaxationFactor\ =\ \_relaxationFactor;}
+\DoxyCodeLine{00156\ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_angular_limit_aa8908e320fa18257118bbe81948142d8}{btAngularLimit::test}}(\textcolor{keyword}{const}\ btScalar\ angle)}
+\DoxyCodeLine{00159\ \{}
+\DoxyCodeLine{00160\ \ \ \ \ m\_correction\ =\ 0.0f;}
+\DoxyCodeLine{00161\ \ \ \ \ m\_sign\ =\ 0.0f;}
+\DoxyCodeLine{00162\ \ \ \ \ m\_solveLimit\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_halfRange\ >=\ 0.0f)}
+\DoxyCodeLine{00165\ \ \ \ \ \{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ btScalar\ deviation\ =\ btNormalizeAngle(angle\ -\/\ m\_center);}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (deviation\ <\ -\/m\_halfRange)}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ m\_solveLimit\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ m\_correction\ =\ -\/(deviation\ +\ m\_halfRange);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ m\_sign\ =\ +1.0f;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (deviation\ >\ m\_halfRange)}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ m\_solveLimit\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ m\_correction\ =\ m\_halfRange\ -\/\ deviation;}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ m\_sign\ =\ -\/1.0f;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00179\ \ \ \ \ \}}
+\DoxyCodeLine{00180\ \}}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ btScalar\ \mbox{\hyperlink{classbt_angular_limit_a781f6596d248dbd0bc074069ca3bde2a}{btAngularLimit::getError}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00183\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_correction\ *\ m\_sign;}
+\DoxyCodeLine{00185\ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_angular_limit_aba82fc7d176c0b4e483eb3959f84eb65}{btAngularLimit::fit}}(btScalar\&\ angle)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00188\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_halfRange\ >\ 0.0f)}
+\DoxyCodeLine{00190\ \ \ \ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ btScalar\ relativeAngle\ =\ btNormalizeAngle(angle\ -\/\ m\_center);}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!btEqual(relativeAngle,\ m\_halfRange))}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (relativeAngle\ >\ 0.0f)}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ angle\ =\ getHigh();}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ angle\ =\ getLow();}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ \}}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ btScalar\ btAngularLimit::getLow()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00207\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordflow}{return}\ btNormalizeAngle(m\_center\ -\/\ m\_halfRange);}
+\DoxyCodeLine{00209\ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ btScalar\ btAngularLimit::getHigh()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00212\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordflow}{return}\ btNormalizeAngle(m\_center\ +\ m\_halfRange);}
+\DoxyCodeLine{00214\ \}}
+
+\end{DoxyCode}

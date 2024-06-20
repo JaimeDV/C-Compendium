@@ -1,0 +1,144 @@
+\doxysection{bt\+Collision\+Object.\+cpp}
+\hypertarget{bt_collision_object_8cpp_source}{}\label{bt_collision_object_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionObject.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCollisionObject.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}btCollisionObject.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btSerializer.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ btCollisionObject::btCollisionObject()}
+\DoxyCodeLine{00021\ \ \ \ \ :\ m\_interpolationLinearVelocity(0.f,\ 0.f,\ 0.f),}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ m\_interpolationAngularVelocity(0.f,\ 0.f,\ 0.f),}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ m\_anisotropicFriction(1.f,\ 1.f,\ 1.f),}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ m\_hasAnisotropicFriction(false),}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ m\_contactProcessingThreshold(BT\_LARGE\_FLOAT),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ m\_broadphaseHandle(0),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ m\_collisionShape(0),}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ m\_extensionPointer(0),}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ m\_rootCollisionShape(0),}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ m\_collisionFlags(btCollisionObject::CF\_STATIC\_OBJECT),}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ m\_islandTag1(-\/1),}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ m\_companionId(-\/1),}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ m\_worldArrayIndex(-\/1),}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ m\_activationState1(1),}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ m\_deactivationTime(btScalar(0.)),}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ m\_friction(btScalar(0.5)),}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ m\_restitution(btScalar(0.)),}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ m\_rollingFriction(0.0f),}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ m\_spinningFriction(0.f),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ m\_contactDamping(.1),}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ m\_contactStiffness(BT\_LARGE\_FLOAT),}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ m\_internalType(CO\_COLLISION\_OBJECT),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ m\_userObjectPointer(0),}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ m\_userIndex2(-\/1),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ m\_userIndex(-\/1),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ m\_userIndex3(-\/1),}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ m\_hitFraction(btScalar(1.)),}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ m\_ccdSweptSphereRadius(btScalar(0.)),}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ m\_ccdMotionThreshold(btScalar(0.)),}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ m\_checkCollideWith(false),}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ m\_updateRevision(0)}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ m\_worldTransform.setIdentity();}
+\DoxyCodeLine{00054\ \ \ \ \ m\_interpolationWorldTransform.setIdentity();}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ btCollisionObject::\string~btCollisionObject()}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ btCollisionObject::setActivationState(\textcolor{keywordtype}{int}\ newState)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{if}\ ((m\_activationState1\ !=\ DISABLE\_DEACTIVATION)\ \&\&\ (m\_activationState1\ !=\ DISABLE\_SIMULATION))}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ m\_activationState1\ =\ newState;}
+\DoxyCodeLine{00065\ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{void}\ btCollisionObject::forceActivationState(\textcolor{keywordtype}{int}\ newState)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00069\ \ \ \ \ m\_activationState1\ =\ newState;}
+\DoxyCodeLine{00070\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{void}\ btCollisionObject::activate(\textcolor{keywordtype}{bool}\ forceActivation)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00073\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{if}\ (forceActivation\ ||\ !(m\_collisionFlags\ \&\ (CF\_STATIC\_OBJECT\ |\ CF\_KINEMATIC\_OBJECT)))}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ setActivationState(ACTIVE\_TAG);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ m\_deactivationTime\ =\ btScalar(0.);}
+\DoxyCodeLine{00078\ \ \ \ \ \}}
+\DoxyCodeLine{00079\ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ btCollisionObject::serialize(\textcolor{keywordtype}{void}*\ dataBuffer,\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00083\ \ \ \ \ btCollisionObjectData*\ dataOut\ =\ (btCollisionObjectData*)dataBuffer;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ m\_worldTransform.serialize(dataOut-\/>m\_worldTransform);}
+\DoxyCodeLine{00086\ \ \ \ \ m\_interpolationWorldTransform.serialize(dataOut-\/>m\_interpolationWorldTransform);}
+\DoxyCodeLine{00087\ \ \ \ \ m\_interpolationLinearVelocity.serialize(dataOut-\/>m\_interpolationLinearVelocity);}
+\DoxyCodeLine{00088\ \ \ \ \ m\_interpolationAngularVelocity.serialize(dataOut-\/>m\_interpolationAngularVelocity);}
+\DoxyCodeLine{00089\ \ \ \ \ m\_anisotropicFriction.serialize(dataOut-\/>m\_anisotropicFriction);}
+\DoxyCodeLine{00090\ \ \ \ \ dataOut-\/>m\_hasAnisotropicFriction\ =\ m\_hasAnisotropicFriction;}
+\DoxyCodeLine{00091\ \ \ \ \ dataOut-\/>m\_contactProcessingThreshold\ =\ m\_contactProcessingThreshold;}
+\DoxyCodeLine{00092\ \ \ \ \ dataOut-\/>m\_broadphaseHandle\ =\ 0;}
+\DoxyCodeLine{00093\ \ \ \ \ dataOut-\/>m\_collisionShape\ =\ serializer-\/>getUniquePointer(m\_collisionShape);}
+\DoxyCodeLine{00094\ \ \ \ \ dataOut-\/>m\_rootCollisionShape\ =\ 0;\ \ \textcolor{comment}{//@todo}}
+\DoxyCodeLine{00095\ \ \ \ \ dataOut-\/>m\_collisionFlags\ =\ m\_collisionFlags;}
+\DoxyCodeLine{00096\ \ \ \ \ dataOut-\/>m\_islandTag1\ =\ m\_islandTag1;}
+\DoxyCodeLine{00097\ \ \ \ \ dataOut-\/>m\_companionId\ =\ m\_companionId;}
+\DoxyCodeLine{00098\ \ \ \ \ dataOut-\/>m\_activationState1\ =\ m\_activationState1;}
+\DoxyCodeLine{00099\ \ \ \ \ dataOut-\/>m\_deactivationTime\ =\ m\_deactivationTime;}
+\DoxyCodeLine{00100\ \ \ \ \ dataOut-\/>m\_friction\ =\ m\_friction;}
+\DoxyCodeLine{00101\ \ \ \ \ dataOut-\/>m\_rollingFriction\ =\ m\_rollingFriction;}
+\DoxyCodeLine{00102\ \ \ \ \ dataOut-\/>m\_contactDamping\ =\ m\_contactDamping;}
+\DoxyCodeLine{00103\ \ \ \ \ dataOut-\/>m\_contactStiffness\ =\ m\_contactStiffness;}
+\DoxyCodeLine{00104\ \ \ \ \ dataOut-\/>m\_restitution\ =\ m\_restitution;}
+\DoxyCodeLine{00105\ \ \ \ \ dataOut-\/>m\_internalType\ =\ m\_internalType;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{char}*\ name\ =\ (\textcolor{keywordtype}{char}*)serializer-\/>findNameForPointer(\textcolor{keyword}{this});}
+\DoxyCodeLine{00108\ \ \ \ \ dataOut-\/>m\_name\ =\ (\textcolor{keywordtype}{char}*)serializer-\/>getUniquePointer(name);}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{if}\ (dataOut-\/>m\_name)}
+\DoxyCodeLine{00110\ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ serializer-\/>serializeName(name);}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ \ \ \ \ dataOut-\/>m\_hitFraction\ =\ m\_hitFraction;}
+\DoxyCodeLine{00114\ \ \ \ \ dataOut-\/>m\_ccdSweptSphereRadius\ =\ m\_ccdSweptSphereRadius;}
+\DoxyCodeLine{00115\ \ \ \ \ dataOut-\/>m\_ccdMotionThreshold\ =\ m\_ccdMotionThreshold;}
+\DoxyCodeLine{00116\ \ \ \ \ dataOut-\/>m\_checkCollideWith\ =\ m\_checkCollideWith;}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_broadphaseHandle)}
+\DoxyCodeLine{00118\ \ \ \ \ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ dataOut-\/>m\_collisionFilterGroup\ =\ m\_broadphaseHandle-\/>m\_collisionFilterGroup;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ dataOut-\/>m\_collisionFilterMask\ =\ m\_broadphaseHandle-\/>m\_collisionFilterMask;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ dataOut-\/>m\_uniqueId\ =\ m\_broadphaseHandle-\/>m\_uniqueId;}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00124\ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ dataOut-\/>m\_collisionFilterGroup\ =\ 0;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ dataOut-\/>m\_collisionFilterMask\ =\ 0;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ dataOut-\/>m\_uniqueId\ =\ -\/1;}
+\DoxyCodeLine{00128\ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{return}\ btCollisionObjectDataName;}
+\DoxyCodeLine{00130\ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{void}\ btCollisionObject::serializeSingleObject(\textcolor{keyword}{class}\ \mbox{\hyperlink{classbt_serializer}{btSerializer}}*\ serializer)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00133\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{int}\ len\ =\ calculateSerializeBufferSize();}
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{classbt_chunk}{btChunk}}*\ chunk\ =\ serializer-\/>allocate(len,\ 1);}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ structType\ =\ serialize(chunk-\/>m\_oldPtr,\ serializer);}
+\DoxyCodeLine{00137\ \ \ \ \ serializer-\/>finalizeChunk(chunk,\ structType,\ BT\_COLLISIONOBJECT\_CODE,\ (\textcolor{keywordtype}{void}*)\textcolor{keyword}{this});}
+\DoxyCodeLine{00138\ \}}
+
+\end{DoxyCode}

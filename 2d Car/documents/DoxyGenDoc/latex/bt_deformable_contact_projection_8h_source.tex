@@ -1,0 +1,105 @@
+\doxysection{bt\+Deformable\+Contact\+Projection.\+h}
+\hypertarget{bt_deformable_contact_projection_8h_source}{}\label{bt_deformable_contact_projection_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableContactProjection.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletSoftBody/btDeformableContactProjection.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ Written\ by\ Xuchen\ Han\ <xuchenhan2015@u.northwestern.edu>}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ }}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ Copyright\ (c)\ 2019\ Google\ Inc.\ http://bulletphysics.org}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ 1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ 2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ 3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ BT\_CONTACT\_PROJECTION\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BT\_CONTACT\_PROJECTION\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}btCGProjection.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}btSoftBody.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyLinkCollider.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletDynamics/Featherstone/btMultiBodyConstraint.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}btDeformableContactConstraint.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btHashMap.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btReducedVector.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btModifiedGramSchmidt.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_lagrange_multiplier}{LagrangeMultiplier}}}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_num\_constraints;\ \ \textcolor{comment}{//\ Number\ of\ constraints}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_num\_nodes;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Number\ of\ nodes\ in\ these\ constraints}}
+\DoxyCodeLine{00032\ \ \ \ \ btScalar\ m\_weights[3];\ \ \textcolor{comment}{//\ weights\ of\ the\ nodes\ involved,\ same\ size\ as\ m\_num\_nodes}}
+\DoxyCodeLine{00033\ \ \ \ \ btVector3\ m\_dirs[3];\ \ \ \ \textcolor{comment}{//\ Constraint\ directions,\ same\ size\ of\ m\_num\_constraints;}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_indices[3];\ \ \ \ \ \ \ \textcolor{comment}{//\ indices\ of\ the\ nodes\ involved,\ same\ size\ as\ m\_num\_nodes;}}
+\DoxyCodeLine{00035\ \};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classbt_deformable_contact_projection}{btDeformableContactProjection}}}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btVector3>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}};}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ m\_softBodies;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//\ all\ constraints\ involving\ face}}
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btDeformableContactConstraint*>}}\ m\_allFaceConstraints;}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#ifndef\ USE\_MGS}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{//\ map\ from\ node\ index\ to\ projection\ directions}}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{classbt_hash_map}{btHashMap<btHashInt,\ btAlignedObjectArray<btVector3>}}\ >\ m\_projectionsDict;}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btReducedVector>}}\ m\_projections;}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<LagrangeMultiplier>}}\ m\_lagrangeMultipliers;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ map\ from\ node\ index\ to\ static\ constraint}}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btAlignedObjectArray<btDeformableStaticConstraint>}}\ >\ m\_staticConstraints;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{//\ map\ from\ node\ index\ to\ node\ rigid\ constraint}}
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btAlignedObjectArray<btDeformableNodeRigidContactConstraint>}}\ >\ m\_nodeRigidConstraints;}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{//\ map\ from\ node\ index\ to\ face\ rigid\ constraint}}
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btAlignedObjectArray<btDeformableFaceRigidContactConstraint>}}\ >\ m\_faceRigidConstraints;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//\ map\ from\ node\ index\ to\ deformable\ constraint}}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btAlignedObjectArray<btDeformableFaceNodeContactConstraint>}}\ >\ m\_deformableConstraints;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//\ map\ from\ node\ index\ to\ node\ anchor\ constraint}}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btAlignedObjectArray<btDeformableNodeAnchorConstraint>}}\ >\ m\_nodeAnchorConstraints;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_useStrainLimiting;}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classbt_deformable_contact_projection}{btDeformableContactProjection}}(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btSoftBody*>}}\&\ softBodies)}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ :\ m\_softBodies(softBodies)}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classbt_deformable_contact_projection}{\string~btDeformableContactProjection}}()}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//\ apply\ the\ constraints\ to\ the\ rhs\ of\ the\ linear\ solve}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ project(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ x);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ add\ friction\ force\ to\ the\ rhs\ of\ the\ linear\ solve}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ applyDynamicFriction(\mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ f);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ update\ and\ solve\ the\ constraints}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ btScalar\ update(btCollisionObject**\ deformableBodies,\ \textcolor{keywordtype}{int}\ numDeformableBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//\ Add\ constraints\ to\ m\_constraints.\ In\ addition,\ the\ constraints\ that\ each\ vertex\ own\ are\ recorded\ in\ m\_constraintsDict.}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{//\ Set\ up\ projections\ for\ each\ vertex\ by\ adding\ the\ projection\ direction\ to}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setProjection();}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ reinitialize(\textcolor{keywordtype}{bool}\ nodeUpdated);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ btScalar\ solveSplitImpulse(btCollisionObject**\ deformableBodies,\ \textcolor{keywordtype}{int}\ numDeformableBodies,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setLagrangeMultiplier();}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{void}\ checkConstraints(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{TVStack}}\&\ x);}
+\DoxyCodeLine{00098\ \};}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ btDeformableContactProjection\_h\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,623 @@
+\doxysection{bt\+MLCPSolver.\+cpp}
+\hypertarget{bt_m_l_c_p_solver_8cpp_source}{}\label{bt_m_l_c_p_solver_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/MLCPSolvers/btMLCPSolver.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletDynamics/MLCPSolvers/btMLCPSolver.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2013\ Erwin\ Coumans\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}btMLCPSolver.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btMatrixX.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btQuickprof.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btSolveProjectedGaussSeidel.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \mbox{\hyperlink{classbt_m_l_c_p_solver_ac699f0a59f0b730ac39658ee2903b042}{btMLCPSolver::btMLCPSolver}}(\mbox{\hyperlink{classbt_m_l_c_p_solver_interface}{btMLCPSolverInterface}}*\ solver)}
+\DoxyCodeLine{00023\ \ \ \ \ :\ m\_solver(solver),}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ m\_fallback(0)}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ btMLCPSolver::\string~btMLCPSolver()}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{bool}\ gUseMatrixMultiply\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{bool}\ interleaveContactAndFriction\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ btScalar\ \mbox{\hyperlink{classbt_m_l_c_p_solver_aa465e167537eceb89f7125d3bb2d5321}{btMLCPSolver::solveGroupCacheFriendlySetup}}(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodiesUnUsed,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(bodies,\ numBodiesUnUsed,\ manifoldPtr,\ numManifolds,\ constraints,\ numConstraints,\ infoGlobal,\ debugDrawer);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}gather\ constraint\ data"{}});}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numFrictionPerContact\ =\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ==\ m\_tmpSolverContactFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ 1\ :\ 2;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ int\ numBodies\ =\ m\_tmpSolverBodyPool.size();}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ m\_allConstraintPtrArray.resize(0);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ m\_limitDependencies.resize(m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_tmpSolverContactFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ btAssert(m\_limitDependencies.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ==\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ +\ m\_tmpSolverContactFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ printf("{}m\_limitDependencies.size()\ =\ \%d\(\backslash\)n"{},m\_limitDependencies.size());}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dindex\ =\ 0;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ m\_allConstraintPtrArray.push\_back(\&m\_tmpSolverNonContactConstraintPool[i]);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ m\_limitDependencies[dindex++]\ =\ -\/1;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ firstContactConstraintOffset\ =\ dindex;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (interleaveContactAndFriction)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allConstraintPtrArray.push\_back(\&m\_tmpSolverContactConstraintPool[i]);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_limitDependencies[dindex++]\ =\ -\/1;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allConstraintPtrArray.push\_back(\&m\_tmpSolverContactFrictionConstraintPool[i\ *\ numFrictionPerContact]);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ findex\ =\ (m\_tmpSolverContactFrictionConstraintPool[i\ *\ numFrictionPerContact].m\_frictionIndex\ *\ (1\ +\ numFrictionPerContact));}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_limitDependencies[dindex++]\ =\ findex\ +\ firstContactConstraintOffset;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (numFrictionPerContact\ ==\ 2)}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allConstraintPtrArray.push\_back(\&m\_tmpSolverContactFrictionConstraintPool[i\ *\ numFrictionPerContact\ +\ 1]);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_limitDependencies[dindex++]\ =\ findex\ +\ firstContactConstraintOffset;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_tmpSolverContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allConstraintPtrArray.push\_back(\&m\_tmpSolverContactConstraintPool[i]);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_limitDependencies[dindex++]\ =\ -\/1;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_tmpSolverContactFrictionConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_allConstraintPtrArray.push\_back(\&m\_tmpSolverContactFrictionConstraintPool[i]);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_limitDependencies[dindex++]\ =\ m\_tmpSolverContactFrictionConstraintPool[i].m\_frictionIndex\ +\ firstContactConstraintOffset;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}())}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ m\_A.resize(0,\ 0);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ m\_b.resize(0);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ m\_x.resize(0);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ m\_lo.resize(0);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ m\_hi.resize(0);}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.f;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ \ \ \ \ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{if}\ (gUseMatrixMultiply)}
+\DoxyCodeLine{00103\ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}createMLCP"{}});}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ createMLCP(infoGlobal);}
+\DoxyCodeLine{00106\ \ \ \ \ \}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}createMLCPFast"{}});}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_m_l_c_p_solver_ab36b9b3bf2bbbd1de7db27ba109e0a8a}{createMLCPFast}}(infoGlobal);}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{return}\ 0.f;}
+\DoxyCodeLine{00114\ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{bool}\ btMLCPSolver::solveMLCP(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00117\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{bool}\ result\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_A.rows()\ ==\ 0)}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//if\ using\ split\ impulse,\ we\ solve\ 2\ separate\ (M)LCPs}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_splitImpulse)}
+\DoxyCodeLine{00125\ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ btMatrixXu\ Acopy\ =\ m\_A;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ limitDependenciesCopy\ =\ m\_limitDependencies;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ printf("{}solve\ first\ LCP\(\backslash\)n"{});}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ result\ =\ m\_solver-\/>solveMLCP(m\_A,\ m\_b,\ m\_x,\ m\_lo,\ m\_hi,\ m\_limitDependencies,\ infoGlobal.m\_numIterations);}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (result)}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ m\_solver-\/>solveMLCP(Acopy,\ \mbox{\hyperlink{classbt_m_l_c_p_solver_a9c1feb6855fa296c8ca582842f8e4fe3}{m\_bSplit}},\ m\_xSplit,\ m\_lo,\ m\_hi,\ limitDependenciesCopy,\ infoGlobal.m\_numIterations);}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00134\ \ \ \ \ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ result\ =\ m\_solver-\/>solveMLCP(m\_A,\ m\_b,\ m\_x,\ m\_lo,\ m\_hi,\ m\_limitDependencies,\ infoGlobal.m\_numIterations);}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00138\ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_joint_node}{btJointNode}}}
+\DoxyCodeLine{00141\ \{}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{int}\ jointIndex;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ pointer\ to\ enclosing\ dxJoint\ object}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{int}\ otherBodyIndex;\ \ \ \ \ \ \textcolor{comment}{//\ *other*\ body\ this\ joint\ is\ connected\ to}}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{int}\ nextJointNodeIndex;\ \ \textcolor{comment}{//-\/1\ for\ null}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{int}\ constraintRowIndex;}
+\DoxyCodeLine{00146\ \};}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_m_l_c_p_solver_ab36b9b3bf2bbbd1de7db27ba109e0a8a}{btMLCPSolver::createMLCPFast}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00149\ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{int}\ numContactRows\ =\ interleaveContactAndFriction\ ?\ 3\ :\ 1;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{int}\ numConstraintRows\ =\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ numConstraintRows;}
+\DoxyCodeLine{00154\ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}init\ b\ (rhs)"{}});}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ m\_b.resize(numConstraintRows);}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_m_l_c_p_solver_a9c1feb6855fa296c8ca582842f8e4fe3}{m\_bSplit}}.resize(numConstraintRows);}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ m\_b.setZero();}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_m_l_c_p_solver_a9c1feb6855fa296c8ca582842f8e4fe3}{m\_bSplit}}.setZero();}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numConstraintRows;\ i++)}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ jacDiag\ =\ m\_allConstraintPtrArray[i]-\/>m\_jacDiagABInv;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!btFuzzyZero(jacDiag))}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ rhs\ =\ m\_allConstraintPtrArray[i]-\/>m\_rhs;}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ rhsPenetration\ =\ m\_allConstraintPtrArray[i]-\/>m\_rhsPenetration;}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_b[i]\ =\ rhs\ /\ jacDiag;}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_m_l_c_p_solver_a9c1feb6855fa296c8ca582842f8e4fe3}{m\_bSplit}}[i]\ =\ rhsPenetration\ /\ jacDiag;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{comment}{//\ \ btScalar*\ w\ =\ 0;}}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{//\ \ int\ nub\ =\ 0;}}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ m\_lo.resize(numConstraintRows);}
+\DoxyCodeLine{00177\ \ \ \ \ m\_hi.resize(numConstraintRows);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}init\ lo/ho"{}});}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numConstraintRows;\ i++)}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (0)\ \ \textcolor{comment}{//m\_limitDependencies[i]>=0)}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_lo[i]\ =\ -\/BT\_INFINITY;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_hi[i]\ =\ BT\_INFINITY;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_lo[i]\ =\ m\_allConstraintPtrArray[i]-\/>m\_lowerLimit;}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_hi[i]\ =\ m\_allConstraintPtrArray[i]-\/>m\_upperLimit;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{int}\ m\ =\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{int}\ numBodies\ =\ m\_tmpSolverBodyPool.size();}
+\DoxyCodeLine{00201\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ bodyJointNodeArray;}
+\DoxyCodeLine{00202\ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}bodyJointNodeArray.resize"{}});}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ bodyJointNodeArray.resize(numBodies,\ -\/1);}
+\DoxyCodeLine{00205\ \ \ \ \ \}}
+\DoxyCodeLine{00206\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btJointNode>}}\ jointNodeArray;}
+\DoxyCodeLine{00207\ \ \ \ \ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}jointNodeArray.reserve"{}});}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ jointNodeArray.reserve(2\ *\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00210\ \ \ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ btMatrixXu\&\ J3\ =\ \mbox{\hyperlink{classbt_m_l_c_p_solver_a8430698267e9572498e04e8dba3cda3b}{m\_scratchJ3}};}
+\DoxyCodeLine{00213\ \ \ \ \ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}J3.resize"{}});}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ J3.resize(2\ *\ m,\ 8);}
+\DoxyCodeLine{00216\ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ btMatrixXu\&\ JinvM3\ =\ m\_scratchJInvM3;}
+\DoxyCodeLine{00218\ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}JinvM3.resize/setZero"{}});}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ JinvM3.resize(2\ *\ m,\ 8);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ JinvM3.setZero();}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ J3.setZero();}
+\DoxyCodeLine{00224\ \ \ \ \ \}}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordtype}{int}\ cur\ =\ 0;}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{int}\ rowOffset\ =\ 0;}
+\DoxyCodeLine{00227\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ ofs\ =\ m\_scratchOfs;}
+\DoxyCodeLine{00228\ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}ofs\ resize"{}});}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ ofs.resize(0);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ ofs.\mbox{\hyperlink{classbt_aligned_object_array_a2cc58c74534181a7a10e5c6ab8b21227}{resizeNoInitialize}}(m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00232\ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}Compute\ J\ and\ JinvM"{}});}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ c\ =\ 0;}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numRows\ =\ 0;}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i\ +=\ numRows,\ c++)}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ ofs[c]\ =\ rowOffset;}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sbA\ =\ m\_allConstraintPtrArray[i]-\/>m\_solverBodyIdA;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sbB\ =\ m\_allConstraintPtrArray[i]-\/>m\_solverBodyIdB;}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ orgBodyA\ =\ m\_tmpSolverBodyPool[sbA].m\_originalBody;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ orgBodyB\ =\ m\_tmpSolverBodyPool[sbB].m\_originalBody;}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ numRows\ =\ i\ <\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ m\_tmpConstraintSizesPool[c].m\_numConstraintRows\ :\ numContactRows;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (orgBodyA)}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ slotA\ =\ -\/1;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//find\ free\ jointNode\ slot\ for\ sbA}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slotA\ =\ jointNodeArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray.expand();\ \ \textcolor{comment}{//NonInitializing();}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prevSlot\ =\ bodyJointNodeArray[sbA];}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bodyJointNodeArray[sbA]\ =\ slotA;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotA].nextJointNodeIndex\ =\ prevSlot;}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotA].jointIndex\ =\ c;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotA].constraintRowIndex\ =\ i;}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotA].otherBodyIndex\ =\ orgBodyB\ ?\ sbB\ :\ -\/1;}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ row\ =\ 0;\ row\ <\ numRows;\ row++,\ cur++)}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalInvMass\ =\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_contactNormal1\ *\ orgBodyA-\/>getInvMass();}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ relPosCrossNormalInvInertia\ =\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_relpos1CrossNormal\ *\ orgBodyA-\/>getInvInertiaTensorWorld();}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ r\ =\ 0;\ r\ <\ 3;\ r++)}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ r,\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_contactNormal1[r]);}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ r\ +\ 4,\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_relpos1CrossNormal[r]);}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ r,\ normalInvMass[r]);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ r\ +\ 4,\ relPosCrossNormalInvInertia[r]);}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ 3,\ 0);}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ 3,\ 0);}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ 7,\ 0);}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ 7,\ 0);}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\ +=\ numRows;}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (orgBodyB)}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ slotB\ =\ -\/1;}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//find\ free\ jointNode\ slot\ for\ sbA}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slotB\ =\ jointNodeArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray.expand();\ \ \textcolor{comment}{//NonInitializing();}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prevSlot\ =\ bodyJointNodeArray[sbB];}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bodyJointNodeArray[sbB]\ =\ slotB;}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotB].nextJointNodeIndex\ =\ prevSlot;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotB].jointIndex\ =\ c;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotB].otherBodyIndex\ =\ orgBodyA\ ?\ sbA\ :\ -\/1;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jointNodeArray[slotB].constraintRowIndex\ =\ i;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ row\ =\ 0;\ row\ <\ numRows;\ row++,\ cur++)}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ normalInvMassB\ =\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_contactNormal2\ *\ orgBodyB-\/>getInvMass();}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ relPosInvInertiaB\ =\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_relpos2CrossNormal\ *\ orgBodyB-\/>getInvInertiaTensorWorld();}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ r\ =\ 0;\ r\ <\ 3;\ r++)}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ r,\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_contactNormal2[r]);}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ r\ +\ 4,\ m\_allConstraintPtrArray[i\ +\ row]-\/>m\_relpos2CrossNormal[r]);}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ r,\ normalInvMassB[r]);}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ r\ +\ 4,\ relPosInvInertiaB[r]);}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ 3,\ 0);}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ 3,\ 0);}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ J3.setElem(cur,\ 7,\ 0);}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ JinvM3.setElem(cur,\ 7,\ 0);}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\ +=\ numRows;}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ rowOffset\ +=\ numRows;}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00323\ \ \ \ \ \}}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{comment}{//compute\ JinvM\ =\ J*invM.}}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ JinvM\ =\ JinvM3.getBufferPointer();}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ Jptr\ =\ J3.getBufferPointer();}
+\DoxyCodeLine{00329\ \ \ \ \ \{}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}m\_A.resize"{}});}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ m\_A.resize(n,\ n);}
+\DoxyCodeLine{00332\ \ \ \ \ \}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \ \ \ \ \{}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}m\_A.setZero"{}});}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ m\_A.setZero();}
+\DoxyCodeLine{00337\ \ \ \ \ \}}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordtype}{int}\ c\ =\ 0;}
+\DoxyCodeLine{00339\ \ \ \ \ \{}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numRows\ =\ 0;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}Compute\ A"{}});}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i\ +=\ numRows,\ c++)}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ row\_\_\ =\ ofs[c];}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sbA\ =\ m\_allConstraintPtrArray[i]-\/>m\_solverBodyIdA;}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sbB\ =\ m\_allConstraintPtrArray[i]-\/>m\_solverBodyIdB;}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ btRigidBody*\ orgBodyA\ =\ m\_tmpSolverBodyPool[sbA].m\_originalBody;}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ btRigidBody*\ orgBodyB\ =\ m\_tmpSolverBodyPool[sbB].m\_originalBody;}}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ numRows\ =\ i\ <\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ m\_tmpConstraintSizesPool[c].m\_numConstraintRows\ :\ numContactRows;}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ JinvMrow\ =\ JinvM\ +\ 2\ *\ 8\ *\ (size\_t)row\_\_;}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ startJointNodeA\ =\ bodyJointNodeArray[sbA];}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (startJointNodeA\ >=\ 0)}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ j0\ =\ jointNodeArray[startJointNodeA].jointIndex;}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ cr0\ =\ jointNodeArray[startJointNodeA].constraintRowIndex;}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (j0\ <\ c)}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numRowsOther\ =\ cr0\ <\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ m\_tmpConstraintSizesPool[j0].m\_numConstraintRows\ :\ numContactRows;}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ofsother\ =\ (m\_allConstraintPtrArray[cr0]-\/>m\_solverBodyIdB\ ==\ sbA)\ ?\ 8\ *\ numRowsOther\ :\ 0;}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}\%d\ joint\ i\ \%d\ and\ j0:\ \%d:\ "{},count++,i,j0);}}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_A.multiplyAdd2\_p8r(JinvMrow,}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Jptr\ +\ 2\ *\ 8\ *\ (\textcolor{keywordtype}{size\_t})ofs[j0]\ +\ ofsother,\ numRows,\ numRowsOther,\ row\_\_,\ ofs[j0]);}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startJointNodeA\ =\ jointNodeArray[startJointNodeA].nextJointNodeIndex;}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ startJointNodeB\ =\ bodyJointNodeArray[sbB];}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (startJointNodeB\ >=\ 0)}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ j1\ =\ jointNodeArray[startJointNodeB].jointIndex;}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ cj1\ =\ jointNodeArray[startJointNodeB].constraintRowIndex;}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (j1\ <\ c)}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numRowsOther\ =\ cj1\ <\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ m\_tmpConstraintSizesPool[j1].m\_numConstraintRows\ :\ numContactRows;}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ofsother\ =\ (m\_allConstraintPtrArray[cj1]-\/>m\_solverBodyIdB\ ==\ sbB)\ ?\ 8\ *\ numRowsOther\ :\ 0;}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_A.multiplyAdd2\_p8r(JinvMrow\ +\ 8\ *\ (\textcolor{keywordtype}{size\_t})numRows,}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Jptr\ +\ 2\ *\ 8\ *\ (\textcolor{keywordtype}{size\_t})ofs[j1]\ +\ ofsother,\ numRows,\ numRowsOther,\ row\_\_,\ ofs[j1]);}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startJointNodeB\ =\ jointNodeArray[startJointNodeB].nextJointNodeIndex;}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00390\ }
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}compute\ diagonal"{}});}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ compute\ diagonal\ blocks\ of\ m\_A}}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ row\_\_\ =\ 0;}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numJointRows\ =\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00397\ }
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ jj\ =\ 0;}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ row\_\_\ <\ numJointRows;)}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//int\ sbA\ =\ m\_allConstraintPtrArray[row\_\_]-\/>m\_solverBodyIdA;}}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sbB\ =\ m\_allConstraintPtrArray[row\_\_]-\/>m\_solverBodyIdB;}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ btRigidBody*\ orgBodyA\ =\ m\_tmpSolverBodyPool[sbA].m\_originalBody;}}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ orgBodyB\ =\ m\_tmpSolverBodyPool[sbB].m\_originalBody;}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ infom\ =\ row\_\_\ <\ m\_tmpSolverNonContactConstraintPool.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ ?\ m\_tmpConstraintSizesPool[jj].m\_numConstraintRows\ :\ numContactRows;}
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ JinvMrow\ =\ JinvM\ +\ 2\ *\ 8\ *\ (size\_t)row\_\_;}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ Jrow\ =\ Jptr\ +\ 2\ *\ 8\ *\ (size\_t)row\_\_;}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_A.multiply2\_p8r(JinvMrow,\ Jrow,\ infom,\ infom,\ row\_\_,\ row\_\_);}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (orgBodyB)}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_A.multiplyAdd2\_p8r(JinvMrow\ +\ 8\ *\ (\textcolor{keywordtype}{size\_t})infom,\ Jrow\ +\ 8\ *\ (size\_t)infom,\ infom,\ infom,\ row\_\_,\ row\_\_);}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ row\_\_\ +=\ infom;}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jj++;}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00419\ \ \ \ \ \}}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00421\ \ \ \ \ \textcolor{keywordflow}{if}\ (1)}
+\DoxyCodeLine{00422\ \ \ \ \ \{}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ add\ cfm\ to\ the\ diagonal\ of\ m\_A}}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_A.rows();\ ++i)}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ m\_A.setElem(i,\ i,\ m\_A(i,\ i)\ +\ infoGlobal.m\_globalCfm\ /\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00428\ \ \ \ \ \}}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00431\ \ \ \ \ \{}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}fill\ the\ upper\ triangle\ "{}});}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ m\_A.copyLowerToUpperTriangle();}
+\DoxyCodeLine{00434\ \ \ \ \ \}}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ \ \ \ \ \{}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}resize/init\ x"{}});}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ m\_x.resize(numConstraintRows);}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ m\_xSplit.resize(numConstraintRows);}
+\DoxyCodeLine{00440\ }
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_solverMode\ \&\ SOLVER\_USE\_WARMSTARTING)}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSolverConstraint\&\ c\ =\ *m\_allConstraintPtrArray[i];}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_x[i]\ =\ c.m\_appliedImpulse;}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_xSplit[i]\ =\ c.m\_appliedPushImpulse;}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ m\_x.setZero();}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ m\_xSplit.setZero();}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00455\ \ \ \ \ \}}
+\DoxyCodeLine{00456\ \}}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \textcolor{keywordtype}{void}\ btMLCPSolver::createMLCP(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal)}
+\DoxyCodeLine{00459\ \{}
+\DoxyCodeLine{00460\ \ \ \ \ \textcolor{keywordtype}{int}\ numBodies\ =\ this-\/>m\_tmpSolverBodyPool.size();}
+\DoxyCodeLine{00461\ \ \ \ \ \textcolor{keywordtype}{int}\ numConstraintRows\ =\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \ \ \ \ m\_b.resize(numConstraintRows);}
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_splitImpulse)}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_m_l_c_p_solver_a9c1feb6855fa296c8ca582842f8e4fe3}{m\_bSplit}}.resize(numConstraintRows);}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \mbox{\hyperlink{classbt_m_l_c_p_solver_a9c1feb6855fa296c8ca582842f8e4fe3}{m\_bSplit}}.setZero();}
+\DoxyCodeLine{00468\ \ \ \ \ m\_b.setZero();}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numConstraintRows;\ i++)}
+\DoxyCodeLine{00471\ \ \ \ \ \{}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_allConstraintPtrArray[i]-\/>m\_jacDiagABInv)}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ m\_b[i]\ =\ m\_allConstraintPtrArray[i]-\/>m\_rhs\ /\ m\_allConstraintPtrArray[i]-\/>m\_jacDiagABInv;}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_splitImpulse)}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_m_l_c_p_solver_a9c1feb6855fa296c8ca582842f8e4fe3}{m\_bSplit}}[i]\ =\ m\_allConstraintPtrArray[i]-\/>m\_rhsPenetration\ /\ m\_allConstraintPtrArray[i]-\/>m\_jacDiagABInv;}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00478\ \ \ \ \ \}}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \ \ \ \ btMatrixXu\&\ Minv\ =\ m\_scratchMInv;}
+\DoxyCodeLine{00481\ \ \ \ \ Minv.resize(6\ *\ numBodies,\ 6\ *\ numBodies);}
+\DoxyCodeLine{00482\ \ \ \ \ Minv.setZero();}
+\DoxyCodeLine{00483\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numBodies;\ i++)}
+\DoxyCodeLine{00484\ \ \ \ \ \{}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSolverBody\&\ rb\ =\ m\_tmpSolverBodyPool[i];}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ invMass\ =\ rb.m\_invMass;}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ setElem(Minv,\ i\ *\ 6\ +\ 0,\ i\ *\ 6\ +\ 0,\ invMass[0]);}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ setElem(Minv,\ i\ *\ 6\ +\ 1,\ i\ *\ 6\ +\ 1,\ invMass[1]);}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ setElem(Minv,\ i\ *\ 6\ +\ 2,\ i\ *\ 6\ +\ 2,\ invMass[2]);}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_rigid_body}{btRigidBody}}*\ orgBody\ =\ m\_tmpSolverBodyPool[i].m\_originalBody;}
+\DoxyCodeLine{00491\ }
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ r\ =\ 0;\ r\ <\ 3;\ r++)}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ c\ =\ 0;\ c\ <\ 3;\ c++)}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setElem(Minv,\ i\ *\ 6\ +\ 3\ +\ r,\ i\ *\ 6\ +\ 3\ +\ c,\ orgBody\ ?\ orgBody-\/>getInvInertiaTensorWorld()[r][c]\ :\ 0);}
+\DoxyCodeLine{00495\ \ \ \ \ \}}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \ \ \ \ btMatrixXu\&\ J\ =\ m\_scratchJ;}
+\DoxyCodeLine{00498\ \ \ \ \ J.resize(numConstraintRows,\ 6\ *\ numBodies);}
+\DoxyCodeLine{00499\ \ \ \ \ J.setZero();}
+\DoxyCodeLine{00500\ }
+\DoxyCodeLine{00501\ \ \ \ \ m\_lo.resize(numConstraintRows);}
+\DoxyCodeLine{00502\ \ \ \ \ m\_hi.resize(numConstraintRows);}
+\DoxyCodeLine{00503\ }
+\DoxyCodeLine{00504\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numConstraintRows;\ i++)}
+\DoxyCodeLine{00505\ \ \ \ \ \{}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ m\_lo[i]\ =\ m\_allConstraintPtrArray[i]-\/>m\_lowerLimit;}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ m\_hi[i]\ =\ m\_allConstraintPtrArray[i]-\/>m\_upperLimit;}
+\DoxyCodeLine{00508\ }
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bodyIndex0\ =\ m\_allConstraintPtrArray[i]-\/>m\_solverBodyIdA;}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bodyIndex1\ =\ m\_allConstraintPtrArray[i]-\/>m\_solverBodyIdB;}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_tmpSolverBodyPool[bodyIndex0].m\_originalBody)}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex0\ +\ 0,\ m\_allConstraintPtrArray[i]-\/>m\_contactNormal1[0]);}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex0\ +\ 1,\ m\_allConstraintPtrArray[i]-\/>m\_contactNormal1[1]);}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex0\ +\ 2,\ m\_allConstraintPtrArray[i]-\/>m\_contactNormal1[2]);}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex0\ +\ 3,\ m\_allConstraintPtrArray[i]-\/>m\_relpos1CrossNormal[0]);}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex0\ +\ 4,\ m\_allConstraintPtrArray[i]-\/>m\_relpos1CrossNormal[1]);}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex0\ +\ 5,\ m\_allConstraintPtrArray[i]-\/>m\_relpos1CrossNormal[2]);}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_tmpSolverBodyPool[bodyIndex1].m\_originalBody)}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex1\ +\ 0,\ m\_allConstraintPtrArray[i]-\/>m\_contactNormal2[0]);}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex1\ +\ 1,\ m\_allConstraintPtrArray[i]-\/>m\_contactNormal2[1]);}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex1\ +\ 2,\ m\_allConstraintPtrArray[i]-\/>m\_contactNormal2[2]);}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex1\ +\ 3,\ m\_allConstraintPtrArray[i]-\/>m\_relpos2CrossNormal[0]);}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex1\ +\ 4,\ m\_allConstraintPtrArray[i]-\/>m\_relpos2CrossNormal[1]);}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ setElem(J,\ i,\ 6\ *\ bodyIndex1\ +\ 5,\ m\_allConstraintPtrArray[i]-\/>m\_relpos2CrossNormal[2]);}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00529\ \ \ \ \ \}}
+\DoxyCodeLine{00530\ }
+\DoxyCodeLine{00531\ \ \ \ \ btMatrixXu\&\ J\_transpose\ =\ m\_scratchJTranspose;}
+\DoxyCodeLine{00532\ \ \ \ \ J\_transpose\ =\ J.transpose();}
+\DoxyCodeLine{00533\ }
+\DoxyCodeLine{00534\ \ \ \ \ btMatrixXu\&\ tmp\ =\ m\_scratchTmp;}
+\DoxyCodeLine{00535\ \ \ \ \ \textcolor{comment}{//Minv.printMatrix("{}Minv="{});}}
+\DoxyCodeLine{00536\ \ \ \ \ \{}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}J*Minv"{}});}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ tmp\ =\ J\ *\ Minv;}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}J*tmp"{}});}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ m\_A\ =\ tmp\ *\ J\_transpose;}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00545\ \ \ \ \ \}}
+\DoxyCodeLine{00546\ \ \ \ \ \textcolor{comment}{//J.printMatrix("{}J"{});}}
+\DoxyCodeLine{00547\ \ \ \ \ \textcolor{keywordflow}{if}\ (1)}
+\DoxyCodeLine{00548\ \ \ \ \ \{}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ add\ cfm\ to\ the\ diagonal\ of\ m\_A}}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_A.rows();\ ++i)}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ m\_A.setElem(i,\ i,\ m\_A(i,\ i)\ +\ infoGlobal.m\_globalCfm\ /\ infoGlobal.m\_timeStep);}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00554\ \ \ \ \ \}}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00556\ \ \ \ \ m\_x.resize(numConstraintRows);}
+\DoxyCodeLine{00557\ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_splitImpulse)}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ m\_xSplit.resize(numConstraintRows);}
+\DoxyCodeLine{00559\ \ \ \ \ \textcolor{comment}{//\ \ m\_x.setZero();}}
+\DoxyCodeLine{00560\ }
+\DoxyCodeLine{00561\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00562\ \ \ \ \ \{}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btSolverConstraint\&\ c\ =\ *m\_allConstraintPtrArray[i];}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ m\_x[i]\ =\ c.m\_appliedImpulse;}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_splitImpulse)}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ m\_xSplit[i]\ =\ c.m\_appliedPushImpulse;}
+\DoxyCodeLine{00567\ \ \ \ \ \}}
+\DoxyCodeLine{00568\ \}}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ btScalar\ btMLCPSolver::solveGroupCacheFriendlyIterations(btCollisionObject**\ bodies,\ \textcolor{keywordtype}{int}\ numBodies,\ btPersistentManifold**\ manifoldPtr,\ \textcolor{keywordtype}{int}\ numManifolds,\ btTypedConstraint**\ constraints,\ \textcolor{keywordtype}{int}\ numConstraints,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_contact_solver_info}{btContactSolverInfo}}\&\ infoGlobal,\ \mbox{\hyperlink{classbt_i_debug_draw}{btIDebugDraw}}*\ debugDrawer)}
+\DoxyCodeLine{00571\ \{}
+\DoxyCodeLine{00572\ \ \ \ \ \textcolor{keywordtype}{bool}\ result\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00573\ \ \ \ \ \{}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}solveMLCP"{}});}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ printf("{}m\_A(\%d,\%d)\(\backslash\)n"{},\ m\_A.rows(),m\_A.cols());}}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ result\ =\ solveMLCP(infoGlobal);}
+\DoxyCodeLine{00577\ \ \ \ \ \}}
+\DoxyCodeLine{00578\ }
+\DoxyCodeLine{00579\ \ \ \ \ \textcolor{comment}{//check\ if\ solution\ is\ valid,\ and\ otherwise\ fallback\ to\ btSequentialImpulseConstraintSolver::solveGroupCacheFriendlyIterations}}
+\DoxyCodeLine{00580\ \ \ \ \ \textcolor{keywordflow}{if}\ (result)}
+\DoxyCodeLine{00581\ \ \ \ \ \{}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ BT\_PROFILE(\textcolor{stringliteral}{"{}process\ MLCP\ results"{}});}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_allConstraintPtrArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverConstraint\&\ c\ =\ *m\_allConstraintPtrArray[i];}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sbA\ =\ c.m\_solverBodyIdA;}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sbB\ =\ c.m\_solverBodyIdB;}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//btRigidBody*\ orgBodyA\ =\ m\_tmpSolverBodyPool[sbA].m\_originalBody;}}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ btRigidBody*\ orgBodyB\ =\ m\_tmpSolverBodyPool[sbB].m\_originalBody;}}
+\DoxyCodeLine{00591\ }
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ solverBodyA\ =\ m\_tmpSolverBodyPool[sbA];}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btSolverBody\&\ solverBodyB\ =\ m\_tmpSolverBodyPool[sbB];}
+\DoxyCodeLine{00594\ }
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ deltaImpulse\ =\ m\_x[i]\ -\/\ c.m\_appliedImpulse;}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_appliedImpulse\ =\ m\_x[i];}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyA.internalApplyImpulse(c.m\_contactNormal1\ *\ solverBodyA.internalGetInvMass(),\ c.m\_angularComponentA,\ deltaImpulse);}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyB.internalApplyImpulse(c.m\_contactNormal2\ *\ solverBodyB.internalGetInvMass(),\ c.m\_angularComponentB,\ deltaImpulse);}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (infoGlobal.m\_splitImpulse)}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ deltaImpulse\ =\ m\_xSplit[i]\ -\/\ c.m\_appliedPushImpulse;}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyA.internalApplyPushImpulse(c.m\_contactNormal1\ *\ solverBodyA.internalGetInvMass(),\ c.m\_angularComponentA,\ deltaImpulse);}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solverBodyB.internalApplyPushImpulse(c.m\_contactNormal2\ *\ solverBodyB.internalGetInvMass(),\ c.m\_angularComponentB,\ deltaImpulse);}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c.m\_appliedPushImpulse\ =\ m\_xSplit[i];}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00611\ \ \ \ \ \}}
+\DoxyCodeLine{00612\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00613\ \ \ \ \ \{}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ printf("{}m\_fallback\ =\ \%d\(\backslash\)n"{},m\_fallback);}}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ m\_fallback++;}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ btSequentialImpulseConstraintSolver::solveGroupCacheFriendlyIterations(bodies,\ numBodies,\ manifoldPtr,\ numManifolds,\ constraints,\ numConstraints,\ infoGlobal,\ debugDrawer);}
+\DoxyCodeLine{00617\ \ \ \ \ \}}
+\DoxyCodeLine{00618\ }
+\DoxyCodeLine{00619\ \ \ \ \ \textcolor{keywordflow}{return}\ 0.f;}
+\DoxyCodeLine{00620\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,180 @@
+\doxysection{Body.\+hpp}
+\hypertarget{_body_8hpp_source}{}\label{_body_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Body.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación II/code/Headers/Body.hpp}}
+\mbox{\hyperlink{_body_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_world_8hpp}{World.hpp}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00014\ \textcolor{keyword}{using\ namespace\ }glt;}
+\DoxyCodeLine{00015\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00016\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{//\ Enum\ that\ indicates\ the\ physic\ interaction\ of\ the\ physicbody}}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4e}{ObjectType}}}
+\DoxyCodeLine{00019\ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4ea39b3feee90ed9230726a57406b7075a3}{staticObject}}\ =\ 0,}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4ea2937b730c3759afec73ea656590c7024}{dynamicObject}},}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4eaa702a8719e38feb3087ea4e5b3dac687}{kinematicObject}}}
+\DoxyCodeLine{00023\ \ \ \ \ \};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ Enum\ that\ indicates\ what\ the\ 3d\ rigidbody\ shape}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8}{Volume}}}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8a6b571cfe3e0e9ec491b0077ff90b919f}{Cube}}\ =\ 0,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8a1d68129fd8a5e1b855f8b825d80862ab}{Sphere}},}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8a7dcb16aee3b869c97ab57f27d5d07fcd}{none}},}
+\DoxyCodeLine{00031\ \ \ \ \ \};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_physic_body}{PhysicBody}}}
+\DoxyCodeLine{00035\ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Quaternion\ representation\ of\ the\ object\ rotation}}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ btQuaternion\ \mbox{\hyperlink{classmisi_1_1_physic_body_ac43bedfd0851b718578d4f1c3efdf284}{quaternion}};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Euler\ representation\ the\ object\ rotation}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{classmisi_1_1_physic_body_aaf958048ca51bd484078622c26eed26f}{rotation}};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Scalar\ representation\ of\ the\ object\ mass,\ used\ for\ physic\ calculations}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ btScalar\ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a49158366782c6b6035be977db601ec51}{mass}};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Inertia\ value}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{classmisi_1_1_physic_body_ab97c0aea780ed9df524c7aa0c11625ea}{localInertia}};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Amount\ of\ power\ loss\ when\ moving}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ btScalar\ \mbox{\hyperlink{classmisi_1_1_physic_body_a9a0fbae89a2c3ddb554c759269fe23ef}{restitution}};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pointer\ to\ the\ Node\ that\ draws\ in\ the\ viewport\ the\ assigned\ rigidbody\ model}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ shared\_ptr\ <Model>\ \mbox{\hyperlink{classmisi_1_1_physic_body_ac1e236dcdeaebc31e73531eabccbb68d}{mainModel}};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Unique\ string\ identifier\ used\ in\ the\ render\ node\ }}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{classmisi_1_1_physic_body_aa5404e59c3d4b1f98f5b19675858495f}{modelName}}\ =\ \textcolor{stringliteral}{"{}\ \ "{}};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Enum\ that\ indicates\ the\ physic\ interaction\ of\ the\ physicbody}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4e}{ObjectType}}\ \mbox{\hyperlink{classmisi_1_1_physic_body_aff08ee4296938cecbe1bb41efdc3ba68}{type}};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pointer\ to\ the\ physic\ rigid\ body\ object}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ btRigidBody*\ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reference\ to\ the\ model\ transform\ matrix}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ btTransform\ \mbox{\hyperlink{classmisi_1_1_physic_body_abbe1cf8c74dabeede643b91de6e93160}{transform}};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Model\ position\ on\ the\ 3d\ scene}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{classmisi_1_1_physic_body_a7d96a6d5725be742ad583c2193fe168d}{origin}};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Enum\ that\ indicates\ what\ the\ 3d\ rigidbody\ shape}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8}{Volume}}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ac642f00f52750367784b761e03312fb0}{volume}}\ =\ \mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8a7dcb16aee3b869c97ab57f27d5d07fcd}{none}};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Scale\ factor\ }}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{classmisi_1_1_physic_body_ad8ffdda377f50e5a1ebc38bef0cc73df}{scale}};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ List\ of\ all\ hinge\ connections\ the\ object\ has}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ vector<shared\_ptr<\ btHingeConstraint>>\ \mbox{\hyperlink{classmisi_1_1_physic_body_a04a948a4cf4f6aa79f18f02274e41486}{hindgeConection}};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a4612a5633851e9f67af0d560137d7d3d}{PhysicBody}}(btVector3\ given\_rotation,\ \textcolor{keywordtype}{float}\ given\_mass,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ given\_inertia,\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a9a0fbae89a2c3ddb554c759269fe23ef}{restitution}},\ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4e}{ObjectType}}\ given\_type,\ btVector3\ given\_origin);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a4021874eb2261c784b0aeaa479c7c4be}{setOrigin}}(btVector3\ \mbox{\hyperlink{classmisi_1_1_physic_body_a7d96a6d5725be742ad583c2193fe168d}{origin}})}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_abbe1cf8c74dabeede643b91de6e93160}{transform}}.setIdentity();}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_abbe1cf8c74dabeede643b91de6e93160}{transform}}.setOrigin(\mbox{\hyperlink{classmisi_1_1_physic_body_a7d96a6d5725be742ad583c2193fe168d}{origin}});}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a184e4d43e68037e96e439930f3bac973}{SetName}}(std::string\ given\_name)}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_aa5404e59c3d4b1f98f5b19675858495f}{modelName}}\ =\ given\_name;}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ac63522f480e0caea9e6c412442cd86c4}{GetName}}()}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_physic_body_aa5404e59c3d4b1f98f5b19675858495f}{modelName}};}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ shared\_ptr\ <Model>\ \mbox{\hyperlink{classmisi_1_1_physic_body_a66b75a1ac65460c2f205658240ba1197}{GetModel}}()}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ac1e236dcdeaebc31e73531eabccbb68d}{mainModel}};}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ btRigidBody*\ \mbox{\hyperlink{classmisi_1_1_physic_body_a4edc038deb7f525eb83e1062d30af5ec}{Getbody}}()}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}};}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8}{Volume}}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ab11b2b00ae72dfe50d29ce3151db71ab}{Getvolume}}()}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ac642f00f52750367784b761e03312fb0}{volume}};}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacemisi_a967b9f111f57612dd2b87c0dfcc5df4e}{ObjectType}}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ad506e7c52758cac709459d893670f8c1}{GetType}}()}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_physic_body_aff08ee4296938cecbe1bb41efdc3ba68}{type}};}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{classmisi_1_1_physic_body_af7faaa235980368e24fee2105d7b3176}{GetScale}}()}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ad8ffdda377f50e5a1ebc38bef0cc73df}{scale}};}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ vector<shared\_ptr<\ btHingeConstraint>>\ \mbox{\hyperlink{classmisi_1_1_physic_body_a3cba1113ecc357d86d9d0884807b2570}{GetHidges}}()}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a04a948a4cf4f6aa79f18f02274e41486}{hindgeConection}};}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a7c933c8e79c386c1960ee5f01ef047b6}{SetVelocity}}(btVector3\ velocity)}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}-\/>setLinearVelocity(velocity);}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ac6adcf3d1299d08f448939c76230fff0}{SetVolume}}(\mbox{\hyperlink{namespacemisi_a7af90bf9a98cd693865c0550f3db08f8}{Volume}}\ given\_volume)}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_ac642f00f52750367784b761e03312fb0}{volume}}\ =\ given\_volume;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a9306fe1d18fcefa39f87d09f786187c2}{LockRotation}}()}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}-\/>setAngularFactor(btVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a1cd432898bc49008135adcfbc62b7ae5}{UnLockRotation}}()}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}-\/>setAngularFactor(btVector3(1,\ 1,\ 1));}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a8ec8c504c717f96519b6460eb8d99836}{DisableGravity}}()}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}-\/>setGravity(btVector3(0,\ 0,\ 0));}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_ab8996dfc7b39638bdef1366d658ed6a8}{DisableModel}}()}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}-\/>setActivationState(DISABLE\_SIMULATION);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}-\/>setCollisionFlags(\mbox{\hyperlink{classmisi_1_1_physic_body_a8cae9b7d09c51c067ee0c90f9983095b}{body}}-\/>getCollisionFlags()\ |\ btCollisionObject::CF\_NO\_CONTACT\_RESPONSE);}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a604106154db6ef7495d1174bd8d4ecbc}{AddhidgeConection}}(shared\_ptr<\ PhysicBody>\ target,\ btVector3\ hidge\_origin,\ btVector3\ localAorigin,\ btVector3\ localBorigin);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a9160462002ad1b887f0466c3349be566}{ApplyMotorForce}}(\textcolor{keywordtype}{float}\ velocity,\ \textcolor{keywordtype}{float}\ force)}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ hindge\ :\ \mbox{\hyperlink{classmisi_1_1_physic_body_a04a948a4cf4f6aa79f18f02274e41486}{hindgeConection}})}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hindge-\/>enableAngularMotor(\textcolor{keyword}{true},\ velocity,\ force);\ \textcolor{comment}{//\ Enable\ motor\ with\ target\ velocity\ of\ 1.0\ rad/sec\ and\ max\ impulse\ of\ 10.0}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a8090a883104ce088b8c9307a3463dc4e}{HandleColision}}(btCollisionObject*\ object\_a,\ btCollisionObject*\ object\_b)\ \{\ \};}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a9fb847a24d184d9ea44c2279a940493c}{ModelAction}}()\ \{\ \};}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classmisi_1_1_physic_body_a556b61269ff55b701f1fc9f91b922c13}{\string~PhysicBody}}()\ \{\}}
+\DoxyCodeLine{00224\ \ \ \ \ \};}
+\DoxyCodeLine{00225\ \}}
+
+\end{DoxyCode}

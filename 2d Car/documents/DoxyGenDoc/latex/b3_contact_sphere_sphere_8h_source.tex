@@ -1,0 +1,159 @@
+\doxysection{b3\+Contact\+Sphere\+Sphere.\+h}
+\hypertarget{b3_contact_sphere_sphere_8h_source}{}\label{b3_contact_sphere_sphere_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3ContactSphereSphere.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Collision/NarrowPhaseCollision/shared/b3ContactSphereSphere.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ B3\_CONTACT\_SPHERE\_SPHERE\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ B3\_CONTACT\_SPHERE\_SPHERE\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{keywordtype}{void}\ computeContactSphereConvex(\textcolor{keywordtype}{int}\ pairIndex,}
+\DoxyCodeLine{00006\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bodyIndexA,\ \textcolor{keywordtype}{int}\ bodyIndexB,}
+\DoxyCodeLine{00007\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ collidableIndexA,\ \textcolor{keywordtype}{int}\ collidableIndexB,}
+\DoxyCodeLine{00008\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ rigidBodies,}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_collidable}{b3Collidable}}*\ collidables,}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_convex_polyhedron_data}{b3ConvexPolyhedronData}}*\ convexShapes,}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ b3Vector3*\ convexVertices,}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*\ convexIndices,}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_gpu_face}{b3GpuFace}}*\ faces,}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Contact4*\ globalContactsOut,}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\&\ nGlobalContactsOut,}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ maxContactCapacity)}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{float}\ radius\ =\ collidables[collidableIndexA].m\_radius;}
+\DoxyCodeLine{00019\ \ \ \ \ float4\ spherePos1\ =\ rigidBodies[bodyIndexA].m\_pos;}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{classb3_quaternion}{b3Quaternion}}\ sphereOrn\ =\ rigidBodies[bodyIndexA].m\_quat;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ float4\ pos\ =\ rigidBodies[bodyIndexB].m\_pos;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{classb3_quaternion}{b3Quaternion}}\ \mbox{\hyperlink{group__ext__quaternion__float_gac1f6a5957091b849730ea6f05a6b7ad6}{quat}}\ =\ rigidBodies[bodyIndexB].m\_quat;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ b3Transform\ tr;}
+\DoxyCodeLine{00027\ \ \ \ \ tr.setIdentity();}
+\DoxyCodeLine{00028\ \ \ \ \ tr.setOrigin(pos);}
+\DoxyCodeLine{00029\ \ \ \ \ tr.setRotation(quat);}
+\DoxyCodeLine{00030\ \ \ \ \ b3Transform\ trInv\ =\ tr.inverse();}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ float4\ spherePos\ =\ trInv(spherePos1);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ collidableIndex\ =\ rigidBodies[bodyIndexB].m\_collidableIdx;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{int}\ shapeIndex\ =\ collidables[collidableIndex].m\_shapeIndex;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ numFaces\ =\ convexShapes[shapeIndex].m\_numFaces;}
+\DoxyCodeLine{00037\ \ \ \ \ float4\ closestPnt\ =\ b3MakeVector3(0,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00038\ \ \ \ \ float4\ hitNormalWorld\ =\ b3MakeVector3(0,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{float}\ minDist\ =\ -\/1000000.f;\ \ \textcolor{comment}{//\ TODO:\ What\ is\ the\ largest/smallest\ float?}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{bool}\ bCollide\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{int}\ region\ =\ -\/1;}
+\DoxyCodeLine{00042\ \ \ \ \ float4\ localHitNormal;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ f\ =\ 0;\ f\ <\ numFaces;\ f++)}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb3_gpu_face}{b3GpuFace}}\ face\ =\ faces[convexShapes[shapeIndex].m\_faceOffset\ +\ f];}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ float4\ planeEqn;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ float4\ localPlaneNormal\ =\ b3MakeVector3(face.m\_plane.x,\ face.m\_plane.y,\ face.m\_plane.z,\ 0.f);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ float4\ n1\ =\ localPlaneNormal;\ \ \textcolor{comment}{//quatRotate(quat,localPlaneNormal);}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ planeEqn\ =\ n1;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ planeEqn[3]\ =\ face.m\_plane.w;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ float4\ pntReturn;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ dist\ =\ signedDistanceFromPointToPlane(spherePos,\ planeEqn,\ \&pntReturn);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ >\ radius)}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ bCollide\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ >\ 0)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//might\ hit\ an\ edge\ or\ vertex}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ b3Vector3\ out;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isInPoly\ =\ IsPointInPolygon(spherePos,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&face,}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&convexVertices[convexShapes[shapeIndex].m\_vertexOffset],}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ convexIndices,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&out);}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isInPoly)}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ >\ minDist)}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minDist\ =\ dist;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ closestPnt\ =\ pntReturn;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ localHitNormal\ =\ planeEqn;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ region\ =\ 1;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Vector3\ tmp\ =\ spherePos\ -\/\ out;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Scalar\ l2\ =\ tmp.length2();}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l2\ <\ radius\ *\ radius)}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dist\ =\ b3Sqrt(l2);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ >\ minDist)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minDist\ =\ dist;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ closestPnt\ =\ out;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ localHitNormal\ =\ tmp\ /\ dist;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ region\ =\ 2;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bCollide\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ >\ minDist)}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minDist\ =\ dist;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ closestPnt\ =\ pntReturn;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ localHitNormal\ =\ planeEqn;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ region\ =\ 3;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ numChecks\ =\ 0;}
+\DoxyCodeLine{00115\ \ \ \ \ numChecks++;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{if}\ (bCollide\ \&\&\ minDist\ >\ -\/10000)}
+\DoxyCodeLine{00118\ \ \ \ \ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ float4\ normalOnSurfaceB1\ =\ tr.getBasis()\ *\ localHitNormal;\ \ \textcolor{comment}{//-\/hitNormalWorld;}}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ float4\ pOnB1\ =\ tr(closestPnt);}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}dist\ ,\%f,"{},minDist);}}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ actualDepth\ =\ minDist\ -\/\ radius;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (actualDepth\ <\ 0)}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}actualDepth\ =\ ,\%f,"{},\ actualDepth);}}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}normalOnSurfaceB1\ =\ ,\%f,\%f,\%f,"{},\ normalOnSurfaceB1.x,normalOnSurfaceB1.y,normalOnSurfaceB1.z);}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}region=,\%d,\(\backslash\)n"{},\ region);}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ pOnB1[3]\ =\ actualDepth;}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dstIdx;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ dstIdx\ =\ nGlobalContactsOut++;//AppendInc(\ nGlobalContactsOut,\ dstIdx\ );}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (nGlobalContactsOut\ <\ maxContactCapacity)}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dstIdx\ =\ nGlobalContactsOut;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nGlobalContactsOut++;}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b3Contact4*\ c\ =\ \&globalContactsOut[dstIdx];}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldNormalOnB\ =\ normalOnSurfaceB1;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>setFrictionCoeff(0.7);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>setRestituitionCoeff(0.f);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_batchIdx\ =\ pairIndex;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_bodyAPtrAndSignBit\ =\ rigidBodies[bodyIndexA].m\_invMass\ ==\ 0\ ?\ -\/bodyIndexA\ :\ bodyIndexA;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_bodyBPtrAndSignBit\ =\ rigidBodies[bodyIndexB].m\_invMass\ ==\ 0\ ?\ -\/bodyIndexB\ :\ bodyIndexB;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldPosB[0]\ =\ pOnB1;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numPoints\ =\ 1;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>m\_worldNormalOnB.w\ =\ (b3Scalar)numPoints;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//if\ (dstIdx\ <\ numPairs)}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00151\ \ \ \ \ \}\ \ \textcolor{comment}{//if\ (hasCollision)}}
+\DoxyCodeLine{00152\ \}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_CONTACT\_SPHERE\_SPHERE\_H}}
+
+\end{DoxyCode}

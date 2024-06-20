@@ -1,0 +1,42 @@
+\doxysection{polar\+\_\+coordinates.\+inl}
+\hypertarget{libraries_2opengl-toolkit_2headers_2glm_2gtx_2polar__coordinates_8inl_source}{}\label{libraries_2opengl-toolkit_2headers_2glm_2gtx_2polar__coordinates_8inl_source}\index{libraries/opengl-\/toolkit/headers/glm/gtx/polar\_coordinates.inl@{libraries/opengl-\/toolkit/headers/glm/gtx/polar\_coordinates.inl}}
+\mbox{\hyperlink{libraries_2opengl-toolkit_2headers_2glm_2gtx_2polar__coordinates_8inl}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceglm}{glm}}}
+\DoxyCodeLine{00005\ \{}
+\DoxyCodeLine{00006\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00007\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \mbox{\hyperlink{group__gtx__polar__coordinates_gaba267270e686615d598de0ffda7bd484}{polar}}}
+\DoxyCodeLine{00008\ \ \ \ \ (}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{group__gtx__polar__coordinates_gabce39068644e280c949d18cfec3fcc12}{euclidean}}}
+\DoxyCodeLine{00010\ \ \ \ \ )}
+\DoxyCodeLine{00011\ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ Length(\mbox{\hyperlink{glad_8h_ab9c919755bde3b34349e23a32b4e0fa7}{length}}(\mbox{\hyperlink{group__gtx__polar__coordinates_gabce39068644e280c949d18cfec3fcc12}{euclidean}}));}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \textcolor{keyword}{const}\ tmp(\mbox{\hyperlink{group__gtx__polar__coordinates_gabce39068644e280c949d18cfec3fcc12}{euclidean}}\ /\ Length);}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ xz\_dist(\mbox{\hyperlink{group__core__func__exponential_ga1f904e09827e939a56e4158f45ca8ede}{sqrt}}(tmp.\mbox{\hyperlink{structglm_1_1tvec3_a84f2c27604bd6ab7f256e3912fb8a79d}{x}}\ *\ tmp.\mbox{\hyperlink{structglm_1_1tvec3_a84f2c27604bd6ab7f256e3912fb8a79d}{x}}\ +\ tmp.\mbox{\hyperlink{structglm_1_1tvec3_aa105b56701c38430e9ac732d4f41925a}{z}}\ *\ tmp.\mbox{\hyperlink{structglm_1_1tvec3_aa105b56701c38430e9ac732d4f41925a}{z}}));}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}(}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__trigonometric_gad3628b879437a75d1941f965b2893db7}{asin}}(tmp.\mbox{\hyperlink{structglm_1_1tvec3_a3969b512749f01b1afd7d60f32f50c94}{y}}),\ \ \ \textcolor{comment}{//\ latitude}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ atan(tmp.\mbox{\hyperlink{structglm_1_1tvec3_a84f2c27604bd6ab7f256e3912fb8a79d}{x}},\ tmp.\mbox{\hyperlink{structglm_1_1tvec3_aa105b56701c38430e9ac732d4f41925a}{z}}),\ \ \ \ \ \ \ \textcolor{comment}{//\ longitude}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ xz\_dist);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ xz\ distance}}
+\DoxyCodeLine{00020\ \ \ \ \ \}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ precision\ P>}
+\DoxyCodeLine{00023\ \ \ \ \ \mbox{\hyperlink{code_2headers_2glm_2detail_2setup_8hpp_a33fdea6f91c5f834105f7415e2a64407}{GLM\_FUNC\_QUALIFIER}}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}\ \mbox{\hyperlink{group__gtx__polar__coordinates_gabce39068644e280c949d18cfec3fcc12}{euclidean}}}
+\DoxyCodeLine{00024\ \ \ \ \ (}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structglm_1_1tvec2}{tvec2<T,\ P>}}\ \textcolor{keyword}{const}\ \&\ \mbox{\hyperlink{group__gtx__polar__coordinates_gaba267270e686615d598de0ffda7bd484}{polar}}}
+\DoxyCodeLine{00026\ \ \ \ \ )}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ latitude(\mbox{\hyperlink{group__gtx__polar__coordinates_gaba267270e686615d598de0ffda7bd484}{polar}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_aa124b422bca85bd1e079c5880591d056}{x}});}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ T\ \textcolor{keyword}{const}\ longitude(\mbox{\hyperlink{group__gtx__polar__coordinates_gaba267270e686615d598de0ffda7bd484}{polar}}.\mbox{\hyperlink{structglm_1_1vec_3_013_00_01_t_00_01_q_01_4_a3ff0c9672e374f78b7403d0c04ddc329}{y}});}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structglm_1_1tvec3}{tvec3<T,\ P>}}(}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{cos}}(latitude)\ *\ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{sin}}(longitude),}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__trigonometric_ga3fcdcfa2d2ac38de9ba1885cd1c79414}{sin}}(latitude),}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{cos}}(latitude)\ *\ \mbox{\hyperlink{group__core__func__trigonometric_ga54745147add8b4fa05642f5c71f6833e}{cos}}(longitude));}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \}\textcolor{comment}{//namespace\ glm}}
+
+\end{DoxyCode}

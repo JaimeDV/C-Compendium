@@ -1,0 +1,111 @@
+\doxysection{Skeleton\+Bounds.\+h}
+\hypertarget{_skeleton_bounds_8h_source}{}\label{_skeleton_bounds_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/SkeletonBounds.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/spine-\/c/include/spine/SkeletonBounds.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/******************************************************************************}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Spine\ Runtimes\ Software\ License}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Version\ 2.3}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2013-\/2015,\ Esoteric\ Software}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ All\ rights\ reserved.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ You\ are\ granted\ a\ perpetual,\ non-\/exclusive,\ non-\/sublicensable\ and}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ non-\/transferable\ license\ to\ use,\ install,\ execute\ and\ perform\ the\ Spine}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Runtimes\ Software\ (the\ "{}Software"{})\ and\ derivative\ works\ solely\ for\ personal}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ or\ internal\ use.\ Without\ the\ written\ permission\ of\ Esoteric\ Software\ (see}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ Section\ 2\ of\ the\ Spine\ Software\ License\ Agreement),\ you\ may\ not\ (a)\ modify,}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ translate,\ adapt\ or\ otherwise\ create\ derivative\ works,\ improvements\ of\ the}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Software\ or\ develop\ new\ applications\ using\ the\ Software\ or\ (b)\ remove,}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ delete,\ alter\ or\ obscure\ any\ trademarks\ or\ any\ copyright,\ trademark,\ patent}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ or\ other\ intellectual\ property\ or\ proprietary\ rights\ notices\ on\ or\ in\ the}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ Software,\ including\ any\ copy\ thereof.\ Redistributions\ in\ binary\ or\ source}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ form\ must\ include\ this\ license\ and\ terms.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ ESOTERIC\ SOFTWARE\ "{}AS\ IS"{}\ AND\ ANY\ EXPRESS\ OR}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ MERCHANTABILITY\ AND\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ EVENT\ SHALL\ ESOTERIC\ SOFTWARE\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,\ DATA,\ OR\ PROFITS;}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY\ THEORY\ OF\ LIABILITY,}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT\ (INCLUDING\ NEGLIGENCE\ OR}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE\ OF\ THIS\ SOFTWARE,\ EVEN\ IF}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifndef\ SPINE\_SKELETONBOUNDS\_H\_}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ SPINE\_SKELETONBOUNDS\_H\_}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <spine/BoundingBoxAttachment.h>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <spine/Skeleton.h>}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_polygon}{spPolygon}}\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{float}*\ \textcolor{keyword}{const}\ vertices;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{int}\ count;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ capacity;}
+\DoxyCodeLine{00046\ \}\ \mbox{\hyperlink{structsp_polygon}{spPolygon}};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \mbox{\hyperlink{structsp_polygon}{spPolygon}}*\ spPolygon\_create\ (\textcolor{keywordtype}{int}\ capacity);}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ spPolygon\_dispose\ (\mbox{\hyperlink{structsp_polygon}{spPolygon}}*\ self);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}spPolygon\_containsPoint\ (\mbox{\hyperlink{structsp_polygon}{spPolygon}}*\ polygon,\ \textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y);}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}spPolygon\_intersectsSegment\ (\mbox{\hyperlink{structsp_polygon}{spPolygon}}*\ polygon,\ \textcolor{keywordtype}{float}\ x1,\ \textcolor{keywordtype}{float}\ y1,\ \textcolor{keywordtype}{float}\ x2,\ \textcolor{keywordtype}{float}\ y2);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00055\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_polygon}{spPolygon}}\ Polygon;}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ Polygon\_create(...)\ spPolygon\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ Polygon\_dispose(...)\ spPolygon\_dispose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ Polygon\_containsPoint(...)\ spPolygon\_containsPoint(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ Polygon\_intersectsSegment(...)\ spPolygon\_intersectsSegment(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{int}\ count;}
+\DoxyCodeLine{00066\ \ \ \ \ \mbox{\hyperlink{structsp_bounding_box_attachment}{spBoundingBoxAttachment}}**\ boundingBoxes;}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{structsp_polygon}{spPolygon}}**\ polygons;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{float}\ minX,\ minY,\ maxX,\ maxY;}
+\DoxyCodeLine{00070\ \}\ \mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ spSkeletonBounds\_create\ ();}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{void}\ spSkeletonBounds\_dispose\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ spSkeletonBounds\_update\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self,\ \mbox{\hyperlink{structsp_skeleton}{spSkeleton}}*\ skeleton,\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}updateAabb);}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}spSkeletonBounds\_aabbContainsPoint\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self,\ \textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}spSkeletonBounds\_aabbIntersectsSegment\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self,\ \textcolor{keywordtype}{float}\ x1,\ \textcolor{keywordtype}{float}\ y1,\ \textcolor{keywordtype}{float}\ x2,\ \textcolor{keywordtype}{float}\ y2);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{int}\textcolor{comment}{/*bool*/}spSkeletonBounds\_aabbIntersectsSkeleton\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self,\ \mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ bounds);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00087\ \mbox{\hyperlink{structsp_bounding_box_attachment}{spBoundingBoxAttachment}}*\ spSkeletonBounds\_containsPoint\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self,\ \textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00091\ \mbox{\hyperlink{structsp_bounding_box_attachment}{spBoundingBoxAttachment}}*\ spSkeletonBounds\_intersectsSegment\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self,\ \textcolor{keywordtype}{float}\ x1,\ \textcolor{keywordtype}{float}\ y1,\ \textcolor{keywordtype}{float}\ x2,\ \textcolor{keywordtype}{float}\ y2);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00094\ \mbox{\hyperlink{structsp_polygon}{spPolygon}}*\ spSkeletonBounds\_getPolygon\ (\mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}*\ self,\ \mbox{\hyperlink{structsp_bounding_box_attachment}{spBoundingBoxAttachment}}*\ boundingBox);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#ifdef\ SPINE\_SHORT\_NAMES}}
+\DoxyCodeLine{00097\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structsp_skeleton_bounds}{spSkeletonBounds}}\ SkeletonBounds;}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_create(...)\ spSkeletonBounds\_create(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_dispose(...)\ spSkeletonBounds\_dispose(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_update(...)\ spSkeletonBounds\_update(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_aabbContainsPoint(...)\ spSkeletonBounds\_aabbContainsPoint(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_aabbIntersectsSegment(...)\ spSkeletonBounds\_aabbIntersectsSegment(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_aabbIntersectsSkeleton(...)\ spSkeletonBounds\_aabbIntersectsSkeleton(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_containsPoint(...)\ spSkeletonBounds\_containsPoint(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_intersectsSegment(...)\ spSkeletonBounds\_intersectsSegment(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#define\ SkeletonBounds\_getPolygon(...)\ spSkeletonBounds\_getPolygon(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00110\ \}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ SPINE\_SKELETONBOUNDS\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

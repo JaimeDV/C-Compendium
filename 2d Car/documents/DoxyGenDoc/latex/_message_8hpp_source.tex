@@ -1,0 +1,64 @@
+\doxysection{Message.\+hpp}
+\hypertarget{_message_8hpp_source}{}\label{_message_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/code/Headers/Message.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/code/Headers/Message.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <list>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <variant>}}
+\DoxyCodeLine{00012\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{class\ }Scene;}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{using\ }parameter\ =\ float;\ \textcolor{comment}{//removed\ variant\ due\ o\ byte\ incompatibility\ when\ upgrading\ to\ c++17}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmisi_1_1_message}{Message}}}
+\DoxyCodeLine{00019\ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ std::string\ id;\ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ std::map<std::string,\ parameter>\ parameters;}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ std::map<std::string,\ std::pair<parameter,\ parameter>>\ double\_parameters;}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structmisi_1_1_message}{Message}}(std::string\ \textcolor{keywordtype}{id},\ std::map<std::string,\ parameter>\ parameters);}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structmisi_1_1_message}{Message}}(std::string\ \textcolor{keywordtype}{id},\ std::map<std::string,\ std::pair<parameter,\ parameter>>\ double\_parameters);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_id(std::string\ given\_id)}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{id}\ =\ given\_id;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_params(std::map<std::string,\ parameter>\ given\_param)}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ parameters\ =\ given\_param;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_params(std::map<std::string,\ std::pair<parameter,\ parameter>>\ given\_param)}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ double\_parameters\ =\ given\_param;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}}\textcolor{comment}{//tienen\ que\ hereralo\ }}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_message___listener_accd44eb6046f741d662f046782440a11}{handle}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ message)\ =\ 0;}
+\DoxyCodeLine{00046\ \ \ \ \ \};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ std::list<Message>\ messages;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ std::map<\ std::string,\ std::list<Message\_Listener*>>\ messageListeners;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ owner;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_message___dispacher}{Message\_Dispacher}}(\mbox{\hyperlink{classmisi_1_1_scene}{Scene}}*\ given\_owner);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ send(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmisi_1_1_message}{Message}}\&\ message)\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ messages.push\_back(message);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ add(\mbox{\hyperlink{classmisi_1_1_message___listener}{Message\_Listener}}\&\ listener,\ \textcolor{keyword}{const}\ std::string\&\ message\_id)\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ messageListeners[message\_id].push\_back(\&listener);}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmisi_1_1_message___dispacher_a279f9733b616a26fe1446fd4b0c24f53}{execute}}(\textcolor{keywordtype}{float}\ t);}
+\DoxyCodeLine{00068\ \ \ \ \ \};}
+\DoxyCodeLine{00069\ \}}
+
+\end{DoxyCode}

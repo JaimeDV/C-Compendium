@@ -1,0 +1,1573 @@
+\doxysection{bt\+Dbvt.\+h}
+\hypertarget{bt_dbvt_8h_source}{}\label{bt_dbvt_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btDbvt.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/BroadphaseCollision/btDbvt.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2007\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifndef\ BT\_DYNAMIC\_BOUNDING\_VOLUME\_TREE\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ BT\_DYNAMIC\_BOUNDING\_VOLUME\_TREE\_H}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAlignedObjectArray.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btVector3.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAabbUtil2.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ Compile\ time\ configuration}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ Implementation\ profiles}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ DBVT\_IMPL\_GENERIC\ 0\ \ }\textcolor{comment}{//\ Generic\ implementation}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ DBVT\_IMPL\_SSE\ 1\ \ \ \ \ \ }\textcolor{comment}{//\ SSE}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ Template\ implementation\ of\ ICollide}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#if\ (defined(\_MSC\_VER)\ \&\&\ \_MSC\_VER\ >=\ 1400)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ DBVT\_USE\_TEMPLATE\ 1}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ DBVT\_USE\_TEMPLATE\ 0}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ DBVT\_USE\_TEMPLATE\ 0}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ Use\ only\ intrinsics\ instead\ of\ inline\ asm}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ DBVT\_USE\_INTRINSIC\_SSE\ 1}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//\ Using\ memmov\ for\ collideOCL}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ DBVT\_USE\_MEMMOVE\ 1}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{//\ Enable\ benchmarking\ code}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ DBVT\_ENABLE\_BENCHMARK\ 0}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{//\ Inlining}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ DBVT\_INLINE\ SIMD\_FORCE\_INLINE}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{//\ Specific\ methods\ implementation}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{//SSE\ gives\ errors\ on\ a\ MSVC\ 7.1}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#if\ defined(BT\_USE\_SSE)\ \ }\textcolor{comment}{//\&\&\ defined\ (\_WIN32)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ DBVT\_SELECT\_IMPL\ DBVT\_IMPL\_SSE}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ DBVT\_MERGE\_IMPL\ DBVT\_IMPL\_SSE}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ DBVT\_INT0\_IMPL\ DBVT\_IMPL\_SSE}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ DBVT\_SELECT\_IMPL\ DBVT\_IMPL\_GENERIC}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ DBVT\_MERGE\_IMPL\ DBVT\_IMPL\_GENERIC}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ DBVT\_INT0\_IMPL\ DBVT\_IMPL\_GENERIC}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#if\ (DBVT\_SELECT\_IMPL\ ==\ DBVT\_IMPL\_SSE)\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ (DBVT\_MERGE\_IMPL\ ==\ DBVT\_IMPL\_SSE)\ ||\ \ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ (DBVT\_INT0\_IMPL\ ==\ DBVT\_IMPL\_SSE)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#include\ <emmintrin.h>}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{//}}
+\DoxyCodeLine{00075\ \textcolor{comment}{//\ Auto\ config\ and\ checks}}
+\DoxyCodeLine{00076\ \textcolor{comment}{//}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#if\ DBVT\_USE\_TEMPLATE}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#define\ DBVT\_VIRTUAL}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ DBVT\_VIRTUAL\_DTOR(a)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#define\ DBVT\_PREFIX\ template\ <typename\ T>}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#define\ DBVT\_IPOLICY\ T\&\ policy}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ DBVT\_CHECKTYPE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\ \ \ \ static\ const\ ICollide\&\ typechecker\ =\ *(T*)1;\ \(\backslash\)}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\ \ \ \ (void)typechecker;}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#define\ DBVT\_VIRTUAL\_DTOR(a)\ \(\backslash\)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\ \ \ \ virtual\ \string~a()\ \{\}}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#define\ DBVT\_VIRTUAL\ virtual}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#define\ DBVT\_PREFIX}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#define\ DBVT\_IPOLICY\ ICollide\&\ policy}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#define\ DBVT\_CHECKTYPE}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#if\ DBVT\_USE\_MEMMOVE}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#if\ !defined(\_\_CELLOS\_LV2\_\_)\ \&\&\ !defined(\_\_MWERKS\_\_)}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#include\ <memory.h>}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#ifndef\ DBVT\_USE\_TEMPLATE}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#error\ "{}DBVT\_USE\_TEMPLATE\ undefined"{}}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#ifndef\ DBVT\_USE\_MEMMOVE}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#error\ "{}DBVT\_USE\_MEMMOVE\ undefined"{}}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#ifndef\ DBVT\_ENABLE\_BENCHMARK}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#error\ "{}DBVT\_ENABLE\_BENCHMARK\ undefined"{}}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#ifndef\ DBVT\_SELECT\_IMPL}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#error\ "{}DBVT\_SELECT\_IMPL\ undefined"{}}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#ifndef\ DBVT\_MERGE\_IMPL}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#error\ "{}DBVT\_MERGE\_IMPL\ undefined"{}}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#ifndef\ DBVT\_INT0\_IMPL}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#error\ "{}DBVT\_INT0\_IMPL\ undefined"{}}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{//}}
+\DoxyCodeLine{00127\ \textcolor{comment}{//\ Defaults\ volumes}}
+\DoxyCodeLine{00128\ \textcolor{comment}{//}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{comment}{/*\ btDbvtAabbMm\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00131\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}}
+\DoxyCodeLine{00132\ \{}
+\DoxyCodeLine{00133\ \ \ \ \ DBVT\_INLINE\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}()\{\}}
+\DoxyCodeLine{00134\ \ \ \ \ DBVT\_INLINE\ btVector3\ Center()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ((mi\ +\ mx)\ /\ 2);\ \}}
+\DoxyCodeLine{00135\ \ \ \ \ DBVT\_INLINE\ btVector3\ Lengths()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (mx\ -\/\ mi);\ \}}
+\DoxyCodeLine{00136\ \ \ \ \ DBVT\_INLINE\ btVector3\ Extents()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ((mx\ -\/\ mi)\ /\ 2);\ \}}
+\DoxyCodeLine{00137\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{const}\ btVector3\&\ Mins()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (mi);\ \}}
+\DoxyCodeLine{00138\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{const}\ btVector3\&\ Maxs()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (mx);\ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ FromCE(\textcolor{keyword}{const}\ btVector3\&\ c,\ \textcolor{keyword}{const}\ btVector3\&\ e);}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ FromCR(\textcolor{keyword}{const}\ btVector3\&\ c,\ btScalar\ r);}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ FromMM(\textcolor{keyword}{const}\ btVector3\&\ mi,\ \textcolor{keyword}{const}\ btVector3\&\ mx);}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ FromPoints(\textcolor{keyword}{const}\ btVector3*\ pts,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ FromPoints(\textcolor{keyword}{const}\ btVector3**\ ppts,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00144\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{void}\ Expand(\textcolor{keyword}{const}\ btVector3\&\ e);}
+\DoxyCodeLine{00145\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{void}\ SignedExpand(\textcolor{keyword}{const}\ btVector3\&\ e);}
+\DoxyCodeLine{00146\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ Contain(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00147\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{int}\ Classify(\textcolor{keyword}{const}\ btVector3\&\ n,\ btScalar\ o,\ \textcolor{keywordtype}{int}\ s)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00148\ \ \ \ \ DBVT\_INLINE\ btScalar\ ProjectMinimum(\textcolor{keyword}{const}\ btVector3\&\ v,\ \textcolor{keywordtype}{unsigned}\ signs)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00149\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{friend}\ \textcolor{keywordtype}{bool}\ Intersect(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{friend}\ \textcolor{keywordtype}{bool}\ Intersect(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b);}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{friend}\ btScalar\ Proximity(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b);}
+\DoxyCodeLine{00157\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{friend}\ \textcolor{keywordtype}{int}\ Select(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ o,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b);}
+\DoxyCodeLine{00160\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{friend}\ \textcolor{keywordtype}{void}\ Merge(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b,}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ r);}
+\DoxyCodeLine{00163\ \ \ \ \ DBVT\_INLINE\ \textcolor{keyword}{friend}\ \textcolor{keywordtype}{bool}\ NotEqual(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ DBVT\_INLINE\ btVector3\&\ tMins()\ \{\ \textcolor{keywordflow}{return}\ (mi);\ \}}
+\DoxyCodeLine{00167\ \ \ \ \ DBVT\_INLINE\ btVector3\&\ tMaxs()\ \{\ \textcolor{keywordflow}{return}\ (mx);\ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00170\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{void}\ AddSpan(\textcolor{keyword}{const}\ btVector3\&\ d,\ btScalar\&\ smi,\ btScalar\&\ smx)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00173\ \ \ \ \ btVector3\ mi,\ mx;}
+\DoxyCodeLine{00174\ \};}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \textcolor{comment}{//\ Types}}
+\DoxyCodeLine{00177\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}};}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{comment}{/*\ btDbvtNode\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00180\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}}
+\DoxyCodeLine{00181\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\ volume;}
+\DoxyCodeLine{00183\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ parent;}
+\DoxyCodeLine{00184\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ isleaf()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (childs[1]\ ==\ 0);\ \}}
+\DoxyCodeLine{00185\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ isinternal()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (!isleaf());\ \}}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ childs[2];}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ data;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dataAsInt;}
+\DoxyCodeLine{00190\ \ \ \ \ \};}
+\DoxyCodeLine{00191\ \};}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{comment}{/*\ btDbv(normal)tNode\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00194\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}}
+\DoxyCodeLine{00195\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\ volume;}
+\DoxyCodeLine{00197\ \ \ \ \ btVector3\ normal;}
+\DoxyCodeLine{00198\ \ \ \ \ btScalar\ angle;}
+\DoxyCodeLine{00199\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ isleaf()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (childs[1]\ ==\ 0);\ \}}
+\DoxyCodeLine{00200\ \ \ \ \ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ isinternal()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (!isleaf());\ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ childs[2];}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{void}*\ data;}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n)}
+\DoxyCodeLine{00205\ \ \ \ \ :\ volume(n-\/>volume)}
+\DoxyCodeLine{00206\ \ \ \ \ ,\ normal(0,0,0)}
+\DoxyCodeLine{00207\ \ \ \ \ ,\ angle(0)}
+\DoxyCodeLine{00208\ \ \ \ \ ,\ data(n-\/>data)}
+\DoxyCodeLine{00209\ \ \ \ \ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ childs[0]\ =\ 0;}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ childs[1]\ =\ 0;}
+\DoxyCodeLine{00212\ \ \ \ \ \}}
+\DoxyCodeLine{00213\ \ \ \ \ }
+\DoxyCodeLine{00214\ \ \ \ \ \mbox{\hyperlink{structbt_dbvnt_node}{\string~btDbvntNode}}()}
+\DoxyCodeLine{00215\ \ \ \ \ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (childs[0])}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ childs[0];}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (childs[1])}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ childs[1];}
+\DoxyCodeLine{00220\ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \};}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btDbvtNode*>}}\ \mbox{\hyperlink{classbt_aligned_object_array}{btNodeStack}};}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00228\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt}{btDbvt}}}
+\DoxyCodeLine{00229\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{comment}{/*\ Stack\ element\ \ \ \ */}}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_n}{sStkNN}}}
+\DoxyCodeLine{00232\ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ a;}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ b;}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_n}{sStkNN}}()\ \{\}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_n}{sStkNN}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ na,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ nb)\ :\ a(na),\ b(nb)\ \{\}}
+\DoxyCodeLine{00237\ \ \ \ \ \};}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_p}{sStkNP}}}
+\DoxyCodeLine{00239\ \ \ \ \ \{}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node;}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mask;}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_p}{sStkNP}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n,\ \textcolor{keywordtype}{unsigned}\ m)\ :\ node(n),\ mask(m)\ \{\}}
+\DoxyCodeLine{00243\ \ \ \ \ \};}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_p_s}{sStkNPS}}}
+\DoxyCodeLine{00245\ \ \ \ \ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node;}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mask;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ btScalar\ value;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_p_s}{sStkNPS}}()\ \{\}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_p_s}{sStkNPS}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n,\ \textcolor{keywordtype}{unsigned}\ m,\ btScalar\ v)\ :\ node(n),\ mask(m),\ value(v)\ \{\}}
+\DoxyCodeLine{00251\ \ \ \ \ \};}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1s_stk_c_l_n}{sStkCLN}}}
+\DoxyCodeLine{00253\ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ parent;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stk_c_l_n}{sStkCLN}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n,\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ p)\ :\ node(n),\ parent(p)\ \{\}}
+\DoxyCodeLine{00257\ \ \ \ \ \};}
+\DoxyCodeLine{00258\ \ \ \ \ }
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1s_stkn_n_n}{sStknNN}}}
+\DoxyCodeLine{00260\ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ a;}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ b;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stkn_n_n}{sStknNN}}()\ \{\}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_1_1s_stkn_n_n}{sStknNN}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ na,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ nb)\ :\ a(na),\ b(nb)\ \{\}}
+\DoxyCodeLine{00265\ \ \ \ \ \};}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{comment}{//\ Policies/Interfaces}}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{comment}{/*\ ICollide\ */}}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{ICollide}}}
+\DoxyCodeLine{00270\ \ \ \ \ \{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ DBVT\_VIRTUAL\_DTOR(\mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{ICollide}})}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ DBVT\_VIRTUAL\ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*)\ \{\}}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ DBVT\_VIRTUAL\ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*)\ \{\}}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ DBVT\_VIRTUAL\ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n,\ btScalar)\ \{\ Process(n);\ \}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ DBVT\_VIRTUAL\ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*)\ \{\}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ DBVT\_VIRTUAL\ \textcolor{keywordtype}{bool}\ Descent(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*)\ \{\ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{true});\ \}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ DBVT\_VIRTUAL\ \textcolor{keywordtype}{bool}\ AllLeaves(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*)\ \{\ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{true});\ \}}
+\DoxyCodeLine{00278\ \ \ \ \ \};}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{comment}{/*\ IWriter\ \ */}}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1_i_writer}{IWriter}}}
+\DoxyCodeLine{00281\ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_dbvt_1_1_i_writer}{\string~IWriter}}()\ \{\}}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ Prepare(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,\ \textcolor{keywordtype}{int}\ numnodes)\ =\ 0;}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteNode(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*,\ \textcolor{keywordtype}{int}\ index,\ \textcolor{keywordtype}{int}\ parent,\ \textcolor{keywordtype}{int}\ child0,\ \textcolor{keywordtype}{int}\ child1)\ =\ 0;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteLeaf(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*,\ \textcolor{keywordtype}{int}\ index,\ \textcolor{keywordtype}{int}\ parent)\ =\ 0;}
+\DoxyCodeLine{00286\ \ \ \ \ \};}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{comment}{/*\ IClone\ \ \ */}}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_dbvt_1_1_i_clone}{IClone}}}
+\DoxyCodeLine{00289\ \ \ \ \ \{}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structbt_dbvt_1_1_i_clone}{\string~IClone}}()\ \{\}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ CloneLeaf(\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*)\ \{\}}
+\DoxyCodeLine{00292\ \ \ \ \ \};}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{comment}{//\ Constants}}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00296\ \ \ \ \ \{}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ SIMPLE\_STACKSIZE\ =\ 64,}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ DOUBLE\_STACKSIZE\ =\ SIMPLE\_STACKSIZE\ *\ 2}
+\DoxyCodeLine{00299\ \ \ \ \ \};}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{comment}{//\ Fields}}
+\DoxyCodeLine{00302\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ m\_root;}
+\DoxyCodeLine{00303\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ m\_free;}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_lkhd;}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_leaves;}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ m\_opath;}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStkNN>}}\ m\_stkStack;}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{comment}{//\ Methods}}
+\DoxyCodeLine{00311\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}();}
+\DoxyCodeLine{00312\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt}{\string~btDbvt}}();}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordtype}{void}\ clear();}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{bool}\ empty()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (0\ ==\ m\_root);\ \}}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordtype}{void}\ optimizeBottomUp();}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordtype}{void}\ optimizeTopDown(\textcolor{keywordtype}{int}\ bu\_treshold\ =\ 128);}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordtype}{void}\ optimizeIncremental(\textcolor{keywordtype}{int}\ passes);}
+\DoxyCodeLine{00318\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ insert(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ box,\ \textcolor{keywordtype}{void}*\ data);}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordtype}{void}\ update(\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf,\ \textcolor{keywordtype}{int}\ lookahead\ =\ -\/1);}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordtype}{void}\ update(\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf,\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ volume);}
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keywordtype}{bool}\ update(\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf,\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ volume,\ \textcolor{keyword}{const}\ btVector3\&\ velocity,\ btScalar\ margin);}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keywordtype}{bool}\ update(\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf,\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ volume,\ \textcolor{keyword}{const}\ btVector3\&\ velocity);}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordtype}{bool}\ update(\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf,\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ volume,\ btScalar\ margin);}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordtype}{void}\ remove(\mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf);}
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keywordtype}{void}\ write(IWriter*\ iwriter)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordtype}{void}\ clone(\mbox{\hyperlink{structbt_dbvt}{btDbvt}}\&\ dest,\ IClone*\ iclone\ =\ 0)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ maxdepth(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node);}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ countLeaves(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node);}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ extractLeaves(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node,\ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btDbvtNode*>}}\&\ leaves);}
+\DoxyCodeLine{00330\ \textcolor{preprocessor}{\#if\ DBVT\_ENABLE\_BENCHMARK}}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ benchmark();}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ benchmark()}
+\DoxyCodeLine{00334\ \ \ \ \ \{}
+\DoxyCodeLine{00335\ \ \ \ \ \}}
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{comment}{//\ DBVT\_IPOLICY\ must\ support\ ICollide\ policy/interface}}
+\DoxyCodeLine{00338\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ enumNodes(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00341\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00342\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ enumLeaves(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00344\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordtype}{void}\ collideTT(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00348\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keywordtype}{void}\ selfCollideT(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ root,}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00351\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00352\ \ \ \ \ \textcolor{keywordtype}{void}\ selfCollideTT(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keywordtype}{void}\ collideTTpersistentStack(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00359\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00360\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ collideTT(\ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ xform,}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00365\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ collideTT(\ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ xform0,}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ xform1,}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00371\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00374\ \ \ \ \ \textcolor{keywordtype}{void}\ collideTV(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ volume,}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordtype}{void}\ collideTVNoStackAlloc(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ volume,}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btNodeStack}}\&\ stack,}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00386\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00387\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_dbvt_a8e316ee3bc9bd7b7354086c0c558cfb5}{rayTest}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayFrom,}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayTo,}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00393\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_dbvt_a8ee6db9249b6c10208826d7c0f804b05}{rayTestInternal}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayFrom,}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayTo,}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayDirectionInverse,}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ signs[3],}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ lambda\_max,}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btDbvtNode*>}}\&\ stack,}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ collideKDOP(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ normals,}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ offsets,}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ count,}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00411\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ collideOCL(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ normals,}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ offsets,}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ sortaxis,}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ count,}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY,}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ fullsort\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00419\ \ \ \ \ DBVT\_PREFIX}
+\DoxyCodeLine{00420\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ collideTU(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY);}
+\DoxyCodeLine{00422\ \ \ \ \ \textcolor{comment}{//\ Helpers}}
+\DoxyCodeLine{00423\ \ \ \ \ \textcolor{keyword}{static}\ DBVT\_INLINE\ \textcolor{keywordtype}{int}\ nearest(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*\ i,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_1_1s_stk_n_p_s}{btDbvt::sStkNPS}}*\ a,\ btScalar\ v,\ \textcolor{keywordtype}{int}\ l,\ \textcolor{keywordtype}{int}\ h)}
+\DoxyCodeLine{00424\ \ \ \ \ \{}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ m\ =\ 0;}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (l\ <\ h)}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ m\ =\ (l\ +\ h)\ >>\ 1;}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (a[i[m]].value\ >=\ v)}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l\ =\ m\ +\ 1;}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ h\ =\ m;}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (h);}
+\DoxyCodeLine{00435\ \ \ \ \ \}}
+\DoxyCodeLine{00436\ \ \ \ \ \textcolor{keyword}{static}\ DBVT\_INLINE\ \textcolor{keywordtype}{int}\ allocate(\mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\&\ ifree,}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStkNPS>}}\&\ stock,}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ sStkNPS\&\ value)}
+\DoxyCodeLine{00439\ \ \ \ \ \{}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ifree.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ >\ 0)}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ i\ =\ ifree[ifree.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1];}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ ifree.pop\_back();}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ stock[i]\ =\ value;}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ i\ =\ stock.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ stock.push\_back(value);}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (i);}
+\DoxyCodeLine{00453\ \ \ \ \ \}}
+\DoxyCodeLine{00454\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00455\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00456\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}\&)\ \{\}}
+\DoxyCodeLine{00457\ \};}
+\DoxyCodeLine{00458\ }
+\DoxyCodeLine{00459\ \textcolor{comment}{//}}
+\DoxyCodeLine{00460\ \textcolor{comment}{//\ Inline's}}
+\DoxyCodeLine{00461\ \textcolor{comment}{//}}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \textcolor{comment}{//}}
+\DoxyCodeLine{00464\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ btDbvtAabbMm::FromCE(\textcolor{keyword}{const}\ btVector3\&\ c,\ \textcolor{keyword}{const}\ btVector3\&\ e)}
+\DoxyCodeLine{00465\ \{}
+\DoxyCodeLine{00466\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ box;}
+\DoxyCodeLine{00467\ \ \ \ \ box.mi\ =\ c\ -\/\ \mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}};}
+\DoxyCodeLine{00468\ \ \ \ \ box.mx\ =\ c\ +\ \mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}};}
+\DoxyCodeLine{00469\ \ \ \ \ \textcolor{keywordflow}{return}\ (box);}
+\DoxyCodeLine{00470\ \}}
+\DoxyCodeLine{00471\ }
+\DoxyCodeLine{00472\ \textcolor{comment}{//}}
+\DoxyCodeLine{00473\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ btDbvtAabbMm::FromCR(\textcolor{keyword}{const}\ btVector3\&\ c,\ btScalar\ r)}
+\DoxyCodeLine{00474\ \{}
+\DoxyCodeLine{00475\ \ \ \ \ \textcolor{keywordflow}{return}\ (FromCE(c,\ btVector3(r,\ r,\ r)));}
+\DoxyCodeLine{00476\ \}}
+\DoxyCodeLine{00477\ }
+\DoxyCodeLine{00478\ \textcolor{comment}{//}}
+\DoxyCodeLine{00479\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ btDbvtAabbMm::FromMM(\textcolor{keyword}{const}\ btVector3\&\ mi,\ \textcolor{keyword}{const}\ btVector3\&\ mx)}
+\DoxyCodeLine{00480\ \{}
+\DoxyCodeLine{00481\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ box;}
+\DoxyCodeLine{00482\ \ \ \ \ box.mi\ =\ mi;}
+\DoxyCodeLine{00483\ \ \ \ \ box.mx\ =\ mx;}
+\DoxyCodeLine{00484\ \ \ \ \ \textcolor{keywordflow}{return}\ (box);}
+\DoxyCodeLine{00485\ \}}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00487\ \textcolor{comment}{//}}
+\DoxyCodeLine{00488\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ btDbvtAabbMm::FromPoints(\textcolor{keyword}{const}\ btVector3*\ pts,\ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00489\ \{}
+\DoxyCodeLine{00490\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ box;}
+\DoxyCodeLine{00491\ \ \ \ \ box.mi\ =\ box.mx\ =\ pts[0];}
+\DoxyCodeLine{00492\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 1;\ i\ <\ n;\ ++i)}
+\DoxyCodeLine{00493\ \ \ \ \ \{}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ box.mi.setMin(pts[i]);}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ box.mx.setMax(pts[i]);}
+\DoxyCodeLine{00496\ \ \ \ \ \}}
+\DoxyCodeLine{00497\ \ \ \ \ \textcolor{keywordflow}{return}\ (box);}
+\DoxyCodeLine{00498\ \}}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \textcolor{comment}{//}}
+\DoxyCodeLine{00501\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ btDbvtAabbMm::FromPoints(\textcolor{keyword}{const}\ btVector3**\ ppts,\ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00502\ \{}
+\DoxyCodeLine{00503\ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\ box;}
+\DoxyCodeLine{00504\ \ \ \ \ box.mi\ =\ box.mx\ =\ *ppts[0];}
+\DoxyCodeLine{00505\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 1;\ i\ <\ n;\ ++i)}
+\DoxyCodeLine{00506\ \ \ \ \ \{}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ box.mi.setMin(*ppts[i]);}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ box.mx.setMax(*ppts[i]);}
+\DoxyCodeLine{00509\ \ \ \ \ \}}
+\DoxyCodeLine{00510\ \ \ \ \ \textcolor{keywordflow}{return}\ (box);}
+\DoxyCodeLine{00511\ \}}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \textcolor{comment}{//}}
+\DoxyCodeLine{00514\ DBVT\_INLINE\ \textcolor{keywordtype}{void}\ btDbvtAabbMm::Expand(\textcolor{keyword}{const}\ btVector3\&\ e)}
+\DoxyCodeLine{00515\ \{}
+\DoxyCodeLine{00516\ \ \ \ \ mi\ -\/=\ \mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}};}
+\DoxyCodeLine{00517\ \ \ \ \ mx\ +=\ \mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}};}
+\DoxyCodeLine{00518\ \}}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \textcolor{comment}{//}}
+\DoxyCodeLine{00521\ DBVT\_INLINE\ \textcolor{keywordtype}{void}\ btDbvtAabbMm::SignedExpand(\textcolor{keyword}{const}\ btVector3\&\ e)}
+\DoxyCodeLine{00522\ \{}
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}}.x()\ >\ 0)}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ mx.setX(mx.x()\ +\ e[0]);}
+\DoxyCodeLine{00525\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ mi.setX(mi.x()\ +\ e[0]);}
+\DoxyCodeLine{00527\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}}.y()\ >\ 0)}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ mx.setY(mx.y()\ +\ e[1]);}
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ mi.setY(mi.y()\ +\ e[1]);}
+\DoxyCodeLine{00531\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__gtc__constants_ga4b7956eb6e2fbedfc7cf2e46e85c5139}{e}}.z()\ >\ 0)}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ mx.setZ(mx.z()\ +\ e[2]);}
+\DoxyCodeLine{00533\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ mi.setZ(mi.z()\ +\ e[2]);}
+\DoxyCodeLine{00535\ \}}
+\DoxyCodeLine{00536\ }
+\DoxyCodeLine{00537\ \textcolor{comment}{//}}
+\DoxyCodeLine{00538\ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ btDbvtAabbMm::Contain(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00539\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00540\ \ \ \ \ \textcolor{keywordflow}{return}\ ((mi.x()\ <=\ a.mi.x())\ \&\&}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ (mi.y()\ <=\ a.mi.y())\ \&\&}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ (mi.z()\ <=\ a.mi.z())\ \&\&}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ (mx.x()\ >=\ a.mx.x())\ \&\&}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ (mx.y()\ >=\ a.mx.y())\ \&\&}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ (mx.z()\ >=\ a.mx.z()));}
+\DoxyCodeLine{00546\ \}}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \textcolor{comment}{//}}
+\DoxyCodeLine{00549\ DBVT\_INLINE\ \textcolor{keywordtype}{int}\ btDbvtAabbMm::Classify(\textcolor{keyword}{const}\ btVector3\&\ n,\ btScalar\ o,\ \textcolor{keywordtype}{int}\ s)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00550\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00551\ \ \ \ \ btVector3\ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}},\ px;}
+\DoxyCodeLine{00552\ \ \ \ \ \textcolor{keywordflow}{switch}\ (s)}
+\DoxyCodeLine{00553\ \ \ \ \ \{}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (0\ +\ 0\ +\ 0):}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mi.x(),\ mi.y(),\ mi.z());}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mx.x(),\ mx.y(),\ mx.z());}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (1\ +\ 0\ +\ 0):}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mx.x(),\ mi.y(),\ mi.z());}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mi.x(),\ mx.y(),\ mx.z());}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (0\ +\ 2\ +\ 0):}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mi.x(),\ mx.y(),\ mi.z());}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mx.x(),\ mi.y(),\ mx.z());}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (1\ +\ 2\ +\ 0):}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mx.x(),\ mx.y(),\ mi.z());}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mi.x(),\ mi.y(),\ mx.z());}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (0\ +\ 0\ +\ 4):}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mi.x(),\ mi.y(),\ mx.z());}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mx.x(),\ mx.y(),\ mi.z());}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (1\ +\ 0\ +\ 4):}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mx.x(),\ mi.y(),\ mx.z());}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mi.x(),\ mx.y(),\ mi.z());}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (0\ +\ 2\ +\ 4):}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mi.x(),\ mx.y(),\ mx.z());}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mx.x(),\ mi.y(),\ mi.z());}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ (1\ +\ 2\ +\ 4):}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ px\ =\ btVector3(mx.x(),\ mx.y(),\ mx.z());}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__ext__scalar__constants_ga94bafeb2a0f23ab6450fed1f98ee4e45}{pi}}\ =\ btVector3(mi.x(),\ mi.y(),\ mi.z());}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00586\ \ \ \ \ \}}
+\DoxyCodeLine{00587\ \ \ \ \ \textcolor{keywordflow}{if}\ ((btDot(n,\ px)\ +\ o)\ <\ 0)\ \textcolor{keywordflow}{return}\ (-\/1);}
+\DoxyCodeLine{00588\ \ \ \ \ \textcolor{keywordflow}{if}\ ((btDot(n,\ pi)\ +\ o)\ >=\ 0)\ \textcolor{keywordflow}{return}\ (+1);}
+\DoxyCodeLine{00589\ \ \ \ \ \textcolor{keywordflow}{return}\ (0);}
+\DoxyCodeLine{00590\ \}}
+\DoxyCodeLine{00591\ }
+\DoxyCodeLine{00592\ \textcolor{comment}{//}}
+\DoxyCodeLine{00593\ DBVT\_INLINE\ btScalar\ btDbvtAabbMm::ProjectMinimum(\textcolor{keyword}{const}\ btVector3\&\ v,\ \textcolor{keywordtype}{unsigned}\ signs)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00594\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00595\ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ b[]\ =\ \{\&mx,\ \&mi\};}
+\DoxyCodeLine{00596\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ p(b[(signs\ >>\ 0)\ \&\ 1]-\/>x(),}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b[(signs\ >>\ 1)\ \&\ 1]-\/>y(),}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b[(signs\ >>\ 2)\ \&\ 1]-\/>z());}
+\DoxyCodeLine{00599\ \ \ \ \ \textcolor{keywordflow}{return}\ (btDot(p,\ v));}
+\DoxyCodeLine{00600\ \}}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00602\ \textcolor{comment}{//}}
+\DoxyCodeLine{00603\ DBVT\_INLINE\ \textcolor{keywordtype}{void}\ btDbvtAabbMm::AddSpan(\textcolor{keyword}{const}\ btVector3\&\ d,\ btScalar\&\ smi,\ btScalar\&\ smx)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00604\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00605\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00606\ \ \ \ \ \{}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d[i]\ <\ 0)}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ smi\ +=\ mx[i]\ *\ d[i];}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ smx\ +=\ mi[i]\ *\ d[i];}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ smi\ +=\ mi[i]\ *\ d[i];}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \ \ \ \ smx\ +=\ mx[i]\ *\ d[i];}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00617\ \ \ \ \ \}}
+\DoxyCodeLine{00618\ \}}
+\DoxyCodeLine{00619\ }
+\DoxyCodeLine{00620\ \textcolor{comment}{//}}
+\DoxyCodeLine{00621\ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ Intersect(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b)}
+\DoxyCodeLine{00623\ \{}
+\DoxyCodeLine{00624\ \textcolor{preprocessor}{\#if\ DBVT\_INT0\_IMPL\ ==\ DBVT\_IMPL\_SSE}}
+\DoxyCodeLine{00625\ \ \ \ \ \textcolor{keyword}{const}\ \_\_m128\ rt(\_mm\_or\_ps(\_mm\_cmplt\_ps(\_mm\_load\_ps(b.mx),\ \_mm\_load\_ps(a.mi)),}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_mm\_cmplt\_ps(\_mm\_load\_ps(a.mx),\ \_mm\_load\_ps(b.mi))));}
+\DoxyCodeLine{00627\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00628\ \ \ \ \ \textcolor{keyword}{const}\ \_\_int32*\ pu((\textcolor{keyword}{const}\ \_\_int32*)\&rt);}
+\DoxyCodeLine{00629\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00630\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*\ pu((\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*)\&rt);}
+\DoxyCodeLine{00631\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00632\ \ \ \ \ \textcolor{keywordflow}{return}\ ((pu[0]\ |\ pu[1]\ |\ pu[2])\ ==\ 0);}
+\DoxyCodeLine{00633\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00634\ \ \ \ \ \textcolor{keywordflow}{return}\ ((a.mi.x()\ <=\ b.mx.x())\ \&\&}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mx.x()\ >=\ b.mi.x())\ \&\&}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mi.y()\ <=\ b.mx.y())\ \&\&}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mx.y()\ >=\ b.mi.y())\ \&\&}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mi.z()\ <=\ b.mx.z())\ \&\&}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mx.z()\ >=\ b.mi.z()));}
+\DoxyCodeLine{00640\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00641\ \}}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \textcolor{comment}{//}}
+\DoxyCodeLine{00644\ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ Intersect(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b)}
+\DoxyCodeLine{00646\ \{}
+\DoxyCodeLine{00647\ \ \ \ \ \textcolor{keywordflow}{return}\ ((b.x()\ >=\ a.mi.x())\ \&\&}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \ \ \ \ (b.y()\ >=\ a.mi.y())\ \&\&}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ (b.z()\ >=\ a.mi.z())\ \&\&}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \ \ \ \ (b.x()\ <=\ a.mx.x())\ \&\&}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ (b.y()\ <=\ a.mx.y())\ \&\&}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \ \ \ \ (b.z()\ <=\ a.mx.z()));}
+\DoxyCodeLine{00653\ \}}
+\DoxyCodeLine{00654\ }
+\DoxyCodeLine{00656\ }
+\DoxyCodeLine{00657\ \textcolor{comment}{//}}
+\DoxyCodeLine{00658\ DBVT\_INLINE\ btScalar\ Proximity(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b)}
+\DoxyCodeLine{00660\ \{}
+\DoxyCodeLine{00661\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ d\ =\ (a.mi\ +\ a.mx)\ -\/\ (b.mi\ +\ b.mx);}
+\DoxyCodeLine{00662\ \ \ \ \ \textcolor{keywordflow}{return}\ (btFabs(d.x())\ +\ btFabs(d.y())\ +\ btFabs(d.z()));}
+\DoxyCodeLine{00663\ \}}
+\DoxyCodeLine{00664\ }
+\DoxyCodeLine{00665\ \textcolor{comment}{//}}
+\DoxyCodeLine{00666\ DBVT\_INLINE\ \textcolor{keywordtype}{int}\ Select(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ o,}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b)}
+\DoxyCodeLine{00669\ \{}
+\DoxyCodeLine{00670\ \textcolor{preprocessor}{\#if\ DBVT\_SELECT\_IMPL\ ==\ DBVT\_IMPL\_SSE}}
+\DoxyCodeLine{00671\ }
+\DoxyCodeLine{00672\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00673\ \ \ \ \ \textcolor{keyword}{static}\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \_\_int32)\ mask[]\ =\ \{0x7fffffff,\ 0x7fffffff,\ 0x7fffffff,\ 0x7fffffff\};}
+\DoxyCodeLine{00674\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00675\ \ \ \ \ \textcolor{keyword}{static}\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})\ mask[]\ =\ \{0x7fffffff,\ 0x7fffffff,\ 0x7fffffff,\ 0x00000000\ \textcolor{comment}{/*0x7fffffff*/}\};}
+\DoxyCodeLine{00676\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00678\ \textcolor{preprocessor}{\#if\ DBVT\_USE\_INTRINSIC\_SSE}}
+\DoxyCodeLine{00679\ }
+\DoxyCodeLine{00680\ \ \ \ \ \textcolor{keyword}{union\ }btSSEUnion\ \ }
+\DoxyCodeLine{00681\ \ \ \ \ \{}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \_\_m128\ ssereg;}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ floats[4];}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ints[4];}
+\DoxyCodeLine{00685\ \ \ \ \ \};}
+\DoxyCodeLine{00686\ }
+\DoxyCodeLine{00687\ \ \ \ \ \_\_m128\ omi(\_mm\_load\_ps(o.mi));}
+\DoxyCodeLine{00688\ \ \ \ \ omi\ =\ \_mm\_add\_ps(omi,\ \_mm\_load\_ps(o.mx));}
+\DoxyCodeLine{00689\ \ \ \ \ \_\_m128\ ami(\_mm\_load\_ps(a.mi));}
+\DoxyCodeLine{00690\ \ \ \ \ ami\ =\ \_mm\_add\_ps(ami,\ \_mm\_load\_ps(a.mx));}
+\DoxyCodeLine{00691\ \ \ \ \ ami\ =\ \_mm\_sub\_ps(ami,\ omi);}
+\DoxyCodeLine{00692\ \ \ \ \ ami\ =\ \_mm\_and\_ps(ami,\ \_mm\_load\_ps((\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*)mask));}
+\DoxyCodeLine{00693\ \ \ \ \ \_\_m128\ bmi(\_mm\_load\_ps(b.mi));}
+\DoxyCodeLine{00694\ \ \ \ \ bmi\ =\ \_mm\_add\_ps(bmi,\ \_mm\_load\_ps(b.mx));}
+\DoxyCodeLine{00695\ \ \ \ \ bmi\ =\ \_mm\_sub\_ps(bmi,\ omi);}
+\DoxyCodeLine{00696\ \ \ \ \ bmi\ =\ \_mm\_and\_ps(bmi,\ \_mm\_load\_ps((\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*)mask));}
+\DoxyCodeLine{00697\ \ \ \ \ \_\_m128\ t0(\_mm\_movehl\_ps(ami,\ ami));}
+\DoxyCodeLine{00698\ \ \ \ \ ami\ =\ \_mm\_add\_ps(ami,\ t0);}
+\DoxyCodeLine{00699\ \ \ \ \ ami\ =\ \_mm\_add\_ss(ami,\ \_mm\_shuffle\_ps(ami,\ ami,\ 1));}
+\DoxyCodeLine{00700\ \ \ \ \ \_\_m128\ t1(\_mm\_movehl\_ps(bmi,\ bmi));}
+\DoxyCodeLine{00701\ \ \ \ \ bmi\ =\ \_mm\_add\_ps(bmi,\ t1);}
+\DoxyCodeLine{00702\ \ \ \ \ bmi\ =\ \_mm\_add\_ss(bmi,\ \_mm\_shuffle\_ps(bmi,\ bmi,\ 1));}
+\DoxyCodeLine{00703\ }
+\DoxyCodeLine{00704\ \ \ \ \ btSSEUnion\ tmp;}
+\DoxyCodeLine{00705\ \ \ \ \ tmp.ssereg\ =\ \_mm\_cmple\_ss(bmi,\ ami);}
+\DoxyCodeLine{00706\ \ \ \ \ \textcolor{keywordflow}{return}\ tmp.ints[0]\ \&\ 1;}
+\DoxyCodeLine{00707\ }
+\DoxyCodeLine{00708\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00709\ \ \ \ \ ATTRIBUTE\_ALIGNED16(\_\_int32\ r[1]);}
+\DoxyCodeLine{00710\ \ \ \ \ \_\_asm}
+\DoxyCodeLine{00711\ \ \ \ \ \{}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ mov\ \ \ \ \ eax,o}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ mov\ \ \ \ \ ecx,a}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ mov\ \ \ \ \ edx,b}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ movaps\ \ xmm0,[eax]}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ movaps\ \ xmm5,mask}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \ \ \ \ addps\ \ \ xmm0,[eax+16]\ \ \ }
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ movaps\ \ xmm1,[ecx]}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ movaps\ \ xmm2,[edx]}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ addps\ \ \ xmm1,[ecx+16]}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ addps\ \ \ xmm2,[edx+16]}
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ subps\ \ \ xmm1,xmm0}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \ \ \ \ subps\ \ \ xmm2,xmm0}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ andps\ \ \ xmm1,xmm5}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \ \ \ \ andps\ \ \ xmm2,xmm5}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ movhlps\ xmm3,xmm1}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ \ \ movhlps\ xmm4,xmm2}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ addps\ \ \ xmm1,xmm3}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \ \ \ \ addps\ \ \ xmm2,xmm4}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \ \ \ \ pshufd\ \ xmm3,xmm1,1}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \ \ \ \ pshufd\ \ xmm4,xmm2,1}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \ \ \ \ addss\ \ \ xmm1,xmm3}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \ \ \ \ addss\ \ \ xmm2,xmm4}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \ \ \ \ cmpless\ xmm2,xmm1}
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \ \ \ \ movss\ \ \ r,xmm2}
+\DoxyCodeLine{00736\ \ \ \ \ \}}
+\DoxyCodeLine{00737\ \ \ \ \ \textcolor{keywordflow}{return}\ (r[0]\ \&\ 1);}
+\DoxyCodeLine{00738\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00739\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00740\ \ \ \ \ \textcolor{keywordflow}{return}\ (Proximity(o,\ a)\ <\ Proximity(o,\ b)\ ?\ 0\ :\ 1);}
+\DoxyCodeLine{00741\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00742\ \}}
+\DoxyCodeLine{00743\ }
+\DoxyCodeLine{00744\ \textcolor{comment}{//}}
+\DoxyCodeLine{00745\ DBVT\_INLINE\ \textcolor{keywordtype}{void}\ Merge(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b,}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ r)}
+\DoxyCodeLine{00748\ \{}
+\DoxyCodeLine{00749\ \textcolor{preprocessor}{\#if\ DBVT\_MERGE\_IMPL\ ==\ DBVT\_IMPL\_SSE}}
+\DoxyCodeLine{00750\ \ \ \ \ \_\_m128\ ami(\_mm\_load\_ps(a.mi));}
+\DoxyCodeLine{00751\ \ \ \ \ \_\_m128\ amx(\_mm\_load\_ps(a.mx));}
+\DoxyCodeLine{00752\ \ \ \ \ \_\_m128\ bmi(\_mm\_load\_ps(b.mi));}
+\DoxyCodeLine{00753\ \ \ \ \ \_\_m128\ bmx(\_mm\_load\_ps(b.mx));}
+\DoxyCodeLine{00754\ \ \ \ \ ami\ =\ \_mm\_min\_ps(ami,\ bmi);}
+\DoxyCodeLine{00755\ \ \ \ \ amx\ =\ \_mm\_max\_ps(amx,\ bmx);}
+\DoxyCodeLine{00756\ \ \ \ \ \_mm\_store\_ps(r.mi,\ ami);}
+\DoxyCodeLine{00757\ \ \ \ \ \_mm\_store\_ps(r.mx,\ amx);}
+\DoxyCodeLine{00758\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00759\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 3;\ ++i)}
+\DoxyCodeLine{00760\ \ \ \ \ \{}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (a.mi[i]\ <\ b.mi[i])}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ r.mi[i]\ =\ a.mi[i];}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ r.mi[i]\ =\ b.mi[i];}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (a.mx[i]\ >\ b.mx[i])}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ r.mx[i]\ =\ a.mx[i];}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ r.mx[i]\ =\ b.mx[i];}
+\DoxyCodeLine{00769\ \ \ \ \ \}}
+\DoxyCodeLine{00770\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00771\ \}}
+\DoxyCodeLine{00772\ }
+\DoxyCodeLine{00773\ \textcolor{comment}{//}}
+\DoxyCodeLine{00774\ DBVT\_INLINE\ \textcolor{keywordtype}{bool}\ NotEqual(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ a,}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtAabbMm}}\&\ b)}
+\DoxyCodeLine{00776\ \{}
+\DoxyCodeLine{00777\ \ \ \ \ \textcolor{keywordflow}{return}\ ((a.mi.x()\ !=\ b.mi.x())\ ||}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mi.y()\ !=\ b.mi.y())\ ||}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mi.z()\ !=\ b.mi.z())\ ||}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mx.x()\ !=\ b.mx.x())\ ||}
+\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mx.y()\ !=\ b.mx.y())\ ||}
+\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ (a.mx.z()\ !=\ b.mx.z()));}
+\DoxyCodeLine{00783\ \}}
+\DoxyCodeLine{00784\ }
+\DoxyCodeLine{00785\ \textcolor{comment}{//}}
+\DoxyCodeLine{00786\ \textcolor{comment}{//\ Inline's}}
+\DoxyCodeLine{00787\ \textcolor{comment}{//}}
+\DoxyCodeLine{00788\ }
+\DoxyCodeLine{00789\ \textcolor{comment}{//}}
+\DoxyCodeLine{00790\ DBVT\_PREFIX}
+\DoxyCodeLine{00791\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::enumNodes(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{00793\ \{}
+\DoxyCodeLine{00794\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{00795\ \ \ \ \ policy.Process(root);}
+\DoxyCodeLine{00796\ \ \ \ \ \textcolor{keywordflow}{if}\ (root-\/>isinternal())}
+\DoxyCodeLine{00797\ \ \ \ \ \{}
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ enumNodes(root-\/>childs[0],\ policy);}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ enumNodes(root-\/>childs[1],\ policy);}
+\DoxyCodeLine{00800\ \ \ \ \ \}}
+\DoxyCodeLine{00801\ \}}
+\DoxyCodeLine{00802\ }
+\DoxyCodeLine{00803\ \textcolor{comment}{//}}
+\DoxyCodeLine{00804\ DBVT\_PREFIX}
+\DoxyCodeLine{00805\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::enumLeaves(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{00807\ \{}
+\DoxyCodeLine{00808\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{00809\ \ \ \ \ \textcolor{keywordflow}{if}\ (root-\/>isinternal())}
+\DoxyCodeLine{00810\ \ \ \ \ \{}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ enumLeaves(root-\/>childs[0],\ policy);}
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ enumLeaves(root-\/>childs[1],\ policy);}
+\DoxyCodeLine{00813\ \ \ \ \ \}}
+\DoxyCodeLine{00814\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00815\ \ \ \ \ \{}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ policy.Process(root);}
+\DoxyCodeLine{00817\ \ \ \ \ \}}
+\DoxyCodeLine{00818\ \}}
+\DoxyCodeLine{00819\ }
+\DoxyCodeLine{00820\ \textcolor{comment}{//}}
+\DoxyCodeLine{00821\ DBVT\_PREFIX}
+\DoxyCodeLine{00822\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::collideTT(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{00825\ \{}
+\DoxyCodeLine{00826\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{00827\ \ \ \ \ \textcolor{keywordflow}{if}\ (root0\ \&\&\ root1)}
+\DoxyCodeLine{00828\ \ \ \ \ \{}
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ depth\ =\ 1;}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ treshold\ =\ DOUBLE\_STACKSIZE\ -\/\ 4;}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStkNN>}}\ stkStack;}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ stkStack.resize(DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ stkStack[0]\ =\ sStkNN(root0,\ root1);}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ \ \ \ \ sStkNN\ p\ =\ stkStack[-\/-\/depth];}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ treshold)}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack.resize(stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ *\ 2);}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold\ =\ stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 4;}
+\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a\ ==\ p.b)}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal())}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.a-\/>childs[0]);}
+\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (Intersect(p.a-\/>volume,\ p.b-\/>volume))}
+\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal())}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00855\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00858\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00859\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00860\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00861\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00862\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00863\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b);}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b);}
+\DoxyCodeLine{00866\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00867\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00868\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00869\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00870\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{00871\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00872\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a,\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00873\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a,\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00875\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00876\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(p.a,\ p.b);}
+\DoxyCodeLine{00878\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00879\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00881\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (depth);}
+\DoxyCodeLine{00882\ \ \ \ \ \}}
+\DoxyCodeLine{00883\ \}}
+\DoxyCodeLine{00884\ }
+\DoxyCodeLine{00885\ \textcolor{comment}{//}}
+\DoxyCodeLine{00886\ DBVT\_PREFIX}
+\DoxyCodeLine{00887\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::selfCollideT(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvnt_node}{btDbvntNode}}*\ root,}
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{00889\ \{}
+\DoxyCodeLine{00890\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{00891\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{00892\ \ \ \ \ \{}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ depth\ =\ 1;}
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ treshold\ =\ DOUBLE\_STACKSIZE\ -\/\ 4;}
+\DoxyCodeLine{00895\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStknNN>}}\ stkStack;}
+\DoxyCodeLine{00896\ \ \ \ \ \ \ \ \ stkStack.resize(DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ stkStack[0]\ =\ sStknNN(root,\ root);}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00899\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ \ \ \ \ sStknNN\ p\ =\ stkStack[-\/-\/depth];}
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ treshold)}
+\DoxyCodeLine{00902\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack.resize(stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ *\ 2);}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold\ =\ stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 4;}
+\DoxyCodeLine{00905\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a\ ==\ p.b)}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal()\ \&\&\ p.a-\/>angle\ >\ SIMD\_PI)}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[0],\ p.a-\/>childs[0]);}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[1],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[0],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (Intersect(p.a-\/>volume,\ p.b-\/>volume))}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00917\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal())}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[0],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[1],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[0],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00924\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[1],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00926\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00927\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00928\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[0],\ p.b);}
+\DoxyCodeLine{00929\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a-\/>childs[1],\ p.b);}
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00931\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00933\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00934\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{00935\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00936\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a,\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00937\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStknNN(p.a,\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00938\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00939\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00940\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00941\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(p.a,\ p.b);}
+\DoxyCodeLine{00942\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00943\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00944\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00945\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (depth);}
+\DoxyCodeLine{00946\ \ \ \ \ \}}
+\DoxyCodeLine{00947\ \}}
+\DoxyCodeLine{00948\ }
+\DoxyCodeLine{00949\ \textcolor{comment}{//}}
+\DoxyCodeLine{00950\ DBVT\_PREFIX}
+\DoxyCodeLine{00951\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::selfCollideTT(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{00952\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{00953\ \{}
+\DoxyCodeLine{00954\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{00955\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{00956\ \ \ \ \ \{}
+\DoxyCodeLine{00957\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ depth\ =\ 1;}
+\DoxyCodeLine{00958\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ treshold\ =\ DOUBLE\_STACKSIZE\ -\/\ 4;}
+\DoxyCodeLine{00959\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStkNN>}}\ stkStack;}
+\DoxyCodeLine{00960\ \ \ \ \ \ \ \ \ stkStack.resize(DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{00961\ \ \ \ \ \ \ \ \ stkStack[0]\ =\ sStkNN(root,\ root);}
+\DoxyCodeLine{00962\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00963\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00964\ \ \ \ \ \ \ \ \ \ \ \ \ sStkNN\ p\ =\ stkStack[-\/-\/depth];}
+\DoxyCodeLine{00965\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ treshold)}
+\DoxyCodeLine{00966\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack.resize(stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ *\ 2);}
+\DoxyCodeLine{00968\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold\ =\ stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 4;}
+\DoxyCodeLine{00969\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00970\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a\ ==\ p.b)}
+\DoxyCodeLine{00971\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00972\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal())}
+\DoxyCodeLine{00973\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00974\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.a-\/>childs[0]);}
+\DoxyCodeLine{00975\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{00976\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{00977\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00978\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00979\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (Intersect(p.a-\/>volume,\ p.b-\/>volume))}
+\DoxyCodeLine{00980\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal())}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00983\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00985\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00986\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{00987\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00988\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{00989\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00990\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00991\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00992\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b);}
+\DoxyCodeLine{00993\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b);}
+\DoxyCodeLine{00994\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00995\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00996\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00997\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00998\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{00999\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01000\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a,\ p.b-\/>childs[0]);}
+\DoxyCodeLine{01001\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]\ =\ sStkNN(p.a,\ p.b-\/>childs[1]);}
+\DoxyCodeLine{01002\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01003\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01004\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01005\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(p.a,\ p.b);}
+\DoxyCodeLine{01006\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01007\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01008\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01009\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (depth);}
+\DoxyCodeLine{01010\ \ \ \ \ \}}
+\DoxyCodeLine{01011\ \}}
+\DoxyCodeLine{01012\ }
+\DoxyCodeLine{01013\ }
+\DoxyCodeLine{01014\ DBVT\_PREFIX}
+\DoxyCodeLine{01015\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::collideTTpersistentStack(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{01016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{01017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{01018\ \{}
+\DoxyCodeLine{01019\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01020\ \ \ \ \ \textcolor{keywordflow}{if}\ (root0\ \&\&\ root1)}
+\DoxyCodeLine{01021\ \ \ \ \ \{}
+\DoxyCodeLine{01022\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ depth\ =\ 1;}
+\DoxyCodeLine{01023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ treshold\ =\ DOUBLE\_STACKSIZE\ -\/\ 4;}
+\DoxyCodeLine{01024\ }
+\DoxyCodeLine{01025\ \ \ \ \ \ \ \ \ m\_stkStack.resize(DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{01026\ \ \ \ \ \ \ \ \ m\_stkStack[0]\ =\ sStkNN(root0,\ root1);}
+\DoxyCodeLine{01027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01028\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01029\ \ \ \ \ \ \ \ \ \ \ \ \ sStkNN\ p\ =\ m\_stkStack[-\/-\/depth];}
+\DoxyCodeLine{01030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ treshold)}
+\DoxyCodeLine{01031\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack.resize(m\_stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ *\ 2);}
+\DoxyCodeLine{01033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold\ =\ m\_stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 4;}
+\DoxyCodeLine{01034\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a\ ==\ p.b)}
+\DoxyCodeLine{01036\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal())}
+\DoxyCodeLine{01038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.a-\/>childs[0]);}
+\DoxyCodeLine{01040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{01041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.a-\/>childs[1]);}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (Intersect(p.a-\/>volume,\ p.b-\/>volume))}
+\DoxyCodeLine{01045\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.a-\/>isinternal())}
+\DoxyCodeLine{01047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{01049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{01051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b-\/>childs[0]);}
+\DoxyCodeLine{01052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{01053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b-\/>childs[1]);}
+\DoxyCodeLine{01054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[0],\ p.b);}
+\DoxyCodeLine{01058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a-\/>childs[1],\ p.b);}
+\DoxyCodeLine{01059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.b-\/>isinternal())}
+\DoxyCodeLine{01064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a,\ p.b-\/>childs[0]);}
+\DoxyCodeLine{01066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_stkStack[depth++]\ =\ sStkNN(p.a,\ p.b-\/>childs[1]);}
+\DoxyCodeLine{01067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(p.a,\ p.b);}
+\DoxyCodeLine{01071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01073\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01074\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (depth);}
+\DoxyCodeLine{01075\ \ \ \ \ \}}
+\DoxyCodeLine{01076\ \}}
+\DoxyCodeLine{01077\ }
+\DoxyCodeLine{01078\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{01079\ \textcolor{comment}{//}}
+\DoxyCodeLine{01080\ DBVT\_PREFIX}
+\DoxyCodeLine{01081\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \ \ \ \ btDbvt::collideTT(\ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{01082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{01083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ xform,}
+\DoxyCodeLine{01084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{01085\ \{}
+\DoxyCodeLine{01086\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(root0\&\&root1)}
+\DoxyCodeLine{01088\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ depth=1;}
+\DoxyCodeLine{01090\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold=DOUBLE\_STACKSIZE-\/4;}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStkNN>}}\ \ \ \ stkStack;}
+\DoxyCodeLine{01092\ \ \ \ \ \ \ \ \ \ \ \ \ stkStack.resize(DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[0]=sStkNN(root0,root1);}
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}\ \ \{}
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sStkNN\ \ p=stkStack[-\/-\/depth];}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(Intersect(p.a-\/>volume,p.b-\/>volume,xform))}
+\DoxyCodeLine{01097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(depth>treshold)}
+\DoxyCodeLine{01099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack.resize(stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()*2);}
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold=stkStack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()-\/4;}
+\DoxyCodeLine{01102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(p.a-\/>isinternal())}
+\DoxyCodeLine{01104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(p.b-\/>isinternal())}
+\DoxyCodeLine{01106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{01107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a-\/>childs[0],p.b-\/>childs[0]);}
+\DoxyCodeLine{01108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a-\/>childs[1],p.b-\/>childs[0]);}
+\DoxyCodeLine{01109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a-\/>childs[0],p.b-\/>childs[1]);}
+\DoxyCodeLine{01110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a-\/>childs[1],p.b-\/>childs[1]);}
+\DoxyCodeLine{01111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a-\/>childs[0],p.b);}
+\DoxyCodeLine{01115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a-\/>childs[1],p.b);}
+\DoxyCodeLine{01116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(p.b-\/>isinternal())}
+\DoxyCodeLine{01121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a,p.b-\/>childs[0]);}
+\DoxyCodeLine{01123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stkStack[depth++]=sStkNN(p.a,p.b-\/>childs[1]);}
+\DoxyCodeLine{01124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(p.a,p.b);}
+\DoxyCodeLine{01128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01131\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}(depth);}
+\DoxyCodeLine{01132\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01133\ \}}
+\DoxyCodeLine{01134\ \textcolor{comment}{//}}
+\DoxyCodeLine{01135\ DBVT\_PREFIX}
+\DoxyCodeLine{01136\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \ \ \ \ btDbvt::collideTT(\ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root0,}
+\DoxyCodeLine{01137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ xform0,}
+\DoxyCodeLine{01138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root1,}
+\DoxyCodeLine{01139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ xform1,}
+\DoxyCodeLine{01140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{01141\ \{}
+\DoxyCodeLine{01142\ \ \ \ \ \textcolor{keyword}{const}\ btTransform\ \ \ xform=xform0.inverse()*xform1;}
+\DoxyCodeLine{01143\ \ \ \ \ collideTT(root0,root1,xform,policy);}
+\DoxyCodeLine{01144\ \}}
+\DoxyCodeLine{01145\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01146\ }
+\DoxyCodeLine{01147\ DBVT\_PREFIX}
+\DoxyCodeLine{01148\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::collideTV(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{01149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ vol,}
+\DoxyCodeLine{01150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01151\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01152\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01153\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{01154\ \ \ \ \ \{}
+\DoxyCodeLine{01155\ \ \ \ \ \ \ \ \ ATTRIBUTE\_ALIGNED16(\mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}})}
+\DoxyCodeLine{01156\ \ \ \ \ \ \ \ \ volume(vol);}
+\DoxyCodeLine{01157\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btDbvtNode*>}}\ stack;}
+\DoxyCodeLine{01158\ \ \ \ \ \ \ \ \ stack.resize(0);}
+\DoxyCodeLine{01159\ \textcolor{preprocessor}{\#ifndef\ BT\_DISABLE\_STACK\_TEMP\_MEMORY}}
+\DoxyCodeLine{01160\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ tempmemory[SIMPLE\_STACKSIZE\ *\ \textcolor{keyword}{sizeof}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*)];}
+\DoxyCodeLine{01161\ \ \ \ \ \ \ \ \ stack.initializeFromBuffer(tempmemory,\ 0,\ SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01162\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01163\ \ \ \ \ \ \ \ \ stack.reserve(SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01164\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DISABLE\_STACK\_TEMP\_MEMORY}}
+\DoxyCodeLine{01165\ }
+\DoxyCodeLine{01166\ \ \ \ \ \ \ \ \ stack.push\_back(root);}
+\DoxyCodeLine{01167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01168\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01169\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n\ =\ stack[stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1];}
+\DoxyCodeLine{01170\ \ \ \ \ \ \ \ \ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{01171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Intersect(n-\/>volume,\ volume))}
+\DoxyCodeLine{01172\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n-\/>isinternal())}
+\DoxyCodeLine{01174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(n-\/>childs[0]);}
+\DoxyCodeLine{01176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(n-\/>childs[1]);}
+\DoxyCodeLine{01177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(n);}
+\DoxyCodeLine{01181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01182\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01183\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ >\ 0);}
+\DoxyCodeLine{01184\ \ \ \ \ \}}
+\DoxyCodeLine{01185\ \}}
+\DoxyCodeLine{01186\ }
+\DoxyCodeLine{01187\ \textcolor{comment}{//}}
+\DoxyCodeLine{01188\ DBVT\_PREFIX}
+\DoxyCodeLine{01189\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::collideTVNoStackAlloc(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{01190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}}\&\ vol,}
+\DoxyCodeLine{01191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btNodeStack}}\&\ stack,}
+\DoxyCodeLine{01192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01193\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01194\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01195\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{01196\ \ \ \ \ \{}
+\DoxyCodeLine{01197\ \ \ \ \ \ \ \ \ ATTRIBUTE\_ALIGNED16(\mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}})}
+\DoxyCodeLine{01198\ \ \ \ \ \ \ \ \ volume(vol);}
+\DoxyCodeLine{01199\ \ \ \ \ \ \ \ \ stack.resize(0);}
+\DoxyCodeLine{01200\ \ \ \ \ \ \ \ \ stack.reserve(SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01201\ \ \ \ \ \ \ \ \ stack.push\_back(root);}
+\DoxyCodeLine{01202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01203\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n\ =\ stack[stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1];}
+\DoxyCodeLine{01205\ \ \ \ \ \ \ \ \ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{01206\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Intersect(n-\/>volume,\ volume))}
+\DoxyCodeLine{01207\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n-\/>isinternal())}
+\DoxyCodeLine{01209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(n-\/>childs[0]);}
+\DoxyCodeLine{01211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(n-\/>childs[1]);}
+\DoxyCodeLine{01212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(n);}
+\DoxyCodeLine{01216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01217\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01218\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ >\ 0);}
+\DoxyCodeLine{01219\ \ \ \ \ \}}
+\DoxyCodeLine{01220\ \}}
+\DoxyCodeLine{01221\ }
+\DoxyCodeLine{01222\ DBVT\_PREFIX}
+\DoxyCodeLine{01223\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_dbvt_a8ee6db9249b6c10208826d7c0f804b05}{btDbvt::rayTestInternal}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{01224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayFrom,}
+\DoxyCodeLine{01225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayTo,}
+\DoxyCodeLine{01226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayDirectionInverse,}
+\DoxyCodeLine{01227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ signs[3],}
+\DoxyCodeLine{01228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ lambda\_max,}
+\DoxyCodeLine{01229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ aabbMin,}
+\DoxyCodeLine{01230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ aabbMax,}
+\DoxyCodeLine{01231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btDbvtNode*>}}\&\ stack,}
+\DoxyCodeLine{01232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{01233\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{01234\ \ \ \ \ (void)rayTo;}
+\DoxyCodeLine{01235\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01236\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{01237\ \ \ \ \ \{}
+\DoxyCodeLine{01238\ \ \ \ \ \ \ \ \ btVector3\ resultNormal;}
+\DoxyCodeLine{01239\ }
+\DoxyCodeLine{01240\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ depth\ =\ 1;}
+\DoxyCodeLine{01241\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ treshold\ =\ DOUBLE\_STACKSIZE\ -\/\ 2;}
+\DoxyCodeLine{01242\ \ \ \ \ \ \ \ \ stack.resize(DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{01243\ \ \ \ \ \ \ \ \ stack[0]\ =\ root;}
+\DoxyCodeLine{01244\ \ \ \ \ \ \ \ \ btVector3\ bounds[2];}
+\DoxyCodeLine{01245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01246\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01247\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node\ =\ stack[-\/-\/depth];}
+\DoxyCodeLine{01248\ \ \ \ \ \ \ \ \ \ \ \ \ bounds[0]\ =\ node-\/>volume.Mins()\ -\/\ aabbMax;}
+\DoxyCodeLine{01249\ \ \ \ \ \ \ \ \ \ \ \ \ bounds[1]\ =\ node-\/>volume.Maxs()\ -\/\ aabbMin;}
+\DoxyCodeLine{01250\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tmin\ =\ 1.f,\ lambda\_min\ =\ 0.f;}
+\DoxyCodeLine{01251\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ result1\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01252\ \ \ \ \ \ \ \ \ \ \ \ \ result1\ =\ btRayAabb2(rayFrom,\ rayDirectionInverse,\ signs,\ bounds,\ tmin,\ lambda\_min,\ lambda\_max);}
+\DoxyCodeLine{01253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (result1)}
+\DoxyCodeLine{01254\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node-\/>isinternal())}
+\DoxyCodeLine{01256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ treshold)}
+\DoxyCodeLine{01258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.resize(stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ *\ 2);}
+\DoxyCodeLine{01260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold\ =\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 2;}
+\DoxyCodeLine{01261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[depth++]\ =\ node-\/>childs[0];}
+\DoxyCodeLine{01263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[depth++]\ =\ node-\/>childs[1];}
+\DoxyCodeLine{01264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(node);}
+\DoxyCodeLine{01268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01269\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01270\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (depth);}
+\DoxyCodeLine{01271\ \ \ \ \ \}}
+\DoxyCodeLine{01272\ \}}
+\DoxyCodeLine{01273\ }
+\DoxyCodeLine{01274\ \textcolor{comment}{//}}
+\DoxyCodeLine{01275\ DBVT\_PREFIX}
+\DoxyCodeLine{01276\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_dbvt_a8e316ee3bc9bd7b7354086c0c558cfb5}{btDbvt::rayTest}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{01277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayFrom,}
+\DoxyCodeLine{01278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ rayTo,}
+\DoxyCodeLine{01279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{01280\ \{}
+\DoxyCodeLine{01281\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01282\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{01283\ \ \ \ \ \{}
+\DoxyCodeLine{01284\ \ \ \ \ \ \ \ \ btVector3\ rayDir\ =\ (rayTo\ -\/\ rayFrom);}
+\DoxyCodeLine{01285\ \ \ \ \ \ \ \ \ rayDir.normalize();}
+\DoxyCodeLine{01286\ }
+\DoxyCodeLine{01288\ \ \ \ \ \ \ \ \ btVector3\ rayDirectionInverse;}
+\DoxyCodeLine{01289\ \ \ \ \ \ \ \ \ rayDirectionInverse[0]\ =\ rayDir[0]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[0];}
+\DoxyCodeLine{01290\ \ \ \ \ \ \ \ \ rayDirectionInverse[1]\ =\ rayDir[1]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[1];}
+\DoxyCodeLine{01291\ \ \ \ \ \ \ \ \ rayDirectionInverse[2]\ =\ rayDir[2]\ ==\ btScalar(0.0)\ ?\ btScalar(BT\_LARGE\_FLOAT)\ :\ btScalar(1.0)\ /\ rayDir[2];}
+\DoxyCodeLine{01292\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ signs[3]\ =\ \{rayDirectionInverse[0]\ <\ 0.0,\ rayDirectionInverse[1]\ <\ 0.0,\ rayDirectionInverse[2]\ <\ 0.0\};}
+\DoxyCodeLine{01293\ }
+\DoxyCodeLine{01294\ \ \ \ \ \ \ \ \ btScalar\ lambda\_max\ =\ rayDir.dot(rayTo\ -\/\ rayFrom);}
+\DoxyCodeLine{01295\ }
+\DoxyCodeLine{01296\ \ \ \ \ \ \ \ \ btVector3\ resultNormal;}
+\DoxyCodeLine{01297\ }
+\DoxyCodeLine{01298\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btDbvtNode*>}}\ stack;}
+\DoxyCodeLine{01299\ }
+\DoxyCodeLine{01300\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ depth\ =\ 1;}
+\DoxyCodeLine{01301\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ treshold\ =\ DOUBLE\_STACKSIZE\ -\/\ 2;}
+\DoxyCodeLine{01302\ }
+\DoxyCodeLine{01303\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ tempmemory[DOUBLE\_STACKSIZE\ *\ \textcolor{keyword}{sizeof}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*)];}
+\DoxyCodeLine{01304\ \textcolor{preprocessor}{\#ifndef\ BT\_DISABLE\_STACK\_TEMP\_MEMORY}}
+\DoxyCodeLine{01305\ \ \ \ \ \ \ \ \ stack.initializeFromBuffer(tempmemory,\ DOUBLE\_STACKSIZE,\ DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{01306\ \textcolor{preprocessor}{\#else\ \ \ }\textcolor{comment}{//BT\_DISABLE\_STACK\_TEMP\_MEMORY}}
+\DoxyCodeLine{01307\ \ \ \ \ \ \ \ \ stack.resize(DOUBLE\_STACKSIZE);}
+\DoxyCodeLine{01308\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//BT\_DISABLE\_STACK\_TEMP\_MEMORY}}
+\DoxyCodeLine{01309\ \ \ \ \ \ \ \ \ stack[0]\ =\ root;}
+\DoxyCodeLine{01310\ \ \ \ \ \ \ \ \ btVector3\ bounds[2];}
+\DoxyCodeLine{01311\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01312\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ node\ =\ stack[-\/-\/depth];}
+\DoxyCodeLine{01314\ }
+\DoxyCodeLine{01315\ \ \ \ \ \ \ \ \ \ \ \ \ bounds[0]\ =\ node-\/>volume.Mins();}
+\DoxyCodeLine{01316\ \ \ \ \ \ \ \ \ \ \ \ \ bounds[1]\ =\ node-\/>volume.Maxs();}
+\DoxyCodeLine{01317\ }
+\DoxyCodeLine{01318\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ tmin\ =\ 1.f,\ lambda\_min\ =\ 0.f;}
+\DoxyCodeLine{01319\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ result1\ =\ btRayAabb2(rayFrom,\ rayDirectionInverse,\ signs,\ bounds,\ tmin,\ lambda\_min,\ lambda\_max);}
+\DoxyCodeLine{01320\ }
+\DoxyCodeLine{01321\ \textcolor{preprocessor}{\#ifdef\ COMPARE\_BTRAY\_AABB2}}
+\DoxyCodeLine{01322\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ param\ =\ 1.f;}
+\DoxyCodeLine{01323\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ result2\ =\ btRayAabb(rayFrom,\ rayTo,\ node-\/>volume.Mins(),\ node-\/>volume.Maxs(),\ param,\ resultNormal);}
+\DoxyCodeLine{01324\ \ \ \ \ \ \ \ \ \ \ \ \ btAssert(result1\ ==\ result2);}
+\DoxyCodeLine{01325\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//TEST\_BTRAY\_AABB2}}
+\DoxyCodeLine{01326\ }
+\DoxyCodeLine{01327\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (result1)}
+\DoxyCodeLine{01328\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node-\/>isinternal())}
+\DoxyCodeLine{01330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ treshold)}
+\DoxyCodeLine{01332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.resize(stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ *\ 2);}
+\DoxyCodeLine{01334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treshold\ =\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 2;}
+\DoxyCodeLine{01335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[depth++]\ =\ node-\/>childs[0];}
+\DoxyCodeLine{01337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[depth++]\ =\ node-\/>childs[1];}
+\DoxyCodeLine{01338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(node);}
+\DoxyCodeLine{01342\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01343\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01344\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (depth);}
+\DoxyCodeLine{01345\ \ \ \ \ \}}
+\DoxyCodeLine{01346\ \}}
+\DoxyCodeLine{01347\ }
+\DoxyCodeLine{01348\ \textcolor{comment}{//}}
+\DoxyCodeLine{01349\ DBVT\_PREFIX}
+\DoxyCodeLine{01350\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::collideKDOP(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{01351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ normals,}
+\DoxyCodeLine{01352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ offsets,}
+\DoxyCodeLine{01353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ count,}
+\DoxyCodeLine{01354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{01355\ \{}
+\DoxyCodeLine{01356\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01357\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{01358\ \ \ \ \ \{}
+\DoxyCodeLine{01359\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ inside\ =\ (1\ <<\ count)\ -\/\ 1;}
+\DoxyCodeLine{01360\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStkNP>}}\ stack;}
+\DoxyCodeLine{01361\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ signs[\textcolor{keyword}{sizeof}(unsigned)\ *\ 8];}
+\DoxyCodeLine{01362\ \ \ \ \ \ \ \ \ btAssert(count\ <\ \textcolor{keywordtype}{int}(\textcolor{keyword}{sizeof}(signs)\ /\ \textcolor{keyword}{sizeof}(signs[0])));}
+\DoxyCodeLine{01363\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ count;\ ++i)}
+\DoxyCodeLine{01364\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01365\ \ \ \ \ \ \ \ \ \ \ \ \ signs[i]\ =\ ((normals[i].x()\ >=\ 0)\ ?\ 1\ :\ 0)\ +}
+\DoxyCodeLine{01366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((normals[i].y()\ >=\ 0)\ ?\ 2\ :\ 0)\ +}
+\DoxyCodeLine{01367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((normals[i].z()\ >=\ 0)\ ?\ 4\ :\ 0);}
+\DoxyCodeLine{01368\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01369\ \ \ \ \ \ \ \ \ stack.reserve(SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01370\ \ \ \ \ \ \ \ \ stack.push\_back(sStkNP(root,\ 0));}
+\DoxyCodeLine{01371\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01372\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01373\ \ \ \ \ \ \ \ \ \ \ \ \ sStkNP\ se\ =\ stack[stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1];}
+\DoxyCodeLine{01374\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ out\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01375\ \ \ \ \ \ \ \ \ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{01376\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0,\ j\ =\ 1;\ (!out)\ \&\&\ (i\ <\ count);\ ++i,\ j\ <<=\ 1)}
+\DoxyCodeLine{01377\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (0\ ==\ (se.mask\ \&\ j))}
+\DoxyCodeLine{01379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ side\ =\ se.node-\/>volume.Classify(normals[i],\ offsets[i],\ signs[i]);}
+\DoxyCodeLine{01381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (side)}
+\DoxyCodeLine{01382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/1:}
+\DoxyCodeLine{01384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ out\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ +1:}
+\DoxyCodeLine{01387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ se.mask\ |=\ j;}
+\DoxyCodeLine{01388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01391\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01392\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!out)}
+\DoxyCodeLine{01393\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((se.mask\ !=\ inside)\ \&\&\ (se.node-\/>isinternal()))}
+\DoxyCodeLine{01395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(sStkNP(se.node-\/>childs[0],\ se.mask));}
+\DoxyCodeLine{01397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(sStkNP(se.node-\/>childs[1],\ se.mask));}
+\DoxyCodeLine{01398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (policy.AllLeaves(se.node))\ enumLeaves(se.node,\ policy);}
+\DoxyCodeLine{01402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01403\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01404\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{01405\ \ \ \ \ \}}
+\DoxyCodeLine{01406\ \}}
+\DoxyCodeLine{01407\ }
+\DoxyCodeLine{01408\ \textcolor{comment}{//}}
+\DoxyCodeLine{01409\ DBVT\_PREFIX}
+\DoxyCodeLine{01410\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::collideOCL(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{01411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3*\ normals,}
+\DoxyCodeLine{01412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btScalar*\ offsets,}
+\DoxyCodeLine{01413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ sortaxis,}
+\DoxyCodeLine{01414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ count,}
+\DoxyCodeLine{01415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY,}
+\DoxyCodeLine{01416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ fsort)}
+\DoxyCodeLine{01417\ \{}
+\DoxyCodeLine{01418\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01419\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{01420\ \ \ \ \ \{}
+\DoxyCodeLine{01421\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ srtsgns\ =\ (sortaxis[0]\ >=\ 0\ ?\ 1\ :\ 0)\ +}
+\DoxyCodeLine{01422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (sortaxis[1]\ >=\ 0\ ?\ 2\ :\ 0)\ +}
+\DoxyCodeLine{01423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (sortaxis[2]\ >=\ 0\ ?\ 4\ :\ 0);}
+\DoxyCodeLine{01424\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ inside\ =\ (1\ <<\ count)\ -\/\ 1;}
+\DoxyCodeLine{01425\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<sStkNPS>}}\ stock;}
+\DoxyCodeLine{01426\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ ifree;}
+\DoxyCodeLine{01427\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<int>}}\ stack;}
+\DoxyCodeLine{01428\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ signs[\textcolor{keyword}{sizeof}(unsigned)\ *\ 8];}
+\DoxyCodeLine{01429\ \ \ \ \ \ \ \ \ btAssert(count\ <\ \textcolor{keywordtype}{int}(\textcolor{keyword}{sizeof}(signs)\ /\ \textcolor{keyword}{sizeof}(signs[0])));}
+\DoxyCodeLine{01430\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ count;\ ++i)}
+\DoxyCodeLine{01431\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01432\ \ \ \ \ \ \ \ \ \ \ \ \ signs[i]\ =\ ((normals[i].x()\ >=\ 0)\ ?\ 1\ :\ 0)\ +}
+\DoxyCodeLine{01433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((normals[i].y()\ >=\ 0)\ ?\ 2\ :\ 0)\ +}
+\DoxyCodeLine{01434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((normals[i].z()\ >=\ 0)\ ?\ 4\ :\ 0);}
+\DoxyCodeLine{01435\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01436\ \ \ \ \ \ \ \ \ stock.reserve(SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01437\ \ \ \ \ \ \ \ \ stack.reserve(SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01438\ \ \ \ \ \ \ \ \ ifree.reserve(SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01439\ \ \ \ \ \ \ \ \ stack.push\_back(allocate(ifree,\ stock,\ sStkNPS(root,\ 0,\ root-\/>volume.ProjectMinimum(sortaxis,\ srtsgns))));}
+\DoxyCodeLine{01440\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01441\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01442\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id}\ =\ stack[stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1];}
+\DoxyCodeLine{01443\ \ \ \ \ \ \ \ \ \ \ \ \ sStkNPS\ se\ =\ stock[id];}
+\DoxyCodeLine{01444\ \ \ \ \ \ \ \ \ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{01445\ \ \ \ \ \ \ \ \ \ \ \ \ ifree.push\_back(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{01446\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (se.mask\ !=\ inside)}
+\DoxyCodeLine{01447\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ out\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0,\ j\ =\ 1;\ (!out)\ \&\&\ (i\ <\ count);\ ++i,\ j\ <<=\ 1)}
+\DoxyCodeLine{01450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (0\ ==\ (se.mask\ \&\ j))}
+\DoxyCodeLine{01452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ side\ =\ se.node-\/>volume.Classify(normals[i],\ offsets[i],\ signs[i]);}
+\DoxyCodeLine{01454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (side)}
+\DoxyCodeLine{01455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/1:}
+\DoxyCodeLine{01457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ out\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ +1:}
+\DoxyCodeLine{01460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ se.mask\ |=\ j;}
+\DoxyCodeLine{01461\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{01462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (out)\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{01466\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01467\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (policy.Descent(se.node))}
+\DoxyCodeLine{01468\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (se.node-\/>isinternal())}
+\DoxyCodeLine{01470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ pns[]\ =\ \{se.node-\/>childs[0],\ se.node-\/>childs[1]\};}
+\DoxyCodeLine{01472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sStkNPS\ nes[]\ =\ \{sStkNPS(pns[0],\ se.mask,\ pns[0]-\/>volume.ProjectMinimum(sortaxis,\ srtsgns)),}
+\DoxyCodeLine{01473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sStkNPS(pns[1],\ se.mask,\ pns[1]-\/>volume.ProjectMinimum(sortaxis,\ srtsgns))\};}
+\DoxyCodeLine{01474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ q\ =\ nes[0].value\ <\ nes[1].value\ ?\ 1\ :\ 0;}
+\DoxyCodeLine{01475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ j\ =\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{01476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fsort\ \&\&\ (j\ >\ 0))}
+\DoxyCodeLine{01477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Insert\ 0\ */}}
+\DoxyCodeLine{01479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ j\ =\ nearest(\&stack[0],\ \&stock[0],\ nes[q].value,\ 0,\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{01480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(0);}
+\DoxyCodeLine{01481\ }
+\DoxyCodeLine{01482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//void\ *\ memmove\ (\ void\ *\ destination,\ const\ void\ *\ source,\ size\_t\ num\ );}}
+\DoxyCodeLine{01483\ }
+\DoxyCodeLine{01484\ \textcolor{preprocessor}{\#if\ DBVT\_USE\_MEMMOVE}}
+\DoxyCodeLine{01485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num\_items\_to\_move\ =\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1\ -\/\ j;}
+\DoxyCodeLine{01487\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (num\_items\_to\_move\ >\ 0)}
+\DoxyCodeLine{01488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memmove(\&stack[j\ +\ 1],\ \&stack[j],\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int})\ *\ num\_items\_to\_move);}
+\DoxyCodeLine{01489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01490\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1;\ k\ >\ j;\ -\/-\/k)}
+\DoxyCodeLine{01492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[k]\ =\ stack[k\ -\/\ 1];}
+\DoxyCodeLine{01494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01495\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[j]\ =\ allocate(ifree,\ stock,\ nes[q]);}
+\DoxyCodeLine{01497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Insert\ 1\ */}}
+\DoxyCodeLine{01498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ j\ =\ nearest(\&stack[0],\ \&stock[0],\ nes[1\ -\/\ q].value,\ j,\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{01499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(0);}
+\DoxyCodeLine{01500\ \textcolor{preprocessor}{\#if\ DBVT\_USE\_MEMMOVE}}
+\DoxyCodeLine{01501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num\_items\_to\_move\ =\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1\ -\/\ j;}
+\DoxyCodeLine{01503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (num\_items\_to\_move\ >\ 0)}
+\DoxyCodeLine{01504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memmove(\&stack[j\ +\ 1],\ \&stack[j],\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int})\ *\ num\_items\_to\_move);}
+\DoxyCodeLine{01505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01506\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{01507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1;\ k\ >\ j;\ -\/-\/k)}
+\DoxyCodeLine{01508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[k]\ =\ stack[k\ -\/\ 1];}
+\DoxyCodeLine{01510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01511\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack[j]\ =\ allocate(ifree,\ stock,\ nes[1\ -\/\ q]);}
+\DoxyCodeLine{01513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(allocate(ifree,\ stock,\ nes[q]));}
+\DoxyCodeLine{01517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(allocate(ifree,\ stock,\ nes[1\ -\/\ q]));}
+\DoxyCodeLine{01518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(se.node,\ se.value);}
+\DoxyCodeLine{01523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01524\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01525\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{01526\ \ \ \ \ \}}
+\DoxyCodeLine{01527\ \}}
+\DoxyCodeLine{01528\ }
+\DoxyCodeLine{01529\ \textcolor{comment}{//}}
+\DoxyCodeLine{01530\ DBVT\_PREFIX}
+\DoxyCodeLine{01531\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ btDbvt::collideTU(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ root,}
+\DoxyCodeLine{01532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DBVT\_IPOLICY)}
+\DoxyCodeLine{01533\ \{}
+\DoxyCodeLine{01534\ \ \ \ \ DBVT\_CHECKTYPE}
+\DoxyCodeLine{01535\ \ \ \ \ \textcolor{keywordflow}{if}\ (root)}
+\DoxyCodeLine{01536\ \ \ \ \ \{}
+\DoxyCodeLine{01537\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<const\ btDbvtNode*>}}\ stack;}
+\DoxyCodeLine{01538\ \ \ \ \ \ \ \ \ stack.reserve(SIMPLE\_STACKSIZE);}
+\DoxyCodeLine{01539\ \ \ \ \ \ \ \ \ stack.push\_back(root);}
+\DoxyCodeLine{01540\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{01541\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01542\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ n\ =\ stack[stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1];}
+\DoxyCodeLine{01543\ \ \ \ \ \ \ \ \ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{01544\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (policy.Descent(n))}
+\DoxyCodeLine{01545\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n-\/>isinternal())}
+\DoxyCodeLine{01547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(n-\/>childs[0]);}
+\DoxyCodeLine{01549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stack.push\_back(n-\/>childs[1]);}
+\DoxyCodeLine{01550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{01552\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{01553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ policy.Process(n);}
+\DoxyCodeLine{01554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01555\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01556\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (stack.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ >\ 0);}
+\DoxyCodeLine{01557\ \ \ \ \ \}}
+\DoxyCodeLine{01558\ \}}
+\DoxyCodeLine{01559\ }
+\DoxyCodeLine{01560\ \textcolor{comment}{//}}
+\DoxyCodeLine{01561\ \textcolor{comment}{//\ PP\ Cleanup}}
+\DoxyCodeLine{01562\ \textcolor{comment}{//}}
+\DoxyCodeLine{01563\ }
+\DoxyCodeLine{01564\ \textcolor{preprocessor}{\#undef\ DBVT\_USE\_MEMMOVE}}
+\DoxyCodeLine{01565\ \textcolor{preprocessor}{\#undef\ DBVT\_USE\_TEMPLATE}}
+\DoxyCodeLine{01566\ \textcolor{preprocessor}{\#undef\ DBVT\_VIRTUAL\_DTOR}}
+\DoxyCodeLine{01567\ \textcolor{preprocessor}{\#undef\ DBVT\_VIRTUAL}}
+\DoxyCodeLine{01568\ \textcolor{preprocessor}{\#undef\ DBVT\_PREFIX}}
+\DoxyCodeLine{01569\ \textcolor{preprocessor}{\#undef\ DBVT\_IPOLICY}}
+\DoxyCodeLine{01570\ \textcolor{preprocessor}{\#undef\ DBVT\_CHECKTYPE}}
+\DoxyCodeLine{01571\ \textcolor{preprocessor}{\#undef\ DBVT\_IMPL\_GENERIC}}
+\DoxyCodeLine{01572\ \textcolor{preprocessor}{\#undef\ DBVT\_IMPL\_SSE}}
+\DoxyCodeLine{01573\ \textcolor{preprocessor}{\#undef\ DBVT\_USE\_INTRINSIC\_SSE}}
+\DoxyCodeLine{01574\ \textcolor{preprocessor}{\#undef\ DBVT\_SELECT\_IMPL}}
+\DoxyCodeLine{01575\ \textcolor{preprocessor}{\#undef\ DBVT\_MERGE\_IMPL}}
+\DoxyCodeLine{01576\ \textcolor{preprocessor}{\#undef\ DBVT\_INT0\_IMPL}}
+\DoxyCodeLine{01577\ }
+\DoxyCodeLine{01578\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

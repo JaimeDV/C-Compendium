@@ -1,0 +1,153 @@
+\doxysection{b2\+\_\+distance.\+h}
+\hypertarget{b2__distance_8h_source}{}\label{b2__distance_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_distance.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_distance.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_DISTANCE\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_DISTANCE\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}b2\_math.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_shape}{b2Shape}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_distance_proxy}{b2DistanceProxy}}}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{structb2_distance_proxy}{b2DistanceProxy}}()\ :\ m\_vertices(\textcolor{keyword}{nullptr}),\ m\_count(0),\ m\_radius(0.0f)\ \{\}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb2_distance_proxy_a80a59a9c9e952482a8fc6db4b883365d}{Set}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ shape,\ int32\ index);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structb2_distance_proxy_a5cd9ba137f6ed9ab73648e5151692fbb}{Set}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}*\ vertices,\ int32\ count,\ \textcolor{keywordtype}{float}\ radius);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00046\ \ \ \ \ int32\ GetSupport(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ d)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ GetSupportVertex(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ d)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00052\ \ \ \ \ int32\ GetVertexCount()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ GetVertex(int32\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ m\_buffer[2];}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}*\ m\_vertices;}
+\DoxyCodeLine{00059\ \ \ \ \ int32\ m\_count;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_radius;}
+\DoxyCodeLine{00061\ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_simplex_cache}{b2SimplexCache}}}
+\DoxyCodeLine{00066\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_simplex_cache_a700adfcbce992d5efcadf62490f3100e}{metric}};\ \ \ \ \ }
+\DoxyCodeLine{00068\ \ \ \ \ uint16\ count;}
+\DoxyCodeLine{00069\ \ \ \ \ uint8\ indexA[3];\ \ \ \ }
+\DoxyCodeLine{00070\ \ \ \ \ uint8\ indexB[3];\ \ \ \ }
+\DoxyCodeLine{00071\ \};}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_distance_input}{b2DistanceInput}}}
+\DoxyCodeLine{00077\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{structb2_distance_proxy}{b2DistanceProxy}}\ proxyA;}
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{structb2_distance_proxy}{b2DistanceProxy}}\ proxyB;}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{structb2_transform}{b2Transform}}\ transformA;}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{structb2_transform}{b2Transform}}\ transformB;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{bool}\ useRadii;}
+\DoxyCodeLine{00083\ \};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_distance_output}{b2DistanceOutput}}}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_distance_output_a7e0f1f44a64e596dc7d37570c69eefce}{pointA}};\ \ \ \ \ \ }
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ \mbox{\hyperlink{structb2_distance_output_aa85beca17337a506cd4a924d0c6f92cc}{pointB}};\ \ \ \ \ \ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{float}\ distance;}
+\DoxyCodeLine{00091\ \ \ \ \ int32\ \mbox{\hyperlink{structb2_distance_output_ae2d4c84dd3d05ea4f4d20c91099ec8d5}{iterations}};\ }
+\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00097\ B2\_API\ \textcolor{keywordtype}{void}\ b2Distance(\mbox{\hyperlink{structb2_distance_output}{b2DistanceOutput}}*\ output,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb2_simplex_cache}{b2SimplexCache}}*\ cache,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_distance_input}{b2DistanceInput}}*\ input);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00102\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_shape_cast_input}{b2ShapeCastInput}}}
+\DoxyCodeLine{00103\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{structb2_distance_proxy}{b2DistanceProxy}}\ proxyA;}
+\DoxyCodeLine{00105\ \ \ \ \ \mbox{\hyperlink{structb2_distance_proxy}{b2DistanceProxy}}\ proxyB;}
+\DoxyCodeLine{00106\ \ \ \ \ \mbox{\hyperlink{structb2_transform}{b2Transform}}\ transformA;}
+\DoxyCodeLine{00107\ \ \ \ \ \mbox{\hyperlink{structb2_transform}{b2Transform}}\ transformB;}
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ translationB;}
+\DoxyCodeLine{00109\ \};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00112\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_shape_cast_output}{b2ShapeCastOutput}}}
+\DoxyCodeLine{00113\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ point;}
+\DoxyCodeLine{00115\ \ \ \ \ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\ normal;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{float}\ lambda;}
+\DoxyCodeLine{00117\ \ \ \ \ int32\ iterations;}
+\DoxyCodeLine{00118\ \};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00122\ B2\_API\ \textcolor{keywordtype}{bool}\ b2ShapeCast(\mbox{\hyperlink{structb2_shape_cast_output}{b2ShapeCastOutput}}*\ output,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_shape_cast_input}{b2ShapeCastInput}}*\ input);}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{keyword}{inline}\ int32\ \mbox{\hyperlink{structb2_distance_proxy_a99c461f28d484429dac8f14b58f63d89}{b2DistanceProxy::GetVertexCount}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00127\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_count;}
+\DoxyCodeLine{00129\ \}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{structb2_distance_proxy_a9073b2c680d3fee6399f15be79ad144a}{b2DistanceProxy::GetVertex}}(int32\ index)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00132\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00133\ \ \ \ \ b2Assert(0\ <=\ index\ \&\&\ index\ <\ m\_count);}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_vertices[index];}
+\DoxyCodeLine{00135\ \}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{keyword}{inline}\ int32\ \mbox{\hyperlink{structb2_distance_proxy_a39de286cc0c1e829adfacfa0061b04f2}{b2DistanceProxy::GetSupport}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ d)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00138\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00139\ \ \ \ \ int32\ bestIndex\ =\ 0;}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{float}\ bestValue\ =\ b2Dot(m\_vertices[0],\ d);}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordflow}{for}\ (int32\ i\ =\ 1;\ i\ <\ m\_count;\ ++i)}
+\DoxyCodeLine{00142\ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ value\ =\ b2Dot(m\_vertices[i],\ d);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (value\ >\ bestValue)}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ bestIndex\ =\ i;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ bestValue\ =\ value;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00149\ \ \ \ \ \}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordflow}{return}\ bestIndex;}
+\DoxyCodeLine{00152\ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ \mbox{\hyperlink{structb2_distance_proxy_a245993f09e9f3d3f374bb95041acf822}{b2DistanceProxy::GetSupportVertex}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ d)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00155\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00156\ \ \ \ \ int32\ bestIndex\ =\ 0;}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{float}\ bestValue\ =\ b2Dot(m\_vertices[0],\ d);}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordflow}{for}\ (int32\ i\ =\ 1;\ i\ <\ m\_count;\ ++i)}
+\DoxyCodeLine{00159\ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ value\ =\ b2Dot(m\_vertices[i],\ d);}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (value\ >\ bestValue)}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ bestIndex\ =\ i;}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ bestValue\ =\ value;}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00166\ \ \ \ \ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_vertices[bestIndex];}
+\DoxyCodeLine{00169\ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

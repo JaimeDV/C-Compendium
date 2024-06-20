@@ -1,0 +1,151 @@
+\doxysection{b3\+Point2\+Point\+Constraint.\+h}
+\hypertarget{b3_point2_point_constraint_8h_source}{}\label{b3_point2_point_constraint_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Dynamics/ConstraintSolver/b3Point2PointConstraint.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/Bullet3Dynamics/ConstraintSolver/b3Point2PointConstraint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ B3\_POINT2POINTCONSTRAINT\_H}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ B3\_POINT2POINTCONSTRAINT\_H}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}Bullet3Common/b3Vector3.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\#include\ "{}b3JacobianEntry.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}b3TypedConstraint.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }b3RigidBody;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#ifdef\ B3\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ b3Point2PointConstraintData\ b3Point2PointConstraintDoubleData}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ b3Point2PointConstraintDataName\ "{}b3Point2PointConstraintDoubleData"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ b3Point2PointConstraintData\ b3Point2PointConstraintFloatData}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ b3Point2PointConstraintDataName\ "{}b3Point2PointConstraintFloatData"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_USE\_DOUBLE\_PRECISION}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_constraint_setting}{b3ConstraintSetting}}}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{structb3_constraint_setting}{b3ConstraintSetting}}()\ :\ m\_tau(b3Scalar(0.3)),}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_damping(b3Scalar(1.)),}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_impulseClamp(b3Scalar(0.))}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ b3Scalar\ m\_tau;}
+\DoxyCodeLine{00041\ \ \ \ \ b3Scalar\ m\_damping;}
+\DoxyCodeLine{00042\ \ \ \ \ b3Scalar\ m\_impulseClamp;}
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{enum}\ b3Point2PointFlags}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ B3\_P2P\_FLAGS\_ERP\ =\ 1,}
+\DoxyCodeLine{00048\ \ \ \ \ B3\_P2P\_FLAGS\_CFM\ =\ 2}
+\DoxyCodeLine{00049\ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00052\ B3\_ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00053\ b3Point2PointConstraint\ :\ public\ b3TypedConstraint}
+\DoxyCodeLine{00054\ \{}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#ifdef\ IN\_PARALLELL\_SOLVER}}
+\DoxyCodeLine{00056\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ b3Vector3\ m\_pivotInA;}
+\DoxyCodeLine{00060\ \ \ \ \ b3Vector3\ m\_pivotInB;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_flags;}
+\DoxyCodeLine{00063\ \ \ \ \ b3Scalar\ m\_erp;}
+\DoxyCodeLine{00064\ \ \ \ \ b3Scalar\ m\_cfm;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00067\ \ \ \ \ B3\_DECLARE\_ALIGNED\_ALLOCATOR();}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{structb3_constraint_setting}{b3ConstraintSetting}}\ m\_setting;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ b3Point2PointConstraint(\textcolor{keywordtype}{int}\ rbA,\ \textcolor{keywordtype}{int}\ rbB,\ \textcolor{keyword}{const}\ b3Vector3\&\ pivotInA,\ \textcolor{keyword}{const}\ b3Vector3\&\ pivotInB);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{//b3Point2PointConstraint(int\ \ rbA,const\ b3Vector3\&\ pivotInA);}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo1(\mbox{\hyperlink{structb3_constraint_info1}{b3ConstraintInfo1}}\ *\ info,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ bodies);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo1NonVirtual(\mbox{\hyperlink{structb3_constraint_info1}{b3ConstraintInfo1}}\ *\ info,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ bodies);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ getInfo2(\mbox{\hyperlink{structb3_constraint_info2}{b3ConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb3_rigid_body_data}{b3RigidBodyData}}*\ bodies);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ getInfo2NonVirtual(\mbox{\hyperlink{structb3_constraint_info2}{b3ConstraintInfo2}}\ *\ info,\ \textcolor{keyword}{const}\ b3Transform\&\ body0\_trans,\ \textcolor{keyword}{const}\ b3Transform\&\ body1\_trans);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{void}\ updateRHS(b3Scalar\ timeStep);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ setPivotA(\textcolor{keyword}{const}\ b3Vector3\&\ pivotA)}
+\DoxyCodeLine{00086\ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ m\_pivotInA\ =\ pivotA;}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{void}\ setPivotB(\textcolor{keyword}{const}\ b3Vector3\&\ pivotB)}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ m\_pivotInB\ =\ pivotB;}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{const}\ b3Vector3\&\ getPivotInA()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_pivotInA;}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ b3Vector3\&\ getPivotInB()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00101\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_pivotInB;}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ setParam(\textcolor{keywordtype}{int}\ num,\ b3Scalar\ value,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1);}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{virtual}\ b3Scalar\ getParam(\textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{int}\ axis\ =\ -\/1)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//\ \ virtual\ int\ calculateSerializeBufferSize()\ const;}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{//\ \ virtual\ const\ char*\ serialize(void*\ dataBuffer,\ b3Serializer*\ serializer)\ const;}}
+\DoxyCodeLine{00115\ \};}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00118\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_point2_point_constraint_float_data}{b3Point2PointConstraintFloatData}}}
+\DoxyCodeLine{00119\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \mbox{\hyperlink{structb3_typed_constraint_data}{b3TypedConstraintData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00121\ \ \ \ \ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}\ m\_pivotInA;}
+\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{structb3_vector3_float_data}{b3Vector3FloatData}}\ m\_pivotInB;}
+\DoxyCodeLine{00123\ \};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00126\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structb3_point2_point_constraint_double_data}{b3Point2PointConstraintDoubleData}}}
+\DoxyCodeLine{00127\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \mbox{\hyperlink{structb3_typed_constraint_data}{b3TypedConstraintData}}\ m\_typeConstraintData;}
+\DoxyCodeLine{00129\ \ \ \ \ \mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}\ m\_pivotInA;}
+\DoxyCodeLine{00130\ \ \ \ \ \mbox{\hyperlink{structb3_vector3_double_data}{b3Vector3DoubleData}}\ m\_pivotInB;}
+\DoxyCodeLine{00131\ \};}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00134\ \textcolor{comment}{B3\_FORCE\_INLINE\ int\ b3Point2PointConstraint::calculateSerializeBufferSize()\ const}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\{}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ return\ sizeof(b3Point2PointConstraintData);}}
+\DoxyCodeLine{00137\ \textcolor{comment}{}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\}}}
+\DoxyCodeLine{00139\ \textcolor{comment}{}}
+\DoxyCodeLine{00141\ B3\_FORCE\_INLINE\ const\ char*\ b3Point2PointConstraint::serialize(void*\ dataBuffer,\ b3Serializer*\ serializer)\ const}
+\DoxyCodeLine{00142\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ b3Point2PointConstraintData*\ p2pData\ =\ (b3Point2PointConstraintData*)dataBuffer;}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ b3TypedConstraint::serialize(\&p2pData-\/>m\_typeConstraintData,serializer);}
+\DoxyCodeLine{00146\ \ \ \ \ m\_pivotInA.serialize(p2pData-\/>m\_pivotInA);}
+\DoxyCodeLine{00147\ \ \ \ \ m\_pivotInB.serialize(p2pData-\/>m\_pivotInB);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ return\ b3Point2PointConstraintDataName;}
+\DoxyCodeLine{00150\ \}}
+\DoxyCodeLine{00151\ */}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//B3\_POINT2POINTCONSTRAINT\_H}}
+
+\end{DoxyCode}

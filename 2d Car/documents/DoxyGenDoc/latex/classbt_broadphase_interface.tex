@@ -1,0 +1,97 @@
+\doxysection{bt\+Broadphase\+Interface Class Reference}
+\hypertarget{classbt_broadphase_interface}{}\label{classbt_broadphase_interface}\index{btBroadphaseInterface@{btBroadphaseInterface}}
+
+
+{\ttfamily \#include $<$bt\+Broadphase\+Interface.\+h$>$}
+
+Inheritance diagram for bt\+Broadphase\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.249071cm]{classbt_broadphase_interface}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_broadphase_interface_a7b2f73fad6df6b9d74adac63b8b5a4bd}\label{classbt_broadphase_interface_a7b2f73fad6df6b9d74adac63b8b5a4bd} 
+virtual bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*} {\bfseries create\+Proxy} (const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, int shape\+Type, void \texorpdfstring{$\ast$}{*}user\+Ptr, int collision\+Filter\+Group, int collision\+Filter\+Mask, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)=0
+\item 
+\Hypertarget{classbt_broadphase_interface_a70f3806d52b97251af59b498947d730d}\label{classbt_broadphase_interface_a70f3806d52b97251af59b498947d730d} 
+virtual void {\bfseries destroy\+Proxy} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)=0
+\item 
+\Hypertarget{classbt_broadphase_interface_a5dafdb7e104b1634202d1b21668a5aa7}\label{classbt_broadphase_interface_a5dafdb7e104b1634202d1b21668a5aa7} 
+virtual void {\bfseries set\+Aabb} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy, const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, \mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)=0
+\item 
+\Hypertarget{classbt_broadphase_interface_a8fc16d360eea987b878ab7fd2efcabe3}\label{classbt_broadphase_interface_a8fc16d360eea987b878ab7fd2efcabe3} 
+virtual void {\bfseries get\+Aabb} (bt\+Broadphase\+Proxy \texorpdfstring{$\ast$}{*}proxy, bt\+Vector3 \&aabb\+Min, bt\+Vector3 \&aabb\+Max) const =0
+\item 
+\Hypertarget{classbt_broadphase_interface_a516bf7f981dc4540c32c67820de64e0c}\label{classbt_broadphase_interface_a516bf7f981dc4540c32c67820de64e0c} 
+virtual void {\bfseries ray\+Test} (const bt\+Vector3 \&ray\+From, const bt\+Vector3 \&ray\+To, \mbox{\hyperlink{structbt_broadphase_ray_callback}{bt\+Broadphase\+Ray\+Callback}} \&ray\+Callback, const bt\+Vector3 \&aabb\+Min=bt\+Vector3(0, 0, 0), const bt\+Vector3 \&aabb\+Max=bt\+Vector3(0, 0, 0))=0
+\item 
+\Hypertarget{classbt_broadphase_interface_a19d8d870968460c4a191937a3bb8ecc4}\label{classbt_broadphase_interface_a19d8d870968460c4a191937a3bb8ecc4} 
+virtual void {\bfseries aabb\+Test} (const bt\+Vector3 \&aabb\+Min, const bt\+Vector3 \&aabb\+Max, \mbox{\hyperlink{structbt_broadphase_aabb_callback}{bt\+Broadphase\+Aabb\+Callback}} \&callback)=0
+\item 
+virtual void \mbox{\hyperlink{classbt_broadphase_interface_a27e29cb6fd31e5fe626e7ba973e67ddb}{calculate\+Overlapping\+Pairs}} (\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)=0
+\begin{DoxyCompactList}\small\item\em calculate\+Overlapping\+Pairs is optional\+: incremental algorithms (sweep and prune) might do it during the set aabb \end{DoxyCompactList}\item 
+\Hypertarget{classbt_broadphase_interface_ad5e96a9c7bd7ebb5a3113492fd3edbfb}\label{classbt_broadphase_interface_ad5e96a9c7bd7ebb5a3113492fd3edbfb} 
+virtual \mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Overlapping\+Pair\+Cache} ()=0
+\item 
+\Hypertarget{classbt_broadphase_interface_abb0fe0687a7ce94d6903445627180a91}\label{classbt_broadphase_interface_abb0fe0687a7ce94d6903445627180a91} 
+virtual const \mbox{\hyperlink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache}} \texorpdfstring{$\ast$}{*} {\bfseries get\+Overlapping\+Pair\+Cache} () const =0
+\item 
+virtual void \mbox{\hyperlink{classbt_broadphase_interface_ab5af9e26414f5a72a76040b8fab4d9e2}{get\+Broadphase\+Aabb}} (bt\+Vector3 \&aabb\+Min, bt\+Vector3 \&aabb\+Max) const =0
+\item 
+virtual void \mbox{\hyperlink{classbt_broadphase_interface_a8135b10b29bced0b1c62ba6be060dc29}{reset\+Pool}} (\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}dispatcher)
+\begin{DoxyCompactList}\small\item\em reset broadphase internal structures, to ensure determinism/reproducability \end{DoxyCompactList}\item 
+\Hypertarget{classbt_broadphase_interface_aa8aa8cfee6492f59c54ca1827a072554}\label{classbt_broadphase_interface_aa8aa8cfee6492f59c54ca1827a072554} 
+virtual void {\bfseries print\+Stats} ()=0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxylink{classbt_broadphase_interface}{bt\+Broadphase\+Interface} class provides an interface to detect aabb-\/overlapping object pairs. Some implementations for this broadphase interface include \doxylink{classbt_axis_sweep3}{bt\+Axis\+Sweep3}, \doxylink{classbt32_bit_axis_sweep3}{bt32\+Bit\+Axis\+Sweep3} and \doxylink{structbt_dbvt_broadphase}{bt\+Dbvt\+Broadphase}. The actual overlapping pair management, storage, adding and removing of pairs is dealt by the \doxylink{classbt_overlapping_pair_cache}{bt\+Overlapping\+Pair\+Cache} class. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_broadphase_interface_a27e29cb6fd31e5fe626e7ba973e67ddb}\label{classbt_broadphase_interface_a27e29cb6fd31e5fe626e7ba973e67ddb} 
+\index{btBroadphaseInterface@{btBroadphaseInterface}!calculateOverlappingPairs@{calculateOverlappingPairs}}
+\index{calculateOverlappingPairs@{calculateOverlappingPairs}!btBroadphaseInterface@{btBroadphaseInterface}}
+\doxysubsubsection{\texorpdfstring{calculateOverlappingPairs()}{calculateOverlappingPairs()}}
+{\footnotesize\ttfamily virtual void bt\+Broadphase\+Interface\+::calculate\+Overlapping\+Pairs (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+calculate\+Overlapping\+Pairs is optional\+: incremental algorithms (sweep and prune) might do it during the set aabb 
+
+
+
+Implemented in \mbox{\hyperlink{classbt_axis_sweep3_internal_ab89835d4ecb51e2dadc7e3b6e7c29adb}{bt\+Axis\+Sweep3\+Internal$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$}}, \mbox{\hyperlink{classbt_axis_sweep3_internal_ab89835d4ecb51e2dadc7e3b6e7c29adb}{bt\+Axis\+Sweep3\+Internal$<$ unsigned int $>$}}, \mbox{\hyperlink{classbt_axis_sweep3_internal_ab89835d4ecb51e2dadc7e3b6e7c29adb}{bt\+Axis\+Sweep3\+Internal$<$ unsigned short int $>$}}, \mbox{\hyperlink{structbt_dbvt_broadphase_a182741d147d9810758c886ce86fb03e6}{bt\+Dbvt\+Broadphase}}, and \mbox{\hyperlink{classbt_simple_broadphase_ac899d483e888fa132677125c88991de8}{bt\+Simple\+Broadphase}}.
+
+\Hypertarget{classbt_broadphase_interface_ab5af9e26414f5a72a76040b8fab4d9e2}\label{classbt_broadphase_interface_ab5af9e26414f5a72a76040b8fab4d9e2} 
+\index{btBroadphaseInterface@{btBroadphaseInterface}!getBroadphaseAabb@{getBroadphaseAabb}}
+\index{getBroadphaseAabb@{getBroadphaseAabb}!btBroadphaseInterface@{btBroadphaseInterface}}
+\doxysubsubsection{\texorpdfstring{getBroadphaseAabb()}{getBroadphaseAabb()}}
+{\footnotesize\ttfamily virtual void bt\+Broadphase\+Interface\+::get\+Broadphase\+Aabb (\begin{DoxyParamCaption}\item[{bt\+Vector3 \&}]{aabb\+Min,  }\item[{bt\+Vector3 \&}]{aabb\+Max }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+get\+Aabb returns the axis aligned bounding box in the \textquotesingle{}global\textquotesingle{} coordinate frame will add some transform later 
+
+Implemented in \mbox{\hyperlink{classbt_axis_sweep3_internal_ad1e0037e1ed62ef5049389bb4e8fd5b5}{bt\+Axis\+Sweep3\+Internal$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$}}, \mbox{\hyperlink{classbt_axis_sweep3_internal_ad1e0037e1ed62ef5049389bb4e8fd5b5}{bt\+Axis\+Sweep3\+Internal$<$ unsigned int $>$}}, \mbox{\hyperlink{classbt_axis_sweep3_internal_ad1e0037e1ed62ef5049389bb4e8fd5b5}{bt\+Axis\+Sweep3\+Internal$<$ unsigned short int $>$}}, \mbox{\hyperlink{structbt_dbvt_broadphase_acbd595a9434b6bb045e15ab0d36120e3}{bt\+Dbvt\+Broadphase}}, and \mbox{\hyperlink{classbt_simple_broadphase_a4e8e5de5df6d3125631e3d94a67ac4d2}{bt\+Simple\+Broadphase}}.
+
+\Hypertarget{classbt_broadphase_interface_a8135b10b29bced0b1c62ba6be060dc29}\label{classbt_broadphase_interface_a8135b10b29bced0b1c62ba6be060dc29} 
+\index{btBroadphaseInterface@{btBroadphaseInterface}!resetPool@{resetPool}}
+\index{resetPool@{resetPool}!btBroadphaseInterface@{btBroadphaseInterface}}
+\doxysubsubsection{\texorpdfstring{resetPool()}{resetPool()}}
+{\footnotesize\ttfamily virtual void bt\+Broadphase\+Interface\+::reset\+Pool (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classbt_dispatcher}{bt\+Dispatcher}} \texorpdfstring{$\ast$}{*}}]{dispatcher }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+reset broadphase internal structures, to ensure determinism/reproducability 
+
+
+
+Reimplemented in \mbox{\hyperlink{classbt_axis_sweep3_internal_aeecfcc066ca77ec8b9bf2c8d422716ee}{bt\+Axis\+Sweep3\+Internal$<$ BP\+\_\+\+FP\+\_\+\+INT\+\_\+\+TYPE $>$}}, \mbox{\hyperlink{classbt_axis_sweep3_internal_aeecfcc066ca77ec8b9bf2c8d422716ee}{bt\+Axis\+Sweep3\+Internal$<$ unsigned int $>$}}, \mbox{\hyperlink{classbt_axis_sweep3_internal_aeecfcc066ca77ec8b9bf2c8d422716ee}{bt\+Axis\+Sweep3\+Internal$<$ unsigned short int $>$}}, \mbox{\hyperlink{structbt_dbvt_broadphase_a4d27a2ffb543aa23bb82fcf50ff25341}{bt\+Dbvt\+Broadphase}}, and \mbox{\hyperlink{classbt_simple_broadphase_a65c387ba0fa8690716296ee9d5f7550a}{bt\+Simple\+Broadphase}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Broadphase\+Collision/bt\+Broadphase\+Interface.\+h\end{DoxyCompactItemize}

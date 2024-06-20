@@ -1,0 +1,72 @@
+\doxysection{Painter.\+hpp}
+\hypertarget{_painter_8hpp_source}{}\label{_painter_8hpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica MidleWare/Tool Engine/code/controller/Painter.hpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica MidleWare/Tool Engine/code/controller/Painter.hpp}}
+\mbox{\hyperlink{_painter_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_a_p_i_8hpp}{../API.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_canvas_8hpp}{../model/Canvas.hpp}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_image_stream_8hpp}{../controller/ImageStream.hpp}}"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemisi}{misi}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{_a_p_i_8hpp_ad8ce4efaa307683d3d763b37b4711c53}{API}}\ \mbox{\hyperlink{classmisi_1_1_painter}{Painter}}}
+\DoxyCodeLine{00016\ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_canvas}{Canvas}}\ *\ canvas;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_image_streamer}{ImageStreamer}}*\ \ streamer;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_painter_af9a60ca9237f28436e3cc17ebd56526c}{Painter}}(\textcolor{keywordtype}{int}\ width,\ \textcolor{keywordtype}{int}\ heigh)}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ canvas\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classmisi_1_1_canvas}{Canvas}}(width,\ heigh);\ \ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ streamer\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_painter_abe06e29831945aa58def98050cc2d25f}{CreateStreamer}}(\textcolor{keyword}{const}\ std::string\&\ filename)}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ streamer\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classmisi_1_1_image_streamer}{ImageStreamer}}(\ filename,\ canvas-\/>get\_width(),\ canvas-\/>get\_height());}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_unity_bridge_8cpp_a92a447fb6579d3aeeb742840b84cc86c}{CreateCanvas}}(\textcolor{keywordtype}{int}\ height,\ \textcolor{keywordtype}{int}\ width);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Clear();}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ SetPixelColor(\textcolor{keywordtype}{int}\ X,\ \textcolor{keywordtype}{int}\ y\ ,\ \textcolor{keywordtype}{int}\ R,\ \textcolor{keywordtype}{int}\ G,\ \textcolor{keywordtype}{int}\ B,\ \textcolor{keywordtype}{int}\ A);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_painter_a59940881526387fa8389dea2b4eeb0a7}{SafeFile}}()}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ streamer-\/>\mbox{\hyperlink{classmisi_1_1_image_streamer_a918af5237e7f436b1bfb16c39cdce211}{GenerateImage}}(canvas-\/>Getbuffer());}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmisi_1_1_painter_ac4e0cd20c0039d81f67cd2374e2a76a7}{ReadFile}}()}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ canvas-\/>Setbuffer(streamer-\/>\mbox{\hyperlink{classmisi_1_1_image_streamer_a170a6ac496c6df6a812869d331778249}{ReadImage}}());}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_canvas}{Canvas}}*\ \mbox{\hyperlink{classmisi_1_1_painter_ad82ab9ab899e86c856b85efcc2cc390d}{GetCanvas}}()}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ canvas;}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{classmisi_1_1_painter_aa51ad28ef2bcbfb49e58abdb187ac9d6}{GetPath}}()}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ streamer-\/>\mbox{\hyperlink{classmisi_1_1_image_streamer_ae0d95d5b4637ce271fb13e1095fe9233}{GetPath}}();}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmisi_1_1_painter_ab00f3aa494443efa376eafc8f9473903}{\string~Painter}}()}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ canvas;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ streamer;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \ \ \ \ \};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \}}
+
+\end{DoxyCode}

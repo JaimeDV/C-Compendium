@@ -1,0 +1,44 @@
+\doxysection{bt\+Subsimplex\+Convex\+Cast Class Reference}
+\hypertarget{classbt_subsimplex_convex_cast}{}\label{classbt_subsimplex_convex_cast}\index{btSubsimplexConvexCast@{btSubsimplexConvexCast}}
+
+
+{\ttfamily \#include $<$bt\+Sub\+Simplex\+Convex\+Cast.\+h$>$}
+
+Inheritance diagram for bt\+Subsimplex\+Convex\+Cast\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classbt_subsimplex_convex_cast}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classbt_subsimplex_convex_cast_a30fb126456a82b5fe625da26c6a28900}\label{classbt_subsimplex_convex_cast_a30fb126456a82b5fe625da26c6a28900} 
+{\bfseries bt\+Subsimplex\+Convex\+Cast} (const bt\+Convex\+Shape \texorpdfstring{$\ast$}{*}shapeA, const bt\+Convex\+Shape \texorpdfstring{$\ast$}{*}shapeB, bt\+Simplex\+Solver\+Interface \texorpdfstring{$\ast$}{*}simplex\+Solver)
+\item 
+virtual bool \mbox{\hyperlink{classbt_subsimplex_convex_cast_a93202199b82c9d2f3074617f8db72e17}{calc\+Time\+Of\+Impact}} (const bt\+Transform \&fromA, const bt\+Transform \&toA, const bt\+Transform \&fromB, const bt\+Transform \&toB, \mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{Cast\+Result}} \&result)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{classbt_subsimplex_convex_cast}{bt\+Subsimplex\+Convex\+Cast} implements Gino van den Bergens\textquotesingle{} paper "{}\+Ray Casting against bteral Convex Objects with Application to Continuous Collision Detection"{} \doxylink{struct_g_j_k}{GJK} based Ray Cast, optimized version Objects should not start in overlap, otherwise results are not defined. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbt_subsimplex_convex_cast_a93202199b82c9d2f3074617f8db72e17}\label{classbt_subsimplex_convex_cast_a93202199b82c9d2f3074617f8db72e17} 
+\index{btSubsimplexConvexCast@{btSubsimplexConvexCast}!calcTimeOfImpact@{calcTimeOfImpact}}
+\index{calcTimeOfImpact@{calcTimeOfImpact}!btSubsimplexConvexCast@{btSubsimplexConvexCast}}
+\doxysubsubsection{\texorpdfstring{calcTimeOfImpact()}{calcTimeOfImpact()}}
+{\footnotesize\ttfamily bool bt\+Subsimplex\+Convex\+Cast\+::calc\+Time\+Of\+Impact (\begin{DoxyParamCaption}\item[{const bt\+Transform \&}]{fromA,  }\item[{const bt\+Transform \&}]{toA,  }\item[{const bt\+Transform \&}]{fromB,  }\item[{const bt\+Transform \&}]{toB,  }\item[{\mbox{\hyperlink{structbt_convex_cast_1_1_cast_result}{Cast\+Result}} \&}]{result }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Simsimplex\+Convex\+Cast calculate\+Time\+Of\+Impact calculates the time of impact+normal for the linear cast (sweep) between two moving objects. Precondition is that objects should not penetration/overlap at the start from the interval. Overlap can be tested using \doxylink{classbt_gjk_pair_detector}{bt\+Gjk\+Pair\+Detector}. take relative motion
+
+Just like regular \doxylink{struct_g_j_k}{GJK} only add the vertex if it isn\textquotesingle{}t already (close) to current vertex, it would lead to divisions by zero and NaN etc.
+
+Implements \mbox{\hyperlink{classbt_convex_cast_abaf0f25a8cccfcafdaabada83c8d2bfb}{bt\+Convex\+Cast}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Narrow\+Phase\+Collision/bt\+Sub\+Simplex\+Convex\+Cast.\+h\item 
+C\+:/\+Users/\+Usuario/\+Documents/pruebas-\/c/\+Practica Animación/libraries/bullet-\/3.\+17/src/\+Bullet\+Collision/\+Narrow\+Phase\+Collision/bt\+Sub\+Simplex\+Convex\+Cast.\+cpp\end{DoxyCompactItemize}

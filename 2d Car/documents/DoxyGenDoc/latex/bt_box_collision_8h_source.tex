@@ -1,0 +1,602 @@
+\doxysection{bt\+Box\+Collision.\+h}
+\hypertarget{bt_box_collision_8h_source}{}\label{bt_box_collision_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btBoxCollision.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/Gimpact/btBoxCollision.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ BT\_BOX\_COLLISION\_H\_INCLUDED}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ BT\_BOX\_COLLISION\_H\_INCLUDED}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00008\ \textcolor{comment}{This\ source\ file\ is\ part\ of\ GIMPACT\ Library.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{}}
+\DoxyCodeLine{00010\ \textcolor{comment}{For\ the\ latest\ info,\ see\ http://gimpact.sourceforge.net/}}
+\DoxyCodeLine{00011\ \textcolor{comment}{}}
+\DoxyCodeLine{00012\ \textcolor{comment}{Copyright\ (c)\ 2007\ Francisco\ Leon\ Najera.\ C.C.\ 80087371.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{email:\ projectileman@yahoo.com}}
+\DoxyCodeLine{00014\ \textcolor{comment}{}}
+\DoxyCodeLine{00015\ \textcolor{comment}{}}
+\DoxyCodeLine{00016\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,}}
+\DoxyCodeLine{00019\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00021\ \textcolor{comment}{}}
+\DoxyCodeLine{00022\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btTransform.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ BT\_SWAP\_NUMBERS(a,\ b)\ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a\ =\ a\ +\ b;\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ b\ =\ a\ -\/\ b;\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a\ =\ a\ -\/\ b;\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ BT\_MAX(a,\ b)\ (a\ <\ b\ ?\ b\ :\ a)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ BT\_MIN(a,\ b)\ (a\ >\ b\ ?\ b\ :\ a)}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ BT\_GREATER(x,\ y)\ btFabs(x)\ >\ (y)}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#define\ BT\_MAX3(a,\ b,\ c)\ BT\_MAX(a,\ BT\_MAX(b,\ c))}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ BT\_MIN3(a,\ b,\ c)\ BT\_MIN(a,\ BT\_MIN(b,\ c))}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{enum}\ eBT\_PLANE\_INTERSECTION\_TYPE}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ BT\_CONST\_BACK\_PLANE\ =\ 0,}
+\DoxyCodeLine{00048\ \ \ \ \ BT\_CONST\_COLLIDE\_PLANE,}
+\DoxyCodeLine{00049\ \ \ \ \ BT\_CONST\_FRONT\_PLANE}
+\DoxyCodeLine{00050\ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{//SIMD\_FORCE\_INLINE\ bool\ test\_cross\_edge\_box(}}
+\DoxyCodeLine{00053\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ edge,}}
+\DoxyCodeLine{00054\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ absolute\_edge,}}
+\DoxyCodeLine{00055\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointa,}}
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointb,\ const\ btVector3\ \&\ extend,}}
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ \ int\ dir\_index0,}}
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ \ int\ dir\_index1}}
+\DoxyCodeLine{00059\ \textcolor{comment}{//\ \ int\ component\_index0,}}
+\DoxyCodeLine{00060\ \textcolor{comment}{//\ \ int\ component\_index1)}}
+\DoxyCodeLine{00061\ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00062\ \textcolor{comment}{//\ \ //\ dir\ coords\ are\ -\/z\ and\ y}}
+\DoxyCodeLine{00063\ \textcolor{comment}{//}}
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ \ const\ btScalar\ dir0\ =\ -\/edge[dir\_index0];}}
+\DoxyCodeLine{00065\ \textcolor{comment}{//\ \ const\ btScalar\ dir1\ =\ edge[dir\_index1];}}
+\DoxyCodeLine{00066\ \textcolor{comment}{//\ \ btScalar\ pmin\ =\ pointa[component\_index0]*dir0\ +\ pointa[component\_index1]*dir1;}}
+\DoxyCodeLine{00067\ \textcolor{comment}{//\ \ btScalar\ pmax\ =\ pointb[component\_index0]*dir0\ +\ pointb[component\_index1]*dir1;}}
+\DoxyCodeLine{00068\ \textcolor{comment}{//\ \ //find\ minmax}}
+\DoxyCodeLine{00069\ \textcolor{comment}{//\ \ if(pmin>pmax)}}
+\DoxyCodeLine{00070\ \textcolor{comment}{//\ \ \{}}
+\DoxyCodeLine{00071\ \textcolor{comment}{//\ \ \ \ \ \ BT\_SWAP\_NUMBERS(pmin,pmax);}}
+\DoxyCodeLine{00072\ \textcolor{comment}{//\ \ \}}}
+\DoxyCodeLine{00073\ \textcolor{comment}{//\ \ //find\ extends}}
+\DoxyCodeLine{00074\ \textcolor{comment}{//\ \ const\ btScalar\ rad\ =\ extend[component\_index0]\ *\ absolute\_edge[dir\_index0]\ +}}
+\DoxyCodeLine{00075\ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ extend[component\_index1]\ *\ absolute\_edge[dir\_index1];}}
+\DoxyCodeLine{00076\ \textcolor{comment}{//}}
+\DoxyCodeLine{00077\ \textcolor{comment}{//\ \ if(pmin>rad\ ||\ -\/rad>pmax)\ return\ false;}}
+\DoxyCodeLine{00078\ \textcolor{comment}{//\ \ return\ true;}}
+\DoxyCodeLine{00079\ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00080\ \textcolor{comment}{//}}
+\DoxyCodeLine{00081\ \textcolor{comment}{//SIMD\_FORCE\_INLINE\ bool\ test\_cross\_edge\_box\_X\_axis(}}
+\DoxyCodeLine{00082\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ edge,}}
+\DoxyCodeLine{00083\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ absolute\_edge,}}
+\DoxyCodeLine{00084\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointa,}}
+\DoxyCodeLine{00085\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointb,\ btVector3\ \&\ extend)}}
+\DoxyCodeLine{00086\ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00087\ \textcolor{comment}{//}}
+\DoxyCodeLine{00088\ \textcolor{comment}{//\ \ return\ test\_cross\_edge\_box(edge,absolute\_edge,pointa,pointb,extend,2,1,1,2);}}
+\DoxyCodeLine{00089\ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00090\ \textcolor{comment}{//}}
+\DoxyCodeLine{00091\ \textcolor{comment}{//}}
+\DoxyCodeLine{00092\ \textcolor{comment}{//SIMD\_FORCE\_INLINE\ bool\ test\_cross\_edge\_box\_Y\_axis(}}
+\DoxyCodeLine{00093\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ edge,}}
+\DoxyCodeLine{00094\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ absolute\_edge,}}
+\DoxyCodeLine{00095\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointa,}}
+\DoxyCodeLine{00096\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointb,\ btVector3\ \&\ extend)}}
+\DoxyCodeLine{00097\ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00098\ \textcolor{comment}{//}}
+\DoxyCodeLine{00099\ \textcolor{comment}{//\ \ return\ test\_cross\_edge\_box(edge,absolute\_edge,pointa,pointb,extend,0,2,2,0);}}
+\DoxyCodeLine{00100\ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00101\ \textcolor{comment}{//}}
+\DoxyCodeLine{00102\ \textcolor{comment}{//SIMD\_FORCE\_INLINE\ bool\ test\_cross\_edge\_box\_Z\_axis(}}
+\DoxyCodeLine{00103\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ edge,}}
+\DoxyCodeLine{00104\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ absolute\_edge,}}
+\DoxyCodeLine{00105\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointa,}}
+\DoxyCodeLine{00106\ \textcolor{comment}{//\ \ const\ btVector3\ \&\ pointb,\ btVector3\ \&\ extend)}}
+\DoxyCodeLine{00107\ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00108\ \textcolor{comment}{//}}
+\DoxyCodeLine{00109\ \textcolor{comment}{//\ \ return\ test\_cross\_edge\_box(edge,absolute\_edge,pointa,pointb,extend,1,0,0,1);}}
+\DoxyCodeLine{00110\ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#define\ TEST\_CROSS\_EDGE\_BOX\_MCR(edge,\ absolute\_edge,\ pointa,\ pointb,\ \_extend,\ i\_dir\_0,\ i\_dir\_1,\ i\_comp\_0,\ i\_comp\_1)\ \(\backslash\)}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ const\ btScalar\ dir0\ =\ -\/edge[i\_dir\_0];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ const\ btScalar\ dir1\ =\ edge[i\_dir\_1];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ btScalar\ pmin\ =\ pointa[i\_comp\_0]\ *\ dir0\ +\ pointa[i\_comp\_1]\ *\ dir1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ btScalar\ pmax\ =\ pointb[i\_comp\_0]\ *\ dir0\ +\ pointb[i\_comp\_1]\ *\ dir1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (pmin\ >\ pmax)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ BT\_SWAP\_NUMBERS(pmin,\ pmax);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ const\ btScalar\ abs\_dir0\ =\ absolute\_edge[i\_dir\_0];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ const\ btScalar\ abs\_dir1\ =\ absolute\_edge[i\_dir\_1];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ const\ btScalar\ rad\ =\ \_extend[i\_comp\_0]\ *\ abs\_dir0\ +\ \_extend[i\_comp\_1]\ *\ abs\_dir1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (pmin\ >\ rad\ ||\ -\/rad\ >\ pmax)\ return\ false;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#define\ TEST\_CROSS\_EDGE\_BOX\_X\_AXIS\_MCR(edge,\ absolute\_edge,\ pointa,\ pointb,\ \_extend)\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_MCR(edge,\ absolute\_edge,\ pointa,\ pointb,\ \_extend,\ 2,\ 1,\ 1,\ 2);\ \(\backslash\)}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#define\ TEST\_CROSS\_EDGE\_BOX\_Y\_AXIS\_MCR(edge,\ absolute\_edge,\ pointa,\ pointb,\ \_extend)\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_MCR(edge,\ absolute\_edge,\ pointa,\ pointb,\ \_extend,\ 0,\ 2,\ 2,\ 0);\ \(\backslash\)}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#define\ TEST\_CROSS\_EDGE\_BOX\_Z\_AXIS\_MCR(edge,\ absolute\_edge,\ pointa,\ pointb,\ \_extend)\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_MCR(edge,\ absolute\_edge,\ pointa,\ pointb,\ \_extend,\ 1,\ 0,\ 0,\ 1);\ \(\backslash\)}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00144\ SIMD\_FORCE\_INLINE\ btScalar\ bt\_mat3\_dot\_col(}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\ \&mat,\ \textcolor{keyword}{const}\ btVector3\ \&vec3,\ \textcolor{keywordtype}{int}\ colindex)}
+\DoxyCodeLine{00146\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordflow}{return}\ vec3[0]\ *\ mat[0][colindex]\ +\ vec3[1]\ *\ mat[1][colindex]\ +\ vec3[2]\ *\ mat[2][colindex];}
+\DoxyCodeLine{00148\ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00151\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00152\ BT\_BOX\_BOX\_TRANSFORM\_CACHE}
+\DoxyCodeLine{00153\ \{}
+\DoxyCodeLine{00154\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00155\ \ \ \ \ btVector3\ m\_T1to0;\ \ \ \ }
+\DoxyCodeLine{00156\ \ \ \ \ btMatrix3x3\ m\_R1to0;\ \ }
+\DoxyCodeLine{00157\ \ \ \ \ btMatrix3x3\ m\_AR;\ \ \ \ \ }
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ calc\_absolute\_matrix()}
+\DoxyCodeLine{00160\ \ \ \ \ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ static\ const\ btVector3\ vepsi(1e-\/6f,1e-\/6f,1e-\/6f);}}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ m\_AR[0]\ =\ vepsi\ +\ m\_R1to0[0].absolute();}}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ m\_AR[1]\ =\ vepsi\ +\ m\_R1to0[1].absolute();}}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ m\_AR[2]\ =\ vepsi\ +\ m\_R1to0[2].absolute();}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i,\ j;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_AR[i][j]\ =\ 1e-\/6f\ +\ btFabs(m\_R1to0[i][j]);}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \ \ \ \ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ BT\_BOX\_BOX\_TRANSFORM\_CACHE()}
+\DoxyCodeLine{00178\ \ \ \ \ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00182\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ calc\_from\_homogenic(\textcolor{keyword}{const}\ btTransform\ \&trans0,\ \textcolor{keyword}{const}\ btTransform\ \&trans1)}
+\DoxyCodeLine{00183\ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ btTransform\ temp\_trans\ =\ trans0.inverse();}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ temp\_trans\ =\ temp\_trans\ *\ trans1;}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ m\_T1to0\ =\ temp\_trans.getOrigin();}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ m\_R1to0\ =\ temp\_trans.getBasis();}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ calc\_absolute\_matrix();}
+\DoxyCodeLine{00191\ \ \ \ \ \}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00194\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ calc\_from\_full\_invert(\textcolor{keyword}{const}\ btTransform\ \&trans0,\ \textcolor{keyword}{const}\ btTransform\ \&trans1)}
+\DoxyCodeLine{00195\ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ m\_R1to0\ =\ trans0.getBasis().inverse();}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ m\_T1to0\ =\ m\_R1to0\ *\ (-\/trans0.getOrigin());}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ m\_T1to0\ +=\ m\_R1to0\ *\ trans1.getOrigin();}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ m\_R1to0\ *=\ trans1.getBasis();}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ calc\_absolute\_matrix();}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ SIMD\_FORCE\_INLINE\ btVector3\ transform(\textcolor{keyword}{const}\ btVector3\ \&point)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00206\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ point.dot3(m\_R1to0[0],\ m\_R1to0[1],\ m\_R1to0[2])\ +\ m\_T1to0;}
+\DoxyCodeLine{00208\ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#define\ BOX\_PLANE\_EPSILON\ 0.000001f}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00214\ ATTRIBUTE\_ALIGNED16(\textcolor{keyword}{class})}
+\DoxyCodeLine{00215\ btAABB}
+\DoxyCodeLine{00216\ \{}
+\DoxyCodeLine{00217\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00218\ \ \ \ \ btVector3\ m\_min;}
+\DoxyCodeLine{00219\ \ \ \ \ btVector3\ m\_max;}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ btAABB()}
+\DoxyCodeLine{00222\ \ \ \ \ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ btAABB(\textcolor{keyword}{const}\ btVector3\ \&V1,}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&V2,}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&V3)}
+\DoxyCodeLine{00228\ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ BT\_MIN3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ BT\_MIN3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ BT\_MIN3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ BT\_MAX3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ BT\_MAX3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ BT\_MAX3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ btAABB(\textcolor{keyword}{const}\ btVector3\ \&V1,}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&V2,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&V3,}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ btScalar\ margin)}
+\DoxyCodeLine{00242\ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ BT\_MIN3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ BT\_MIN3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ BT\_MIN3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ BT\_MAX3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ BT\_MAX3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ BT\_MAX3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ m\_min[0]\ -\/=\ margin;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ m\_min[1]\ -\/=\ margin;}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ m\_min[2]\ -\/=\ margin;}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ m\_max[0]\ +=\ margin;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ m\_max[1]\ +=\ margin;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ m\_max[2]\ +=\ margin;}
+\DoxyCodeLine{00257\ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ btAABB(\textcolor{keyword}{const}\ btAABB\ \&other)\ :\ m\_min(other.m\_min),\ m\_max(other.m\_max)}
+\DoxyCodeLine{00260\ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ btAABB(\textcolor{keyword}{const}\ btAABB\ \&other,\ btScalar\ margin)\ :\ m\_min(other.m\_min),\ m\_max(other.m\_max)}
+\DoxyCodeLine{00264\ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ m\_min[0]\ -\/=\ margin;}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ m\_min[1]\ -\/=\ margin;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ m\_min[2]\ -\/=\ margin;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ m\_max[0]\ +=\ margin;}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ m\_max[1]\ +=\ margin;}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ m\_max[2]\ +=\ margin;}
+\DoxyCodeLine{00271\ \ \ \ \ \}}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ invalidate()}
+\DoxyCodeLine{00274\ \ \ \ \ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ SIMD\_INFINITY;}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ SIMD\_INFINITY;}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ SIMD\_INFINITY;}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ -\/SIMD\_INFINITY;}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ -\/SIMD\_INFINITY;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ -\/SIMD\_INFINITY;}
+\DoxyCodeLine{00281\ \ \ \ \ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ increment\_margin(btScalar\ margin)}
+\DoxyCodeLine{00284\ \ \ \ \ \{}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ m\_min[0]\ -\/=\ margin;}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ m\_min[1]\ -\/=\ margin;}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ m\_min[2]\ -\/=\ margin;}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ m\_max[0]\ +=\ margin;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ m\_max[1]\ +=\ margin;}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ m\_max[2]\ +=\ margin;}
+\DoxyCodeLine{00291\ \ \ \ \ \}}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ copy\_with\_margin(\textcolor{keyword}{const}\ btAABB\ \&other,\ btScalar\ margin)}
+\DoxyCodeLine{00294\ \ \ \ \ \{}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ other.m\_min[0]\ -\/\ margin;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ other.m\_min[1]\ -\/\ margin;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ other.m\_min[2]\ -\/\ margin;}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ other.m\_max[0]\ +\ margin;}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ other.m\_max[1]\ +\ margin;}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ other.m\_max[2]\ +\ margin;}
+\DoxyCodeLine{00302\ \ \ \ \ \}}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ CLASS\_POINT>}
+\DoxyCodeLine{00305\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ calc\_from\_triangle(}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CLASS\_POINT\ \&V1,}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CLASS\_POINT\ \&V2,}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CLASS\_POINT\ \&V3)}
+\DoxyCodeLine{00309\ \ \ \ \ \{}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ BT\_MIN3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ BT\_MIN3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ BT\_MIN3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ BT\_MAX3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ BT\_MAX3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ BT\_MAX3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00317\ \ \ \ \ \}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ CLASS\_POINT>}
+\DoxyCodeLine{00320\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ calc\_from\_triangle\_margin(}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CLASS\_POINT\ \&V1,}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CLASS\_POINT\ \&V2,}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CLASS\_POINT\ \&V3,\ btScalar\ margin)}
+\DoxyCodeLine{00324\ \ \ \ \ \{}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ BT\_MIN3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ BT\_MIN3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ BT\_MIN3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ BT\_MAX3(V1[0],\ V2[0],\ V3[0]);}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ BT\_MAX3(V1[1],\ V2[1],\ V3[1]);}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ BT\_MAX3(V1[2],\ V2[2],\ V3[2]);}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ m\_min[0]\ -\/=\ margin;}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ m\_min[1]\ -\/=\ margin;}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ m\_min[2]\ -\/=\ margin;}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ m\_max[0]\ +=\ margin;}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ m\_max[1]\ +=\ margin;}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ m\_max[2]\ +=\ margin;}
+\DoxyCodeLine{00339\ \ \ \ \ \}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00342\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ appy\_transform(\textcolor{keyword}{const}\ btTransform\ \&trans)}
+\DoxyCodeLine{00343\ \ \ \ \ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ btVector3\ center\ =\ (m\_max\ +\ m\_min)\ *\ 0.5f;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ btVector3\ extends\ =\ m\_max\ -\/\ center;}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Compute\ new\ center}}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ center\ =\ trans(center);}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ btVector3\ textends\ =\ extends.dot3(trans.getBasis().getRow(0).absolute(),}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ trans.getBasis().getRow(1).absolute(),}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ trans.getBasis().getRow(2).absolute());}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ m\_min\ =\ center\ -\/\ textends;}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ m\_max\ =\ center\ +\ textends;}
+\DoxyCodeLine{00355\ \ \ \ \ \}}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00358\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ appy\_transform\_trans\_cache(\textcolor{keyword}{const}\ BT\_BOX\_BOX\_TRANSFORM\_CACHE\ \&trans)}
+\DoxyCodeLine{00359\ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ btVector3\ center\ =\ (m\_max\ +\ m\_min)\ *\ 0.5f;}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ btVector3\ extends\ =\ m\_max\ -\/\ center;}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Compute\ new\ center}}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ center\ =\ trans.transform(center);}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ btVector3\ textends\ =\ extends.dot3(trans.m\_R1to0.getRow(0).absolute(),}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ trans.m\_R1to0.getRow(1).absolute(),}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ trans.m\_R1to0.getRow(2).absolute());}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ m\_min\ =\ center\ -\/\ textends;}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ m\_max\ =\ center\ +\ textends;}
+\DoxyCodeLine{00371\ \ \ \ \ \}}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00374\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ merge(\textcolor{keyword}{const}\ btAABB\ \&box)}
+\DoxyCodeLine{00375\ \ \ \ \ \{}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ BT\_MIN(m\_min[0],\ box.m\_min[0]);}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ BT\_MIN(m\_min[1],\ box.m\_min[1]);}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ BT\_MIN(m\_min[2],\ box.m\_min[2]);}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ BT\_MAX(m\_max[0],\ box.m\_max[0]);}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ BT\_MAX(m\_max[1],\ box.m\_max[1]);}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ BT\_MAX(m\_max[2],\ box.m\_max[2]);}
+\DoxyCodeLine{00383\ \ \ \ \ \}}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00386\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ CLASS\_POINT>}
+\DoxyCodeLine{00387\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ merge\_point(\textcolor{keyword}{const}\ CLASS\_POINT\ \&point)}
+\DoxyCodeLine{00388\ \ \ \ \ \{}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ m\_min[0]\ =\ BT\_MIN(m\_min[0],\ point[0]);}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ m\_min[1]\ =\ BT\_MIN(m\_min[1],\ point[1]);}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ m\_min[2]\ =\ BT\_MIN(m\_min[2],\ point[2]);}
+\DoxyCodeLine{00392\ }
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ m\_max[0]\ =\ BT\_MAX(m\_max[0],\ point[0]);}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ m\_max[1]\ =\ BT\_MAX(m\_max[1],\ point[1]);}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ m\_max[2]\ =\ BT\_MAX(m\_max[2],\ point[2]);}
+\DoxyCodeLine{00396\ \ \ \ \ \}}
+\DoxyCodeLine{00397\ }
+\DoxyCodeLine{00399\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ get\_center\_extend(btVector3\ \&\ center,\ btVector3\ \&\ extend)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00400\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ center\ =\ (m\_max\ +\ m\_min)\ *\ 0.5f;}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__gtx__extend_ga8140caae613b0f847ab0d7175dc03a37}{extend}}\ =\ m\_max\ -\/\ center;}
+\DoxyCodeLine{00403\ \ \ \ \ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00406\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ find\_intersection(\textcolor{keyword}{const}\ btAABB\ \&other,\ btAABB\ \&intersection)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00407\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ intersection.m\_min[0]\ =\ BT\_MAX(other.m\_min[0],\ m\_min[0]);}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ intersection.m\_min[1]\ =\ BT\_MAX(other.m\_min[1],\ m\_min[1]);}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ intersection.m\_min[2]\ =\ BT\_MAX(other.m\_min[2],\ m\_min[2]);}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ intersection.m\_max[0]\ =\ BT\_MIN(other.m\_max[0],\ m\_max[0]);}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ intersection.m\_max[1]\ =\ BT\_MIN(other.m\_max[1],\ m\_max[1]);}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ intersection.m\_max[2]\ =\ BT\_MIN(other.m\_max[2],\ m\_max[2]);}
+\DoxyCodeLine{00415\ \ \ \ \ \}}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ has\_collision(\textcolor{keyword}{const}\ btAABB\ \&other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00418\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_min[0]\ >\ other.m\_max[0]\ ||}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ m\_max[0]\ <\ other.m\_min[0]\ ||}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ m\_min[1]\ >\ other.m\_max[1]\ ||}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ m\_max[1]\ <\ other.m\_min[1]\ ||}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ m\_min[2]\ >\ other.m\_max[2]\ ||}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ m\_max[2]\ <\ other.m\_min[2])}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00429\ \ \ \ \ \}}
+\DoxyCodeLine{00430\ }
+\DoxyCodeLine{00436\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ collide\_ray(\textcolor{keyword}{const}\ btVector3\ \&vorigin,\ \textcolor{keyword}{const}\ btVector3\ \&vdir)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00437\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ btVector3\ extents,\ center;}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ this-\/>get\_center\_extend(center,\ extents);}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ btScalar\ Dx\ =\ vorigin[0]\ -\/\ center[0];}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (BT\_GREATER(Dx,\ extents[0])\ \&\&\ Dx\ *\ vdir[0]\ >=\ 0.0f)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ btScalar\ Dy\ =\ vorigin[1]\ -\/\ center[1];}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (BT\_GREATER(Dy,\ extents[1])\ \&\&\ Dy\ *\ vdir[1]\ >=\ 0.0f)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ btScalar\ Dz\ =\ vorigin[2]\ -\/\ center[2];}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (BT\_GREATER(Dz,\ extents[2])\ \&\&\ Dz\ *\ vdir[2]\ >=\ 0.0f)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00448\ }
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ btScalar\ f\ =\ vdir[1]\ *\ Dz\ -\/\ vdir[2]\ *\ Dy;}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(f)\ >\ extents[1]\ *\ btFabs(vdir[2])\ +\ extents[2]\ *\ btFabs(vdir[1]))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ f\ =\ vdir[2]\ *\ Dx\ -\/\ vdir[0]\ *\ Dz;}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(f)\ >\ extents[0]\ *\ btFabs(vdir[2])\ +\ extents[2]\ *\ btFabs(vdir[0]))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ f\ =\ vdir[0]\ *\ Dy\ -\/\ vdir[1]\ *\ Dx;}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(f)\ >\ extents[0]\ *\ btFabs(vdir[1])\ +\ extents[1]\ *\ btFabs(vdir[0]))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00456\ \ \ \ \ \}}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ projection\_interval(\textcolor{keyword}{const}\ btVector3\ \&direction,\ btScalar\ \&vmin,\ btScalar\ \&vmax)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00459\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ btVector3\ center\ =\ (m\_max\ +\ m\_min)\ *\ 0.5f;}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ btVector3\ \mbox{\hyperlink{group__gtx__extend_ga8140caae613b0f847ab0d7175dc03a37}{extend}}\ =\ m\_max\ -\/\ center;}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ btScalar\ \_fOrigin\ =\ direction.dot(center);}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ btScalar\ \_fMaximumExtent\ =\ \mbox{\hyperlink{group__gtx__extend_ga8140caae613b0f847ab0d7175dc03a37}{extend}}.dot(direction.absolute());}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ vmin\ =\ \_fOrigin\ -\/\ \_fMaximumExtent;}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ vmax\ =\ \_fOrigin\ +\ \_fMaximumExtent;}
+\DoxyCodeLine{00467\ \ \ \ \ \}}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \ \ \ \ SIMD\_FORCE\_INLINE\ eBT\_PLANE\_INTERSECTION\_TYPE\ plane\_classify(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ \&plane)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00470\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ btScalar\ \_fmin,\ \_fmax;}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ this-\/>projection\_interval(plane,\ \_fmin,\ \_fmax);}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (plane[3]\ >\ \_fmax\ +\ BOX\_PLANE\_EPSILON)}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_CONST\_BACK\_PLANE;\ \ \textcolor{comment}{//\ 0}}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00478\ }
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (plane[3]\ +\ BOX\_PLANE\_EPSILON\ >=\ \_fmin)}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_CONST\_COLLIDE\_PLANE;\ \ \textcolor{comment}{//1}}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BT\_CONST\_FRONT\_PLANE;\ \ \textcolor{comment}{//2}}
+\DoxyCodeLine{00484\ \ \ \ \ \}}
+\DoxyCodeLine{00485\ }
+\DoxyCodeLine{00486\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ overlapping\_trans\_conservative(\textcolor{keyword}{const}\ btAABB\ \&box,\ btTransform\ \&trans1\_to\_0)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00487\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ btAABB\ tbox\ =\ box;}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ tbox.appy\_transform(trans1\_to\_0);}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ has\_collision(tbox);}
+\DoxyCodeLine{00491\ \ \ \ \ \}}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00493\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ overlapping\_trans\_conservative2(\textcolor{keyword}{const}\ btAABB\ \&box,}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BT\_BOX\_BOX\_TRANSFORM\_CACHE\ \&trans1\_to\_0)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00495\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ btAABB\ tbox\ =\ box;}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ tbox.appy\_transform\_trans\_cache(trans1\_to\_0);}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ has\_collision(tbox);}
+\DoxyCodeLine{00499\ \ \ \ \ \}}
+\DoxyCodeLine{00500\ }
+\DoxyCodeLine{00502\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ overlapping\_trans\_cache(}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btAABB\ \&box,\ \textcolor{keyword}{const}\ BT\_BOX\_BOX\_TRANSFORM\_CACHE\ \&transcache,\ \textcolor{keywordtype}{bool}\ fulltest)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00504\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Taken\ from\ OPCODE}}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ btVector3\ ea,\ eb;\ \ \textcolor{comment}{//extends}}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ btVector3\ ca,\ cb;\ \ \textcolor{comment}{//extends}}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ get\_center\_extend(ca,\ ea);}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ box.get\_center\_extend(cb,\ eb);}
+\DoxyCodeLine{00510\ }
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ btVector3\ T;}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ btScalar\ t,\ t2;}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00514\ }
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Class\ I\ :\ A's\ basis\ vectors}}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ T[i]\ =\ transcache.m\_R1to0[i].dot(cb)\ +\ transcache.m\_T1to0[i]\ -\/\ ca[i];}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ transcache.m\_AR[i].dot(eb)\ +\ ea[i];}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (BT\_GREATER(T[i],\ t))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Class\ II\ :\ B's\ basis\ vectors}}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ bt\_mat3\_dot\_col(transcache.m\_R1to0,\ T,\ i);}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ t2\ =\ bt\_mat3\_dot\_col(transcache.m\_AR,\ ea,\ i)\ +\ eb[i];}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (BT\_GREATER(t,\ t2))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Class\ III\ :\ 9\ cross\ products}}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fulltest)}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ j,\ m,\ n,\ o,\ p,\ q,\ r;}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 3;\ i++)}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\ =\ (i\ +\ 1)\ \%\ 3;}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ n\ =\ (i\ +\ 2)\ \%\ 3;}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ o\ =\ i\ ==\ 0\ ?\ 1\ :\ 0;}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\ =\ i\ ==\ 2\ ?\ 1\ :\ 2;}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ 3;\ j++)}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ q\ =\ j\ ==\ 2\ ?\ 1\ :\ 2;}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ j\ ==\ 0\ ?\ 1\ :\ 0;}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ T[n]\ *\ transcache.m\_R1to0[m][j]\ -\/\ T[m]\ *\ transcache.m\_R1to0[n][j];}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t2\ =\ ea[o]\ *\ transcache.m\_AR[p][j]\ +\ ea[p]\ *\ transcache.m\_AR[o][j]\ +}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eb[r]\ *\ transcache.m\_AR[i][q]\ +\ eb[q]\ *\ transcache.m\_AR[i][r];}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (BT\_GREATER(t,\ t2))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00551\ \ \ \ \ \}}
+\DoxyCodeLine{00552\ }
+\DoxyCodeLine{00554\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ collide\_plane(}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ \&plane)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00556\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ eBT\_PLANE\_INTERSECTION\_TYPE\ classify\ =\ plane\_classify(plane);}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (classify\ ==\ BT\_CONST\_COLLIDE\_PLANE);}
+\DoxyCodeLine{00559\ \ \ \ \ \}}
+\DoxyCodeLine{00560\ }
+\DoxyCodeLine{00562\ \ \ \ \ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ collide\_triangle\_exact(}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&p1,}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&p2,}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ \&p3,}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_vector4}{btVector4}}\ \&triangle\_plane)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00567\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!collide\_plane(triangle\_plane))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ btVector3\ center,\ extends;}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ this-\/>get\_center\_extend(center,\ extends);}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ v1(p1\ -\/\ center);}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ v2(p2\ -\/\ center);}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ v3(p3\ -\/\ center);}
+\DoxyCodeLine{00576\ }
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \textcolor{comment}{//First\ axis}}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ btVector3\ diff(v2\ -\/\ v1);}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ btVector3\ abs\_diff\ =\ diff.absolute();}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ X\ axis}}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_X\_AXIS\_MCR(diff,\ abs\_diff,\ v1,\ v3,\ extends);}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ Y\ axis}}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_Y\_AXIS\_MCR(diff,\ abs\_diff,\ v1,\ v3,\ extends);}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ Z\ axis}}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_Z\_AXIS\_MCR(diff,\ abs\_diff,\ v1,\ v3,\ extends);}
+\DoxyCodeLine{00586\ }
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ diff\ =\ v3\ -\/\ v2;}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ abs\_diff\ =\ diff.absolute();}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ X\ axis}}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_X\_AXIS\_MCR(diff,\ abs\_diff,\ v2,\ v1,\ extends);}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ Y\ axis}}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_Y\_AXIS\_MCR(diff,\ abs\_diff,\ v2,\ v1,\ extends);}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ Z\ axis}}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_Z\_AXIS\_MCR(diff,\ abs\_diff,\ v2,\ v1,\ extends);}
+\DoxyCodeLine{00595\ }
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ diff\ =\ v1\ -\/\ v3;}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ abs\_diff\ =\ diff.absolute();}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ X\ axis}}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_X\_AXIS\_MCR(diff,\ abs\_diff,\ v3,\ v2,\ extends);}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ Y\ axis}}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_Y\_AXIS\_MCR(diff,\ abs\_diff,\ v3,\ v2,\ extends);}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Test\ With\ Z\ axis}}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ TEST\_CROSS\_EDGE\_BOX\_Z\_AXIS\_MCR(diff,\ abs\_diff,\ v3,\ v2,\ extends);}
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00606\ \ \ \ \ \}}
+\DoxyCodeLine{00607\ \};}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00610\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{bool}\ btCompareTransformsEqual(\textcolor{keyword}{const}\ btTransform\ \&t1,\ \textcolor{keyword}{const}\ btTransform\ \&t2)}
+\DoxyCodeLine{00611\ \{}
+\DoxyCodeLine{00612\ \ \ \ \ \textcolor{keywordflow}{if}\ (!(t1.getOrigin()\ ==\ t2.getOrigin()))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00613\ }
+\DoxyCodeLine{00614\ \ \ \ \ \textcolor{keywordflow}{if}\ (!(t1.getBasis().getRow(0)\ ==\ t2.getBasis().getRow(0)))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00615\ \ \ \ \ \textcolor{keywordflow}{if}\ (!(t1.getBasis().getRow(1)\ ==\ t2.getBasis().getRow(1)))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00616\ \ \ \ \ \textcolor{keywordflow}{if}\ (!(t1.getBasis().getRow(2)\ ==\ t2.getBasis().getRow(2)))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00617\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00618\ \}}
+\DoxyCodeLine{00619\ }
+\DoxyCodeLine{00620\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GIM\_BOX\_COLLISION\_H\_INCLUDED}}
+
+\end{DoxyCode}

@@ -1,0 +1,389 @@
+\doxysection{bt\+Compound\+Collision\+Algorithm.\+cpp}
+\hypertarget{bt_compound_collision_algorithm_8cpp_source}{}\label{bt_compound_collision_algorithm_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCompoundCollisionAlgorithm.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/CollisionDispatch/btCompoundCollisionAlgorithm.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2003-\/2006\ Erwin\ Coumans\ \ http://continuousphysics.com/Bullet/}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{}}
+\DoxyCodeLine{00015\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCompoundCollisionAlgorithm.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObject.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btCompoundShape.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/BroadphaseCollision/btDbvt.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btIDebugDraw.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}LinearMath/btAabbUtil2.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}btManifoldResult.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ btShapePairCallback\ gCompoundChildShapePairCallback\ =\ 0;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ btCompoundCollisionAlgorithm::btCompoundCollisionAlgorithm(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_algorithm_construction_info}{btCollisionAlgorithmConstructionInfo}}\&\ ci,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ \textcolor{keywordtype}{bool}\ isSwapped)}
+\DoxyCodeLine{00029\ \ \ \ \ :\ \mbox{\hyperlink{classbt_activating_collision_algorithm}{btActivatingCollisionAlgorithm}}(ci,\ body0Wrap,\ body1Wrap),}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ m\_isSwapped(isSwapped),}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ m\_sharedManifold(ci.m\_manifold)}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ m\_ownsManifold\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObjWrap\ =\ m\_isSwapped\ ?\ body1Wrap\ :\ body0Wrap;}
+\DoxyCodeLine{00036\ \ \ \ \ btAssert(colObjWrap-\/>getCollisionShape()-\/>isCompound());}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(colObjWrap-\/>getCollisionShape());}
+\DoxyCodeLine{00039\ \ \ \ \ m\_compoundShapeRevision\ =\ compoundShape-\/>getUpdateRevision();}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ preallocateChildAlgorithms(body0Wrap,\ body1Wrap);}
+\DoxyCodeLine{00042\ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ btCompoundCollisionAlgorithm::preallocateChildAlgorithms(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap)}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObjWrap\ =\ m\_isSwapped\ ?\ body1Wrap\ :\ body0Wrap;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ otherObjWrap\ =\ m\_isSwapped\ ?\ body0Wrap\ :\ body1Wrap;}
+\DoxyCodeLine{00048\ \ \ \ \ btAssert(colObjWrap-\/>getCollisionShape()-\/>isCompound());}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(colObjWrap-\/>getCollisionShape());}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ numChildren\ =\ compoundShape-\/>getNumChildShapes();}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ m\_childCollisionAlgorithms.resize(numChildren);}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numChildren;\ i++)}
+\DoxyCodeLine{00057\ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (compoundShape-\/>getDynamicAabbTree())}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ m\_childCollisionAlgorithms[i]\ =\ 0;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ childShape\ =\ compoundShape-\/>getChildShape(i);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ childWrap(colObjWrap,\ childShape,\ colObjWrap-\/>getCollisionObject(),\ colObjWrap-\/>getWorldTransform(),\ -\/1,\ i);\ \ \textcolor{comment}{//wrong\ child\ trans,\ but\ unused\ (hopefully)}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ m\_childCollisionAlgorithms[i]\ =\ m\_dispatcher-\/>findAlgorithm(\&childWrap,\ otherObjWrap,\ m\_sharedManifold,\ BT\_CONTACT\_POINT\_ALGORITHMS);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionAlgorithm*>}}\ m\_childCollisionAlgorithmsContact;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btAlignedObjectArray<btCollisionAlgorithm*>}}\ m\_childCollisionAlgorithmsClosestPoints;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ btCompoundCollisionAlgorithm::removeChildAlgorithms()}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ numChildren\ =\ m\_childCollisionAlgorithms.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numChildren;\ i++)}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_childCollisionAlgorithms[i])}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ m\_childCollisionAlgorithms[i]-\/>\string~btCollisionAlgorithm();}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatcher-\/>freeCollisionAlgorithm(m\_childCollisionAlgorithms[i]);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \ \ \ \ \}}
+\DoxyCodeLine{00087\ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ btCompoundCollisionAlgorithm::\string~btCompoundCollisionAlgorithm()}
+\DoxyCodeLine{00090\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ removeChildAlgorithms();}
+\DoxyCodeLine{00092\ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbt_compound_leaf_callback}{btCompoundLeafCallback}}\ :\ \mbox{\hyperlink{structbt_dbvt_1_1_i_collide}{btDbvt::ICollide}}}
+\DoxyCodeLine{00095\ \{}
+\DoxyCodeLine{00096\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_compoundColObjWrap;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ m\_otherObjWrap;}
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ m\_dispatcher;}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ m\_dispatchInfo;}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ m\_resultOut;}
+\DoxyCodeLine{00102\ \ \ \ \ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}**\ m\_childCollisionAlgorithms;}
+\DoxyCodeLine{00103\ \ \ \ \ btPersistentManifold*\ m\_sharedManifold;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \mbox{\hyperlink{structbt_compound_leaf_callback}{btCompoundLeafCallback}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ compoundObjWrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ otherObjWrap,\ \mbox{\hyperlink{classbt_dispatcher}{btDispatcher}}*\ dispatcher,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut,\ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}**\ childCollisionAlgorithms,\ btPersistentManifold*\ sharedManifold)}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ :\ m\_compoundColObjWrap(compoundObjWrap),\ m\_otherObjWrap(otherObjWrap),\ m\_dispatcher(dispatcher),\ m\_dispatchInfo(dispatchInfo),\ m\_resultOut(resultOut),\ m\_childCollisionAlgorithms(childCollisionAlgorithms),\ m\_sharedManifold(sharedManifold)}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_compound_leaf_callback_a447295638bb470ddfbcdd314eb14b6ad}{ProcessChildShape}}(\textcolor{keyword}{const}\ btCollisionShape*\ childShape,\ \textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ btAssert(index\ >=\ 0);}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(m\_compoundColObjWrap-\/>getCollisionShape());}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ btAssert(index\ <\ compoundShape-\/>getNumChildShapes());}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gCompoundChildShapePairCallback)}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!gCompoundChildShapePairCallback(m\_otherObjWrap-\/>getCollisionShape(),\ childShape))}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{comment}{//backup}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ btTransform\ orgTrans\ =\ m\_compoundColObjWrap-\/>getWorldTransform();}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ childTrans\ =\ compoundShape-\/>getChildTransform(index);}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ btTransform\ newChildWorldTrans\ =\ orgTrans\ *\ childTrans;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//perform\ an\ AABB\ check\ first}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ btVector3\ aabbMin0,\ aabbMax0;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ childShape-\/>getAabb(newChildWorldTrans,\ aabbMin0,\ aabbMax0);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ btVector3\ extendAabb(m\_resultOut-\/>m\_closestPointDistanceThreshold,\ m\_resultOut-\/>m\_closestPointDistanceThreshold,\ m\_resultOut-\/>m\_closestPointDistanceThreshold);}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ aabbMin0\ -\/=\ extendAabb;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ aabbMax0\ +=\ extendAabb;}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ btVector3\ aabbMin1,\ aabbMax1;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ m\_otherObjWrap-\/>getCollisionShape()-\/>getAabb(m\_otherObjWrap-\/>getWorldTransform(),\ aabbMin1,\ aabbMax1);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TestAabbAgainstAabb2(aabbMin0,\ aabbMax0,\ aabbMin1,\ aabbMax1))}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ preTransform\ =\ childTrans;}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (this-\/>m\_compoundColObjWrap-\/>m\_preTransform)}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ preTransform\ =\ preTransform\ *(*(this-\/>m\_compoundColObjWrap-\/>m\_preTransform));}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}\ compoundWrap(this-\/>m\_compoundColObjWrap,\ childShape,\ m\_compoundColObjWrap-\/>getCollisionObject(),\ newChildWorldTrans,\ preTransform,\ -\/1,\ index);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classbt_collision_algorithm}{btCollisionAlgorithm}}*\ algo\ =\ 0;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ allocatedAlgorithm\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultOut-\/>m\_closestPointDistanceThreshold\ >\ 0)}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ algo\ =\ m\_dispatcher-\/>findAlgorithm(\&compoundWrap,\ m\_otherObjWrap,\ 0,\ BT\_CLOSEST\_POINT\_ALGORITHMS);}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocatedAlgorithm\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//the\ contactpoint\ is\ still\ projected\ back\ using\ the\ original\ inverted\ worldtrans}}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_childCollisionAlgorithms[index])}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_childCollisionAlgorithms[index]\ =\ m\_dispatcher-\/>findAlgorithm(\&compoundWrap,\ m\_otherObjWrap,\ m\_sharedManifold,\ BT\_CONTACT\_POINT\_ALGORITHMS);}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ algo\ =\ m\_childCollisionAlgorithms[index];}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ tmpWrap\ =\ 0;}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultOut-\/>getBody0Internal()\ ==\ m\_compoundColObjWrap-\/>getCollisionObject())}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tmpWrap\ =\ m\_resultOut-\/>getBody0Wrap();}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultOut-\/>setBody0Wrap(\&compoundWrap);}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultOut-\/>\mbox{\hyperlink{classbt_manifold_result_a01f472fc7b6d431845d22f55842f029d}{setShapeIdentifiersA}}(-\/1,\ index);}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tmpWrap\ =\ m\_resultOut-\/>getBody1Wrap();}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultOut-\/>setBody1Wrap(\&compoundWrap);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultOut-\/>setShapeIdentifiersB(-\/1,\ index);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ algo-\/>processCollision(\&compoundWrap,\ m\_otherObjWrap,\ m\_dispatchInfo,\ m\_resultOut);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_dispatchInfo.m\_debugDraw\ \&\&\ (m\_dispatchInfo.m\_debugDraw-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawAabb))}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ worldAabbMin,worldAabbMax;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatchInfo.m\_debugDraw-\/>drawAabb(aabbMin0,aabbMax0,btVector3(1,1,1));}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatchInfo.m\_debugDraw-\/>drawAabb(aabbMin1,aabbMax1,btVector3(1,1,1));}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_resultOut-\/>getBody0Internal()\ ==\ m\_compoundColObjWrap-\/>getCollisionObject())}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultOut-\/>setBody0Wrap(tmpWrap);}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_resultOut-\/>setBody1Wrap(tmpWrap);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (allocatedAlgorithm)}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ algo-\/>\string~btCollisionAlgorithm();}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatcher-\/>freeCollisionAlgorithm(algo);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordtype}{void}\ Process(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt_node}{btDbvtNode}}*\ leaf)}
+\DoxyCodeLine{00210\ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ leaf-\/>dataAsInt;}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(m\_compoundColObjWrap-\/>getCollisionShape());}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ childShape\ =\ compoundShape-\/>getChildShape(index);}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_dispatchInfo.m\_debugDraw\ \&\&\ (m\_dispatchInfo.m\_debugDraw-\/>getDebugMode()\ \&\ btIDebugDraw::DBG\_DrawAabb))}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ worldAabbMin,worldAabbMax;}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ btTransform\ orgTrans\ =\ m\_compoundColObjWrap-\/>getWorldTransform();}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ btTransformAabb(leaf-\/>volume.Mins(),leaf-\/>volume.Maxs(),0.,orgTrans,worldAabbMin,worldAabbMax);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatchInfo.m\_debugDraw-\/>drawAabb(worldAabbMin,worldAabbMax,btVector3(1,0,0));}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_compound_leaf_callback_a447295638bb470ddfbcdd314eb14b6ad}{ProcessChildShape}}(childShape,\ index);}
+\DoxyCodeLine{00227\ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \};}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classbt_compound_collision_algorithm_a173ce993461795e0572dd2924c54cdc0}{btCompoundCollisionAlgorithm::processCollision}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body0Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ body1Wrap,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut)}
+\DoxyCodeLine{00231\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ colObjWrap\ =\ m\_isSwapped\ ?\ body1Wrap\ :\ body0Wrap;}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_collision_object_wrapper}{btCollisionObjectWrapper}}*\ otherObjWrap\ =\ m\_isSwapped\ ?\ body0Wrap\ :\ body1Wrap;}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ btAssert(colObjWrap-\/>getCollisionShape()-\/>isCompound());}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keyword}{const}\ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }btCompoundShape*\textcolor{keyword}{>}(colObjWrap-\/>getCollisionShape());}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keywordflow}{if}\ (compoundShape-\/>getUpdateRevision()\ !=\ m\_compoundShapeRevision)}
+\DoxyCodeLine{00241\ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ removeChildAlgorithms();}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ preallocateChildAlgorithms(body0Wrap,\ body1Wrap);}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ m\_compoundShapeRevision\ =\ compoundShape-\/>getUpdateRevision();}
+\DoxyCodeLine{00247\ \ \ \ \ \}}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_childCollisionAlgorithms.size()\ ==\ 0)}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dbvt}{btDbvt}}*\ tree\ =\ compoundShape-\/>getDynamicAabbTree();}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{comment}{//use\ a\ dynamic\ aabb\ tree\ to\ cull\ potential\ child-\/overlaps}}
+\DoxyCodeLine{00254\ \ \ \ \ \mbox{\hyperlink{structbt_compound_leaf_callback}{btCompoundLeafCallback}}\ callback(colObjWrap,\ otherObjWrap,\ m\_dispatcher,\ dispatchInfo,\ resultOut,\ \&m\_childCollisionAlgorithms[0],\ m\_sharedManifold);}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00259\ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ manifoldArray.resize(0);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ m\_childCollisionAlgorithms.size();\ i++)}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_childCollisionAlgorithms[i])}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_childCollisionAlgorithms[i]-\/>getAllContactManifolds(manifoldArray);}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ m\ =\ 0;\ m\ <\ manifoldArray.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ m++)}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (manifoldArray[m]-\/>getNumContacts())}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultOut-\/>setPersistentManifold(manifoldArray[m]);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultOut-\/>refreshContactPoints();}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultOut-\/>setPersistentManifold(0);\ \ \textcolor{comment}{//??necessary?}}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ manifoldArray.resize(0);}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00279\ \ \ \ \ \}}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordflow}{if}\ (tree)}
+\DoxyCodeLine{00282\ \ \ \ \ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ btVector3\ localAabbMin,\ localAabbMax;}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ btTransform\ otherInCompoundSpace;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ otherInCompoundSpace\ =\ colObjWrap-\/>getWorldTransform().inverse()\ *\ otherObjWrap-\/>getWorldTransform();}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ otherObjWrap-\/>getCollisionShape()-\/>getAabb(otherInCompoundSpace,\ localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ btVector3\ extraExtends(resultOut-\/>m\_closestPointDistanceThreshold,\ resultOut-\/>m\_closestPointDistanceThreshold,\ resultOut-\/>m\_closestPointDistanceThreshold);}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ localAabbMin\ -\/=\ extraExtends;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ localAabbMax\ +=\ extraExtends;}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ATTRIBUTE\_ALIGNED16(\mbox{\hyperlink{structbt_dbvt_aabb_mm}{btDbvtVolume}})\ bounds\ =\ btDbvtVolume::FromMM(localAabbMin,\ localAabbMax);}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \textcolor{comment}{//process\ all\ children,\ that\ overlap\ with\ \ the\ given\ AABB\ bounds}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ tree-\/>collideTVNoStackAlloc(tree-\/>m\_root,\ bounds,\ stack2,\ callback);}
+\DoxyCodeLine{00294\ \ \ \ \ \}}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00296\ \ \ \ \ \{}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{comment}{//iterate\ over\ all\ children,\ perform\ an\ AABB\ check\ inside\ ProcessChildShape}}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numChildren\ =\ m\_childCollisionAlgorithms.size();}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numChildren;\ i++)}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ callback.\mbox{\hyperlink{structbt_compound_leaf_callback_a447295638bb470ddfbcdd314eb14b6ad}{ProcessChildShape}}(compoundShape-\/>getChildShape(i),\ i);}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00304\ \ \ \ \ \}}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ \{}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{comment}{//iterate\ over\ all\ children,\ perform\ an\ AABB\ check\ inside\ ProcessChildShape}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numChildren\ =\ m\_childCollisionAlgorithms.size();}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ manifoldArray.resize(0);}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btCollisionShape*\ childShape\ =\ 0;}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ btTransform\ orgTrans;}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ btTransform\ newChildWorldTrans;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ btVector3\ aabbMin0,\ aabbMax0,\ aabbMin1,\ aabbMax1;}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numChildren;\ i++)}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_childCollisionAlgorithms[i])}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ childShape\ =\ compoundShape-\/>getChildShape(i);}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ not\ longer\ overlapping,\ remove\ the\ algorithm}}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ orgTrans\ =\ colObjWrap-\/>getWorldTransform();}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ childTrans\ =\ compoundShape-\/>getChildTransform(i);}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ newChildWorldTrans\ =\ orgTrans\ *\ childTrans;}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//perform\ an\ AABB\ check\ first}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ childShape-\/>getAabb(newChildWorldTrans,\ aabbMin0,\ aabbMax0);}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ otherObjWrap-\/>getCollisionShape()-\/>getAabb(otherObjWrap-\/>getWorldTransform(),\ aabbMin1,\ aabbMax1);}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!TestAabbAgainstAabb2(aabbMin0,\ aabbMax0,\ aabbMin1,\ aabbMax1))}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_childCollisionAlgorithms[i]-\/>\string~btCollisionAlgorithm();}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_dispatcher-\/>freeCollisionAlgorithm(m\_childCollisionAlgorithms[i]);}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_childCollisionAlgorithms[i]\ =\ 0;}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00340\ \ \ \ \ \}}
+\DoxyCodeLine{00341\ \}}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ btScalar\ btCompoundCollisionAlgorithm::calculateTimeOfImpact(btCollisionObject*\ body0,\ btCollisionObject*\ body1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_dispatcher_info}{btDispatcherInfo}}\&\ dispatchInfo,\ \mbox{\hyperlink{classbt_manifold_result}{btManifoldResult}}*\ resultOut)}
+\DoxyCodeLine{00344\ \{}
+\DoxyCodeLine{00345\ \ \ \ \ btAssert(0);}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{comment}{//needs\ to\ be\ fixed,\ using\ btCollisionObjectWrapper\ and\ NOT\ modifying\ internal\ data\ structures}}
+\DoxyCodeLine{00347\ \ \ \ \ btCollisionObject*\ colObj\ =\ m\_isSwapped\ ?\ body1\ :\ body0;}
+\DoxyCodeLine{00348\ \ \ \ \ btCollisionObject*\ otherObj\ =\ m\_isSwapped\ ?\ body0\ :\ body1;}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ btAssert(colObj-\/>getCollisionShape()-\/>isCompound());}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \ \ \ \ btCompoundShape*\ compoundShape\ =\ \textcolor{keyword}{static\_cast<}btCompoundShape*\textcolor{keyword}{>}(colObj-\/>getCollisionShape());}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \ \ \ \ \textcolor{comment}{//We\ will\ use\ the\ OptimizedBVH,\ AABB\ tree\ to\ cull\ potential\ child-\/overlaps}}
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{comment}{//If\ both\ proxies\ are\ Compound,\ we\ will\ deal\ with\ that\ directly,\ by\ performing\ sequential/parallel\ tree\ traversals}}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{comment}{//given\ Proxy0\ and\ Proxy1,\ if\ both\ have\ a\ tree,\ Tree0\ and\ Tree1,\ this\ means:}}
+\DoxyCodeLine{00357\ \ \ \ \ \textcolor{comment}{//determine\ overlapping\ nodes\ of\ Proxy1\ using\ Proxy0\ AABB\ against\ Tree1}}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{comment}{//then\ use\ each\ overlapping\ node\ AABB\ against\ Tree0}}
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{comment}{//and\ vise\ versa.}}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \ \ \ \ btScalar\ hitFraction\ =\ btScalar(1.);}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00363\ \ \ \ \ \textcolor{keywordtype}{int}\ numChildren\ =\ m\_childCollisionAlgorithms.size();}
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00365\ \ \ \ \ btTransform\ orgTrans;}
+\DoxyCodeLine{00366\ \ \ \ \ btScalar\ frac;}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numChildren;\ i++)}
+\DoxyCodeLine{00368\ \ \ \ \ \{}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btCollisionShape*\ childShape\ =\ compoundShape-\/>getChildShape(i);}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \textcolor{comment}{//backup}}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ orgTrans\ =\ colObj-\/>getWorldTransform();}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btTransform\&\ childTrans\ =\ compoundShape-\/>getChildTransform(i);}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btTransform\ \ \ newChildWorldTrans\ =\ orgTrans*childTrans\ ;}}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ colObj-\/>setWorldTransform(orgTrans\ *\ childTrans);}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \textcolor{comment}{//btCollisionShape*\ tmpShape\ =\ colObj-\/>getCollisionShape();}}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{comment}{//colObj-\/>internalSetTemporaryCollisionShape(\ childShape\ );}}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ frac\ =\ m\_childCollisionAlgorithms[i]-\/>calculateTimeOfImpact(colObj,\ otherObj,\ dispatchInfo,\ resultOut);}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (frac\ <\ hitFraction)}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ hitFraction\ =\ frac;}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{comment}{//revert\ back}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \textcolor{comment}{//colObj-\/>internalSetTemporaryCollisionShape(\ tmpShape);}}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ colObj-\/>setWorldTransform(orgTrans);}
+\DoxyCodeLine{00388\ \ \ \ \ \}}
+\DoxyCodeLine{00389\ \ \ \ \ \textcolor{keywordflow}{return}\ hitFraction;}
+\DoxyCodeLine{00390\ \}}
+
+\end{DoxyCode}

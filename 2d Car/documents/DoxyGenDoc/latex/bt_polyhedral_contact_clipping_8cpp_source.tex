@@ -1,0 +1,551 @@
+\doxysection{bt\+Polyhedral\+Contact\+Clipping.\+cpp}
+\hypertarget{bt_polyhedral_contact_clipping_8cpp_source}{}\label{bt_polyhedral_contact_clipping_8cpp_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btPolyhedralContactClipping.cpp@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/bullet-\/3.17/src/BulletCollision/NarrowPhaseCollision/btPolyhedralContactClipping.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{Bullet\ Continuous\ Collision\ Detection\ and\ Physics\ Library}}
+\DoxyCodeLine{00003\ \textcolor{comment}{Copyright\ (c)\ 2011\ Advanced\ Micro\ Devices,\ Inc.\ \ http://bulletphysics.org}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{This\ software\ is\ provided\ 'as-\/is',\ without\ any\ express\ or\ implied\ warranty.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{In\ no\ event\ will\ the\ authors\ be\ held\ liable\ for\ any\ damages\ arising\ from\ the\ use\ of\ this\ software.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{Permission\ is\ granted\ to\ anyone\ to\ use\ this\ software\ for\ any\ purpose,\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{including\ commercial\ applications,\ and\ to\ alter\ it\ and\ redistribute\ it\ freely,\ }}
+\DoxyCodeLine{00009\ \textcolor{comment}{subject\ to\ the\ following\ restrictions:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{1.\ The\ origin\ of\ this\ software\ must\ not\ be\ misrepresented;\ you\ must\ not\ claim\ that\ you\ wrote\ the\ original\ software.\ If\ you\ use\ this\ software\ in\ a\ product,\ an\ acknowledgment\ in\ the\ product\ documentation\ would\ be\ appreciated\ but\ is\ not\ required.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{2.\ Altered\ source\ versions\ must\ be\ plainly\ marked\ as\ such,\ and\ must\ not\ be\ misrepresented\ as\ being\ the\ original\ software.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{3.\ This\ notice\ may\ not\ be\ removed\ or\ altered\ from\ any\ source\ distribution.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}btPolyhedralContactClipping.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}BulletCollision/CollisionShapes/btConvexPolyhedron.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <float.h>}\ \ \textcolor{comment}{//for\ FLT\_MAX}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ gExpectedNbTests\ =\ 0;}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{int}\ gActualNbTests\ =\ 0;}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{bool}\ gUseInternalObject\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ Clips\ a\ face\ to\ the\ back\ of\ a\ plane}}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structbt_polyhedral_contact_clipping_a1ab4d8cdb0e9cce0dbba7843c29c0f0d}{btPolyhedralContactClipping::clipFace}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}\&\ pVtxIn,\ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}\&\ ppVtxOut,\ \textcolor{keyword}{const}\ btVector3\&\ planeNormalWS,\ btScalar\ planeEqWS)}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ ve;}
+\DoxyCodeLine{00033\ \ \ \ \ btScalar\ ds,\ de;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ numVerts\ =\ pVtxIn.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{if}\ (numVerts\ <\ 2)}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ btVector3\ firstVertex\ =\ pVtxIn[pVtxIn.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}()\ -\/\ 1];}
+\DoxyCodeLine{00039\ \ \ \ \ btVector3\ endVertex\ =\ pVtxIn[0];}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ ds\ =\ planeNormalWS.dot(firstVertex)\ +\ planeEqWS;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{for}\ (ve\ =\ 0;\ ve\ <\ numVerts;\ ve++)}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ endVertex\ =\ pVtxIn[ve];}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ de\ =\ planeNormalWS.dot(endVertex)\ +\ planeEqWS;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ds\ <\ 0)}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (de\ <\ 0)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Start\ <\ 0,\ end\ <\ 0,\ so\ output\ endVertex}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ppVtxOut.push\_back(endVertex);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Start\ <\ 0,\ end\ >=\ 0,\ so\ output\ intersection}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ppVtxOut.push\_back(firstVertex.lerp(endVertex,\ btScalar(ds\ *\ 1.f\ /\ (ds\ -\/\ de))));}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (de\ <\ 0)}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Start\ >=\ 0,\ end\ <\ 0\ so\ output\ intersection\ and\ end}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ppVtxOut.push\_back(firstVertex.lerp(endVertex,\ btScalar(ds\ *\ 1.f\ /\ (ds\ -\/\ de))));}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ppVtxOut.push\_back(endVertex);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ firstVertex\ =\ endVertex;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ ds\ =\ de;}
+\DoxyCodeLine{00073\ \ \ \ \ \}}
+\DoxyCodeLine{00074\ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ TestSepAxis(\textcolor{keyword}{const}\ btConvexPolyhedron\&\ hullA,\ \textcolor{keyword}{const}\ btConvexPolyhedron\&\ hullB,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btVector3\&\ sep\_axis,\ btScalar\&\ depth,\ btVector3\&\ witnessPointA,\ btVector3\&\ witnessPointB)}
+\DoxyCodeLine{00077\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ btScalar\ Min0,\ Max0;}
+\DoxyCodeLine{00079\ \ \ \ \ btScalar\ Min1,\ Max1;}
+\DoxyCodeLine{00080\ \ \ \ \ btVector3\ witnesPtMinA,\ witnesPtMaxA;}
+\DoxyCodeLine{00081\ \ \ \ \ btVector3\ witnesPtMinB,\ witnesPtMaxB;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ hullA.project(transA,\ sep\_axis,\ Min0,\ Max0,\ witnesPtMinA,\ witnesPtMaxA);}
+\DoxyCodeLine{00084\ \ \ \ \ hullB.project(transB,\ sep\_axis,\ Min1,\ Max1,\ witnesPtMinB,\ witnesPtMaxB);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{if}\ (Max0\ <\ Min1\ ||\ Max1\ <\ Min0)}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ btScalar\ d0\ =\ Max0\ -\/\ Min1;}
+\DoxyCodeLine{00090\ \ \ \ \ btAssert(d0\ >=\ 0.0f);}
+\DoxyCodeLine{00091\ \ \ \ \ btScalar\ d1\ =\ Max1\ -\/\ Min0;}
+\DoxyCodeLine{00092\ \ \ \ \ btAssert(d1\ >=\ 0.0f);}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (d0\ <\ d1)}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ depth\ =\ d0;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ witnessPointA\ =\ witnesPtMaxA;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ witnessPointB\ =\ witnesPtMinB;}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00100\ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ depth\ =\ d1;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ witnessPointA\ =\ witnesPtMinA;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ witnessPointB\ =\ witnesPtMaxB;}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00107\ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ gActualSATPairTests\ =\ 0;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ IsAlmostZero(\textcolor{keyword}{const}\ btVector3\&\ v)}
+\DoxyCodeLine{00112\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{if}\ (btFabs(v.x())\ >\ 1e-\/6\ ||\ btFabs(v.y())\ >\ 1e-\/6\ ||\ btFabs(v.z())\ >\ 1e-\/6)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00115\ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#ifdef\ TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ BoxSupport(\textcolor{keyword}{const}\ btScalar\ extents[3],\ \textcolor{keyword}{const}\ btScalar\ sv[3],\ btScalar\ p[3])}
+\DoxyCodeLine{00120\ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{//\ This\ version\ is\ \string~11.000\ cycles\ (4\%)\ faster\ overall\ in\ one\ of\ the\ tests.}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{//\ \ IR(p[0])\ =\ IR(extents[0])|(IR(sv[0])\&SIGN\_BITMASK);}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//\ \ IR(p[1])\ =\ IR(extents[1])|(IR(sv[1])\&SIGN\_BITMASK);}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{//\ \ IR(p[2])\ =\ IR(extents[2])|(IR(sv[2])\&SIGN\_BITMASK);}}
+\DoxyCodeLine{00125\ \ \ \ \ p[0]\ =\ sv[0]\ <\ 0.0f\ ?\ -\/extents[0]\ :\ extents[0];}
+\DoxyCodeLine{00126\ \ \ \ \ p[1]\ =\ sv[1]\ <\ 0.0f\ ?\ -\/extents[1]\ :\ extents[1];}
+\DoxyCodeLine{00127\ \ \ \ \ p[2]\ =\ sv[2]\ <\ 0.0f\ ?\ -\/extents[2]\ :\ extents[2];}
+\DoxyCodeLine{00128\ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ InverseTransformPoint3x3(btVector3\&\ out,\ \textcolor{keyword}{const}\ btVector3\&\ in,\ \textcolor{keyword}{const}\ btTransform\&\ tr)}
+\DoxyCodeLine{00131\ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{const}\ btMatrix3x3\&\ rot\ =\ tr.getBasis();}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ r0\ =\ rot[0];}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ r1\ =\ rot[1];}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ r2\ =\ rot[2];}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ x\ =\ r0.x()\ *\ in.x()\ +\ r1.x()\ *\ in.y()\ +\ r2.x()\ *\ in.z();}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ y\ =\ r0.y()\ *\ in.x()\ +\ r1.y()\ *\ in.y()\ +\ r2.y()\ *\ in.z();}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ z\ =\ r0.z()\ *\ in.x()\ +\ r1.z()\ *\ in.y()\ +\ r2.z()\ *\ in.z();}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ out.setValue(x,\ y,\ z);}
+\DoxyCodeLine{00142\ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{keywordtype}{bool}\ TestInternalObjects(\textcolor{keyword}{const}\ btTransform\&\ trans0,\ \textcolor{keyword}{const}\ btTransform\&\ trans1,\ \textcolor{keyword}{const}\ btVector3\&\ delta\_c,\ \textcolor{keyword}{const}\ btVector3\&\ axis,\ \textcolor{keyword}{const}\ btConvexPolyhedron\&\ convex0,\ \textcolor{keyword}{const}\ btConvexPolyhedron\&\ convex1,\ btScalar\ dmin)}
+\DoxyCodeLine{00145\ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ dp\ =\ delta\_c.dot(axis);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ btVector3\ localAxis0;}
+\DoxyCodeLine{00149\ \ \ \ \ InverseTransformPoint3x3(localAxis0,\ axis,\ trans0);}
+\DoxyCodeLine{00150\ \ \ \ \ btVector3\ localAxis1;}
+\DoxyCodeLine{00151\ \ \ \ \ InverseTransformPoint3x3(localAxis1,\ axis,\ trans1);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ btScalar\ p0[3];}
+\DoxyCodeLine{00154\ \ \ \ \ BoxSupport(convex0.m\_extents,\ localAxis0,\ p0);}
+\DoxyCodeLine{00155\ \ \ \ \ btScalar\ p1[3];}
+\DoxyCodeLine{00156\ \ \ \ \ BoxSupport(convex1.m\_extents,\ localAxis1,\ p1);}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ Radius0\ =\ p0[0]\ *\ localAxis0.x()\ +\ p0[1]\ *\ localAxis0.y()\ +\ p0[2]\ *\ localAxis0.z();}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ Radius1\ =\ p1[0]\ *\ localAxis1.x()\ +\ p1[1]\ *\ localAxis1.y()\ +\ p1[2]\ *\ localAxis1.z();}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ MinRadius\ =\ Radius0\ >\ convex0.m\_radius\ ?\ Radius0\ :\ convex0.m\_radius;}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ MaxRadius\ =\ Radius1\ >\ convex1.m\_radius\ ?\ Radius1\ :\ convex1.m\_radius;}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ MinMaxRadius\ =\ MaxRadius\ +\ MinRadius;}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ d0\ =\ MinMaxRadius\ +\ dp;}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ d1\ =\ MinMaxRadius\ -\/\ dp;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keyword}{const}\ btScalar\ depth\ =\ d0\ <\ d1\ ?\ d0\ :\ d1;}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ >\ dmin)}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00172\ \}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ SIMD\_FORCE\_INLINE\ \textcolor{keywordtype}{void}\ btSegmentsClosestPoints(}
+\DoxyCodeLine{00176\ \ \ \ \ btVector3\&\ ptsVector,}
+\DoxyCodeLine{00177\ \ \ \ \ btVector3\&\ offsetA,}
+\DoxyCodeLine{00178\ \ \ \ \ btVector3\&\ offsetB,}
+\DoxyCodeLine{00179\ \ \ \ \ btScalar\&\ tA,\ btScalar\&\ tB,}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ translation,}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ dirA,\ btScalar\ hlenA,}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ dirB,\ btScalar\ hlenB)}
+\DoxyCodeLine{00183\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{comment}{//\ compute\ the\ parameters\ of\ the\ closest\ points\ on\ each\ line\ segment}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ btScalar\ dirA\_dot\_dirB\ =\ btDot(dirA,\ dirB);}
+\DoxyCodeLine{00187\ \ \ \ \ btScalar\ dirA\_dot\_trans\ =\ btDot(dirA,\ translation);}
+\DoxyCodeLine{00188\ \ \ \ \ btScalar\ dirB\_dot\_trans\ =\ btDot(dirB,\ translation);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ btScalar\ denom\ =\ 1.0f\ -\/\ dirA\_dot\_dirB\ *\ dirA\_dot\_dirB;}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordflow}{if}\ (denom\ ==\ 0.0f)}
+\DoxyCodeLine{00193\ \ \ \ \ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ tA\ =\ 0.0f;}
+\DoxyCodeLine{00195\ \ \ \ \ \}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00197\ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ tA\ =\ (dirA\_dot\_trans\ -\/\ dirB\_dot\_trans\ *\ dirA\_dot\_dirB)\ /\ denom;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tA\ <\ -\/hlenA)}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ tA\ =\ -\/hlenA;}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (tA\ >\ hlenA)}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ tA\ =\ hlenA;}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ tB\ =\ tA\ *\ dirA\_dot\_dirB\ -\/\ dirB\_dot\_trans;}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordflow}{if}\ (tB\ <\ -\/hlenB)}
+\DoxyCodeLine{00208\ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ tB\ =\ -\/hlenB;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ tA\ =\ tB\ *\ dirA\_dot\_dirB\ +\ dirA\_dot\_trans;}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tA\ <\ -\/hlenA)}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ tA\ =\ -\/hlenA;}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (tA\ >\ hlenA)}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ tA\ =\ hlenA;}
+\DoxyCodeLine{00216\ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (tB\ >\ hlenB)}
+\DoxyCodeLine{00218\ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ tB\ =\ hlenB;}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ tA\ =\ tB\ *\ dirA\_dot\_dirB\ +\ dirA\_dot\_trans;}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tA\ <\ -\/hlenA)}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ tA\ =\ -\/hlenA;}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (tA\ >\ hlenA)}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ tA\ =\ hlenA;}
+\DoxyCodeLine{00226\ \ \ \ \ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{comment}{//\ compute\ the\ closest\ points\ relative\ to\ segment\ centers.}}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ offsetA\ =\ dirA\ *\ tA;}
+\DoxyCodeLine{00231\ \ \ \ \ offsetB\ =\ dirB\ *\ tB;}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ ptsVector\ =\ translation\ -\/\ offsetA\ +\ offsetB;}
+\DoxyCodeLine{00234\ \}}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{keywordtype}{bool}\ btPolyhedralContactClipping::findSeparatingAxis(\textcolor{keyword}{const}\ btConvexPolyhedron\&\ hullA,\ \textcolor{keyword}{const}\ btConvexPolyhedron\&\ hullB,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ btVector3\&\ sep,\ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_result}{btDiscreteCollisionDetectorInterface::Result}}\&\ resultOut)}
+\DoxyCodeLine{00237\ \{}
+\DoxyCodeLine{00238\ \ \ \ \ gActualSATPairTests++;}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{comment}{//\#ifdef\ TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ c0\ =\ transA\ *\ hullA.m\_localCenter;}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ c1\ =\ transB\ *\ hullB.m\_localCenter;}
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ DeltaC2\ =\ c0\ -\/\ c1;}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{comment}{//\#endif}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ btScalar\ dmin\ =\ FLT\_MAX;}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{keywordtype}{int}\ curPlaneTests\ =\ 0;}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordtype}{int}\ numFacesA\ =\ hullA.m\_faces.size();}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{comment}{//\ Test\ normals\ from\ hullA}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numFacesA;\ i++)}
+\DoxyCodeLine{00252\ \ \ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ Normal(hullA.m\_faces[i].m\_plane[0],\ hullA.m\_faces[i].m\_plane[1],\ hullA.m\_faces[i].m\_plane[2]);}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ btVector3\ faceANormalWS\ =\ transA.getBasis()\ *\ Normal;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (DeltaC2.dot(faceANormalWS)\ <\ 0)}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ faceANormalWS\ *=\ -\/1.f;}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ curPlaneTests++;}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#ifdef\ TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ gExpectedNbTests++;}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gUseInternalObject\ \&\&\ !TestInternalObjects(transA,\ transB,\ DeltaC2,\ faceANormalWS,\ hullA,\ hullB,\ dmin))}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ gActualNbTests++;}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ btScalar\ d;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ btVector3\ wA,\ wB;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!TestSepAxis(hullA,\ hullB,\ transA,\ transB,\ faceANormalWS,\ d,\ wA,\ wB))}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ dmin)}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ dmin\ =\ d;}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ sep\ =\ faceANormalWS;}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00276\ \ \ \ \ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordtype}{int}\ numFacesB\ =\ hullB.m\_faces.size();}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{comment}{//\ Test\ normals\ from\ hullB}}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numFacesB;\ i++)}
+\DoxyCodeLine{00281\ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ Normal(hullB.m\_faces[i].m\_plane[0],\ hullB.m\_faces[i].m\_plane[1],\ hullB.m\_faces[i].m\_plane[2]);}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ btVector3\ WorldNormal\ =\ transB.getBasis()\ *\ Normal;}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (DeltaC2.dot(WorldNormal)\ <\ 0)}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ WorldNormal\ *=\ -\/1.f;}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ curPlaneTests++;}
+\DoxyCodeLine{00288\ \textcolor{preprocessor}{\#ifdef\ TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ gExpectedNbTests++;}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gUseInternalObject\ \&\&\ !TestInternalObjects(transA,\ transB,\ DeltaC2,\ WorldNormal,\ hullA,\ hullB,\ dmin))}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ gActualNbTests++;}
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ btScalar\ d;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ btVector3\ wA,\ wB;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!TestSepAxis(hullA,\ hullB,\ transA,\ transB,\ WorldNormal,\ d,\ wA,\ wB))}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ dmin)}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ dmin\ =\ d;}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ sep\ =\ WorldNormal;}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00305\ \ \ \ \ \}}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ btVector3\ edgeAstart,\ edgeAend,\ edgeBstart,\ edgeBend;}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordtype}{int}\ edgeA\ =\ -\/1;}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keywordtype}{int}\ edgeB\ =\ -\/1;}
+\DoxyCodeLine{00310\ \ \ \ \ btVector3\ worldEdgeA;}
+\DoxyCodeLine{00311\ \ \ \ \ btVector3\ worldEdgeB;}
+\DoxyCodeLine{00312\ \ \ \ \ btVector3\ witnessPointA(0,\ 0,\ 0),\ witnessPointB(0,\ 0,\ 0);}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{int}\ curEdgeEdge\ =\ 0;}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{comment}{//\ Test\ edges}}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ e0\ =\ 0;\ e0\ <\ hullA.m\_uniqueEdges.size();\ e0++)}
+\DoxyCodeLine{00317\ \ \ \ \ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ edge0\ =\ hullA.m\_uniqueEdges[e0];}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ WorldEdge0\ =\ transA.getBasis()\ *\ edge0;}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ e1\ =\ 0;\ e1\ <\ hullB.m\_uniqueEdges.size();\ e1++)}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ edge1\ =\ hullB.m\_uniqueEdges[e1];}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ WorldEdge1\ =\ transB.getBasis()\ *\ edge1;}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ Cross\ =\ WorldEdge0.cross(WorldEdge1);}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ curEdgeEdge++;}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!IsAlmostZero(Cross))}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Cross\ =\ Cross.normalize();}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (DeltaC2.dot(Cross)\ <\ 0)}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Cross\ *=\ -\/1.f;}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \textcolor{preprocessor}{\#ifdef\ TEST\_INTERNAL\_OBJECTS}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gExpectedNbTests++;}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gUseInternalObject\ \&\&\ !TestInternalObjects(transA,\ transB,\ DeltaC2,\ Cross,\ hullA,\ hullB,\ dmin))}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gActualNbTests++;}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ dist;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ wA,\ wB;}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!TestSepAxis(hullA,\ hullB,\ transA,\ transB,\ Cross,\ dist,\ wA,\ wB))}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ <\ dmin)}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dmin\ =\ dist;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sep\ =\ Cross;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgeA\ =\ e0;}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ edgeB\ =\ e1;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ worldEdgeA\ =\ WorldEdge0;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ worldEdgeB\ =\ WorldEdge1;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ witnessPointA\ =\ wA;}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ witnessPointB\ =\ wB;}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00358\ \ \ \ \ \}}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ \ \ \textcolor{keywordflow}{if}\ (edgeA\ >=\ 0\ \&\&\ edgeB\ >=\ 0)}
+\DoxyCodeLine{00361\ \ \ \ \ \{}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ printf("{}edge-\/edge\(\backslash\)n"{});}}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \textcolor{comment}{//add\ an\ edge-\/edge\ contact}}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ btVector3\ ptsVector;}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ btVector3\ offsetA;}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ btVector3\ offsetB;}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ btScalar\ tA;}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ btScalar\ tB;}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ btVector3\ translation\ =\ witnessPointB\ -\/\ witnessPointA;}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ btVector3\ dirA\ =\ worldEdgeA;}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ btVector3\ dirB\ =\ worldEdgeB;}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ btScalar\ hlenB\ =\ 1e30f;}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ btScalar\ hlenA\ =\ 1e30f;}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ btSegmentsClosestPoints(ptsVector,\ offsetA,\ offsetB,\ tA,\ tB,}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ translation,}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dirA,\ hlenA,}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dirB,\ hlenB);}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ btScalar\ nlSqrt\ =\ ptsVector.length2();}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (nlSqrt\ >\ SIMD\_EPSILON)}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ nl\ =\ btSqrt(nlSqrt);}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ ptsVector\ *=\ 1.f\ /\ nl;}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptsVector.dot(DeltaC2)\ <\ 0.f)}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ptsVector\ *=\ -\/1.f;}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ ptOnB\ =\ witnessPointB\ +\ offsetB;}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ distance\ =\ nl;}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ resultOut.addContactPoint(ptsVector,\ ptOnB,\ -\/distance);}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00397\ \ \ \ \ \}}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \ \ \textcolor{keywordflow}{if}\ ((DeltaC2.dot(sep))\ <\ 0.0f)}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ sep\ =\ -\/sep;}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00403\ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \textcolor{keywordtype}{void}\ btPolyhedralContactClipping::clipFaceAgainstHull(\textcolor{keyword}{const}\ btVector3\&\ separatingNormal,\ \textcolor{keyword}{const}\ btConvexPolyhedron\&\ hullA,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}\&\ worldVertsB1,\ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}\&\ worldVertsB2,\ \textcolor{keyword}{const}\ btScalar\ minDist,\ btScalar\ maxDist,\ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_result}{btDiscreteCollisionDetectorInterface::Result}}\&\ resultOut)}
+\DoxyCodeLine{00406\ \{}
+\DoxyCodeLine{00407\ \ \ \ \ worldVertsB2.resize(0);}
+\DoxyCodeLine{00408\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}*\ pVtxIn\ =\ \&worldVertsB1;}
+\DoxyCodeLine{00409\ \ \ \ \ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}*\ pVtxOut\ =\ \&worldVertsB2;}
+\DoxyCodeLine{00410\ \ \ \ \ pVtxOut-\/>reserve(pVtxIn-\/>\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}());}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordtype}{int}\ closestFaceA\ =\ -\/1;}
+\DoxyCodeLine{00413\ \ \ \ \ \{}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ btScalar\ dmin\ =\ FLT\_MAX;}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ face\ =\ 0;\ face\ <\ hullA.m\_faces.size();\ face++)}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ Normal(hullA.m\_faces[face].m\_plane[0],\ hullA.m\_faces[face].m\_plane[1],\ hullA.m\_faces[face].m\_plane[2]);}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ faceANormalWS\ =\ transA.getBasis()\ *\ Normal;}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ d\ =\ faceANormalWS.dot(separatingNormal);}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ dmin)}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dmin\ =\ d;}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ closestFaceA\ =\ face;}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00427\ \ \ \ \ \}}
+\DoxyCodeLine{00428\ \ \ \ \ \textcolor{keywordflow}{if}\ (closestFaceA\ <\ 0)}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00430\ }
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_face}{btFace}}\&\ polyA\ =\ hullA.m\_faces[closestFaceA];}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \ \ \ \ \textcolor{comment}{//\ clip\ polygon\ to\ back\ of\ planes\ of\ all\ faces\ of\ hull\ A\ that\ are\ adjacent\ to\ witness\ face}}
+\DoxyCodeLine{00434\ \ \ \ \ \textcolor{keywordtype}{int}\ numVerticesA\ =\ polyA.m\_indices.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00435\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ e0\ =\ 0;\ e0\ <\ numVerticesA;\ e0++)}
+\DoxyCodeLine{00436\ \ \ \ \ \{}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ a\ =\ hullA.m\_vertices[polyA.m\_indices[e0]];}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b\ =\ hullA.m\_vertices[polyA.m\_indices[(e0\ +\ 1)\ \%\ numVerticesA]];}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ edge0\ =\ a\ -\/\ b;}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ WorldEdge0\ =\ transA.getBasis()\ *\ edge0;}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ btVector3\ worldPlaneAnormal1\ =\ transA.getBasis()\ *\ btVector3(polyA.m\_plane[0],\ polyA.m\_plane[1],\ polyA.m\_plane[2]);}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ btVector3\ planeNormalWS1\ =\ -\/WorldEdge0.cross(worldPlaneAnormal1);\ \ \textcolor{comment}{//.cross(WorldEdge0);}}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ btVector3\ worldA1\ =\ transA\ *\ a;}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ btScalar\ planeEqWS1\ =\ -\/worldA1.dot(planeNormalWS1);}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \textcolor{comment}{//int\ otherFace=0;}}
+\DoxyCodeLine{00448\ \textcolor{preprocessor}{\#ifdef\ BLA1}}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ otherFace\ =\ polyA.m\_connectedFaces[e0];}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ btVector3\ localPlaneNormal(hullA.m\_faces[otherFace].m\_plane[0],\ hullA.m\_faces[otherFace].m\_plane[1],\ hullA.m\_faces[otherFace].m\_plane[2]);}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ btScalar\ localPlaneEq\ =\ hullA.m\_faces[otherFace].m\_plane[3];}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ btVector3\ planeNormalWS\ =\ transA.getBasis()\ *\ localPlaneNormal;}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ btScalar\ planeEqWS\ =\ localPlaneEq\ -\/\ planeNormalWS.dot(transA.getOrigin());}
+\DoxyCodeLine{00455\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ btVector3\ planeNormalWS\ =\ planeNormalWS1;}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ btScalar\ planeEqWS\ =\ planeEqWS1;}
+\DoxyCodeLine{00458\ }
+\DoxyCodeLine{00459\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \textcolor{comment}{//clip\ face}}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structbt_polyhedral_contact_clipping_a1ab4d8cdb0e9cce0dbba7843c29c0f0d}{clipFace}}(*pVtxIn,\ *pVtxOut,\ planeNormalWS,\ planeEqWS);}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ btSwap(pVtxIn,\ pVtxOut);}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ pVtxOut-\/>resize(0);}
+\DoxyCodeLine{00465\ \ \ \ \ \}}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \textcolor{comment}{//\#define\ ONLY\_REPORT\_DEEPEST\_POINT}}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \ \ \ \ btVector3\ point;}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{comment}{//\ only\ keep\ points\ that\ are\ behind\ the\ witness\ face}}
+\DoxyCodeLine{00472\ \ \ \ \ \{}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ btVector3\ localPlaneNormal(polyA.m\_plane[0],\ polyA.m\_plane[1],\ polyA.m\_plane[2]);}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ btScalar\ localPlaneEq\ =\ polyA.m\_plane[3];}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ btVector3\ planeNormalWS\ =\ transA.getBasis()\ *\ localPlaneNormal;}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ btScalar\ planeEqWS\ =\ localPlaneEq\ -\/\ planeNormalWS.dot(transA.getOrigin());}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ pVtxIn-\/>\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();\ i++)}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ vtx\ =\ pVtxIn-\/>at(i);}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ depth\ =\ planeNormalWS.dot(vtx)\ +\ planeEqWS;}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ <=\ minDist)}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ printf("{}clamped:\ depth=\%f\ to\ minDist=\%f\(\backslash\)n"{},depth,minDist);}}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ depth\ =\ minDist;}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth\ <=\ maxDist)}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ btVector3\ point\ =\ pVtxIn-\/>at(i);}
+\DoxyCodeLine{00490\ \textcolor{preprocessor}{\#ifdef\ ONLY\_REPORT\_DEEPEST\_POINT}}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curMaxDist\ =\ depth;}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00493\ \textcolor{preprocessor}{\#if\ 0}}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (depth<-\/3)}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}error\ in\ btPolyhedralContactClipping\ depth\ =\ \%f\(\backslash\)n"{}},\ depth);}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}likely\ wrong\ separatingNormal\ passed\ in\(\backslash\)n"{}});}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00499\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultOut.addContactPoint(separatingNormal,\ point,\ depth);}
+\DoxyCodeLine{00501\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00504\ \ \ \ \ \}}
+\DoxyCodeLine{00505\ \textcolor{preprocessor}{\#ifdef\ ONLY\_REPORT\_DEEPEST\_POINT}}
+\DoxyCodeLine{00506\ \ \ \ \ \textcolor{keywordflow}{if}\ (curMaxDist\ <\ maxDist)}
+\DoxyCodeLine{00507\ \ \ \ \ \{}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ resultOut.addContactPoint(separatingNormal,\ point,\ curMaxDist);}
+\DoxyCodeLine{00509\ \ \ \ \ \}}
+\DoxyCodeLine{00510\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//ONLY\_REPORT\_DEEPEST\_POINT}}
+\DoxyCodeLine{00511\ \}}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \textcolor{keywordtype}{void}\ btPolyhedralContactClipping::clipHullAgainstHull(\textcolor{keyword}{const}\ btVector3\&\ separatingNormal1,\ \textcolor{keyword}{const}\ btConvexPolyhedron\&\ hullA,\ \textcolor{keyword}{const}\ btConvexPolyhedron\&\ hullB,\ \textcolor{keyword}{const}\ btTransform\&\ transA,\ \textcolor{keyword}{const}\ btTransform\&\ transB,\ \textcolor{keyword}{const}\ btScalar\ minDist,\ btScalar\ maxDist,\ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}\&\ worldVertsB1,\ \mbox{\hyperlink{classbt_aligned_object_array}{btVertexArray}}\&\ worldVertsB2,\ \mbox{\hyperlink{structbt_discrete_collision_detector_interface_1_1_result}{btDiscreteCollisionDetectorInterface::Result}}\&\ resultOut)}
+\DoxyCodeLine{00514\ \{}
+\DoxyCodeLine{00515\ \ \ \ \ btVector3\ separatingNormal\ =\ separatingNormal1.normalized();}
+\DoxyCodeLine{00516\ \ \ \ \ \textcolor{comment}{//\ \ const\ btVector3\ c0\ =\ transA\ *\ hullA.m\_localCenter;}}
+\DoxyCodeLine{00517\ \ \ \ \ \textcolor{comment}{//\ \ const\ btVector3\ c1\ =\ transB\ *\ hullB.m\_localCenter;}}
+\DoxyCodeLine{00518\ \ \ \ \ \textcolor{comment}{//const\ btVector3\ DeltaC2\ =\ c0\ -\/\ c1;}}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{keywordtype}{int}\ closestFaceB\ =\ -\/1;}
+\DoxyCodeLine{00521\ \ \ \ \ btScalar\ dmax\ =\ -\/FLT\_MAX;}
+\DoxyCodeLine{00522\ \ \ \ \ \{}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ face\ =\ 0;\ face\ <\ hullB.m\_faces.size();\ face++)}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ Normal(hullB.m\_faces[face].m\_plane[0],\ hullB.m\_faces[face].m\_plane[1],\ hullB.m\_faces[face].m\_plane[2]);}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\ WorldNormal\ =\ transB.getBasis()\ *\ Normal;}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ btScalar\ d\ =\ WorldNormal.dot(separatingNormal);}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ >\ dmax)}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dmax\ =\ d;}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ closestFaceB\ =\ face;}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00534\ \ \ \ \ \}}
+\DoxyCodeLine{00535\ \ \ \ \ worldVertsB1.resize(0);}
+\DoxyCodeLine{00536\ \ \ \ \ \{}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structbt_face}{btFace}}\&\ polyB\ =\ hullB.m\_faces[closestFaceB];}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ numVertices\ =\ polyB.m\_indices.\mbox{\hyperlink{classbt_aligned_object_array_a31de8d83d29c6edd1493fc583091194c}{size}}();}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ e0\ =\ 0;\ e0\ <\ numVertices;\ e0++)}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ btVector3\&\ b\ =\ hullB.m\_vertices[polyB.m\_indices[e0]];}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ worldVertsB1.push\_back(transB\ *\ b);}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00544\ \ \ \ \ \}}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \ \ \ \ \textcolor{keywordflow}{if}\ (closestFaceB\ >=\ 0)}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ clipFaceAgainstHull(separatingNormal,\ hullA,\ transA,\ worldVertsB1,\ worldVertsB2,\ minDist,\ maxDist,\ resultOut);}
+\DoxyCodeLine{00548\ \}}
+
+\end{DoxyCode}

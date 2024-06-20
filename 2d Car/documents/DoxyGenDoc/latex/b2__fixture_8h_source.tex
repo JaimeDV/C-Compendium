@@ -1,0 +1,300 @@
+\doxysection{b2\+\_\+fixture.\+h}
+\hypertarget{b2__fixture_8h_source}{}\label{b2__fixture_8h_source}\index{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_fixture.h@{C:/Users/Usuario/Documents/pruebas-\/c/Practica Animación/libraries/box2d-\/2.4.1/include/box2d/b2\_fixture.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MIT\ License}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Copyright\ (c)\ 2019\ Erin\ Catto}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Permission\ is\ hereby\ granted,\ free\ of\ charge,\ to\ any\ person\ obtaining\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ of\ this\ software\ and\ associated\ documentation\ files\ (the\ "{}Software"{}),\ to\ deal}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ in\ the\ Software\ without\ restriction,\ including\ without\ limitation\ the\ rights}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ to\ use,\ copy,\ modify,\ merge,\ publish,\ distribute,\ sublicense,\ and/or\ sell}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ copies\ of\ the\ Software,\ and\ to\ permit\ persons\ to\ whom\ the\ Software\ is}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ furnished\ to\ do\ so,\ subject\ to\ the\ following\ conditions:}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ above\ copyright\ notice\ and\ this\ permission\ notice\ shall\ be\ included\ in\ all}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ copies\ or\ substantial\ portions\ of\ the\ Software.}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ THE\ SOFTWARE\ IS\ PROVIDED\ "{}AS\ IS"{},\ WITHOUT\ WARRANTY\ OF\ ANY\ KIND,\ EXPRESS\ OR}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ IMPLIED,\ INCLUDING\ BUT\ NOT\ LIMITED\ TO\ THE\ WARRANTIES\ OF\ MERCHANTABILITY,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE\ AND\ NONINFRINGEMENT.\ IN\ NO\ EVENT\ SHALL\ THE}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ AUTHORS\ OR\ COPYRIGHT\ HOLDERS\ BE\ LIABLE\ FOR\ ANY\ CLAIM,\ DAMAGES\ OR\ OTHER}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ AN\ ACTION\ OF\ CONTRACT,\ TORT\ OR\ OTHERWISE,\ ARISING\ FROM,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ OUT\ OF\ OR\ IN\ CONNECTION\ WITH\ THE\ SOFTWARE\ OR\ THE\ USE\ OR\ OTHER\ DEALINGS\ IN\ THE}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ SOFTWARE.}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ B2\_FIXTURE\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ B2\_FIXTURE\_H}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}b2\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}b2\_body.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{b2__collision_8h}{b2\_collision.h}}"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}b2\_shape.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}};}
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_body}{b2Body}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_broad_phase}{b2BroadPhase}};}
+\DoxyCodeLine{00034\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_fixture}{b2Fixture}};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_filter}{b2Filter}}}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{structb2_filter}{b2Filter}}()}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ categoryBits\ =\ 0x0001;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ maskBits\ =\ 0xFFFF;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ groupIndex\ =\ 0;}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00047\ \ \ \ \ uint16\ \mbox{\hyperlink{structb2_filter_a368907397168d39af8b4fc5201d50bba}{categoryBits}};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00051\ \ \ \ \ uint16\ \mbox{\hyperlink{structb2_filter_a533cccf85e3ba3d9e3700d73b819f6e2}{maskBits}};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00056\ \ \ \ \ int16\ \mbox{\hyperlink{structb2_filter_a572a8f4a1672f6d5d71123a35e872950}{groupIndex}};}
+\DoxyCodeLine{00057\ \};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_fixture_def}{b2FixtureDef}}}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{structb2_fixture_def_aa34ba06bcf0d6d981931a83cf124a602}{b2FixtureDef}}()}
+\DoxyCodeLine{00065\ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ shape\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ friction\ =\ 0.2f;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ restitution\ =\ 0.0f;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ restitutionThreshold\ =\ 1.0f\ *\ \mbox{\hyperlink{b2__settings_8h_ac981dcccb9ee291352843a27af829c8c}{b2\_lengthUnitsPerMeter}};}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ density\ =\ 0.0f;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ isSensor\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ \mbox{\hyperlink{structb2_fixture_def_a1e41753d89abf3443e7897e2498a3240}{shape}};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{structb2_fixture_user_data}{b2FixtureUserData}}\ \mbox{\hyperlink{structb2_fixture_def_a480da3de55f826e8df9e7d2c0f7e911f}{userData}};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_fixture_def_a13799607109ebee16538facf1f0e1701}{friction}};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_fixture_def_a87e1f5db5b7164fc7198e18a02ee6e36}{restitution}};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_fixture_def_ad56b10047e9c1b3bb317e7e5249f030c}{restitutionThreshold}};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structb2_fixture_def_a386a1e68b7bebb7d1de64332d3bf34ce}{density}};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structb2_fixture_def_ac8cfcc6208663c92861eaab3b3fdc57e}{isSensor}};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{structb2_filter}{b2Filter}}\ \mbox{\hyperlink{structb2_fixture_def_a4c3e493a13d11ab27fcc2eee9f52fd61}{filter}};}
+\DoxyCodeLine{00100\ \};}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{struct\ }B2\_API\ \mbox{\hyperlink{structb2_fixture_proxy}{b2FixtureProxy}}}
+\DoxyCodeLine{00104\ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\ aabb;}
+\DoxyCodeLine{00106\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ fixture;}
+\DoxyCodeLine{00107\ \ \ \ \ int32\ childIndex;}
+\DoxyCodeLine{00108\ \ \ \ \ int32\ proxyId;}
+\DoxyCodeLine{00109\ \};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00116\ \textcolor{keyword}{class\ }B2\_API\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}}
+\DoxyCodeLine{00117\ \{}
+\DoxyCodeLine{00118\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00121\ \ \ \ \ b2Shape::Type\ GetType()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00126\ \ \ \ \ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ GetShape();}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ GetShape()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a6198a81dcee0fe814d730383ebfa7038}{SetSensor}}(\textcolor{keywordtype}{bool}\ sensor);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsSensor()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a2c5e0d12c174927a4ad550459be334ad}{SetFilterData}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_filter}{b2Filter}}\&\ filter);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_filter}{b2Filter}}\&\ GetFilterData()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a45d3320f94811d67383c48466165fa26}{Refilter}}();}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00149\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ GetBody();}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ GetBody()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00154\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetNext();}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ GetNext()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00159\ \ \ \ \ \mbox{\hyperlink{structb2_fixture_user_data}{b2FixtureUserData}}\&\ GetUserData();}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{bool}\ TestPoint(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ p)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{bool}\ RayCast(\mbox{\hyperlink{structb2_ray_cast_output}{b2RayCastOutput}}*\ output,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\&\ input,\ int32\ childIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{void}\ GetMassData(\mbox{\hyperlink{structb2_mass_data}{b2MassData}}*\ massData)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{void}\ SetDensity(\textcolor{keywordtype}{float}\ density);}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordtype}{float}\ GetDensity()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{float}\ GetFriction()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{void}\ SetFriction(\textcolor{keywordtype}{float}\ friction);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{float}\ GetRestitution()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRestitution(\textcolor{keywordtype}{float}\ restitution);}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{float}\ GetRestitutionThreshold()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRestitutionThreshold(\textcolor{keywordtype}{float}\ threshold);}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ GetAABB(int32\ childIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a57485e73a2063060e320c7176676cd5e}{Dump}}(int32\ bodyIndex);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_body}{b2Body}};}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_world}{b2World}};}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact}{b2Contact}};}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classb2_contact_manager}{b2ContactManager}};}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}();}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{comment}{//\ We\ need\ separation\ create/destroy\ functions\ from\ the\ constructor/destructor\ because}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{comment}{//\ the\ destructor\ cannot\ access\ the\ allocator\ (no\ destructor\ arguments\ allowed\ by\ C++).}}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{void}\ Create(\mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator,\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ body,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_fixture_def}{b2FixtureDef}}*\ def);}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{void}\ Destroy(\mbox{\hyperlink{classb2_block_allocator}{b2BlockAllocator}}*\ allocator);}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{comment}{//\ These\ support\ body\ activation/deactivation.}}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordtype}{void}\ CreateProxies(\mbox{\hyperlink{classb2_broad_phase}{b2BroadPhase}}*\ broadPhase,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xf);}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordtype}{void}\ DestroyProxies(\mbox{\hyperlink{classb2_broad_phase}{b2BroadPhase}}*\ broadPhase);}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordtype}{void}\ Synchronize(\mbox{\hyperlink{classb2_broad_phase}{b2BroadPhase}}*\ broadPhase,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xf1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_transform}{b2Transform}}\&\ xf2);}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_density;}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ m\_next;}
+\DoxyCodeLine{00235\ \ \ \ \ \mbox{\hyperlink{classb2_body}{b2Body}}*\ m\_body;}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ m\_shape;}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_friction;}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restitution;}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_restitutionThreshold;}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \mbox{\hyperlink{structb2_fixture_proxy}{b2FixtureProxy}}*\ m\_proxies;}
+\DoxyCodeLine{00244\ \ \ \ \ int32\ m\_proxyCount;}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \mbox{\hyperlink{structb2_filter}{b2Filter}}\ m\_filter;}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_isSensor;}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \mbox{\hyperlink{structb2_fixture_user_data}{b2FixtureUserData}}\ m\_userData;}
+\DoxyCodeLine{00251\ \};}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \textcolor{keyword}{inline}\ b2Shape::Type\ \mbox{\hyperlink{classb2_fixture_a7a566c1e3b768f6a72ebc3b758aad70e}{b2Fixture::GetType}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00254\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_shape-\/>\mbox{\hyperlink{classb2_shape_a600cceee6186d81bb1b8ab142324bba6}{GetType}}();}
+\DoxyCodeLine{00256\ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ \mbox{\hyperlink{classb2_fixture_aaa2b73fa212fa53b1c800cccd7a1d31e}{b2Fixture::GetShape}}()}
+\DoxyCodeLine{00259\ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_shape;}
+\DoxyCodeLine{00261\ \}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_shape}{b2Shape}}*\ \mbox{\hyperlink{classb2_fixture_aaa2b73fa212fa53b1c800cccd7a1d31e}{b2Fixture::GetShape}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00264\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_shape;}
+\DoxyCodeLine{00266\ \}}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_fixture_aedd23d27ff7ce2d53b6c5b7a878a35d3}{b2Fixture::IsSensor}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00269\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_isSensor;}
+\DoxyCodeLine{00271\ \}}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_filter}{b2Filter}}\&\ \mbox{\hyperlink{classb2_fixture_ad956250d9f684a407992ec178320127e}{b2Fixture::GetFilterData}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00274\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_filter;}
+\DoxyCodeLine{00276\ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{structb2_fixture_user_data}{b2FixtureUserData}}\&\ \mbox{\hyperlink{classb2_fixture_af42d4b917097c6300012f63410a985dc}{b2Fixture::GetUserData}}()}
+\DoxyCodeLine{00279\ \{}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_userData;}
+\DoxyCodeLine{00281\ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{classb2_fixture_a9d6536ef274d768e86ab0a8330921535}{b2Fixture::GetBody}}()}
+\DoxyCodeLine{00284\ \{}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_body;}
+\DoxyCodeLine{00286\ \}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_body}{b2Body}}*\ \mbox{\hyperlink{classb2_fixture_a9d6536ef274d768e86ab0a8330921535}{b2Fixture::GetBody}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00289\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_body;}
+\DoxyCodeLine{00291\ \}}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_fixture_a0241952461f6f1a04a3c850306390fd2}{b2Fixture::GetNext}}()}
+\DoxyCodeLine{00294\ \{}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00296\ \}}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classb2_fixture}{b2Fixture}}*\ \mbox{\hyperlink{classb2_fixture_a0241952461f6f1a04a3c850306390fd2}{b2Fixture::GetNext}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00299\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_next;}
+\DoxyCodeLine{00301\ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a6c303a123f83b90650da822ad6f291ec}{b2Fixture::SetDensity}}(\textcolor{keywordtype}{float}\ density)}
+\DoxyCodeLine{00304\ \{}
+\DoxyCodeLine{00305\ \ \ \ \ b2Assert(b2IsValid(density)\ \&\&\ density\ >=\ 0.0f);}
+\DoxyCodeLine{00306\ \ \ \ \ m\_density\ =\ density;}
+\DoxyCodeLine{00307\ \}}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_fixture_adf764a37ac8dbf39029bb062afca651a}{b2Fixture::GetDensity}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00310\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_density;}
+\DoxyCodeLine{00312\ \}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_fixture_a44ac72b400bde646b73542f64131d158}{b2Fixture::GetFriction}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00315\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_friction;}
+\DoxyCodeLine{00317\ \}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a097aa48046dd2686db47b7ab8e2cde92}{b2Fixture::SetFriction}}(\textcolor{keywordtype}{float}\ friction)}
+\DoxyCodeLine{00320\ \{}
+\DoxyCodeLine{00321\ \ \ \ \ m\_friction\ =\ friction;}
+\DoxyCodeLine{00322\ \}}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_fixture_a50f89dfa96a456ca28b03e418e8dee3f}{b2Fixture::GetRestitution}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00325\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_restitution;}
+\DoxyCodeLine{00327\ \}}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_abd9d4c46a54febb1b06cedc8f9b88b26}{b2Fixture::SetRestitution}}(\textcolor{keywordtype}{float}\ restitution)}
+\DoxyCodeLine{00330\ \{}
+\DoxyCodeLine{00331\ \ \ \ \ m\_restitution\ =\ restitution;}
+\DoxyCodeLine{00332\ \}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{classb2_fixture_a3fb3768555b29d85e40f5c4ddedbf348}{b2Fixture::GetRestitutionThreshold}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00335\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_restitutionThreshold;}
+\DoxyCodeLine{00337\ \}}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a50231620388dd3e0eddce81af516a6cc}{b2Fixture::SetRestitutionThreshold}}(\textcolor{keywordtype}{float}\ threshold)}
+\DoxyCodeLine{00340\ \{}
+\DoxyCodeLine{00341\ \ \ \ \ m\_restitutionThreshold\ =\ threshold;}
+\DoxyCodeLine{00342\ \}}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_fixture_aa56d3ca04a5d0478c6477876cd480cc6}{b2Fixture::TestPoint}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_vec2}{b2Vec2}}\&\ p)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00345\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_shape-\/>\mbox{\hyperlink{classb2_shape_a6ac968e403e2d93e8ae46d728a2e50fa}{TestPoint}}(m\_body-\/>\mbox{\hyperlink{classb2_body_afb316448e6e555ceb2df23ed216b2f53}{GetTransform}}(),\ p);}
+\DoxyCodeLine{00347\ \}}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classb2_fixture_aaaafd69aa3e1a922acc4b9d7fb49170a}{b2Fixture::RayCast}}(\mbox{\hyperlink{structb2_ray_cast_output}{b2RayCastOutput}}*\ output,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_ray_cast_input}{b2RayCastInput}}\&\ input,\ int32\ childIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00350\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_shape-\/>\mbox{\hyperlink{classb2_shape_aee53a926f4fe64cd03693f6211ef6335}{RayCast}}(output,\ input,\ m\_body-\/>\mbox{\hyperlink{classb2_body_afb316448e6e555ceb2df23ed216b2f53}{GetTransform}}(),\ childIndex);}
+\DoxyCodeLine{00352\ \}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classb2_fixture_a4532a12e848c5ceb5a3b94cf45b7cbad}{b2Fixture::GetMassData}}(\mbox{\hyperlink{structb2_mass_data}{b2MassData}}*\ massData)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00355\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00356\ \ \ \ \ m\_shape-\/>\mbox{\hyperlink{classb2_shape_a1b9497fd7951fa995df6fe00bcf8581b}{ComputeMass}}(massData,\ m\_density);}
+\DoxyCodeLine{00357\ \}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structb2_a_a_b_b}{b2AABB}}\&\ \mbox{\hyperlink{classb2_fixture_a158574dc389fec83a05b09ab715c4474}{b2Fixture::GetAABB}}(int32\ childIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00360\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{00361\ \ \ \ \ b2Assert(0\ <=\ childIndex\ \&\&\ childIndex\ <\ m\_proxyCount);}
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{keywordflow}{return}\ m\_proxies[childIndex].aabb;}
+\DoxyCodeLine{00363\ \}}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}
