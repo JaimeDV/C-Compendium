@@ -18,7 +18,7 @@ Contains a total of 5 visual studio proyects:
 ![Sin título](https://github.com/user-attachments/assets/cf3fee3a-e019-4b4c-bed4-c28474cb2aed)
 
 ## Proyect compilation:
-Due to githubs file limit all libraries are stored in a rar file named library extract the files and the open the visual studio proyect.
+Due to githubs file limit all libraries are stored in a rar file named library. Extract the files and the open the visual studio proyect.
 
-In case of Misipainter simply drag the dll to an already existing unity proyect and copy the editor folder located at: C-Compendium\Misi Painter\MidleWare Unity Example\Assets\Editor
+In case of Misipainter simply drag the dll to an already existing unity proyect and copy the editor folder located at: C-Compendium\Misi Painter\MidleWare Unity Example\Assets\Editor if an editor folder laready exists copy the code
 
